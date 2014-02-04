@@ -1,0 +1,18 @@
+#OSX Metafiles
+.DS_Store
+
+# Tool Directories
+node_modules/
+
+
+# Resource files
+
+# Audio Files
+*.mp3
+*.wav
+*.ogg
+
+#Log Files
+*.log
+*.csv
+*.dat
