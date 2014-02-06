@@ -9,14 +9,14 @@ define(['src/lib/core/filereader/APISupport', 'src/lib/core/filereader/Read'], f
     var _aFiles = [];
 
     // Check File API Support 
-    var APISupport = function() {
+    var _checkAPISupport = function() {
 
         console.log("File API supported: " + bAPISupport());
 
     };
 
-    // Handle file objects 
-    var Open = function(oFileList) {
+    // Set file objects 
+    var _setFiles = function(oFileList) {
 
         if (bAPISupport()) {
 
@@ -26,10 +26,19 @@ define(['src/lib/core/filereader/APISupport', 'src/lib/core/filereader/Read'], f
 
     };
 
+    // Get file objects as Array 
+    var _getFiles = function() {
+
+        return _aFiles;
+
+    };
+
+    // Exposed methods
     return {
 
-        supported: APISupport,
-        open: Open
+        supported: _checkAPISupport,
+        open: _setFiles,
+        getFiles: _getFiles
 
     };
 
