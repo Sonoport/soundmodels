@@ -4,21 +4,46 @@ module.exports = function(grunt) {
   grunt.initConfig({
     // This line makes your node configurations available for use
     pkg: grunt.file.readJSON('package.json'),
+
+    // Define files and locations
+    files:{
+      js_src: 'src/lib/**/*.js'
+    },
+    dirs: {
+      src : 'src',
+      docs: 'docs',
+      doc_theme : 'docs/theme'
+    },
     // JS Beautifier - automatic code cleanup.
     jsbeautifier: {
-      files: ["src/lib/**/*.js"],
+      files: ['<%= files.js_src %>'],
     },
     // JSHint
     jshint: {
-      all: ['Gruntfile.js', 'src/lib/**/*.js']
+      all: ['Gruntfile.js', '<%= files.js_src %>']
     },
-    // Watcher for serving
+    // Watcher for updating
     watch: {
       scripts: {
-        //files: ['<%= dirs.src %>/*.js','app.js'],
-        //tasks: ['jshint','uglify','browserify'],
+        files: ['<%= files.js_src %>'],
+        tasks: ['default'],
         options: {
           spawn: false
+        }
+      }
+    },
+    // YUI Documentation
+    yuidoc: {
+      compile: {
+        name: '<%= pkg.name %>',
+        description: '<%= pkg.description %>',
+        version: '<%= pkg.version %>',
+        url: '<%= pkg.homepage %>',
+        options: {
+          paths: '<%= dirs.src %>',
+          outdir: '<%= dirs.docs %>',
+          linkNatives: "true",
+
         }
       }
     },
@@ -44,10 +69,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-jsbeautifier');
 
   grunt.registerTask('default', ['jsbeautifier','jshint']);
   grunt.registerTask('serve', ['jsbeautifier','jshint', 'connect', 'watch' ]);
+  grunt.registerTask('doc', ['jsbeautifier','jshint', 'connect', 'watch' ]);
 
 
 };
