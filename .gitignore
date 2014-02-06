@@ -19,5 +19,9 @@ wiki/
 *.csv
 *.dat
 
-#NetBeans specific
+# NetBeans specific
 /nbproject/*
+
+# Burn specific
+burnTest.html
+burnTest.js
