@@ -42,8 +42,7 @@ module.exports = function(grunt) {
         options: {
           paths: '<%= dirs.src %>',
           outdir: '<%= dirs.docs %>',
-          linkNatives: "true",
-
+          linkNatives: "true"
         }
       }
     },
