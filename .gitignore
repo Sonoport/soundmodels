@@ -21,3 +21,6 @@ wiki/
 *.log
 *.csv
 *.dat
+
+#NetBeans specific
+/nbproject/*
