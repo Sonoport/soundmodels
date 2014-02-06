@@ -4,20 +4,32 @@
  * @description Read contents of file
  * @requires Class APISupport
  */
-define(['src/lib/core/filereader/APISupport'], function(bAPISupport) {
+define(['src/lib/core/filereader/APISupport', 'src/lib/core/filereader/Read'], function(bAPISupport, aRead) {
 
-    /**
-     * Gets a FileList object
-     * @param {Object} oFileList
-     */
-    return function(oFileList) {
+    var _aFiles = [];
 
-        // Check if File API is supported
+    // Check File API Support 
+    var APISupport = function() {
+
+        console.log("File API supported: " + bAPISupport());
+
+    };
+
+    // Handle file objects 
+    var Open = function(oFileList) {
+
         if (bAPISupport()) {
 
-            console.log("yes!");
+            _aFiles = aRead(oFileList);
 
         }
+
+    };
+
+    return {
+
+        supported: APISupport,
+        open: Open
 
     };
 
