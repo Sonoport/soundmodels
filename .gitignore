@@ -26,5 +26,5 @@ wiki/
 /nbproject/*
 
 # Burn specific
-burnTest.html
-app.js
+/index.html
+/app.js
