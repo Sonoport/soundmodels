@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * @author Cliburn M. Solano
  * @email cliburn.solano@sonoport.com
@@ -43,3 +44,6 @@ define(['src/lib/core/filereader/APISupport', 'src/lib/core/filereader/Read'], f
     };
 
 });
+=======
+
+>>>>>>> 2d42f1d99d86f07baf59e1575d961b7f87865875
