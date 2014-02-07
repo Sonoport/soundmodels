@@ -51,6 +51,10 @@ function SPAudioParam(name, minValue, maxValue, defaultValue, aParam,mapping){
       if (aParam){
         aParam.value = value;
       }else{
+        if (value > this.maxValue)
+          value = maxValue
+        else if (value < minValue)
+          value = minValue;
         mValue = value;
       }
     },
@@ -239,5 +243,3 @@ function SPAudioParam(name, minValue, maxValue, defaultValue, aParam,mapping){
     }
   }
 }
-
-module.exports = SPAudioParam;
