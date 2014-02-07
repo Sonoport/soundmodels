@@ -9,12 +9,9 @@ define(['utils/webkitAudioContextMonkeyPatch.js'], function() {
     'use strict';
 
     function BaseSound(audiocontext) {
-        this.audiocontext = null;
 
         var initializeAudioContext = function() {
             console.log("create audiocontext");
-            var ac = new webkitAudioContext();
-            this.audiocontext = ac;
         };
 
         if (typeof audiocontext === "undefined") {
@@ -25,20 +22,20 @@ define(['utils/webkitAudioContextMonkeyPatch.js'], function() {
 
 
         /**
-				@property gain
-				@type number
-				**/
+		@property gain
+		@type number
+		**/
         this.numberOfInputs = 0;
         this.numberOfOutputs = 0;
 
     }
 
     /**
-		Returns 
+	Returns 
 
-		@method connect
-		@return null
-		**/
+	@method connect
+	@return null
+	**/
     BaseSound.prototype.connect = function() {
 
     };
