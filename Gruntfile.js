@@ -56,9 +56,27 @@ module.exports = function(grunt) {
       },
       test2: {
         options: {
-          port: 8080,
+          port: 8000,
           base: 'test/'
         }
+      }
+    },
+    // For copying files from src/ folder to test folder 
+    copy: {
+      main: {
+        files: [{
+          cwd: 'src/lib/core/',
+          src: 'BaseSound.js',
+          dest: 'test/test-BaseSound/',
+          expand: true
+        },
+        {
+          cwd: 'src/utils/',
+          src: 'webkitAudioContextMonkeyPatch.js',
+          dest: 'test/test-BaseSound/utils',
+          expand: true
+        }
+        ]
       }
     }
   });
@@ -70,10 +88,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-jsbeautifier');
+  grunt.loadNpmTasks('grunt-contrib-copy');
 
   grunt.registerTask('default', ['jsbeautifier','jshint']);
   grunt.registerTask('serve', ['jsbeautifier','jshint', 'connect', 'watch' ]);
   grunt.registerTask('doc', ['jsbeautifier','jshint', 'connect', 'watch' ]);
-
+  grunt.registerTask('test', ['jsbeautifier','jshint','copy']);
 
 };

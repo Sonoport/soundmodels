@@ -1,37 +1,36 @@
-
 /**
 Mock AudioParam for external use on Models.
 
 @class SPAudioParam
 @constructor
 **/
-function SPAudioParam(){
-  "use strict";
-  /**
+function SPAudioParam() {
+    "use strict";
+    /**
   @property defaultValue
   @default 0
   **/
-  this.defaultValue = 0;
-   /**
+    this.defaultValue = 0;
+    /**
   @property maxValue
   @default 0
   **/
-  this.maxValue = 0;
-   /**
+    this.maxValue = 0;
+    /**
   @property minValue
   @default 0
   **/
-  this.minValue = 0;
-   /**
+    this.minValue = 0;
+    /**
   @property name
   @default ""
   **/
-  this.name = "";
-   /**
+    this.name = "";
+    /**
   @property value
   @default 0
   **/
-  this.value = 0;
+    this.value = 0;
 }
 
 
@@ -44,7 +43,7 @@ Schedules a parameter value change at the given time.
 @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
 
 **/
-SPAudioParam.prototype.setValueAtTime = function (value,startTime){
+SPAudioParam.prototype.setValueAtTime = function(value, startTime) {
 
 };
 
@@ -62,7 +61,7 @@ During the time interval: T0 <= t < T1, where T0 is the startTime parameter and 
 @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
 @param {Number} timeConstant The timeConstant parameter is the time-constant value of first-order filter (exponential) approach to the target value. The larger this value is, the slower the transition will be.
 **/
-SPAudioParam.prototype.setTargetAtTime = function(target, startTime, timeConstant){
+SPAudioParam.prototype.setTargetAtTime = function(target, startTime, timeConstant) {
 
 };
 
@@ -79,7 +78,7 @@ During the time interval: startTime <= t < startTime + duration, values will be 
 @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
 @param {Number} duration The duration parameter is the amount of time in seconds (after the time parameter) where values will be calculated according to the values parameter.
 **/
-SPAudioParam.prototype.setTargetValueAtTime = function (values,startTime,duration){
+SPAudioParam.prototype.setTargetValueAtTime = function(values, startTime, duration) {
 
 };
 
@@ -96,7 +95,7 @@ During the time interval: startTime <= t < startTime + duration, values will be 
 @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
 @param {Number} duration The duration parameter is the amount of time in seconds (after the time parameter) where values will be calculated according to the values parameter.
 **/
-SPAudioParam.prototype.setValueCurveAtTime = function(values, startTime, duration){
+SPAudioParam.prototype.setValueCurveAtTime = function(values, startTime, duration) {
 
 };
 
@@ -108,7 +107,7 @@ Schedules an exponential continuous change in parameter value from the previous 
 @param {Float32Array} value The value parameter is the value the parameter will exponentially ramp to at the given time.
 @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
 **/
-SPAudioParam.prototype.exponentialRampToValueAtTime = function(value, endTime){
+SPAudioParam.prototype.exponentialRampToValueAtTime = function(value, endTime) {
 
 };
 
@@ -120,7 +119,7 @@ Schedules a linear continuous change in parameter value from the previous schedu
 @param {Float32Array} value The value parameter is the value the parameter will exponentially ramp to at the given time.
 @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
 **/
-SPAudioParam.prototype.linearRampToValueAtTime = function(value, endTime){
+SPAudioParam.prototype.linearRampToValueAtTime = function(value, endTime) {
 
 };
 
@@ -131,6 +130,6 @@ Schedules a linear continuous change in parameter value from the previous schedu
 @return  null
 @param {Number} startTime The startTime parameter is the starting time at and after which any previously scheduled parameter changes will be cancelled.
 **/
-SPAudioParam.prototype.cancelScheduledValues = function(startTime){
+SPAudioParam.prototype.cancelScheduledValues = function(startTime) {
 
 };
