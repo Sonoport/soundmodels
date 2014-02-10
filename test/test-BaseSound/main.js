@@ -11,5 +11,5 @@ require(['baseSndURL','require'],
 		console.log("main app loaded.");
 
 		var bs = new BaseSound();
-
-	});
+		//bs.start(0);
+});

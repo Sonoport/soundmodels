@@ -1,62 +1,90 @@
 /**
 
-Base class for all sounds.
+Base class for all sounds. 
+
+Pseudo AudioNode class the encapsulates basic functionality of creating a AudioContext and passing in audio file buffer.
 
 @class BaseSound
 @constructor
 **/
-define(['utils/webkitAudioContextMonkeyPatch.js'], function() {
+define(['utils/AudioContextMonkeyPatch.js'], function() {
     'use strict';
 
     function BaseSound(audiocontext) {
-        this.audiocontext = null;
-
-        var initializeAudioContext = function() {
-            console.log("create audiocontext");
-            var ac = new webkitAudioContext();
-            this.audiocontext = ac;
-        };
-
+        // Define one AudioContext
         if (typeof audiocontext === "undefined") {
-            initializeAudioContext();
+            // Need to check for prefixes for AudioContext
+            this.audiocontext = new AudioContext();
+            console.log("new audiocontext");
         } else {
             this.audiocontext = audiocontext;
+            console.log("current ac");
         }
 
-
+        this.numberOfInputs = 1; // Defaults to 1
+        this.numberOfOutputs = 1; // Defaults to 1
         /**
-				@property gain
-				@type number
-				**/
-        this.numberOfInputs = 0;
-        this.numberOfOutputs = 0;
+        @property gainNode
+        @type number
+        **/
+        this.gainNode = this.audiocontext.createGain();
+        this.releaseNode = {};
 
+        /** 
+        Temp: Create a sine wave oscillator buffer as a temporary source.
+        Will be replaced by FileReader to parse in the 
+        **/
+        this.bufferSource = this.audiocontext.createOscillator();
+        // Connects this to the destination node
+        this.bufferSource.connect(this.audiocontext.destination);
     }
 
     /**
-		Returns 
+    Connects (master) Gain Node.
 
-		@method connect
-		@return null
-		**/
-    BaseSound.prototype.connect = function() {
-
+	@method connect
+	@return null
+	**/
+    BaseSound.prototype.connect = function(input) {
+        console.log("connects gainNode");
+        this.gainNode.connect(input);
     };
+    /**
+    Disconnects (master) Gain Node.
 
-    BaseSound.prototype.disconnect = function() {
-
+    @method disconnect
+    @return null
+    **/
+    BaseSound.prototype.disconnect = function(input) {
+        this.gainNode.disconnect(input);
     };
+    /**
+    Start audio
 
-    BaseSound.prototype.start = function() {
-
+    @method start
+    @return null
+    **/
+    BaseSound.prototype.start = function(value) {
+        console.log("start playing");
+        this.bufferSource.start(value);
     };
+    /**
+    Stop audio
 
-    BaseSound.prototype.stop = function() {
-
+    @method stop
+    @return null
+    **/
+    BaseSound.prototype.stop = function(value) {
+        this.bufferSource.stop(value);
     };
+    /**
+    Linearly release the gain of the audio in time(s).
 
-    BaseSound.prototype.release = function() {
-
+    @method release
+    @return null
+    **/
+    BaseSound.prototype.release = function(time) {
+        //this.gainNode;
     };
 
     // Return constructor function

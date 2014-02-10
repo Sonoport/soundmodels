@@ -72,7 +72,7 @@ module.exports = function(grunt) {
         },
         {
           cwd: 'src/utils/',
-          src: 'webkitAudioContextMonkeyPatch.js',
+          src: 'AudioContextMonkeyPatch.js',
           dest: 'test/test-BaseSound/utils',
           expand: true
         }
