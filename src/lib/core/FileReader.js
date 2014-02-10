@@ -48,8 +48,8 @@ define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/L
 
         if (loadFile.isLoaded()) {
 
-            _fBuffer = loadFile.getBuffer(555567);
-            console.log(_fBuffer);
+            _fBuffer = loadFile.getBuffer(555567, 705567);
+            
             //        var startTime = _context.currentTime;
             var source = _context.createBufferSource();
             //        // Connect graph
