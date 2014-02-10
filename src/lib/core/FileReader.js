@@ -8,7 +8,6 @@ define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/L
 
     "use strict";
 
-    var _aFiles = [];
     var _bAPISupported = false;
     var _context;
     var _fBuffer;
