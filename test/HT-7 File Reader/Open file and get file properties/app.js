@@ -1,15 +1,13 @@
 require(['src/lib/core/FileReader'], function (fr) {
 
-function handleFileSelect(evt) {
+  //fr.open("https://webservice.buddyplatform.com/Service/v1/BuddyService.ashx?Sound_Sounds_GetSound&BuddyApplicationName=Sonoport Buddy AIR App&BuddyApplicationPassword=685F0B35-EE01-4A93-8F53-FF6098A06790&SoundName=nyc_city_ambience_car_horn_07&Quality=High");
+  fr.open("http://localhost:8383/javascript-sound-models/long.mp3");
+  function handleClick(e) {
     
-  fr.open(evt.target.files);
-//  alert(fr.getFiles().length);
-    var aFiles = fr.getFiles();
-    
-    console.log(aFiles[0].name);
+    fr.play();
 
   }
 
-  document.getElementById('files').addEventListener('change', handleFileSelect, false);
-
+  document.getElementById('bPlay').addEventListener('click', handleClick, false);
+  
 });

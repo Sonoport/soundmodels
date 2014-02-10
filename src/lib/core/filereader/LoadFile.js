@@ -56,17 +56,46 @@ define(function() {
         var nLength = _buffer.length;
         var newBuffer;
 
+        // Set nEnd if it is missing
+        if (typeof nEnd === "undefined") {
+
+            nEnd = _buffer.length;
+
+        }
+
+        // Verify parameters
         if (!_isInt(nStart)) {
 
             console.log("getBuffer Start parameter is not an integer");
             return;
 
+        } else if (!_isInt(nEnd)) {
+
+            console.log("getBuffer End parameter is not an integer");
+            return;
+
         }
 
+        // Check if nStart is smaller than nEnd
+        if (nStart > nEnd) {
+
+            console.log("getBuffer Start parameter should be bigger than End parameter");
+            return;
+
+        }
+
+        // Check if nEnd is larger that the buffer size and adjust accordingly
+        if (nEnd > _buffer.length) {
+
+            nEnd = -1;
+
+        }
+
+        // Start trimming
         for (var i = 0; i < nChannels; i++) {
 
             var aData = new Float32Array(_buffer.getChannelData(i));
-            aChannels[i] = aData.subarray(nStart);
+            aChannels[i] = aData.subarray(nStart, nEnd);
 
         }
 
@@ -76,6 +105,7 @@ define(function() {
 
         }
 
+        // Create the new buffer
         newBuffer = _context.createBuffer(_buffer.numberOfChannels, nLength, _buffer.sampleRate);
 
         for (var j = 0; j < nChannels; j++) {
@@ -103,6 +133,7 @@ define(function() {
         request.open('GET', sLink, true);
         request.responseType = 'arraybuffer';
 
+        // Handler for onLoad
         request.onload = function() {
 
             context.decodeAudioData(request.response, function(buffer) {
@@ -116,6 +147,7 @@ define(function() {
 
         };
 
+        // Handler for onError
         var onError = function() {
 
             console.log("Error loading URL");
