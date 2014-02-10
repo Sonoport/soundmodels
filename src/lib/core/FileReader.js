@@ -4,15 +4,13 @@
  * @description Read contents of file
  * @requires Class APISupport
  */
-define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/LoadFile', 'src/lib/core/filereader/Read'], function(bWebAudioAPISupport, loadFile, aRead) {
+define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/LoadFile'], function(bWebAudioAPISupport, loadFile) {
 
     "use strict";
 
     var _bAPISupported = false;
     var _context;
     var _fBuffer;
-
-    //var context = new AudioContext();
 
     /**
      * check for Web API support
@@ -47,13 +45,14 @@ define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/L
 
         if (loadFile.isLoaded()) {
 
-            _fBuffer = loadFile.getBuffer(555567, 705567);
-            
+            _fBuffer = loadFile.getBuffer(0);
+
             //        var startTime = _context.currentTime;
             var source = _context.createBufferSource();
             //        // Connect graph
+            //            console.log(_fBuffer);
             source.buffer = _fBuffer;
-            //        source.loop = true;
+            //            source.loop = true;
             source.connect(_context.destination);
             source.start(0);
             //        // Start playback, but make sure we stay in bound of the buffer.

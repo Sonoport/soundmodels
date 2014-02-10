@@ -6,7 +6,7 @@
  * @param {String} sLink The URL
  * @return {ArrayBuffer} An ArrayBuffer
  */
-define(function() {
+define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
 
     "use strict";
 
@@ -84,6 +84,14 @@ define(function() {
 
         }
 
+        // Check if nStart is beyong buffer size
+        if (nStart > _buffer.length) {
+
+            console.log("getBuffer Start parameter should be withing buffer length");
+            return;
+
+        }
+
         // Check if nEnd is larger that the buffer size and adjust accordingly
         if (nEnd > _buffer.length) {
 
@@ -113,6 +121,9 @@ define(function() {
             newBuffer.getChannelData(j).set(aChannels[j]);
 
         }
+
+        // Detect loop markers
+        loopMarker.detect(newBuffer);
 
         return newBuffer;
 
