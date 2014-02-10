@@ -8,6 +8,8 @@
  */
 define(function() {
 
+    "use strict";
+
     return function(oFileList) {
 
         var _aFiles = [];

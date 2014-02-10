@@ -4,41 +4,74 @@
  * @description Read contents of file
  * @requires Class APISupport
  */
-define(['src/lib/core/filereader/APISupport', 'src/lib/core/filereader/Read'], function(bAPISupport, aRead) {
+define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/LoadFile', 'src/lib/core/filereader/Read'], function(bWebAudioAPISupport, loadFile, aRead) {
+
+    "use strict";
 
     var _aFiles = [];
+    var _bAPISupported = false;
+    var _context;
+    var _fBuffer;
 
-    // Check File API Support 
-    var _checkAPISupport = function() {
+    //var context = new AudioContext();
 
-        console.log("File API supported: " + bAPISupport());
+    /**
+     * check for Web API support
+     */
+    var _checkWebAudioAPISupport = function() {
+
+        _bAPISupported = bWebAudioAPISupport();
+        _context = new AudioContext();
+
+        console.log("Web Audio API supported: " + _bAPISupported);
 
     };
 
-    // Set file objects 
-    var _setFiles = function(oFileList) {
+    /**
+     * Load a file from URI
+     * @param {String} sLink The link of the file to load
+     */
+    var _loadFile = function(sLink) {
 
-        if (bAPISupport()) {
+        if (_bAPISupported) {
 
-            _aFiles = aRead(oFileList);
+            loadFile.load(sLink, _context);
 
         }
 
     };
 
-    // Get file objects as Array 
-    var _getFiles = function() {
+    /**
+     * Plays the file
+     */
+    var _playFile = function() {
 
-        return _aFiles;
+        if (loadFile.isLoaded()) {
+
+            _fBuffer = loadFile.getBuffer(555567);
+            console.log(_fBuffer);
+            //        var startTime = _context.currentTime;
+            var source = _context.createBufferSource();
+            //        // Connect graph
+            source.buffer = _fBuffer;
+            //        source.loop = true;
+            source.connect(_context.destination);
+            source.start(0);
+            //        // Start playback, but make sure we stay in bound of the buffer.
+            //        source.start(0, 10 % _fBuffer.duration);
+
+        }
 
     };
+
+    _checkWebAudioAPISupport();
 
     // Exposed methods
     return {
 
-        supported: _checkAPISupport,
-        open: _setFiles,
-        getFiles: _getFiles
+        supportWebAudioAPI: _checkWebAudioAPISupport,
+        open: _loadFile,
+        play: _playFile
 
     };
 
