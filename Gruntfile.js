@@ -12,6 +12,9 @@ module.exports = function(grunt) {
     dirs: {
       src : 'src',
       docs: 'docs',
+      build: 'build',
+      core: 'src/lib/core',
+      models: 'src/lib/models',
       doc_theme : 'docs/theme'
     },
     // JS Beautifier - automatic code cleanup.
@@ -46,6 +49,19 @@ module.exports = function(grunt) {
         }
       }
     },
+    requirejs: {
+      compile: {
+        options: {
+          dir: "<%= dirs.build %>",
+          optimize: 'uglify',
+          modules: [{
+            name: "compiled.js",
+            create: true,
+            include: ["SPAudioParam"]
+          }]
+        }
+      }
+    },
     // HTTP server for testing
     connect: {
       test1: {
@@ -69,6 +85,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-jsbeautifier');
 
   grunt.registerTask('default', ['jsbeautifier','jshint']);
