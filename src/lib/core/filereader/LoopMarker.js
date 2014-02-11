@@ -8,10 +8,14 @@ define(function() {
 
     "use strict";
 
-    var MAX_MP3_SILENCE = 20000;
     var PREPOSTFIX_LEN = 5000;
     var SPIKE_THRESH = 0.5;
 
+    var MAX_MP3_SILENCE = 20000;
+    var SILENCE_THRESH = 0.1;
+
+    var _aRightChannel;
+    var _aLeftChannel;
     var _nLoopStart;
     var _nLoopLength;
 
@@ -22,21 +26,44 @@ define(function() {
      */
     var _bLoopMarkerFound = function(buffer) {
 
-        var aRightChannel = new Float32Array(buffer.getChannelData(0));
-        var aLeftChannel = new Float32Array(buffer.getChannelData(1));
         var startSpikePos = -1;
         var endSpikePos = -1;
         var loopEnd = buffer.length - 1;
+
+        _aRightChannel = new Float32Array(buffer.getChannelData(0));
+
+        if (buffer.numberOfChannels > 1) {
+
+            _aLeftChannel = new Float32Array(buffer.getChannelData(1));
+
+        }
 
         // Find spike near start of file
         var pos = 0;
 
         while (startSpikePos < 0 && pos < buffer.length && pos < MAX_MP3_SILENCE) {
 
-            if (aRightChannel[pos] > SPIKE_THRESH && aLeftChannel[pos] < -SPIKE_THRESH) {
+            if (_aRightChannel[pos] > SPIKE_THRESH) {
 
-                startSpikePos = pos;
-                break;
+                if (buffer.numberOfChannels > 1) {
+
+                    if (_aLeftChannel[pos] < -SPIKE_THRESH) {
+                        console.log("found it");
+                        startSpikePos = pos;
+                        break;
+
+                    } else {
+
+                        pos++;
+
+                    }
+
+                } else {
+                    console.log("did not find it");
+                    startSpikePos = pos;
+                    break;
+
+                }
 
             } else {
 
@@ -51,10 +78,27 @@ define(function() {
 
         while (endSpikePos < 0 && pos > 0 && buffer.length - pos < MAX_MP3_SILENCE) {
 
-            if (aRightChannel[pos] > SPIKE_THRESH && aLeftChannel[pos] < -SPIKE_THRESH) {
+            if (_aRightChannel[pos] > SPIKE_THRESH) {
 
-                endSpikePos = pos;
-                break;
+                if (buffer.numberOfChannels > 1) {
+
+                    if (_aLeftChannel[pos] < -SPIKE_THRESH) {
+
+                        endSpikePos = pos;
+                        break;
+
+                    } else {
+
+                        pos--;
+
+                    }
+
+                } else {
+
+                    endSpikePos = pos;
+                    break;
+
+                }
 
             } else {
 
@@ -84,22 +128,90 @@ define(function() {
 
     };
 
-    var _createLoopMarkers = function() {
-
-
-
-    }
-
     /**
      * Detect loop markers in the audio file and create if there is none
      * @param {AudioBuffer} buffer
-     * @returns {AudioBuffer} The AuudioBuffer with the loop marks
+     * @returns {AudioBuffer} The AudioBuffer with the loop marks
      */
     var _detectLoopMarkers = function(buffer) {
 
         if (!_bLoopMarkerFound(buffer)) {
 
             console.log("Loop markers not found");
+            _trimSilence(buffer);
+
+        }
+
+        console.log("Marker positions: Start = " + _nLoopStart + " End = " + _nLoopLength);
+
+    };
+
+    /**
+     * Get the end marker
+     * @returns {Number} The end marker position
+     */
+    var _getEndMarker = function() {
+
+        return _nLoopLength;
+
+    };
+
+    /**
+     * Get the start marker
+     * @returns {Number} The start marker position
+     */
+    var _getStartMarker = function() {
+
+        return _nLoopStart;
+
+    };
+
+    /**
+     * Trims silence for markers undetected
+     * @param {AudioBuffer} buffer The buffer to trim silence
+     */
+    var _trimSilence = function(buffer) {
+
+        var loopEnd = buffer.length - 1;
+
+        if (buffer.numberOfChannels > 1) {
+
+            while (_nLoopStart < MAX_MP3_SILENCE && _nLoopStart < _nLoopLength && Math.abs(_aLeftChannel[_nLoopStart]) < SILENCE_THRESH && Math.abs(_aRightChannel[_nLoopStart]) < SILENCE_THRESH) {
+
+                _nLoopStart++;
+
+            }
+
+            while (buffer.length - loopEnd < MAX_MP3_SILENCE && loopEnd > 0 && Math.abs(_aLeftChannel[loopEnd]) < SILENCE_THRESH && Math.abs(_aRightChannel[loopEnd]) < SILENCE_THRESH) {
+
+                loopEnd--;
+
+            }
+
+        } else {
+
+            while (_nLoopStart < MAX_MP3_SILENCE && _nLoopStart < _nLoopLength && Math.abs(_aRightChannel[_nLoopStart]) < SILENCE_THRESH) {
+
+                _nLoopStart++;
+
+            }
+
+            while (buffer.length - loopEnd < MAX_MP3_SILENCE && loopEnd > 0 && Math.abs(_aRightChannel[loopEnd]) < SILENCE_THRESH) {
+
+                loopEnd--;
+
+            }
+
+        }
+
+        if (loopEnd > _nLoopStart) {
+
+            _nLoopLength = loopEnd - _nLoopStart + 1;
+
+        } else {
+
+            _nLoopStart = 0;
+            _nLoopLength = buffer.length;
 
         }
 
@@ -108,7 +220,9 @@ define(function() {
     // Exposed methods
     return {
 
-        detect: _detectLoopMarkers
+        detect: _detectLoopMarkers,
+        startMarker: _getStartMarker,
+        endMarker: _getEndMarker
 
     };
 
