@@ -1,96 +1,87 @@
 module.exports = function(grunt) {
+    "use strict";
+    // Project configuration.
+    grunt.initConfig({
+        // This line makes your node configurations available for use
+        pkg: grunt.file.readJSON('package.json'),
 
-  // Project configuration.
-  grunt.initConfig({
-    // This line makes your node configurations available for use
-    pkg: grunt.file.readJSON('package.json'),
+        // Define files and locations
+        files:{
+            jsSrc: 'src/lib/**/*.js'
+        },
+        dirs: {
+            src : 'src',
+            docs: 'docs',
+            build: 'build',
+            core: 'src/lib/core',
+            models: 'src/lib/models'
+        },
+        // JS Beautifier - automatic code cleanup.
+        jsbeautifier: {
+            files: ['<%= files.jsSrc %>'],
+        },
+        // JSHint
+        jshint: {
+            all: ['Gruntfile.js', '<%= files.jsSrc %>']
+        },
+        concat: {
+            options: {
+                separator: ';',
+            },
+            dev : {
+                src: ['<%= files.jsSrc %>'],
+                dest: '<%= dirs.build %>/splib.js'
+            },
+        },
+        // Watcher for updating
+        watch: {
+            scripts: {
+                files: ['<%= files.jsSrc %>'],
+                tasks: ['default'],
+                options: {
+                    spawn: false
+                }
+            }
+        },
+        // YUI Documentation
+        yuidoc: {
+            compile: {
+                name: '<%= pkg.name %>',
+                description: '<%= pkg.description %>',
+                version: '<%= pkg.version %>',
+                url: '<%= pkg.homepage %>',
+                options: {
+                    paths: '<%= dirs.src %>',
+                    outdir: '<%= dirs.docs %>',
+                    linkNatives: "true"
+                }
+            }
+        },
 
-    // Define files and locations
-    files:{
-      js_src: 'src/lib/**/*.js'
-    },
-    dirs: {
-      src : 'src',
-      docs: 'docs',
-      build: 'build',
-      core: 'src/lib/core',
-      models: 'src/lib/models',
-      doc_theme : 'docs/theme'
-    },
-    // JS Beautifier - automatic code cleanup.
-    jsbeautifier: {
-      files: ['<%= files.js_src %>'],
-    },
-    // JSHint
-    jshint: {
-      all: ['Gruntfile.js', '<%= files.js_src %>']
-    },
-    // Watcher for updating
-    watch: {
-      scripts: {
-        files: ['<%= files.js_src %>'],
-        tasks: ['default'],
-        options: {
-          spawn: false
+        // HTTP server for testing
+        connect: {
+            test1: {
+                options: {
+                    port: 8080,
+                    base: 'test/'
+                }
+            },
+            test2: {
+                options: {
+                    port: 8080,
+                    base: 'test/'
+                }
+            }
         }
-      }
-    },
-    // YUI Documentation
-    yuidoc: {
-      compile: {
-        name: '<%= pkg.name %>',
-        description: '<%= pkg.description %>',
-        version: '<%= pkg.version %>',
-        url: '<%= pkg.homepage %>',
-        options: {
-          paths: '<%= dirs.src %>',
-          outdir: '<%= dirs.docs %>',
-          linkNatives: "true"
-        }
-      }
-    },
-    requirejs: {
-      compile: {
-        options: {
-          dir: "<%= dirs.build %>",
-          optimize: 'uglify',
-          modules: [{
-            name: "compiled.js",
-            create: true,
-            include: ["SPAudioParam"]
-          }]
-        }
-      }
-    },
-    // HTTP server for testing
-    connect: {
-      test1: {
-        options: {
-          port: 8080,
-          base: 'test/'
-        }
-      },
-      test2: {
-        options: {
-          port: 8080,
-          base: 'test/'
-        }
-      }
-    }
-  });
+    });
+      // Load Plugins
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-yuidoc');
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-jsbeautifier');
 
-
-  // Load Plugins
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-yuidoc');
-  grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-jsbeautifier');
-
-  grunt.registerTask('default', ['jsbeautifier','jshint']);
-  grunt.registerTask('serve', ['jsbeautifier','jshint', 'connect', 'watch' ]);
-  grunt.registerTask('doc', ['jsbeautifier','jshint', 'connect', 'watch' ]);
-
-
+    grunt.registerTask('dev-build', ['jsbeautifier','jshint','concat']);
+    grunt.registerTask('make-doc', ['jsbeautifier','jshint', 'yuidoc']);
 };
