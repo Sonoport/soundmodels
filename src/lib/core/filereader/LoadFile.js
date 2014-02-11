@@ -11,6 +11,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
     "use strict";
 
     var _buffer;
+    var _bufferMarkedAndTrimmed;
     var _bSoundLoaded = false;
     var _context;
 
@@ -44,12 +45,28 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
     };
 
     /**
-     * Get a buffer from sound loaded
+     * Get the buffer
+     * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed
+     */
+    var _getBuffer = function() {
+
+        // Detect loop markers
+        loopMarker.detect(_buffer);
+
+        // Get new marked then trimmed buffer
+        _bufferMarkedAndTrimmed = _getMarkedBuffer(loopMarker.startMarker(), loopMarker.endMarker());
+
+        return _bufferMarkedAndTrimmed;
+
+    };
+
+    /**
+     * Get a buffer based on the start and end markers
      * @param {type} nStart The start of the buffer to load
      * @param {type} nEnd The end of the buffer to load
      * @returns {AudioBuffer} The trimmed buffer
      */
-    var _getBuffer = function(nStart, nEnd) {
+    var _getMarkedBuffer = function(nStart, nEnd) {
 
         var aChannels = [];
         var nChannels = _buffer.numberOfChannels;
@@ -121,9 +138,6 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
             newBuffer.getChannelData(j).set(aChannels[j]);
 
         }
-
-        // Detect loop markers
-        loopMarker.detect(newBuffer);
 
         return newBuffer;
 

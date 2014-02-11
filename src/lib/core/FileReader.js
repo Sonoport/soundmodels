@@ -45,18 +45,14 @@ define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/L
 
         if (loadFile.isLoaded()) {
 
-            _fBuffer = loadFile.getBuffer(0);
+            _fBuffer = loadFile.getBuffer();
 
-            //        var startTime = _context.currentTime;
             var source = _context.createBufferSource();
-            //        // Connect graph
-            //            console.log(_fBuffer);
+
+            source.loop = true;
             source.buffer = _fBuffer;
-            //            source.loop = true;
             source.connect(_context.destination);
             source.start(0);
-            //        // Start playback, but make sure we stay in bound of the buffer.
-            //        source.start(0, 10 % _fBuffer.duration);
 
         }
 
