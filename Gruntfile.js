@@ -60,10 +60,10 @@ module.exports = function(grunt) {
 
         // HTTP server for testing
         connect: {
-            test1: {
+            test: {
                 options: {
                     port: 8080,
-                    base: 'test/'
+                    base: ['<%= dirs.build %>','test/testaudioparam']
                 }
             },
             test2: {
@@ -84,4 +84,5 @@ module.exports = function(grunt) {
 
     grunt.registerTask('dev-build', ['jsbeautifier','jshint','concat']);
     grunt.registerTask('make-doc', ['jsbeautifier','jshint', 'yuidoc']);
+    grunt.registerTask('test', ['jsbeautifier','jshint', 'concat', 'connect:test', 'watch']);
 };
