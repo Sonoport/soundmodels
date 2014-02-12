@@ -10,7 +10,6 @@ define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/L
 
     var _bAPISupported = false;
     var _context;
-    var _fBuffer;
 
     /**
      * check for Web API support
@@ -39,22 +38,22 @@ define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/L
     };
 
     /**
-     * Plays the file
+     * Get the AudioContext instance
+     * @return {AudioContext} The Audio context instance
      */
-    var _playFile = function() {
+    var _getContext = function() {
 
-        if (loadFile.isLoaded()) {
+        return _context;
 
-            _fBuffer = loadFile.getBuffer();
+    };
 
-            var source = _context.createBufferSource();
+    /**
+     * Get the loadFile class
+     * @return {Class} The loadFile class
+     */
+    var _getLoadFileClass = function() {
 
-            source.loop = true;
-            source.buffer = _fBuffer;
-            source.connect(_context.destination);
-            source.start(0);
-
-        }
+        return loadFile;
 
     };
 
@@ -65,7 +64,8 @@ define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/L
 
         supportWebAudioAPI: _checkWebAudioAPISupport,
         open: _loadFile,
-        play: _playFile
+        loadFile: _getLoadFileClass,
+        context: _getContext
 
     };
 

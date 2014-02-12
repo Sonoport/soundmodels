@@ -17,19 +17,20 @@ define(function() {
     var _aRightChannel;
     var _aLeftChannel;
     var _nLoopStart;
+    var _nLoopEnd;
     var _nLoopLength;
 
     /**
      * Determine if loop markers are in the file
-     * @param {type} buffer
+     * @param {AudioBuffer} The buffer
      * @returns {Boolean}
      */
     var _bLoopMarkerFound = function(buffer) {
 
         var startSpikePos = -1;
         var endSpikePos = -1;
-        var loopEnd = buffer.length - 1;
 
+        _nLoopEnd = buffer.length - 1;
         _aRightChannel = new Float32Array(buffer.getChannelData(0));
 
         if (buffer.numberOfChannels > 1) {
@@ -48,7 +49,7 @@ define(function() {
                 if (buffer.numberOfChannels > 1) {
 
                     if (_aLeftChannel[pos] < -SPIKE_THRESH) {
-                        console.log("found it");
+
                         startSpikePos = pos;
                         break;
 
@@ -59,7 +60,7 @@ define(function() {
                     }
 
                 } else {
-                    console.log("did not find it");
+
                     startSpikePos = pos;
                     break;
 
@@ -113,8 +114,8 @@ define(function() {
 
             // Compute loop start and length
             _nLoopStart = startSpikePos + PREPOSTFIX_LEN / 2;
-            loopEnd = endSpikePos - PREPOSTFIX_LEN / 2;
-            _nLoopLength = loopEnd - _nLoopStart;
+            _nLoopEnd = endSpikePos - PREPOSTFIX_LEN / 2;
+            _nLoopLength = _nLoopEnd - _nLoopStart;
 
             return true;
 
@@ -142,8 +143,6 @@ define(function() {
 
         }
 
-        console.log("Marker positions: Start = " + _nLoopStart + " End = " + _nLoopLength);
-
     };
 
     /**
@@ -152,7 +151,7 @@ define(function() {
      */
     var _getEndMarker = function() {
 
-        return _nLoopLength;
+        return _nLoopEnd;
 
     };
 
@@ -167,13 +166,24 @@ define(function() {
     };
 
     /**
+     * Get loop length
+     * @returns {Number} The loop length
+     */
+    var _getLoopLength = function() {
+
+        return _nLoopLength;
+
+    };
+
+    /**
      * Trims silence for markers undetected
      * @param {AudioBuffer} buffer The buffer to trim silence
      */
     var _trimSilence = function(buffer) {
 
-        var loopEnd = buffer.length - 1;
+        _nLoopEnd = buffer.length - 1;
 
+        // Determine if mono or stereo or more than 2 channels
         if (buffer.numberOfChannels > 1) {
 
             while (_nLoopStart < MAX_MP3_SILENCE && _nLoopStart < _nLoopLength && Math.abs(_aLeftChannel[_nLoopStart]) < SILENCE_THRESH && Math.abs(_aRightChannel[_nLoopStart]) < SILENCE_THRESH) {
@@ -182,9 +192,9 @@ define(function() {
 
             }
 
-            while (buffer.length - loopEnd < MAX_MP3_SILENCE && loopEnd > 0 && Math.abs(_aLeftChannel[loopEnd]) < SILENCE_THRESH && Math.abs(_aRightChannel[loopEnd]) < SILENCE_THRESH) {
+            while (buffer.length - _nLoopEnd < MAX_MP3_SILENCE && _nLoopEnd > 0 && Math.abs(_aLeftChannel[_nLoopEnd]) < SILENCE_THRESH && Math.abs(_aRightChannel[_nLoopEnd]) < SILENCE_THRESH) {
 
-                loopEnd--;
+                _nLoopEnd--;
 
             }
 
@@ -196,17 +206,17 @@ define(function() {
 
             }
 
-            while (buffer.length - loopEnd < MAX_MP3_SILENCE && loopEnd > 0 && Math.abs(_aRightChannel[loopEnd]) < SILENCE_THRESH) {
+            while (buffer.length - _nLoopEnd < MAX_MP3_SILENCE && _nLoopEnd > 0 && Math.abs(_aRightChannel[_nLoopEnd]) < SILENCE_THRESH) {
 
-                loopEnd--;
+                _nLoopEnd--;
 
             }
 
         }
 
-        if (loopEnd > _nLoopStart) {
+        if (_nLoopEnd > _nLoopStart) {
 
-            _nLoopLength = loopEnd - _nLoopStart + 1;
+            _nLoopLength = _nLoopEnd - _nLoopStart + 1;
 
         } else {
 
@@ -222,7 +232,8 @@ define(function() {
 
         detect: _detectLoopMarkers,
         startMarker: _getStartMarker,
-        endMarker: _getEndMarker
+        endMarker: _getEndMarker,
+        loopLength: _getLoopLength
 
     };
 
