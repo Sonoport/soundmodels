@@ -14,6 +14,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
     var _bufferMarkedAndTrimmed;
     var _bSoundLoaded = false;
     var _context;
+    var _sLink;
 
     /**
      * Check if a value is an integer
@@ -50,12 +51,42 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
      */
     var _getBuffer = function() {
 
-        // Detect loop markers
-        loopMarker.detect(_buffer);
+        var aEr = /[^.]+$/.exec(_sLink);
 
-        // Get new marked then trimmed buffer
-        _bufferMarkedAndTrimmed = _getMarkedBuffer(loopMarker.startMarker(), loopMarker.endMarker());
+        // Do trimming if it is not a wave file
+        if (aEr[0] !== "wav") {
 
+            // Detect loop markers
+            loopMarker.detect(_buffer);
+
+            // Get new marked then trimmed buffer
+            _bufferMarkedAndTrimmed = _getMarkedBuffer(loopMarker.startMarker(), loopMarker.endMarker());
+
+            return _bufferMarkedAndTrimmed;
+
+        }
+
+        return _buffer;
+
+    };
+
+    /**
+     * Get the original buffer
+     * @returns {AudioBuffer} The original AudioBuffer
+     */
+    var _getBufferRaw = function() {
+
+        return _buffer;
+
+    };
+
+    /**
+     * Get the marked buffer
+     * @returns {AudioBuffer} The marked AudioBuffer
+     */
+    var _getBufferMarkedAndTrimmed = function() {
+
+        // It's possible that this could return null or undefined
         return _bufferMarkedAndTrimmed;
 
     };
@@ -154,6 +185,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
 
         _bSoundLoaded = false;
         _context = context;
+        _sLink = sLink.toLocaleLowerCase();
 
         request.open('GET', sLink, true);
         request.responseType = 'arraybuffer';
@@ -188,7 +220,9 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
 
         load: _loadFile,
         isLoaded: _isSoundLoaded,
-        getBuffer: _getBuffer
+        getBuffer: _getBuffer,
+        getBufferRaw: _getBufferRaw,
+        getBufferMarkedAndTrimmed: _getBufferMarkedAndTrimmed
 
     };
 
