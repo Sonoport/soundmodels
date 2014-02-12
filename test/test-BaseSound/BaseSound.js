@@ -54,7 +54,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         @constant FADE_TIME
         @default 2 (seconds)
         **/
-        this.FADE_TIME = 2; // Seconds
+        this.FADE_TIME = 0.5; // Seconds
         this.isPlaying = false;
         /** 
         Temp: Create a sine wave oscillator buffer as a temporary source.
@@ -68,6 +68,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
 
 	@method connect
 	@return null
+    @oaram input {object}  
 	**/
     BaseSound.prototype.connect = function(input) {
         console.log("connects to gainNode");
@@ -112,7 +113,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @return null
     **/
     BaseSound.prototype.release = function(fadeTime) {
-        if (fadeTime === undefined) {
+        if (typeof fadeTime === "undefined") {
             fadeTime = this.FADE_TIME;
         }
         this.gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + fadeTime);

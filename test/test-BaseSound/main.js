@@ -14,6 +14,6 @@ require(['baseSndURL','require'],
 		var bs = new BaseSound();
 		
 		bs.play();
-		bs.release(4);
+		bs.release();
 		//bs.stop(3);
 });
