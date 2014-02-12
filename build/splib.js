@@ -1,4 +1,6 @@
-define(
+
+;
+;define(
     [],
     function() {
         "use strict";
@@ -323,3 +325,4 @@ define(
 
         return SPAudioParam;
     });
+;
