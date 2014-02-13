@@ -1,123 +1,50 @@
 /**
  * @author Cliburn M. Solano
  * @email cliburn.solano@sonoport.com
- * @name core.filereader.LoadFile
- * @description Load file from a URL
+ * @class LoadFile
+ * @description Load file from a URL.
+ * @module FileReader
  * @param {String} sLink The URL
- * @return {ArrayBuffer} An ArrayBuffer
+ * @return {ArrayBuffer} An ArrayBuffer.
  */
 define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
 
     "use strict";
 
-    var _buffer;
-    var _bufferMarkedAndTrimmed;
-    var _bSoundLoaded = false;
-    var _context;
-    var _sLink;
+    var buffer_;
+    var bSoundLoaded_ = false;
+    var context_;
+    var sLink_;
 
     /**
-     * Check if a value is an integer
-     * @param {Object} value
-     * @returns {Boolean} Result of test
+     * Get a buffer based on the start and end markers.
+     * @private
+     * @method getMarkedBuffer
+     * @param {type} nStart The start of the buffer to load.
+     * @param {type} nEnd The end of the buffer to load.
+     * @returns {AudioBuffer} The trimmed buffer.
      */
-    function _isInt(value) {
-
-        var er = /^[0-9]+$/;
-
-        if (er.test(value)) {
-
-            return true;
-
-        }
-
-        return false;
-
-    }
-
-    /**
-     * Check if sound is already loaded
-     * @returns {Boolean} If sound is loaded
-     */
-    var _isSoundLoaded = function() {
-
-        return _bSoundLoaded;
-
-    };
-
-    /**
-     * Get the buffer
-     * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed
-     */
-    var _getBuffer = function() {
-
-        var aEr = /[^.]+$/.exec(_sLink);
-
-        // Do trimming if it is not a wave file
-        if (aEr[0] !== "wav") {
-
-            // Detect loop markers
-            loopMarker.detect(_buffer);
-
-            // Get new marked then trimmed buffer
-            _bufferMarkedAndTrimmed = _getMarkedBuffer(loopMarker.startMarker(), loopMarker.endMarker());
-
-            return _bufferMarkedAndTrimmed;
-
-        }
-
-        return _buffer;
-
-    };
-
-    /**
-     * Get the original buffer
-     * @returns {AudioBuffer} The original AudioBuffer
-     */
-    var _getBufferRaw = function() {
-
-        return _buffer;
-
-    };
-
-    /**
-     * Get the marked buffer
-     * @returns {AudioBuffer} The marked AudioBuffer
-     */
-    var _getBufferMarkedAndTrimmed = function() {
-
-        // It's possible that this could return null or undefined
-        return _bufferMarkedAndTrimmed;
-
-    };
-
-    /**
-     * Get a buffer based on the start and end markers
-     * @param {type} nStart The start of the buffer to load
-     * @param {type} nEnd The end of the buffer to load
-     * @returns {AudioBuffer} The trimmed buffer
-     */
-    var _getMarkedBuffer = function(nStart, nEnd) {
+    function getMarkedBuffer_(nStart, nEnd) {
 
         var aChannels = [];
-        var nChannels = _buffer.numberOfChannels;
-        var nLength = _buffer.length;
+        var nChannels = buffer_.numberOfChannels;
+        var nLength = buffer_.length;
         var newBuffer;
 
         // Set nEnd if it is missing
         if (typeof nEnd === "undefined") {
 
-            nEnd = _buffer.length;
+            nEnd = buffer_.length;
 
         }
 
         // Verify parameters
-        if (!_isInt(nStart)) {
+        if (!isInt_(nStart)) {
 
             console.log("getBuffer Start parameter is not an integer");
             return;
 
-        } else if (!_isInt(nEnd)) {
+        } else if (!isInt_(nEnd)) {
 
             console.log("getBuffer End parameter is not an integer");
             return;
@@ -133,7 +60,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
         }
 
         // Check if nStart is beyong buffer size
-        if (nStart > _buffer.length) {
+        if (nStart > buffer_.length) {
 
             console.log("getBuffer Start parameter should be withing buffer length");
             return;
@@ -141,7 +68,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
         }
 
         // Check if nEnd is larger that the buffer size and adjust accordingly
-        if (nEnd > _buffer.length) {
+        if (nEnd > buffer_.length) {
 
             nEnd = -1;
 
@@ -150,7 +77,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
         // Start trimming
         for (var i = 0; i < nChannels; i++) {
 
-            var aData = new Float32Array(_buffer.getChannelData(i));
+            var aData = new Float32Array(buffer_.getChannelData(i));
             aChannels[i] = aData.subarray(nStart, nEnd);
 
         }
@@ -162,7 +89,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
         }
 
         // Create the new buffer
-        newBuffer = _context.createBuffer(_buffer.numberOfChannels, nLength, _buffer.sampleRate);
+        newBuffer = context_.createBuffer(buffer_.numberOfChannels, nLength, buffer_.sampleRate);
 
         for (var j = 0; j < nChannels; j++) {
 
@@ -172,20 +99,86 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
 
         return newBuffer;
 
+    }
+
+    /**
+     * Check if a value is an integer.
+     * @private
+     * @param {Object} value
+     * @returns {Boolean} Result of test.
+     */
+    function isInt_(value) {
+
+        var er = /^[0-9]+$/;
+
+        if (er.test(value)) {
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    /**
+     * Get the current buffer.
+     * @method getBuffer
+     * @returns {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
+     */
+    var getBuffer = function() {
+
+        var aEr = /[^.]+$/.exec(sLink_);
+
+        // Do trimming if it is not a wave file
+        if (aEr[0] !== "wav") {
+
+            // Detect loop markers
+            loopMarker.detectMarkers(buffer_);
+
+            return getMarkedBuffer_(loopMarker.getStartMarker(), loopMarker.getEndMarker());
+
+        }
+
+        return buffer_;
+
     };
 
     /**
-     * Load a file based on the URI
-     * @param {String} sLink The link of the file to load
-     * @param {Context} context The Audio context
+     * Get the original buffer.
+     * @method getBufferRaw
+     * @returns {AudioBuffer} The original AudioBuffer.
      */
-    var _loadFile = function(sLink, context) {
+    var getBufferRaw = function() {
+
+        return buffer_;
+
+    };
+
+    /**
+     * Check if sound is already loaded.
+     * @method isLoaded
+     * @returns {Boolean} True if file is loaded. Flase if file is not yeat loaded.
+     */
+    var isLoaded = function() {
+
+        return bSoundLoaded_;
+
+    };
+
+    /**
+     * Load a file based on the URI.
+     * @method load
+     * @param {String} link The link of the file to load.
+     * @param {AudioContext} context The Audio context.
+     */
+    var load = function(sLink, context) {
 
         var request = new XMLHttpRequest();
 
-        _bSoundLoaded = false;
-        _context = context;
-        _sLink = sLink.toLocaleLowerCase();
+        bSoundLoaded_ = false;
+        context_ = context;
+        sLink_ = sLink.toLocaleLowerCase();
 
         request.open('GET', sLink, true);
         request.responseType = 'arraybuffer';
@@ -197,8 +190,8 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
 
                 console.log("File successfully loaded");
 
-                _bSoundLoaded = true;
-                _buffer = buffer;
+                bSoundLoaded_ = true;
+                buffer_ = buffer;
 
             }, onError);
 
@@ -218,11 +211,10 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
     // Exposed methods
     return {
 
-        load: _loadFile,
-        isLoaded: _isSoundLoaded,
-        getBuffer: _getBuffer,
-        getBufferRaw: _getBufferRaw,
-        getBufferMarkedAndTrimmed: _getBufferMarkedAndTrimmed
+        isLoaded: isLoaded,
+        load: load,
+        getBuffer: getBuffer,
+        getBufferRaw: getBufferRaw
 
     };
 

@@ -6,6 +6,7 @@ define(
           Mock AudioParam for external use on Models.
 
           @class SPAudioParam
+@module SPAudioParam
           @constructor
           **/
         function SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mapping, audioContext ) {
