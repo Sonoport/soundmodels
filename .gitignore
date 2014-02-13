@@ -4,6 +4,9 @@
 # Tool Directories
 node_modules/
 
+# Docs
+docs/
+
 #Wiki
 wiki/
 
