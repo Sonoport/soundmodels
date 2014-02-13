@@ -4,105 +4,93 @@
  * @class FileReader
  * @description Read contents of file.
  * @module FileReader
- * @requires Class APISupport
  */
 define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/LoadFile'], function(webAudioAPISupport, loadFile) {
 
     "use strict";
 
-    var context_;
+    function FileReader(context) {
 
-    /**
-     * Get the AudioContext buffer.
-     * @method getBuffer
-     * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed.
-     */
-    var getBuffer = function() {
+        if (!(this instanceof FileReader)) {
 
-        return loadFile.getBuffer();
+            throw new TypeError("FileReader constructor cannot be called as a function.");
 
-    };
+        }
 
-    /**
-     * Get the original buffer.
-     * @method getBufferRaw
-     * @returns {AudioBuffer} The original AudioBuffer.
-     */
-    var getBufferRaw = function() {
+        // Determine if AudioContext was pass as a parameter. If not make one.      
+        if (typeof context === "undefined") {
 
-        return loadFile.getBufferRaw();
+            console.log("No AudioContext instance found. Creating a new AudioContext.");
+            context = new AudioContext();
 
-    };
+        }
 
-    /**
-     * Get the AudioContext instance.
-     * @method getContext
-     * @return {AudioContext} The Audio context instance.
-     */
-    var getContext = function() {
+        /**
+         * @property context
+         * @type @new;AudioContext
+         */
+        this.context = context;
 
-        return context_;
+    }
 
-    };
+    FileReader.prototype = {
 
-    /**
-     * Determine if file is loaded.
-     * @method isLoaded
-     * @return {Boolean} True if file is loaded. False if file is not loaded.
-     */
-    var isLoaded = function() {
+        constructor: FileReader,
 
-        return loadFile.isLoaded();
+        /**
+         * Load a file from URI.
+         * @method open
+         * @param {String} link The link of the file to load.
+         */
+        open: function(sLink) {
 
-    };
+            if (webAudioAPISupport.isSupported()) {
 
-    /**
-     * Load a file from URI.
-     * @method open
-     * @param {String} link The link of the file to load.
-     */
-    var open = function(sLink) {
+                loadFile.load(sLink, this.context);
 
-        if (webAudioAPISupport.isSupported()) {
+            } else {
 
-            if (typeof context_ === "undefined") {
-
-                console.log("No AudioContext instance found. Creating a new AudioContext.");
-                context_ = new AudioContext();
+                console.log("Web Audio API is not supported. Failed to open file.");
 
             }
 
-            loadFile.load(sLink, context_);
+        },
 
-        } else {
+        /**
+         * Determine if file is loaded.
+         * @method isLoaded
+         * @return {Boolean} True if file is loaded. False if file is not loaded.
+         */
+        isLoaded: function() {
 
-            console.log("Web Audio API is not supported. Failed to open file.");
+            return loadFile.isLoaded();
+
+        },
+
+        /**
+         * Get the AudioContext buffer.
+         * @method getBuffer
+         * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed.
+         */
+        getBuffer: function() {
+
+            return loadFile.getBuffer();
+
+        },
+
+        /**
+         * Get the original buffer.
+         * @method getBufferRaw
+         * @returns {AudioBuffer} The original AudioBuffer.
+         */
+        getBufferRaw: function() {
+
+            return loadFile.getBufferRaw();
 
         }
 
     };
 
-    /**
-     * Set the AudioContext to use.
-     * @method setContext
-     * @param {AudioContext} context The Audio context instance to use.
-     */
-    var setContext = function(context) {
-
-        context_ = context;
-
-    };
-
-    // Exposed methods
-    return {
-
-        open: open,
-        isLoaded: isLoaded,
-        getBuffer: getBuffer,
-        getBufferRaw: getBufferRaw,
-        getContext: getContext,
-        setContext: setContext
-
-    };
+    return FileReader;
 
 });
