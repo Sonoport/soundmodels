@@ -14,7 +14,7 @@ define(
             var MIN_DIFF = 0.0001;
             var UPDATE_INTERVAL_MS = 100;
 
-            var intervalID;
+            var intervalID_;
 
             /**
                   @property defaultValue
@@ -49,17 +49,19 @@ define(
                   @type String
                   @default 0
                   **/
-            var mValue = 0;
+            var value_ = 0;
             Object.defineProperty( this, 'value', {
                 enumerable: true,
                 configurable: true,
                 set: function ( value ) {
                     // Sanitize the value with min/max
                     // bounds first.
-                    if ( value > maxValue ) {
-                        value = maxValue;
-                    } else if ( value < minValue ) {
-                        value = minValue;
+                    if ( value > this.maxValue ) {
+                        console.log( 'Clamping to max' );
+                        value = this.maxValue;
+                    } else if ( value < this.minValue ) {
+                        console.log( 'Clamping to min' );
+                        value = this.minValue;
                     }
 
                     if ( aParam ) {
@@ -71,24 +73,25 @@ define(
                         aParam.value = value;
                     } else {
                         // If Psuedo param
-                        mValue = value;
+                        console.log( "Setting to " + value );
+                        value_ = value;
                     }
                 },
                 get: function () {
                     if ( aParam && aParam instanceof AudioParam ) {
                         return aParam.value;
                     } else {
-                        return mValue;
+                        return value_;
                     }
                 }
             } );
 
             if ( aParam && aParam instanceof AudioParam ) {
                 this.defaultValue = aParam.defaultValue;
-                this.value = aParam.defaultValue;
-                this.name = aParam.name;
                 this.minValue = aParam.minValue;
                 this.maxValue = aParam.maxValue;
+                this.value = aParam.defaultValue;
+                this.name = aParam.name;
             }
 
             if ( defaultValue ) {
@@ -128,10 +131,10 @@ define(
                     // Horrible hack for the case we don't have access to
                     // a real AudioParam.
                     var self = this;
-                    var remainingTime = startTime - audioContext.currentTime;
+                    var remainingTime_ = startTime - audioContext.currentTime;
                     window.setTimeout( function () {
                         self.value = value;
-                    }, remainingTime * 1000 );
+                    }, remainingTime_ * 1000 );
                 }
             };
 
@@ -157,13 +160,13 @@ define(
                     // Horrible hack for the case we don't have access to
                     // a real AudioParam.
                     var self = this;
-                    var initValue = self.value;
-                    var initTime = audioContext.currentTime;
-                    intervalID = window.setInterval( function () {
+                    var initValue_ = self.value;
+                    var initTime_ = audioContext.currentTime;
+                    intervalID_ = window.setInterval( function () {
                         if ( audioContext.currentTime >= startTime ) {
-                            self.value = target + ( initValue - target ) * Math.exp( -( audioContext.currentTime - initTime ) / timeConstant );
+                            self.value = target + ( initValue_ - target ) * Math.exp( -( audioContext.currentTime - initTime_ ) / timeConstant );
                             if ( Math.abs( self.value - target ) < MIN_DIFF ) {
-                                window.clearInterval( intervalID );
+                                window.clearInterval( intervalID_ );
                             }
                         }
                     }, UPDATE_INTERVAL_MS );
@@ -181,12 +184,11 @@ define(
               @return  null
               @param {Float32Array} values The values parameter is a Float32Array representing a parameter value curve. These values will apply starting at the given time and lasting for the given duration.
               @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
-              @param {Number} duration The duration parameter is the amount of time in seconds (after the time parameter) where values will be calculated according to the values parameter.
+              @param {Number} duration The duration parameter is the amount of time in seconds (after the startTime parameter) where values will be calculated according to the values parameter.
               **/
             this.setValueCurveAtTime = function ( values, startTime, duration ) {
                 if ( typeof mapping === 'function' ) {
-                    var index = 0;
-                    for ( ; index < values.length; index++ ) {
+                    for ( var index = 0; index < values.length; index++ ) {
                         values[ index ] = mapping( values[ index ] );
                     }
                 }
@@ -194,15 +196,14 @@ define(
                     aParam.setValueCurveAtTime( values, startTime, duration );
                 } else {
                     var self = this;
-                    var initTime = audioContext.currentTime;
-                    intervalID = window.setInterval( function () {
-                        if ( audioContext.currentTime > startTime ) {
-                            var index = Math.floor( values.length * ( audioContext.currentTime - initTime ) / duration );
-                            console.log( 'index is ' + index );
+                    var initTime_ = audioContext.currentTime;
+                    intervalID_ = window.setInterval( function () {
+                        if ( audioContext.currentTime >= startTime ) {
+                            var index = Math.floor( values.length * ( audioContext.currentTime - initTime_ ) / duration );
                             if ( index < values.length ) {
                                 self.value = values[ index ];
                             } else {
-                                window.clearInterval( intervalID );
+                                window.clearInterval( intervalID_ );
                             }
                         }
                     }, UPDATE_INTERVAL_MS );
@@ -227,13 +228,13 @@ define(
                     aParam.exponentialRampToValueAtTime( value, endTime );
                 } else {
                     var self = this;
-                    var initValue = self.value;
-                    var initTime = audioContext.currentTime;
-                    intervalID = window.setInterval( function () {
-                        var timeRatio = ( audioContext.currentTime - initTime ) / ( endTime - initTime );
-                        self.value = initValue * Math.pow( value / initValue, timeRatio );
+                    var initValue_ = self.value;
+                    var initTime_ = audioContext.currentTime;
+                    intervalID_ = window.setInterval( function () {
+                        var timeRatio = ( audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
+                        self.value = initValue_ * Math.pow( value / initValue_, timeRatio );
                         if ( audioContext.currentTime >= endTime ) {
-                            window.clearInterval( intervalID );
+                            window.clearInterval( intervalID_ );
                         }
                     }, UPDATE_INTERVAL_MS );
                 }
@@ -255,13 +256,13 @@ define(
                     aParam.linearRampToValueAtTime( value, endTime );
                 } else {
                     var self = this;
-                    var initValue = self.value;
-                    var initTime = audioContext.currentTime;
-                    intervalID = window.setInterval( function () {
-                        var timeRatio = ( audioContext.currentTime - initTime ) / ( endTime - initTime );
-                        self.value = initValue + ( ( value - initValue ) * timeRatio );
+                    var initValue_ = self.value;
+                    var initTime_ = audioContext.currentTime;
+                    intervalID_ = window.setInterval( function () {
+                        var timeRatio = ( audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
+                        self.value = initValue_ + ( ( value - initValue_ ) * timeRatio );
                         if ( audioContext.currentTime >= endTime ) {
-                            window.clearInterval( intervalID );
+                            window.clearInterval( intervalID_ );
                         }
                     }, UPDATE_INTERVAL_MS );
                 }
@@ -278,7 +279,7 @@ define(
                 if ( aParam ) {
                     aParam.cancelScheduledValues( startTime );
                 } else {
-                    window.clearInterval( intervalID );
+                    window.clearInterval( intervalID_ );
                 }
             };
         }
