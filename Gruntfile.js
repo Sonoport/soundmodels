@@ -69,7 +69,7 @@ module.exports = function ( grunt ) {
                     base: [ '<%= dirs.build %>', 'test/testaudioparam' ]
                 }
             },
-            test2: {
+      testhk: {
                 options: {
           port: 8000,
                     base: 'test/'
@@ -107,4 +107,5 @@ module.exports = function ( grunt ) {
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'concat' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc' ] );
     grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'concat', 'connect:test', 'watch' ] );
+  grunt.registerTask('testhk', ['jsbeautifier','jshint','connect:testhk', 'watch']);
 };
