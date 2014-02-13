@@ -54,7 +54,7 @@ module.exports = function(grunt) {
           base: 'test/'
         }
       },
-      test2: {
+      testhk: {
         options: {
           port: 8000,
           base: 'test/'
@@ -93,6 +93,6 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['jsbeautifier','jshint']);
   grunt.registerTask('serve', ['jsbeautifier','jshint', 'connect', 'watch' ]);
   grunt.registerTask('doc', ['jsbeautifier','jshint', 'connect', 'watch' ]);
-  grunt.registerTask('test', ['jsbeautifier','jshint','copy']);
+  grunt.registerTask('testhk', ['jsbeautifier','jshint','connect:testhk', 'watch']);
 
 };

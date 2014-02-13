@@ -6,18 +6,18 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
 
 @class BaseSound
 @constructor
+@param {AudioContext} audioContext
 **/
 define(['utils/AudioContextMonkeyPatch.js'], function() {
     'use strict';
 
     function BaseSound(audioContext) {
         /**
-        Define one AudioContext 
-        There should only be one AudioContext. 
+        Define one audioContext from Web Audio API's AudioContext class.
 
         @property audioContext
         @type AudioContext
-        @default "audioContext"
+        @default audioContext
         **/
         if (typeof audioContext === "undefined") {
             // Need to check for prefixes for AudioContext
@@ -32,7 +32,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
 
         @property numberOfInputs
         @type Number
-        @default "1"
+        @default 1
         **/
         this.numberOfInputs = 1; // Defaults to 1
         /**
@@ -40,55 +40,68 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
 
         @property numberOfOutputs
         @type Number
+        @default 1
         **/
         this.numberOfOutputs = 1; // Defaults to 1
         /**
         Master Gain Node
 
         @property gainNode
-        @type Object
+        @type GainNode
         **/
         this.gainNode = this.audioContext.createGain();
         /**
         Fading time in (seconds)
         @constant FADE_TIME
-        @default 2 (seconds)
+        @default 0.5 (seconds)
         **/
         this.FADE_TIME = 0.5; // Seconds
+        /**
+        Checks if the sound is currently playing.
+
+        @property isPlaying
+        @type boolean
+        @default false
+        **/
         this.isPlaying = false;
         /** 
         Temp: Create a sine wave oscillator buffer as a temporary source.
-        Will be replaced by FileReader to parse in as source
+        Will be replaced by FileReader and parse in an AudioBuffer
+
+        @property bufferSource
+        @type Object
         **/
         this.bufferSource = this.audioContext.createOscillator();
     }
 
     /**
-    Connects (master) Gain Node.
+    Connects (master) Gain Node to an AudioNode or AudioParam.
 
 	@method connect
 	@return null
-    @oaram input {object}  
+    @param {Object} input Takes in an AudioNode or AudioParam.
 	**/
     BaseSound.prototype.connect = function(input) {
         console.log("connects to gainNode");
         this.gainNode.connect(input);
     };
     /**
-    Disconnects (master) Gain Node.
+    Disconnects (master) Gain Node from an AudioNode or AudioParam.
 
     @method disconnect
     @return null
+    @param {Object} input Takes in an AudioNode or AudioParam.
     **/
     BaseSound.prototype.disconnect = function(input) {
         console.log("disconnect from gainNode");
         this.gainNode.disconnect(input);
     };
     /**
-    Start audio
+    Start audio at this current time.
 
     @method start
     @return null
+    @param {Number} currTime Time in (seconds) that audio will start.
     **/
     BaseSound.prototype.start = function(currTime) {
         console.log("start the buffer");
@@ -96,21 +109,23 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         this.isPlaying = true;
     };
     /**
-    Stop audio
+    Stop audio.
 
     @method stop
     @return null
+    @param {Number} currTime Time in (seconds) that audio will stop.
     **/
-    BaseSound.prototype.stop = function(value) {
+    BaseSound.prototype.stop = function(currTime) {
         console.log("stop the buffer");
-        this.bufferSource.stop(value);
+        this.bufferSource.stop(currTime);
         this.isPlaying = false;
     };
     /**
-    Linearly release the gain of the audio in time (seconds).
+    Linearly ramp down the gain of the audio in time (seconds) to 0.
 
     @method release
     @return null
+    @param {Number} fadeTime Amount of time it takes for linear ramp down to happen.
     **/
     BaseSound.prototype.release = function(fadeTime) {
         if (typeof fadeTime === "undefined") {
