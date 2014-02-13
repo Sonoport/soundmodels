@@ -58,34 +58,19 @@
                 configurable: true,
                 set: function ( value ) {
 
-                    // Check if the value type of the new value is
-                    // the same as defaultValue.
-                    if ( typeof value !== typeof this.defaultValue ) {
-                        throw {
-                            name: "Incorrect value type Exception",
-                            message: "Attempt to set a " + ( typeof this.defaultValue ) + " parameter to a " + ( typeof value ) + " value",
-                            toString: function () {
-                                return this.name + ": " + this.message;
-                            }
-                        };
-                    }
-
                     // Sanitize the value with min/max
                     // bounds first.
-                    if ( typeof value === "number" ) {
-                        if ( value > this.maxValue ) {
-                            console.log( 'Clamping to max' );
-                            value = this.maxValue;
-                        } else if ( value < this.minValue ) {
-                            console.log( 'Clamping to min' );
-                            value = this.minValue;
-                        }
+                    if ( value > this.maxValue ) {
+                        console.log( 'Clamping to max' );
+                        value = this.maxValue;
+                    } else if ( value < this.minValue ) {
+                        console.log( 'Clamping to min' );
+                        value = this.minValue;
                     }
 
                     if ( aParam ) {
                         // If mapped param
-                        if ( typeof value === "number" &&
-                            typeof mapping === 'function' ) {
+                        if ( typeof mapping === 'function' ) {
                             // Map if mapping is defined
                             value = mapping( value );
                         }
@@ -139,11 +124,10 @@
               @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
               **/
             this.setValueAtTime = function ( value, startTime ) {
-                if ( typeof mapping === 'function' ) {
-                    value = mapping( value );
-                }
-
                 if ( aParam ) {
+                    if ( typeof mapping === 'function' ) {
+                        value = mapping( value );
+                    }
                     aParam.setValueAtTime( value, startTime );
                 } else {
                     // Horrible hack for the case we don't have access to
@@ -169,10 +153,10 @@
               @param {Number} timeConstant The timeConstant parameter is the time-constant value of first-order filter (exponential) approach to the target value. The larger this value is, the slower the transition will be.
               **/
             this.setTargetAtTime = function ( target, startTime, timeConstant ) {
-                if ( typeof mapping === 'function' ) {
-                    target = mapping( target );
-                }
                 if ( aParam ) {
+                    if ( typeof mapping === 'function' ) {
+                        target = mapping( target );
+                    }
                     aParam.setTargetAtTime( target, startTime, timeConstant );
                 } else {
                     // Horrible hack for the case we don't have access to
@@ -205,12 +189,12 @@
               @param {Number} duration The duration parameter is the amount of time in seconds (after the startTime parameter) where values will be calculated according to the values parameter.
               **/
             this.setValueCurveAtTime = function ( values, startTime, duration ) {
-                if ( typeof mapping === 'function' ) {
-                    for ( var index = 0; index < values.length; index++ ) {
-                        values[ index ] = mapping( values[ index ] );
-                    }
-                }
                 if ( aParam ) {
+                    if ( typeof mapping === 'function' ) {
+                        for ( var index = 0; index < values.length; index++ ) {
+                            values[ index ] = mapping( values[ index ] );
+                        }
+                    }
                     aParam.setValueCurveAtTime( values, startTime, duration );
                 } else {
                     var self = this;
@@ -239,10 +223,10 @@
               @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
               **/
             this.exponentialRampToValueAtTime = function ( value, endTime ) {
-                if ( typeof mapping === 'function' ) {
-                    value = mapping( value );
-                }
                 if ( aParam ) {
+                    if ( typeof mapping === 'function' ) {
+                        value = mapping( value );
+                    }
                     aParam.exponentialRampToValueAtTime( value, endTime );
                 } else {
                     var self = this;
@@ -267,10 +251,10 @@
               @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
               **/
             this.linearRampToValueAtTime = function ( value, endTime ) {
-                if ( typeof mapping === 'function' ) {
-                    value = mapping( value );
-                }
                 if ( aParam ) {
+                    if ( typeof mapping === 'function' ) {
+                        value = mapping( value );
+                    }
                     aParam.linearRampToValueAtTime( value, endTime );
                 } else {
                     var self = this;
