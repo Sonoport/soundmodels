@@ -9,6 +9,7 @@
     "brace_style": "collapse",
     "keep_array_indentation": false,
     "keep_function_indentation": false,
+    "space-in-paren": true,
     "space_before_conditional": true,
     "break_chained_methods": true,
     "eval_code": false,
