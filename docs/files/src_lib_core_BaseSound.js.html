@@ -134,12 +134,12 @@ define([&#x27;utils/AudioContextMonkeyPatch.js&#x27;], function() {
         **/
         this.numberOfOutputs = 1; // Defaults to 1
         /**
-        Master Gain Node
+        Release Gain Node
 
-        @property gainNode
+        @property releaseGainNode
         @type GainNode
         **/
-        this.gainNode = this.audioContext.createGain();
+        this.releaseGainNode = this.audioContext.createGain();
         /**
         Fading time in (seconds)
         @constant FADE_TIME
@@ -162,29 +162,33 @@ define([&#x27;utils/AudioContextMonkeyPatch.js&#x27;], function() {
         @type Object
         **/
         this.bufferSource = this.audioContext.createOscillator();
+        // Connects source to release gain node
+        this.bufferSource.connect(this.releaseGainNode);
+        // Connects release gain node to the destination node
+        this.connect(this.audioContext.destination);
     }
 
     /**
-    Connects (master) Gain Node to an AudioNode or AudioParam.
+    Connects release Gain Node to an AudioNode or AudioParam.
 
 	@method connect
 	@return null
-    @param {Object} input Takes in an AudioNode or AudioParam.
+    @param {Object} output Connects to an AudioNode or AudioParam.
 	**/
-    BaseSound.prototype.connect = function(input) {
-        console.log(&quot;connects to gainNode&quot;);
-        this.gainNode.connect(input);
+    BaseSound.prototype.connect = function(output) {
+        console.log(&quot;connects to release Gain Node&quot;);
+        this.releaseGainNode.connect(output);
     };
     /**
-    Disconnects (master) Gain Node from an AudioNode or AudioParam.
+    Disconnects (release) Gain Node from an AudioNode or AudioParam.
 
     @method disconnect
     @return null
-    @param {Object} input Takes in an AudioNode or AudioParam.
+    @param {Object} output Takes in an AudioNode or AudioParam.
     **/
-    BaseSound.prototype.disconnect = function(input) {
-        console.log(&quot;disconnect from gainNode&quot;);
-        this.gainNode.disconnect(input);
+    BaseSound.prototype.disconnect = function(output) {
+        console.log(&quot;disconnect from Gain Node&quot;);
+        this.releaseGainNode.disconnect(output);
     };
     /**
     Start audio at this current time.
@@ -221,8 +225,10 @@ define([&#x27;utils/AudioContextMonkeyPatch.js&#x27;], function() {
         if (typeof fadeTime === &quot;undefined&quot;) {
             fadeTime = this.FADE_TIME;
         }
-        this.gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + fadeTime);
+        this.releaseGainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + fadeTime);
         console.log(&quot;release: linear ramp down after &quot; + fadeTime + &quot; seconds.&quot;);
+
+        //this.stop(this.audioContext + fadeTime + 5);
     };
     /**
     Play sound after connecting the (master) gain node to the destination node.
@@ -232,10 +238,6 @@ define([&#x27;utils/AudioContextMonkeyPatch.js&#x27;], function() {
     **/
     BaseSound.prototype.play = function() {
         console.log(&quot;play sound&quot;);
-        // Connects source to (master) gain node
-        this.bufferSource.connect(this.gainNode);
-        // Connects (master) gain node to the destination node
-        this.connect(this.audioContext.destination);
         this.start(0);
     };
 

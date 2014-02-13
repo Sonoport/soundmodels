@@ -292,13 +292,6 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_gainNode">gainNode</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
                                 <a href="#property_isPlaying">isPlaying</a>
 
                                 
@@ -314,6 +307,13 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
                         
                             <li class="index-item property">
                                 <a href="#property_numberOfOutputs">numberOfOutputs</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_releaseGainNode">releaseGainNode</a>
 
                                 
                                 
@@ -342,7 +342,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
                 <li class="arg">
                     
-                        <code>input</code>
+                        <code>output</code>
                     
                 </li>
             
@@ -379,7 +379,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l77"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:77</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l81"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:81</code></a>
         
         </p>
 
@@ -390,7 +390,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
     </div>
 
     <div class="description">
-        <p>Connects (master) Gain Node to an AudioNode or AudioParam.</p>
+        <p>Connects release Gain Node to an AudioNode or AudioParam.</p>
 
     </div>
 
@@ -402,14 +402,14 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
                 <li class="param">
                     
-                        <code class="param-name">input</code>
+                        <code class="param-name">output</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Takes in an AudioNode or AudioParam.</p>
+                        <p>Connects to an AudioNode or AudioParam.</p>
 
                     </div>
 
@@ -447,7 +447,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
                 <li class="arg">
                     
-                        <code>input</code>
+                        <code>output</code>
                     
                 </li>
             
@@ -484,7 +484,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l88"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:88</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l92"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:92</code></a>
         
         </p>
 
@@ -495,7 +495,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
     </div>
 
     <div class="description">
-        <p>Disconnects (master) Gain Node from an AudioNode or AudioParam.</p>
+        <p>Disconnects (release) Gain Node from an AudioNode or AudioParam.</p>
 
     </div>
 
@@ -507,7 +507,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
                 <li class="param">
                     
-                        <code class="param-name">input</code>
+                        <code class="param-name">output</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
                     
 
@@ -579,7 +579,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l137"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:137</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l143"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:143</code></a>
         
         </p>
 
@@ -660,7 +660,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l123"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:123</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l127"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:127</code></a>
         
         </p>
 
@@ -765,7 +765,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l99"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:99</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l103"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:103</code></a>
         
         </p>
 
@@ -870,7 +870,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l111"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:111</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l115"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:115</code></a>
         
         </p>
 
@@ -1030,51 +1030,6 @@ Will be replaced by FileReader and parse in an AudioBuffer</p>
 </div>
 
                 
-                    <div id="property_gainNode" class="property item">
-    <h3 class="name"><code>gainNode</code></h3>
-    <span class="type">GainNode</span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/src_lib_core_BaseSound.js.html#l46"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:46</code></a>
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Master Gain Node</p>
-
-    </div>
-
-    
-
-    
-
-    
-</div>
-
-                
                     <div id="property_isPlaying" class="property item">
     <h3 class="name"><code>isPlaying</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
@@ -1208,6 +1163,51 @@ Will be replaced by FileReader and parse in an AudioBuffer</p>
 
     
         <p><strong>Default:</strong> 1</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_releaseGainNode" class="property item">
+    <h3 class="name"><code>releaseGainNode</code></h3>
+    <span class="type">GainNode</span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_lib_core_BaseSound.js.html#l46"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:46</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Release Gain Node</p>
+
+    </div>
+
     
 
     
