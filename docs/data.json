@@ -95,9 +95,9 @@
         {
             "file": "src/lib/core/BaseSound.js",
             "line": 46,
-            "description": "Master Gain Node",
+            "description": "Release Gain Node",
             "itemtype": "property",
-            "name": "gainNode",
+            "name": "releaseGainNode",
             "type": "GainNode",
             "class": "BaseSound"
         },
@@ -130,8 +130,8 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 77,
-            "description": "Connects (master) Gain Node to an AudioNode or AudioParam.",
+            "line": 81,
+            "description": "Connects release Gain Node to an AudioNode or AudioParam.",
             "itemtype": "method",
             "name": "connect",
             "return": {
@@ -139,8 +139,8 @@
             },
             "params": [
                 {
-                    "name": "input",
-                    "description": "Takes in an AudioNode or AudioParam.",
+                    "name": "output",
+                    "description": "Connects to an AudioNode or AudioParam.",
                     "type": "Object"
                 }
             ],
@@ -148,8 +148,8 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 88,
-            "description": "Disconnects (master) Gain Node from an AudioNode or AudioParam.",
+            "line": 92,
+            "description": "Disconnects (release) Gain Node from an AudioNode or AudioParam.",
             "itemtype": "method",
             "name": "disconnect",
             "return": {
@@ -157,7 +157,7 @@
             },
             "params": [
                 {
-                    "name": "input",
+                    "name": "output",
                     "description": "Takes in an AudioNode or AudioParam.",
                     "type": "Object"
                 }
@@ -166,7 +166,7 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 99,
+            "line": 103,
             "description": "Start audio at this current time.",
             "itemtype": "method",
             "name": "start",
@@ -184,7 +184,7 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 111,
+            "line": 115,
             "description": "Stop audio.",
             "itemtype": "method",
             "name": "stop",
@@ -202,7 +202,7 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 123,
+            "line": 127,
             "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
             "itemtype": "method",
             "name": "release",
@@ -220,7 +220,7 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 137,
+            "line": 143,
             "description": "Play sound after connecting the (master) gain node to the destination node.",
             "itemtype": "method",
             "name": "play",

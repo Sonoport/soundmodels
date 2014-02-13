@@ -44,12 +44,12 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         **/
         this.numberOfOutputs = 1; // Defaults to 1
         /**
-        Master Gain Node
+        Release Gain Node
 
-        @property gainNode
+        @property releaseGainNode
         @type GainNode
         **/
-        this.gainNode = this.audioContext.createGain();
+        this.releaseGainNode = this.audioContext.createGain();
         /**
         Fading time in (seconds)
         @constant FADE_TIME
@@ -72,29 +72,33 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         @type Object
         **/
         this.bufferSource = this.audioContext.createOscillator();
+        // Connects source to release gain node
+        this.bufferSource.connect(this.releaseGainNode);
+        // Connects release gain node to the destination node
+        this.connect(this.audioContext.destination);
     }
 
     /**
-    Connects (master) Gain Node to an AudioNode or AudioParam.
+    Connects release Gain Node to an AudioNode or AudioParam.
 
 	@method connect
 	@return null
-    @param {Object} input Takes in an AudioNode or AudioParam.
+    @param {Object} output Connects to an AudioNode or AudioParam.
 	**/
-    BaseSound.prototype.connect = function(input) {
-        console.log("connects to gainNode");
-        this.gainNode.connect(input);
+    BaseSound.prototype.connect = function(output) {
+        console.log("connects to release Gain Node");
+        this.releaseGainNode.connect(output);
     };
     /**
-    Disconnects (master) Gain Node from an AudioNode or AudioParam.
+    Disconnects (release) Gain Node from an AudioNode or AudioParam.
 
     @method disconnect
     @return null
-    @param {Object} input Takes in an AudioNode or AudioParam.
+    @param {Object} output Takes in an AudioNode or AudioParam.
     **/
-    BaseSound.prototype.disconnect = function(input) {
-        console.log("disconnect from gainNode");
-        this.gainNode.disconnect(input);
+    BaseSound.prototype.disconnect = function(output) {
+        console.log("disconnect from Gain Node");
+        this.releaseGainNode.disconnect(output);
     };
     /**
     Start audio at this current time.
@@ -104,9 +108,9 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @param {Number} currTime Time in (seconds) that audio will start.
     **/
     BaseSound.prototype.start = function(currTime) {
-        console.log("start the buffer");
         this.bufferSource.start(currTime);
         this.isPlaying = true;
+        console.log("start the buffer " + this.isPlaying);
     };
     /**
     Stop audio.
@@ -116,9 +120,10 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @param {Number} currTime Time in (seconds) that audio will stop.
     **/
     BaseSound.prototype.stop = function(currTime) {
-        console.log("stop the buffer");
         this.bufferSource.stop(currTime);
+        // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         this.isPlaying = false;
+        console.log("stop the buffer " + this.isPlaying);
     };
     /**
     Linearly ramp down the gain of the audio in time (seconds) to 0.
@@ -131,8 +136,10 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         if (typeof fadeTime === "undefined") {
             fadeTime = this.FADE_TIME;
         }
-        this.gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + fadeTime);
+        this.releaseGainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + fadeTime);
         console.log("release: linear ramp down after " + fadeTime + " seconds.");
+        // Stops the sound after fadeTime has passed.
+        this.stop(this.audioContext.currentTime + fadeTime * 2);
     };
     /**
     Play sound after connecting the (master) gain node to the destination node.
@@ -142,10 +149,6 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     **/
     BaseSound.prototype.play = function() {
         console.log("play sound");
-        // Connects source to (master) gain node
-        this.bufferSource.connect(this.gainNode);
-        // Connects (master) gain node to the destination node
-        this.connect(this.audioContext.destination);
         this.start(0);
     };
 
