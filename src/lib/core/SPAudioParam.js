@@ -59,28 +59,16 @@ define(
 
                     // Sanitize the value with min/max
                     // bounds first.
-                    if ( typeof value !== typeof this.defaultValue ) {
-                        throw {
-                            name: "Incorrect value type Exception",
-                            message: "Attempt to set a " + ( typeof this.defaultValue ) + " parameter to a " + ( typeof value ) + " value",
-                            toString: function () {
-                                return this.name + ": " + this.message;
-                            }
-                        };
-                    }
-
-                    if ( typeof value === "number" ) {
-                        if ( value > this.maxValue ) {
-                            console.log( 'Clamping to max' );
-                            value = this.maxValue;
-                        } else if ( value < this.minValue ) {
-                            console.log( 'Clamping to min' );
-                            value = this.minValue;
+                    if ( value > this.maxValue ) {
+                        console.log( 'Clamping to max' );
+                        value = this.maxValue;
+                    } else if ( value < this.minValue ) {
+                        console.log( 'Clamping to min' );
+                        value = this.minValue;
                     }
 
                     if ( aParam ) {
                         // If mapped param
-                            typeof mapping === 'function' ) {
                             // Map if mapping is defined
                             value = mapping( value );
                         }
