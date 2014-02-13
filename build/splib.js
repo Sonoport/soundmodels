@@ -78,6 +78,7 @@
                     } else {
                         // If Psuedo param
                         value_ = value;
+                        value_ = value;
                     }
                 },
                 get: function () {
