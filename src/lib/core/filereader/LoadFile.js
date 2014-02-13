@@ -20,8 +20,8 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
      * Get a buffer based on the start and end markers.
      * @private
      * @method getMarkedBuffer
-     * @param {type} nStart The start of the buffer to load.
-     * @param {type} nEnd The end of the buffer to load.
+     * @param {Number} nStart The start of the buffer to load.
+     * @param {Number} nEnd The end of the buffer to load.
      * @returns {AudioBuffer} The trimmed buffer.
      */
     function getMarkedBuffer_(nStart, nEnd) {
