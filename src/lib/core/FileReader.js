@@ -41,12 +41,22 @@ define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/L
          * Load a file from URI.
          * @method open
          * @param {String} link The link of the file to load.
+         * @param {Function} callback The function to call when file loads.
+         *
          */
-        open: function(sLink) {
+        open: function(sLink, fCallback) {
 
             if (webAudioAPISupport.isSupported()) {
 
-                loadFile.load(sLink, this.context);
+                loadFile.load(sLink, this.context, {
+
+                    success: function() {
+
+                        fCallback();
+
+                    }
+
+                });
 
             } else {
 
