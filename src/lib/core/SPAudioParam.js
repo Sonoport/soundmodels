@@ -16,23 +16,24 @@ define(
 
             var intervalID_;
 
+
             /**
                   @property defaultValue
-                  @type Number
+                  @type Number/Boolean
                   @default 0
                   **/
-            this.defaultValue = 0;
+            this.defaultValue = null;
 
             /**
                   @property maxValue
-                  @type Number
+                  @type Number/Boolean
                   @default 0
                   **/
             this.maxValue = 0;
 
             /**
                   @property minValue
-                  @type Number
+                  @type Number/Boolean
                   @default 0
                   **/
             this.minValue = 0;
@@ -46,7 +47,7 @@ define(
 
             /**
                   @property value
-                  @type String
+                  @type Number/Boolean
                   @default 0
                   **/
             var value_ = 0;
@@ -54,26 +55,41 @@ define(
                 enumerable: true,
                 configurable: true,
                 set: function ( value ) {
+
+                    // Check if the value type of the new value is
+                    // the same as defaultValue.
+                    if ( typeof value !== typeof this.defaultValue ) {
+                        throw {
+                            name: "Incorrect value type Exception",
+                            message: "Attempt to set a " + ( typeof this.defaultValue ) + " parameter to a " + ( typeof value ) + " value",
+                            toString: function () {
+                                return this.name + ": " + this.message;
+                            }
+                        };
+                    }
+
                     // Sanitize the value with min/max
                     // bounds first.
-                    if ( value > this.maxValue ) {
-                        console.log( 'Clamping to max' );
-                        value = this.maxValue;
-                    } else if ( value < this.minValue ) {
-                        console.log( 'Clamping to min' );
-                        value = this.minValue;
+                    if ( typeof value === "number" ) {
+                        if ( value > this.maxValue ) {
+                            console.log( 'Clamping to max' );
+                            value = this.maxValue;
+                        } else if ( value < this.minValue ) {
+                            console.log( 'Clamping to min' );
+                            value = this.minValue;
+                        }
                     }
 
                     if ( aParam ) {
                         // If mapped param
-                        if ( typeof mapping === 'function' ) {
+                        if ( typeof value === "number" &&
+                            typeof mapping === 'function' ) {
                             // Map if mapping is defined
                             value = mapping( value );
                         }
                         aParam.value = value;
                     } else {
                         // If Psuedo param
-                        console.log( "Setting to " + value );
                         value_ = value;
                     }
                 },
