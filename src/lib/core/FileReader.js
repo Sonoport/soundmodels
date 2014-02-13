@@ -1,71 +1,107 @@
 /**
  * @author Cliburn M. Solano
  * @email cliburn.solano@sonoport.com
- * @description Read contents of file
+ * @class FileReader
+ * @description Read contents of file.
+ * @module FileReader
  * @requires Class APISupport
  */
-define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/LoadFile'], function(bWebAudioAPISupport, loadFile) {
+define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/LoadFile'], function(webAudioAPISupport, loadFile) {
 
     "use strict";
 
-    var _bAPISupported = false;
-    var _context;
+    var context_;
 
     /**
-     * check for Web API support
+     * Get the AudioContext buffer.
+     * @method getBuffer
+     * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed.
      */
-    var _checkWebAudioAPISupport = function() {
+    var getBuffer = function() {
 
-        _bAPISupported = bWebAudioAPISupport();
-        _context = new AudioContext();
-
-        console.log("Web Audio API supported: " + _bAPISupported);
+        return loadFile.getBuffer();
 
     };
 
     /**
-     * Load a file from URI
-     * @param {String} sLink The link of the file to load
+     * Get the original buffer.
+     * @method getBufferRaw
+     * @returns {AudioBuffer} The original AudioBuffer.
      */
-    var _loadFile = function(sLink) {
+    var getBufferRaw = function() {
 
-        if (_bAPISupported) {
+        return loadFile.getBufferRaw();
 
-            loadFile.load(sLink, _context);
+    };
+
+    /**
+     * Get the AudioContext instance.
+     * @method getContext
+     * @return {AudioContext} The Audio context instance.
+     */
+    var getContext = function() {
+
+        return context_;
+
+    };
+
+    /**
+     * Determine if file is loaded.
+     * @method isLoaded
+     * @return {Boolean} True if file is loaded. False if file is not loaded.
+     */
+    var isLoaded = function() {
+
+        return loadFile.isLoaded();
+
+    };
+
+    /**
+     * Load a file from URI.
+     * @method open
+     * @param {String} link The link of the file to load.
+     */
+    var open = function(sLink) {
+
+        if (webAudioAPISupport.isSupported()) {
+
+            if (typeof context_ === "undefined") {
+
+                console.log("No AudioContext instance found. Creating a new AudioContext.");
+                context_ = new AudioContext();
+
+            }
+
+            loadFile.load(sLink, context_);
+
+        } else {
+
+            console.log("Web Audio API is not supported. Failed to open file.");
 
         }
 
     };
 
     /**
-     * Get the AudioContext instance
-     * @return {AudioContext} The Audio context instance
+     * Set the AudioContext to use.
+     * @method setContext
+     * @param {AudioContext} context The Audio context instance to use.
      */
-    var _getContext = function() {
+    var setContext = function(context) {
 
-        return _context;
+        context_ = context;
 
     };
-
-    /**
-     * Get the loadFile class
-     * @return {Class} The loadFile class
-     */
-    var _getLoadFileClass = function() {
-
-        return loadFile;
-
-    };
-
-    _checkWebAudioAPISupport();
 
     // Exposed methods
     return {
 
-        supportWebAudioAPI: _checkWebAudioAPISupport,
-        open: _loadFile,
-        loadFile: _getLoadFileClass,
-        context: _getContext
+        open: open,
+        isLoaded: isLoaded,
+        getBuffer: getBuffer,
+        getBufferRaw: getBufferRaw,
+        getContext: getContext,
+        setContext: setContext
 
     };
 
