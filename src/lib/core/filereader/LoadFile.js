@@ -171,8 +171,9 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
      * @method load
      * @param {String} link The link of the file to load.
      * @param {AudioContext} context The Audio context.
+     * @param {Function} callback The function to call when file loads.
      */
-    var load = function(sLink, context) {
+    var load = function(sLink, context, fCallback) {
 
         var request = new XMLHttpRequest();
 
@@ -192,6 +193,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
 
                 bSoundLoaded_ = true;
                 buffer_ = buffer;
+                fCallback.success();
 
             }, onError);
 
