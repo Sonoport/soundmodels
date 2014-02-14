@@ -105,13 +105,25 @@
             "file": "src/lib/core/BaseSound.js",
             "line": 53,
             "description": "Fading time in (seconds)",
+            "itemtype": "property",
+            "name": "FADE_TIME",
             "constant": "FADE_TIME",
             "default": "0.5 (seconds)",
             "class": "BaseSound"
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 59,
+            "line": 61,
+            "description": "Padding time in (seconds) after FADE_TIME to allow sound to fade out smoothly.",
+            "itemtype": "property",
+            "name": "FADE_TIME_PAD",
+            "constant": "FADE_TIME_PAD",
+            "default": "1 (seconds)",
+            "class": "BaseSound"
+        },
+        {
+            "file": "src/lib/core/BaseSound.js",
+            "line": 69,
             "description": "Checks if the sound is currently playing.",
             "itemtype": "property",
             "name": "isPlaying",
@@ -121,7 +133,7 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 67,
+            "line": 77,
             "description": "Temp: Create a sine wave oscillator buffer as a temporary source.\nWill be replaced by FileReader and parse in an AudioBuffer",
             "itemtype": "property",
             "name": "bufferSource",
@@ -130,7 +142,7 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 81,
+            "line": 91,
             "description": "Connects release Gain Node to an AudioNode or AudioParam.",
             "itemtype": "method",
             "name": "connect",
@@ -148,8 +160,8 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 92,
-            "description": "Disconnects (release) Gain Node from an AudioNode or AudioParam.",
+            "line": 102,
+            "description": "Disconnects release Gain Node from an AudioNode or AudioParam.",
             "itemtype": "method",
             "name": "disconnect",
             "return": {
@@ -166,7 +178,7 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 103,
+            "line": 113,
             "description": "Start audio at this current time.",
             "itemtype": "method",
             "name": "start",
@@ -184,8 +196,8 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 115,
-            "description": "Stop audio.",
+            "line": 125,
+            "description": "Stop audio at this current time.",
             "itemtype": "method",
             "name": "stop",
             "return": {
@@ -202,7 +214,7 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 127,
+            "line": 138,
             "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
             "itemtype": "method",
             "name": "release",
@@ -220,8 +232,8 @@
         },
         {
             "file": "src/lib/core/BaseSound.js",
-            "line": 143,
-            "description": "Play sound after connecting the (master) gain node to the destination node.",
+            "line": 154,
+            "description": "Play sound after connecting the (release) Gain Node to the destination node.",
             "itemtype": "method",
             "name": "play",
             "return": {
@@ -447,8 +459,8 @@
             "line": " src/lib/core/BaseSound.js:53"
         },
         {
-            "message": "Missing item type\nFading time in (seconds)",
-            "line": " src/lib/core/BaseSound.js:53"
+            "message": "unknown tag: constant",
+            "line": " src/lib/core/BaseSound.js:61"
         }
     ]
 }

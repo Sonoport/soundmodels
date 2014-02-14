@@ -52,10 +52,20 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         this.releaseGainNode = this.audioContext.createGain();
         /**
         Fading time in (seconds)
+
+        @property FADE_TIME
         @constant FADE_TIME
         @default 0.5 (seconds)
         **/
-        this.FADE_TIME = 0.5; // Seconds
+        this.FADE_TIME = 0.5;
+        /**
+        Padding time in (seconds) after FADE_TIME to allow sound to fade out smoothly. 
+
+        @property FADE_TIME_PAD
+        @constant FADE_TIME_PAD
+        @default 1 (seconds)
+        **/
+        this.FADE_TIME_PAD = 1;
         /**
         Checks if the sound is currently playing.
 
@@ -90,7 +100,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         this.releaseGainNode.connect(output);
     };
     /**
-    Disconnects (release) Gain Node from an AudioNode or AudioParam.
+    Disconnects release Gain Node from an AudioNode or AudioParam.
 
     @method disconnect
     @return null
@@ -113,7 +123,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         console.log("start the buffer " + this.isPlaying);
     };
     /**
-    Stop audio.
+    Stop audio at this current time.
 
     @method stop
     @return null
@@ -138,11 +148,11 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         }
         this.releaseGainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + fadeTime);
         console.log("release: linear ramp down after " + fadeTime + " seconds.");
-        // Stops the sound after fadeTime has passed.
-        this.stop(this.audioContext.currentTime + fadeTime * 2);
+        // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
+        this.stop(this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD);
     };
     /**
-    Play sound after connecting the (master) gain node to the destination node.
+    Play sound after connecting the (release) Gain Node to the destination node.
 
     @method play
     @return null

@@ -142,10 +142,20 @@ define([&#x27;utils/AudioContextMonkeyPatch.js&#x27;], function() {
         this.releaseGainNode = this.audioContext.createGain();
         /**
         Fading time in (seconds)
+
+        @property FADE_TIME
         @constant FADE_TIME
         @default 0.5 (seconds)
         **/
-        this.FADE_TIME = 0.5; // Seconds
+        this.FADE_TIME = 0.5;
+        /**
+        Padding time in (seconds) after FADE_TIME to allow sound to fade out smoothly. 
+
+        @property FADE_TIME_PAD
+        @constant FADE_TIME_PAD
+        @default 1 (seconds)
+        **/
+        this.FADE_TIME_PAD = 1;
         /**
         Checks if the sound is currently playing.
 
@@ -180,7 +190,7 @@ define([&#x27;utils/AudioContextMonkeyPatch.js&#x27;], function() {
         this.releaseGainNode.connect(output);
     };
     /**
-    Disconnects (release) Gain Node from an AudioNode or AudioParam.
+    Disconnects release Gain Node from an AudioNode or AudioParam.
 
     @method disconnect
     @return null
@@ -198,21 +208,22 @@ define([&#x27;utils/AudioContextMonkeyPatch.js&#x27;], function() {
     @param {Number} currTime Time in (seconds) that audio will start.
     **/
     BaseSound.prototype.start = function(currTime) {
-        console.log(&quot;start the buffer&quot;);
         this.bufferSource.start(currTime);
         this.isPlaying = true;
+        console.log(&quot;start the buffer &quot; + this.isPlaying);
     };
     /**
-    Stop audio.
+    Stop audio at this current time.
 
     @method stop
     @return null
     @param {Number} currTime Time in (seconds) that audio will stop.
     **/
     BaseSound.prototype.stop = function(currTime) {
-        console.log(&quot;stop the buffer&quot;);
         this.bufferSource.stop(currTime);
+        // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         this.isPlaying = false;
+        console.log(&quot;stop the buffer &quot; + this.isPlaying);
     };
     /**
     Linearly ramp down the gain of the audio in time (seconds) to 0.
@@ -227,11 +238,11 @@ define([&#x27;utils/AudioContextMonkeyPatch.js&#x27;], function() {
         }
         this.releaseGainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + fadeTime);
         console.log(&quot;release: linear ramp down after &quot; + fadeTime + &quot; seconds.&quot;);
-
-        //this.stop(this.audioContext + fadeTime + 5);
+        // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
+        this.stop(this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD);
     };
     /**
-    Play sound after connecting the (master) gain node to the destination node.
+    Play sound after connecting the (release) Gain Node to the destination node.
 
     @method play
     @return null
