@@ -80,22 +80,24 @@ define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/L
         /**
          * Get the AudioContext buffer.
          * @method getBuffer
+         * @param {Number} start The start index
+         * @param {Number} end the end index
          * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed.
          */
-        getBuffer: function() {
+        getBuffer: function(nStart, nEnd) {
 
-            return loadFile.getBuffer();
+            return loadFile.getBuffer(nStart, nEnd);
 
         },
 
         /**
          * Get the original buffer.
-         * @method getBufferRaw
+         * @method getRawBuffer
          * @returns {AudioBuffer} The original AudioBuffer.
          */
-        getBufferRaw: function() {
+        getRawBuffer: function() {
 
-            return loadFile.getBufferRaw();
+            return loadFile.getRawBuffer();
 
         }
 

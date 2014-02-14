@@ -17,14 +17,34 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
     var sLink_;
 
     /**
+     * Check if a value is an integer.
+     * @private
+     * @param {Object} value
+     * @returns {Boolean} Result of test.
+     */
+    function isInt_(value) {
+
+        var er = /^[0-9]+$/;
+
+        if (er.test(value)) {
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    /**
      * Get a buffer based on the start and end markers.
      * @private
-     * @method getMarkedBuffer
+     * @method sliceBuffer
      * @param {Number} nStart The start of the buffer to load.
      * @param {Number} nEnd The end of the buffer to load.
      * @returns {AudioBuffer} The trimmed buffer.
      */
-    function getMarkedBuffer_(nStart, nEnd) {
+    function sliceBuffer_(nStart, nEnd) {
 
         var aChannels = [];
         var nChannels = buffer_.numberOfChannels;
@@ -102,31 +122,13 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
     }
 
     /**
-     * Check if a value is an integer.
-     * @private
-     * @param {Object} value
-     * @returns {Boolean} Result of test.
-     */
-    function isInt_(value) {
-
-        var er = /^[0-9]+$/;
-
-        if (er.test(value)) {
-
-            return true;
-
-        }
-
-        return false;
-
-    }
-
-    /**
      * Get the current buffer.
      * @method getBuffer
+     * @param {Number} start The start index
+     * @param {Number} end the end index
      * @returns {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
      */
-    var getBuffer = function() {
+    var getBuffer = function(nStart, nEnd) {
 
         var aEr = /[^.]+$/.exec(sLink_);
 
@@ -136,20 +138,26 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
             // Detect loop markers
             loopMarker.detectMarkers(buffer_);
 
-            return getMarkedBuffer_(loopMarker.getStartMarker(), loopMarker.getEndMarker());
+            if (nEnd + loopMarker.getStartMarker() > loopMarker.getEndMarker()) {
+
+                nEnd = loopMarker.getEndMarker();
+
+            }
+
+            return sliceBuffer_(nStart + loopMarker.getStartMarker(), nEnd + loopMarker.getStartMarker());
 
         }
 
-        return buffer_;
+        return sliceBuffer_(nStart, nEnd);
 
     };
 
     /**
      * Get the original buffer.
-     * @method getBufferRaw
+     * @method getRawBuffer
      * @returns {AudioBuffer} The original AudioBuffer.
      */
-    var getBufferRaw = function() {
+    var getRawBuffer = function() {
 
         return buffer_;
 
@@ -216,7 +224,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
         isLoaded: isLoaded,
         load: load,
         getBuffer: getBuffer,
-        getBufferRaw: getBufferRaw
+        getRawBuffer: getRawBuffer
 
     };
 
