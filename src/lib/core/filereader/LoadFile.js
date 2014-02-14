@@ -12,6 +12,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
     "use strict";
 
     var buffer_;
+    var bIsNotWavFile_ = false;
     var bSoundLoaded_ = false;
     var context_;
     var sLink_;
@@ -130,10 +131,8 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
      */
     var getBuffer = function(nStart, nEnd) {
 
-        var aEr = /[^.]+$/.exec(sLink_);
-
         // Do trimming if it is not a wave file
-        if (aEr[0] !== "wav") {
+        if (bIsNotWavFile_) {
 
             if (nEnd + loopMarker.getStartMarker() > loopMarker.getEndMarker()) {
 
@@ -183,6 +182,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
         var request = new XMLHttpRequest();
 
         bSoundLoaded_ = false;
+        bIsNotWavFile_ = false;
         context_ = context;
         sLink_ = sLink.toLocaleLowerCase();
 
@@ -194,14 +194,23 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
 
             context.decodeAudioData(request.response, function(buffer) {
 
+                var aEr = /[^.]+$/.exec(sLink_);
+
                 console.log("File successfully loaded");
 
                 bSoundLoaded_ = true;
                 buffer_ = buffer;
-               
-                // Detect loop markers
-                loopMarker.detectMarkers(buffer_);
-            
+
+                // Do trimming if it is not a wave file
+                if (aEr[0] !== "wav") {
+
+                    bIsNotWavFile_ = true;
+
+                    // Detect loop markers
+                    loopMarker.detectMarkers(buffer_);
+
+                }
+
                 fCallback.success();
 
             }, onError);
