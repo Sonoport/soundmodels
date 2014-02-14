@@ -18,3 +18,10 @@ wiki/
 *.log
 *.csv
 *.dat
+
+# NetBeans specific
+/nbproject/*
+
+# Burn specific
+/index.html
+/app.js
