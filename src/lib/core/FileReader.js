@@ -5,7 +5,7 @@
  * @description Read contents of file.
  * @module FileReader
  */
-define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/LoadFile'], function(webAudioAPISupport, loadFile) {
+define(['src/lib/core/filereader/LoadFile'], function(loadFile) {
 
     "use strict";
 
@@ -46,7 +46,7 @@ define(['src/lib/core/filereader/WebAudioAPISupport', 'src/lib/core/filereader/L
          */
         open: function(sLink, fCallback) {
 
-            if (webAudioAPISupport.isSupported()) {
+            if (window.AudioContext || window.webkitAudioContext) {
 
                 loadFile.load(sLink, this.context, {
 
