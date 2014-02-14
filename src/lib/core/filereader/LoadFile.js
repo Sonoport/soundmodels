@@ -135,9 +135,6 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
         // Do trimming if it is not a wave file
         if (aEr[0] !== "wav") {
 
-            // Detect loop markers
-            loopMarker.detectMarkers(buffer_);
-
             if (nEnd + loopMarker.getStartMarker() > loopMarker.getEndMarker()) {
 
                 nEnd = loopMarker.getEndMarker();
@@ -201,6 +198,10 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
 
                 bSoundLoaded_ = true;
                 buffer_ = buffer;
+               
+                // Detect loop markers
+                loopMarker.detectMarkers(buffer_);
+            
                 fCallback.success();
 
             }, onError);
