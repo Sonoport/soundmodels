@@ -66,13 +66,32 @@ module.exports = function(grunt) {
                     base: ['<%= dirs.build %>','test/testaudioparam']
                 }
             },
-            test2: {
+            testhk: {
                 options: {
-                    port: 8080,
+                    port: 8000,
                     base: 'test/'
                 }
             }
-        }
+        },
+
+        // For copying files from src/ folder to test folder 
+        copy: {
+            main: {
+              files: [{
+                cwd: 'src/lib/core/',
+                src: 'BaseSound.js',
+                dest: 'test/test-BaseSound/',
+                expand: true
+              },
+              {
+                cwd: 'src/utils/',
+                src: 'AudioContextMonkeyPatch.js',
+                dest: 'test/test-BaseSound/utils',
+                expand: true
+              }
+              ]
+            }
+          }
     });
       // Load Plugins
     grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -81,8 +100,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-yuidoc');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-jsbeautifier');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
     grunt.registerTask('dev-build', ['jsbeautifier','jshint','concat']);
     grunt.registerTask('make-doc', ['jsbeautifier','jshint', 'yuidoc']);
     grunt.registerTask('test', ['jsbeautifier','jshint', 'concat', 'connect:test', 'watch']);
+    grunt.registerTask('testhk', ['jsbeautifier','jshint','connect:testhk', 'watch']);
 };

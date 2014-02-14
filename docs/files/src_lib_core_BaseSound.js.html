@@ -1,3 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/lib/core/BaseSound.js - javascript-sound-models</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title="javascript-sound-models"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 3.4.7</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/BaseSound.html">BaseSound</a></li>
+            
+                <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/lib/core/BaseSound.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
 /**
 
 Base class for all sounds. 
@@ -8,24 +98,24 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
 @constructor
 @param {AudioContext} audioContext
 **/
-define(['utils/AudioContextMonkeyPatch.js'], function() {
-    'use strict';
+define([&#x27;utils/AudioContextMonkeyPatch.js&#x27;], function() {
+    &#x27;use strict&#x27;;
 
     function BaseSound(audioContext) {
         /**
-        Define one audioContext from Web Audio API's AudioContext class.
+        Define one audioContext from Web Audio API&#x27;s AudioContext class.
 
         @property audioContext
         @type AudioContext
         @default audioContext
         **/
-        if (typeof audioContext === "undefined") {
+        if (typeof audioContext === &quot;undefined&quot;) {
             // Need to check for prefixes for AudioContext
             this.audioContext = new AudioContext();
-            console.log("new audioContext");
+            console.log(&quot;new audioContext&quot;);
         } else {
             this.audioContext = audioContext;
-            console.log("current ac");
+            console.log(&quot;current ac&quot;);
         }
         /**
         Number of inputs
@@ -96,7 +186,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @param {Object} output Connects to an AudioNode or AudioParam.
 	**/
     BaseSound.prototype.connect = function(output) {
-        console.log("connects to release Gain Node");
+        console.log(&quot;connects to release Gain Node&quot;);
         this.releaseGainNode.connect(output);
     };
     /**
@@ -107,7 +197,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @param {Object} output Takes in an AudioNode or AudioParam.
     **/
     BaseSound.prototype.disconnect = function(output) {
-        console.log("disconnect from Gain Node");
+        console.log(&quot;disconnect from Gain Node&quot;);
         this.releaseGainNode.disconnect(output);
     };
     /**
@@ -120,7 +210,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     BaseSound.prototype.start = function(currTime) {
         this.bufferSource.start(currTime);
         this.isPlaying = true;
-        console.log("start the buffer " + this.isPlaying);
+        console.log(&quot;start the buffer &quot; + this.isPlaying);
     };
     /**
     Stop audio at this current time.
@@ -133,7 +223,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         this.bufferSource.stop(currTime);
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         this.isPlaying = false;
-        console.log("stop the buffer " + this.isPlaying);
+        console.log(&quot;stop the buffer &quot; + this.isPlaying);
     };
     /**
     Linearly ramp down the gain of the audio in time (seconds) to 0.
@@ -143,11 +233,11 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @param {Number} fadeTime Amount of time it takes for linear ramp down to happen.
     **/
     BaseSound.prototype.release = function(fadeTime) {
-        if (typeof fadeTime === "undefined") {
+        if (typeof fadeTime === &quot;undefined&quot;) {
             fadeTime = this.FADE_TIME;
         }
         this.releaseGainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + fadeTime);
-        console.log("release: linear ramp down after " + fadeTime + " seconds.");
+        console.log(&quot;release: linear ramp down after &quot; + fadeTime + &quot; seconds.&quot;);
         // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
         this.stop(this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD);
     };
@@ -158,7 +248,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @return null
     **/
     BaseSound.prototype.play = function() {
-        console.log("play sound");
+        console.log(&quot;play sound&quot;);
         this.start(0);
     };
 
@@ -166,3 +256,23 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     return BaseSound;
 
 });
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
