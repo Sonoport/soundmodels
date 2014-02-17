@@ -78,12 +78,12 @@ define(
                             console.log( 'Clamping to min' );
                             value = this.minValue;
                         }
-
+                    }
 
                     if ( aParam ) {
                         // If mapped param
-                            // Map if mapping is defined
-                            typeof mapping === 'function' ) {
+                        // Map if mapping is defined
+                        if ( typeof mapping === 'function' ) {
                             // Map if mapping is defined
                             value = mapping( value );
                         }

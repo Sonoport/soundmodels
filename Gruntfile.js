@@ -18,14 +18,14 @@ module.exports = function ( grunt ) {
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
-            files: [ 'Gruntfile.js', '<%= files.jsSrc %>' ],
+            files: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>' ],
             options: {
                 config: ".jsbeautifyrc"
             }
         },
         // JSHint
         jshint: {
-            all: [ 'Gruntfile.js', '<%= files.jsSrc %>' ]
+            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>' ]
         },
         concat: {
             options: {
@@ -78,30 +78,28 @@ module.exports = function ( grunt ) {
                     base: [ '<%= dirs.build %>', 'test/testaudioparam' ]
                 }
             },
-      testhk: {
+            testhk: {
                 options: {
-          port: 8000,
+                    port: 8000,
                     base: 'test/'
                 }
             }
-    },
-    // For copying files from src/ folder to test folder 
-    copy: {
-      main: {
-        files: [{
-          cwd: 'src/lib/core/',
-          src: 'BaseSound.js',
-          dest: 'test/test-BaseSound/',
-          expand: true
         },
-        {
-          cwd: 'src/utils/',
-          src: 'AudioContextMonkeyPatch.js',
-          dest: 'test/test-BaseSound/utils',
-          expand: true
-        }
-        ]
-      }
+        // For copying files from src/ folder to test folder
+        copy: {
+            main: {
+                files: [ {
+                    cwd: 'src/lib/core/',
+                    src: 'BaseSound.js',
+                    dest: 'test/test-BaseSound/',
+                    expand: true
+                }, {
+                    cwd: 'src/utils/',
+                    src: 'AudioContextMonkeyPatch.js',
+                    dest: 'test/test-BaseSound/utils',
+                    expand: true
+                } ]
+            }
         }
     } );
     // Load Plugins
@@ -112,10 +110,10 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-concat' );
     grunt.loadNpmTasks( 'grunt-contrib-requirejs' );
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
-  grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks( 'grunt-contrib-copy' );
 
-    grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'concat' ] );
+    grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc' ] );
     grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'concat', 'connect:test', 'watch' ] );
-  grunt.registerTask('testhk', ['jsbeautifier','jshint','connect:testhk', 'watch']);
+    grunt.registerTask( 'testhk', [ 'jsbeautifier', 'jshint', 'connect:testhk', 'watch' ] );
 };

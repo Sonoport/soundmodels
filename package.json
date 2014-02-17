@@ -1,51 +1,47 @@
 {
-  "name": "javascript-sound-models",
-  "description": "Sonoport Javascript Sound Models",
-  "version": "3.4.7",
-  "author": "Sonport Asia Pte. Ltd",
-  "contributors": [
-    {
-      "name": "Chinmay Pendharkar",
-      "email": "chinmay.pendharkar@sonoport.com"
+    "name": "javascript-sound-models",
+    "description": "Sonoport Javascript Sound Models",
+    "version": "3.4.7",
+    "author": "Sonport Asia Pte. Ltd",
+    "contributors": [ {
+        "name": "Chinmay Pendharkar",
+        "email": "chinmay.pendharkar@sonoport.com"
+    }, {
+        "name": "Yap Hong Kheng",
+        "email": "hong.kheng@sonoport.com"
+    }, {
+        "name": "Cliburn Solano",
+        "email": "cliburn.solano@sonoport.com"
+    } ],
+    "dependencies": {
+        "grunt-contrib-requirejs": "0.4.1"
     },
-    {
-      "name": "Yap Hong Kheng",
-      "email": "hong.kheng@sonoport.com"
+    "devDependencies": {
+        "grunt": "~0.4.2",
+        "grunt-contrib-concat": "~0.3.0",
+        "grunt-contrib-connect": "0.6.0",
+        "grunt-contrib-copy": "0.5.0",
+        "grunt-contrib-jshint": "~0.8.0",
+        "grunt-contrib-requirejs": "~0.4.1",
+        "grunt-contrib-watch": "~0.5.3",
+        "grunt-contrib-yuidoc": "~0.5.0",
+        "grunt-jsbeautifier": "~0.2.6"
     },
-    {
-      "name": "Cliburn Solano",
-      "email": "cliburn.solano@sonoport.com"
-    }
-  ],
-  "dependencies": {
-    "grunt-contrib-requirejs": "0.4.1"
-  },
-  "devDependencies": {
-    "grunt-contrib-connect": "0.6.0",
-    "grunt-jsbeautifier": "~0.2.6",
-    "grunt": "~0.4.2",
-    "grunt-contrib-jshint": "~0.8.0",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-yuidoc": "~0.5.0",
-    "grunt-contrib-requirejs": "~0.4.1",
-    "grunt-contrib-copy": "0.5.0"
-    "grunt-contrib-concat": "~0.3.0"
-  },
-  "keywords": [
-    "sonoport",
-    "audio",
-    "webaudio",
-    "soundmodels",
-    "sound",
-    "interactive"
-  ],
-  "repository": "https://chinmaypendharkar@bitbucket.org/sonoport/javascript-sound-models.git",
-  "scripts": {
-    "build": "grunt built",
-    "test": "grunt test"
-  },
-  "engines": {
-    "node": ">= 0.8.0"
-  },
-  "license": "Proprietary"
+    "keywords": [
+        "sonoport",
+        "audio",
+        "webaudio",
+        "soundmodels",
+        "sound",
+        "interactive"
+    ],
+    "repository": "https://chinmaypendharkar@bitbucket.org/sonoport/javascript-sound-models.git",
+    "scripts": {
+        "build": "grunt built",
+        "test": "grunt test"
+    },
+    "engines": {
+        "node": ">= 0.8.0"
+    },
+    "license": "Proprietary"
 }
