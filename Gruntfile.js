@@ -81,7 +81,7 @@ module.exports = function ( grunt ) {
             testhk: {
                 options: {
                     port: 8000,
-                    base:  [ '<%= dirs.build %>', 'test/' ]
+                    base: [ '<%= dirs.build %>', 'test/' ]
                 }
             }
         },
@@ -100,40 +100,7 @@ module.exports = function ( grunt ) {
                     expand: true
                 } ]
             }
-        },
-
-        // For copying files from src/ folder to test folder 
-        copy: {
-            main: {
-              files: [{
-                cwd: 'src/lib/core/',
-                src: 'BaseSound.js',
-                dest: 'test/test-BaseSound/',
-                expand: true
-              },
-              {
-                cwd: 'src/utils/',
-                src: 'AudioContextMonkeyPatch.js',
-                dest: 'test/test-BaseSound/utils',
-                expand: true
-            }
-        },
-        // For copying files from src/ folder to test folder
-        copy: {
-            main: {
-                files: [ {
-                    cwd: 'src/lib/core/',
-                    src: 'BaseSound.js',
-                    dest: 'test/test-BaseSound/',
-                    expand: true
-                }, {
-                    cwd: 'src/lib/core/',
-                    src: 'AudioContextMonkeyPatch.js',
-                    dest: 'test/test-BaseSound/utils',
-                    expand: true
-                } ]
-            }
-          }
+        }
     } );
     // Load Plugins
     grunt.loadNpmTasks( 'grunt-contrib-jshint' );

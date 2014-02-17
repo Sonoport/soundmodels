@@ -5,7 +5,7 @@
  * @module FileReader
  * @description Detect loop markers.
  */
-define(function() {
+define( function () {
 
     "use strict";
 
@@ -28,30 +28,30 @@ define(function() {
      * @param {AudioBuffer} buffer The buffer.
      * @returns {Boolean}
      */
-    function bLoopMarkerFound_(buffer) {
+    function bLoopMarkerFound_( buffer ) {
 
         var startSpikePos = -1;
         var endSpikePos = -1;
 
         nLoopEnd_ = buffer.length - 1;
-        aRightChannel_ = new Float32Array(buffer.getChannelData(0));
+        aRightChannel_ = new Float32Array( buffer.getChannelData( 0 ) );
 
-        if (buffer.numberOfChannels > 1) {
+        if ( buffer.numberOfChannels > 1 ) {
 
-            aLeftChannel_ = new Float32Array(buffer.getChannelData(1));
+            aLeftChannel_ = new Float32Array( buffer.getChannelData( 1 ) );
 
         }
 
         // Find spike near start of file
         var pos = 0;
 
-        while (startSpikePos < 0 && pos < buffer.length && pos < MAX_MP3_SILENCE) {
+        while ( startSpikePos < 0 && pos < buffer.length && pos < MAX_MP3_SILENCE ) {
 
-            if (aRightChannel_[pos] > SPIKE_THRESH) {
+            if ( aRightChannel_[ pos ] > SPIKE_THRESH ) {
 
-                if (buffer.numberOfChannels > 1) {
+                if ( buffer.numberOfChannels > 1 ) {
 
-                    if (aLeftChannel_[pos] < -SPIKE_THRESH) {
+                    if ( aLeftChannel_[ pos ] < -SPIKE_THRESH ) {
 
                         startSpikePos = pos;
                         break;
@@ -80,13 +80,13 @@ define(function() {
         // Find spike near end of file
         pos = buffer.length - 1;
 
-        while (endSpikePos < 0 && pos > 0 && buffer.length - pos < MAX_MP3_SILENCE) {
+        while ( endSpikePos < 0 && pos > 0 && buffer.length - pos < MAX_MP3_SILENCE ) {
 
-            if (aRightChannel_[pos] > SPIKE_THRESH) {
+            if ( aRightChannel_[ pos ] > SPIKE_THRESH ) {
 
-                if (buffer.numberOfChannels > 1) {
+                if ( buffer.numberOfChannels > 1 ) {
 
-                    if (aLeftChannel_[pos] < -SPIKE_THRESH) {
+                    if ( aLeftChannel_[ pos ] < -SPIKE_THRESH ) {
 
                         endSpikePos = pos;
                         break;
@@ -113,7 +113,7 @@ define(function() {
         }
 
         // If both spikes found
-        if (startSpikePos > 0 && endSpikePos > 0 && endSpikePos > startSpikePos) {
+        if ( startSpikePos > 0 && endSpikePos > 0 && endSpikePos > startSpikePos ) {
 
             // Compute loop start and length
             nLoopStart_ = startSpikePos + PREPOSTFIX_LEN / 2;
@@ -138,20 +138,20 @@ define(function() {
      * @method trimSilence
      * @param {AudioBuffer} buffer The buffer to trim silence.
      */
-    function trimSilence_(buffer) {
+    function trimSilence_( buffer ) {
 
         nLoopEnd_ = buffer.length - 1;
 
         // Determine if mono or stereo or more than 2 channels
-        if (buffer.numberOfChannels > 1) {
+        if ( buffer.numberOfChannels > 1 ) {
 
-            while (nLoopStart_ < MAX_MP3_SILENCE && nLoopStart_ < nLoopLength_ && Math.abs(aLeftChannel_[nLoopStart_]) < SILENCE_THRESH && Math.abs(aRightChannel_[nLoopStart_]) < SILENCE_THRESH) {
+            while ( nLoopStart_ < MAX_MP3_SILENCE && nLoopStart_ < nLoopLength_ && Math.abs( aLeftChannel_[ nLoopStart_ ] ) < SILENCE_THRESH && Math.abs( aRightChannel_[ nLoopStart_ ] ) < SILENCE_THRESH ) {
 
                 nLoopStart_++;
 
             }
 
-            while (buffer.length - nLoopEnd_ < MAX_MP3_SILENCE && nLoopEnd_ > 0 && Math.abs(aLeftChannel_[nLoopEnd_]) < SILENCE_THRESH && Math.abs(aRightChannel_[nLoopEnd_]) < SILENCE_THRESH) {
+            while ( buffer.length - nLoopEnd_ < MAX_MP3_SILENCE && nLoopEnd_ > 0 && Math.abs( aLeftChannel_[ nLoopEnd_ ] ) < SILENCE_THRESH && Math.abs( aRightChannel_[ nLoopEnd_ ] ) < SILENCE_THRESH ) {
 
                 nLoopEnd_--;
 
@@ -159,13 +159,13 @@ define(function() {
 
         } else {
 
-            while (nLoopStart_ < MAX_MP3_SILENCE && nLoopStart_ < nLoopLength_ && Math.abs(aRightChannel_[nLoopStart_]) < SILENCE_THRESH) {
+            while ( nLoopStart_ < MAX_MP3_SILENCE && nLoopStart_ < nLoopLength_ && Math.abs( aRightChannel_[ nLoopStart_ ] ) < SILENCE_THRESH ) {
 
                 nLoopStart_++;
 
             }
 
-            while (buffer.length - nLoopEnd_ < MAX_MP3_SILENCE && nLoopEnd_ > 0 && Math.abs(aRightChannel_[nLoopEnd_]) < SILENCE_THRESH) {
+            while ( buffer.length - nLoopEnd_ < MAX_MP3_SILENCE && nLoopEnd_ > 0 && Math.abs( aRightChannel_[ nLoopEnd_ ] ) < SILENCE_THRESH ) {
 
                 nLoopEnd_--;
 
@@ -173,7 +173,7 @@ define(function() {
 
         }
 
-        if (nLoopEnd_ > nLoopStart_) {
+        if ( nLoopEnd_ > nLoopStart_ ) {
 
             nLoopLength_ = nLoopEnd_ - nLoopStart_ + 1;
 
@@ -192,12 +192,12 @@ define(function() {
      * @param {AudioBuffer} buffer
      * @returns {AudioBuffer} The AudioBuffer with the loop marks.
      */
-    var detectMarkers = function(buffer) {
+    var detectMarkers = function ( buffer ) {
 
-        if (!bLoopMarkerFound_(buffer)) {
+        if ( !bLoopMarkerFound_( buffer ) ) {
 
-            console.log("Loop markers not found");
-            trimSilence_(buffer);
+            console.log( "Loop markers not found" );
+            trimSilence_( buffer );
 
         }
 
@@ -208,7 +208,7 @@ define(function() {
      * @method getEndMarker
      * @returns {Number} The end marker position. Default value is 0;
      */
-    var getEndMarker = function() {
+    var getEndMarker = function () {
 
         return nLoopEnd_;
 
@@ -219,7 +219,7 @@ define(function() {
      * @method getStartMarker
      * @returns {Number} The start marker position. Default value is 0;
      */
-    var getStartMarker = function() {
+    var getStartMarker = function () {
 
         return nLoopStart_;
 
@@ -230,7 +230,7 @@ define(function() {
      * @method getLoopLength
      * @returns {Number} The loop length. Default value is 0;
      */
-    var getLoopLength = function() {
+    var getLoopLength = function () {
 
         return nLoopLength_;
 
@@ -246,4 +246,4 @@ define(function() {
 
     };
 
-});
+} );
