@@ -81,7 +81,7 @@ module.exports = function ( grunt ) {
             testhk: {
                 options: {
                     port: 8000,
-                    base: 'test/'
+                    base:  [ '<%= dirs.build %>', 'test/' ]
                 }
             }
         },
@@ -94,7 +94,7 @@ module.exports = function ( grunt ) {
                     dest: 'test/test-BaseSound/',
                     expand: true
                 }, {
-                    cwd: 'src/utils/',
+                    cwd: 'src/lib/core/',
                     src: 'AudioContextMonkeyPatch.js',
                     dest: 'test/test-BaseSound/utils',
                     expand: true
