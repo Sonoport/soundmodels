@@ -1,16 +1,16 @@
-module.exports = function(grunt) {
+module.exports = function ( grunt ) {
     "use strict";
     // Project configuration.
-    grunt.initConfig({
+    grunt.initConfig( {
         // This line makes your node configurations available for use
-        pkg: grunt.file.readJSON('package.json'),
+        pkg: grunt.file.readJSON( 'package.json' ),
 
         // Define files and locations
-        files:{
+        files: {
             jsSrc: 'src/lib/**/*.js'
         },
         dirs: {
-            src : 'src',
+            src: 'src',
             docs: 'docs',
             build: 'build',
             core: 'src/lib/core',
@@ -18,26 +18,38 @@ module.exports = function(grunt) {
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
-            files: ['<%= files.jsSrc %>'],
+            files: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>' ],
+            options: {
+                config: ".jsbeautifyrc"
+            }
         },
         // JSHint
         jshint: {
-            all: ['Gruntfile.js', '<%= files.jsSrc %>']
+            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>' ]
         },
         concat: {
             options: {
                 separator: ';',
             },
-            dev : {
-                src: ['<%= files.jsSrc %>'],
+            dev: {
+                src: [ '<%= files.jsSrc %>' ],
                 dest: '<%= dirs.build %>/splib.js'
             },
+        },
+        requirejs: {
+            compile: {
+                options: {
+                    optimize: "none",
+                    appDir: "src/lib/",
+                    dir: "<%= dirs.build %>",
+                }
+            }
         },
         // Watcher for updating
         watch: {
             scripts: {
-                files: ['<%= files.jsSrc %>'],
-                tasks: ['default'],
+                files: [ '<%= files.jsSrc %>' ],
+                tasks: [ 'dev-build' ],
                 options: {
                     spawn: false
                 }
@@ -63,14 +75,30 @@ module.exports = function(grunt) {
             test: {
                 options: {
                     port: 8080,
-                    base: ['<%= dirs.build %>','test/testaudioparam']
+                    base: [ '<%= dirs.build %>', 'test/testaudioparam' ]
                 }
             },
             testhk: {
                 options: {
                     port: 8000,
-                    base: 'test/'
+                    base:  [ '<%= dirs.build %>', 'test/' ]
                 }
+            }
+        },
+        // For copying files from src/ folder to test folder
+        copy: {
+            main: {
+                files: [ {
+                    cwd: 'src/lib/core/',
+                    src: 'BaseSound.js',
+                    dest: 'test/test-BaseSound/',
+                    expand: true
+                }, {
+                    cwd: 'src/lib/core/',
+                    src: 'AudioContextMonkeyPatch.js',
+                    dest: 'test/test-BaseSound/utils',
+                    expand: true
+                } ]
             }
         },
 
@@ -92,18 +120,19 @@ module.exports = function(grunt) {
               ]
             }
           }
-    });
-      // Load Plugins
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-contrib-yuidoc');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-jsbeautifier');
-    grunt.loadNpmTasks('grunt-contrib-copy');
+    } );
+    // Load Plugins
+    grunt.loadNpmTasks( 'grunt-contrib-jshint' );
+    grunt.loadNpmTasks( 'grunt-contrib-watch' );
+    grunt.loadNpmTasks( 'grunt-contrib-connect' );
+    grunt.loadNpmTasks( 'grunt-contrib-yuidoc' );
+    grunt.loadNpmTasks( 'grunt-contrib-concat' );
+    grunt.loadNpmTasks( 'grunt-contrib-requirejs' );
+    grunt.loadNpmTasks( 'grunt-jsbeautifier' );
+    grunt.loadNpmTasks( 'grunt-contrib-copy' );
 
-    grunt.registerTask('dev-build', ['jsbeautifier','jshint','concat']);
-    grunt.registerTask('make-doc', ['jsbeautifier','jshint', 'yuidoc']);
-    grunt.registerTask('test', ['jsbeautifier','jshint', 'concat', 'connect:test', 'watch']);
-    grunt.registerTask('testhk', ['jsbeautifier','jshint','connect:testhk', 'watch']);
+    grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
+    grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc' ] );
+    grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'concat', 'connect:test', 'watch' ] );
+    grunt.registerTask( 'testhk', [ 'jsbeautifier', 'jshint', 'connect:testhk', 'watch' ] );
 };

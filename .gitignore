@@ -4,8 +4,14 @@
 # Tool Directories
 node_modules/
 
+# Docs
+docs/
+
 #Wiki
 wiki/
+
+#Build folder
+build/
 
 # Resource files
 
