@@ -1,6 +1,6 @@
 /**
 
-Base class for all sounds. 
+Base class for all sounds.
 
 Pseudo AudioNode class the encapsulates basic functionality of creating a AudioContext and passing in audio file buffer.
 
@@ -8,10 +8,10 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
 @constructor
 @param {AudioContext} audioContext
 **/
-define(['utils/AudioContextMonkeyPatch.js'], function() {
+define( [ 'core/AudioContextMonkeyPatch' ], function () {
     'use strict';
 
-    function BaseSound(audioContext) {
+    function BaseSound( audioContext ) {
         /**
         Define one audioContext from Web Audio API's AudioContext class.
 
@@ -19,13 +19,13 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         @type AudioContext
         @default audioContext
         **/
-        if (typeof audioContext === "undefined") {
+        if ( typeof audioContext === "undefined" ) {
             // Need to check for prefixes for AudioContext
             this.audioContext = new AudioContext();
-            console.log("new audioContext");
+            console.log( "new audioContext" );
         } else {
             this.audioContext = audioContext;
-            console.log("current ac");
+            console.log( "current ac" );
         }
         /**
         Number of inputs
@@ -59,7 +59,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         **/
         this.FADE_TIME = 0.5;
         /**
-        Padding time in (seconds) after FADE_TIME to allow sound to fade out smoothly. 
+        Padding time in (seconds) after FADE_TIME to allow sound to fade out smoothly.
 
         @property FADE_TIME_PAD
         @constant FADE_TIME_PAD
@@ -74,7 +74,7 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         @default false
         **/
         this.isPlaying = false;
-        /** 
+        /**
         Temp: Create a sine wave oscillator buffer as a temporary source.
         Will be replaced by FileReader and parse in an AudioBuffer
 
@@ -83,9 +83,9 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
         **/
         this.bufferSource = this.audioContext.createOscillator();
         // Connects source to release gain node
-        this.bufferSource.connect(this.releaseGainNode);
+        this.bufferSource.connect( this.releaseGainNode );
         // Connects release gain node to the destination node
-        this.connect(this.audioContext.destination);
+        this.connect( this.audioContext.destination );
     }
 
     /**
@@ -95,9 +95,9 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
 	@return null
     @param {Object} output Connects to an AudioNode or AudioParam.
 	**/
-    BaseSound.prototype.connect = function(output) {
-        console.log("connects to release Gain Node");
-        this.releaseGainNode.connect(output);
+    BaseSound.prototype.connect = function ( output ) {
+        console.log( "connects to release Gain Node" );
+        this.releaseGainNode.connect( output );
     };
     /**
     Disconnects release Gain Node from an AudioNode or AudioParam.
@@ -106,9 +106,9 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @return null
     @param {Object} output Takes in an AudioNode or AudioParam.
     **/
-    BaseSound.prototype.disconnect = function(output) {
-        console.log("disconnect from Gain Node");
-        this.releaseGainNode.disconnect(output);
+    BaseSound.prototype.disconnect = function ( output ) {
+        console.log( "disconnect from Gain Node" );
+        this.releaseGainNode.disconnect( output );
     };
     /**
     Start audio at this current time.
@@ -117,10 +117,10 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @return null
     @param {Number} currTime Time in (seconds) that audio will start.
     **/
-    BaseSound.prototype.start = function(currTime) {
-        this.bufferSource.start(currTime);
+    BaseSound.prototype.start = function ( currTime ) {
+        this.bufferSource.start( currTime );
         this.isPlaying = true;
-        console.log("start the buffer " + this.isPlaying);
+        console.log( "start the buffer " + this.isPlaying );
     };
     /**
     Stop audio at this current time.
@@ -129,11 +129,11 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @return null
     @param {Number} currTime Time in (seconds) that audio will stop.
     **/
-    BaseSound.prototype.stop = function(currTime) {
-        this.bufferSource.stop(currTime);
+    BaseSound.prototype.stop = function ( currTime ) {
+        this.bufferSource.stop( currTime );
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         this.isPlaying = false;
-        console.log("stop the buffer " + this.isPlaying);
+        console.log( "stop the buffer " + this.isPlaying );
     };
     /**
     Linearly ramp down the gain of the audio in time (seconds) to 0.
@@ -142,14 +142,14 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @return null
     @param {Number} fadeTime Amount of time it takes for linear ramp down to happen.
     **/
-    BaseSound.prototype.release = function(fadeTime) {
-        if (typeof fadeTime === "undefined") {
+    BaseSound.prototype.release = function ( fadeTime ) {
+        if ( typeof fadeTime === "undefined" ) {
             fadeTime = this.FADE_TIME;
         }
-        this.releaseGainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + fadeTime);
-        console.log("release: linear ramp down after " + fadeTime + " seconds.");
+        this.releaseGainNode.gain.linearRampToValueAtTime( 0, this.audioContext.currentTime + fadeTime );
+        console.log( "release: linear ramp down after " + fadeTime + " seconds." );
         // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
-        this.stop(this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD);
+        this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
     };
     /**
     Play sound after connecting the (release) Gain Node to the destination node.
@@ -157,12 +157,12 @@ define(['utils/AudioContextMonkeyPatch.js'], function() {
     @method play
     @return null
     **/
-    BaseSound.prototype.play = function() {
-        console.log("play sound");
-        this.start(0);
+    BaseSound.prototype.play = function () {
+        console.log( "play sound" );
+        this.start( 0 );
     };
 
     // Return constructor function
     return BaseSound;
 
-});
+} );

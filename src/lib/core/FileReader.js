@@ -5,22 +5,22 @@
  * @description Read contents of file.
  * @module FileReader
  */
-define(['src/lib/core/filereader/LoadFile'], function(loadFile) {
+define( [ 'core/LoadFile' ], function ( loadFile ) {
 
     "use strict";
 
-    function FileReader(context) {
+    function FileReader( context ) {
 
-        if (!(this instanceof FileReader)) {
+        if ( !( this instanceof FileReader ) ) {
 
-            throw new TypeError("FileReader constructor cannot be called as a function.");
+            throw new TypeError( "FileReader constructor cannot be called as a function." );
 
         }
 
-        // Determine if AudioContext was pass as a parameter. If not make one.      
-        if (typeof context === "undefined") {
+        // Determine if AudioContext was pass as a parameter. If not make one.
+        if ( typeof context === "undefined" ) {
 
-            console.log("No AudioContext instance found. Creating a new AudioContext.");
+            console.log( "No AudioContext instance found. Creating a new AudioContext." );
             context = new AudioContext();
 
         }
@@ -44,23 +44,23 @@ define(['src/lib/core/filereader/LoadFile'], function(loadFile) {
          * @param {Function} callback The function to call when file loads.
          *
          */
-        open: function(sLink, fCallback) {
+        open: function ( sLink, fCallback ) {
 
-            if (window.AudioContext || window.webkitAudioContext) {
+            if ( window.AudioContext || window.webkitAudioContext ) {
 
-                loadFile.load(sLink, this.context, {
+                loadFile.load( sLink, this.context, {
 
-                    success: function() {
+                    success: function () {
 
                         fCallback();
 
                     }
 
-                });
+                } );
 
             } else {
 
-                console.log("Web Audio API is not supported. Failed to open file.");
+                console.log( "Web Audio API is not supported. Failed to open file." );
 
             }
 
@@ -71,7 +71,7 @@ define(['src/lib/core/filereader/LoadFile'], function(loadFile) {
          * @method isLoaded
          * @return {Boolean} True if file is loaded. False if file is not loaded.
          */
-        isLoaded: function() {
+        isLoaded: function () {
 
             return loadFile.isLoaded();
 
@@ -84,9 +84,9 @@ define(['src/lib/core/filereader/LoadFile'], function(loadFile) {
          * @param {Number} end the end index
          * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed.
          */
-        getBuffer: function(nStart, nEnd) {
+        getBuffer: function ( nStart, nEnd ) {
 
-            return loadFile.getBuffer(nStart, nEnd);
+            return loadFile.getBuffer( nStart, nEnd );
 
         },
 
@@ -95,7 +95,7 @@ define(['src/lib/core/filereader/LoadFile'], function(loadFile) {
          * @method getRawBuffer
          * @returns {AudioBuffer} The original AudioBuffer.
          */
-        getRawBuffer: function() {
+        getRawBuffer: function () {
 
             return loadFile.getRawBuffer();
 
@@ -105,4 +105,4 @@ define(['src/lib/core/filereader/LoadFile'], function(loadFile) {
 
     return FileReader;
 
-});
+} );

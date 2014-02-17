@@ -6,7 +6,9 @@ var o = context.createOscillator();
 o.connect(g);
 g.connect(context.destination);
 
-require(["splib"], function (SPAudioParam) {
+require(["core/SPAudioParam"], function (SPAudioParam) {
+
+	console.log(SPAudioParam);
 
 	p = new SPAudioParam(null,null,null,null,o.frequency,function (value) {
 		return value*2;

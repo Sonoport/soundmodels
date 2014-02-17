@@ -17,6 +17,11 @@ This project contains the HTML5/Javascript port of Sonoport's sound models.
 
 ## Build Process
 
+### Development builds
+A concatenated lib file is placed in the build directory.
+
+``` grunt dev-build```
+
 
 ## Wiki
 

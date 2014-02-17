@@ -36,6 +36,15 @@ module.exports = function ( grunt ) {
                 dest: '<%= dirs.build %>/splib.js'
             },
         },
+        requirejs: {
+            compile: {
+                options: {
+                    optimize: "none",
+                    appDir: "src/lib/",
+                    dir: "<%= dirs.build %>",
+                }
+            }
+        },
         // Watcher for updating
         watch: {
             scripts: {
@@ -101,6 +110,7 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-connect' );
     grunt.loadNpmTasks( 'grunt-contrib-yuidoc' );
     grunt.loadNpmTasks( 'grunt-contrib-concat' );
+    grunt.loadNpmTasks( 'grunt-contrib-requirejs' );
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
   grunt.loadNpmTasks('grunt-contrib-copy');
 

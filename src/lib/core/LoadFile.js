@@ -7,7 +7,7 @@
  * @param {String} sLink The URL
  * @return {ArrayBuffer} An ArrayBuffer.
  */
-define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
+define( [ 'core/LoopMarker' ], function ( loopMarker ) {
 
     "use strict";
 
@@ -23,11 +23,11 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
      * @param {Object} value
      * @returns {Boolean} Result of test.
      */
-    function isInt_(value) {
+    function isInt_( value ) {
 
         var er = /^[0-9]+$/;
 
-        if (er.test(value)) {
+        if ( er.test( value ) ) {
 
             return true;
 
@@ -45,7 +45,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
      * @param {Number} nEnd The end of the buffer to load.
      * @returns {AudioBuffer} The trimmed buffer.
      */
-    function sliceBuffer_(nStart, nEnd) {
+    function sliceBuffer_( nStart, nEnd ) {
 
         var aChannels = [];
         var nChannels = buffer_.numberOfChannels;
@@ -53,68 +53,69 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
         var newBuffer;
 
         // Set nEnd if it is missing
-        if (typeof nEnd === "undefined") {
+        if ( typeof nEnd === "undefined" ) {
 
             nEnd = buffer_.length;
 
         }
 
         // Verify parameters
-        if (!isInt_(nStart)) {
+        if ( !isInt_( nStart ) ) {
 
-            console.log("getBuffer Start parameter is not an integer");
+            console.log( "getBuffer Start parameter is not an integer" );
             return;
 
-        } else if (!isInt_(nEnd)) {
+        } else if ( !isInt_( nEnd ) ) {
 
-            console.log("getBuffer End parameter is not an integer");
+            console.log( "getBuffer End parameter is not an integer" );
             return;
 
         }
 
         // Check if nStart is smaller than nEnd
-        if (nStart > nEnd) {
+        if ( nStart > nEnd ) {
 
-            console.log("getBuffer Start parameter should be bigger than End parameter");
+            console.log( "getBuffer Start parameter should be bigger than End parameter" );
             return;
 
         }
 
         // Check if nStart is beyong buffer size
-        if (nStart > buffer_.length) {
+        if ( nStart > buffer_.length ) {
 
-            console.log("getBuffer Start parameter should be withing buffer length");
+            console.log( "getBuffer Start parameter should be withing buffer length" );
             return;
 
         }
 
         // Check if nEnd is larger that the buffer size and adjust accordingly
-        if (nEnd > buffer_.length) {
+        if ( nEnd > buffer_.length ) {
 
             nEnd = -1;
 
         }
 
         // Start trimming
-        for (var i = 0; i < nChannels; i++) {
+        for ( var i = 0; i < nChannels; i++ ) {
 
-            var aData = new Float32Array(buffer_.getChannelData(i));
-            aChannels[i] = aData.subarray(nStart, nEnd);
+            var aData = new Float32Array( buffer_.getChannelData( i ) );
+            aChannels[ i ] = aData.subarray( nStart, nEnd );
 
         }
 
-        if (aChannels.length > 0) {
+        if ( aChannels.length > 0 ) {
 
-            nLength = aChannels[0].length;
+            nLength = aChannels[ 0 ].length;
 
         }
 
         // Create the new buffer
-        newBuffer = context_.createBuffer(buffer_.numberOfChannels, nLength, buffer_.sampleRate);
+        newBuffer = context_.createBuffer( buffer_.numberOfChannels, nLength, buffer_.sampleRate );
 
-        for (var j = 0; j < nChannels; j++) {
+        for ( var j = 0; j < nChannels; j++ ) {
 
-            newBuffer.getChannelData(j).set(aChannels[j]);
+            newBuffer.getChannelData( j )
+                .set( aChannels[ j ] );
 
         }
 
@@ -129,22 +130,22 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
      * @param {Number} end the end index
      * @returns {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
      */
-    var getBuffer = function(nStart, nEnd) {
+    var getBuffer = function ( nStart, nEnd ) {
 
         // Do trimming if it is not a wave file
-        if (bIsNotWavFile_) {
+        if ( bIsNotWavFile_ ) {
 
-            if (nEnd + loopMarker.getStartMarker() > loopMarker.getEndMarker()) {
+            if ( nEnd + loopMarker.getStartMarker() > loopMarker.getEndMarker() ) {
 
                 nEnd = loopMarker.getEndMarker();
 
             }
 
-            return sliceBuffer_(nStart + loopMarker.getStartMarker(), nEnd + loopMarker.getStartMarker());
+            return sliceBuffer_( nStart + loopMarker.getStartMarker(), nEnd + loopMarker.getStartMarker() );
 
         }
 
-        return sliceBuffer_(nStart, nEnd);
+        return sliceBuffer_( nStart, nEnd );
 
     };
 
@@ -153,7 +154,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
      * @method getRawBuffer
      * @returns {AudioBuffer} The original AudioBuffer.
      */
-    var getRawBuffer = function() {
+    var getRawBuffer = function () {
 
         return buffer_;
 
@@ -164,7 +165,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
      * @method isLoaded
      * @returns {Boolean} True if file is loaded. Flase if file is not yeat loaded.
      */
-    var isLoaded = function() {
+    var isLoaded = function () {
 
         return bSoundLoaded_;
 
@@ -177,7 +178,7 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
      * @param {AudioContext} context The Audio context.
      * @param {Function} callback The function to call when file loads.
      */
-    var load = function(sLink, context, fCallback) {
+    var load = function ( sLink, context, fCallback ) {
 
         var request = new XMLHttpRequest();
 
@@ -186,41 +187,41 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
         context_ = context;
         sLink_ = sLink.toLocaleLowerCase();
 
-        request.open('GET', sLink, true);
+        request.open( 'GET', sLink, true );
         request.responseType = 'arraybuffer';
 
         // Handler for onLoad
-        request.onload = function() {
+        request.onload = function () {
 
-            context.decodeAudioData(request.response, function(buffer) {
+            context.decodeAudioData( request.response, function ( buffer ) {
 
-                var aEr = /[^.]+$/.exec(sLink_);
+                var aEr = /[^.]+$/.exec( sLink_ );
 
-                console.log("File successfully loaded");
+                console.log( "File successfully loaded" );
 
                 bSoundLoaded_ = true;
                 buffer_ = buffer;
 
                 // Do trimming if it is not a wave file
-                if (aEr[0] !== "wav") {
+                if ( aEr[ 0 ] !== "wav" ) {
 
                     bIsNotWavFile_ = true;
 
                     // Detect loop markers
-                    loopMarker.detectMarkers(buffer_);
+                    loopMarker.detectMarkers( buffer_ );
 
                 }
 
                 fCallback.success();
 
-            }, onError);
+            }, onError );
 
         };
 
         // Handler for onError
-        var onError = function() {
+        var onError = function () {
 
-            console.log("Error loading URL");
+            console.log( "Error loading URL" );
 
         };
 
@@ -238,4 +239,4 @@ define(['src/lib/core/filereader/LoopMarker'], function(loopMarker) {
 
     };
 
-});
+} );
