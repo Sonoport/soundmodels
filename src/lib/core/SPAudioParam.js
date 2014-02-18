@@ -12,7 +12,7 @@ define(
             // Min diff between set and actual
             // values to stop updates.
             var MIN_DIFF = 0.0001;
-            var UPDATE_INTERVAL_MS = 100;
+            var UPDATE_INTERVAL_MS = 500;
 
             var intervalID_;
 

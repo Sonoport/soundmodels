@@ -27,15 +27,6 @@ module.exports = function ( grunt ) {
         jshint: {
             all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>' ]
         },
-        concat: {
-            options: {
-                separator: ';',
-            },
-            dev: {
-                src: [ '<%= files.jsSrc %>' ],
-                dest: '<%= dirs.build %>/splib.js'
-            },
-        },
         requirejs: {
             compile: {
                 options: {
@@ -84,22 +75,6 @@ module.exports = function ( grunt ) {
                     base: [ '<%= dirs.build %>', 'test/' ]
                 }
             }
-        },
-        // For copying files from src/ folder to test folder
-        copy: {
-            main: {
-                files: [ {
-                    cwd: 'src/lib/core/',
-                    src: 'BaseSound.js',
-                    dest: 'test/test-BaseSound/',
-                    expand: true
-                }, {
-                    cwd: 'src/lib/core/',
-                    src: 'AudioContextMonkeyPatch.js',
-                    dest: 'test/test-BaseSound/utils',
-                    expand: true
-                } ]
-            }
         }
     } );
     // Load Plugins
@@ -110,10 +85,9 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-concat' );
     grunt.loadNpmTasks( 'grunt-contrib-requirejs' );
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
-    grunt.loadNpmTasks( 'grunt-contrib-copy' );
 
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc' ] );
-    grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'concat', 'connect:test', 'watch' ] );
+    grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'connect:test', 'watch' ] );
     grunt.registerTask( 'testhk', [ 'jsbeautifier', 'jshint', 'connect:testhk', 'watch' ] );
 };
