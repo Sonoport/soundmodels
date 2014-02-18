@@ -7,8 +7,16 @@ define(
 
           @class SPAudioParam
           @constructor
+          @param {String} name The name of the parameter.
+          @param {Number} minValue The minimum value of the parameter.
+          @param {Number} maxValue The maximum value of the parameter.
+          @param {Number} defaultValue The default and starting value of the parameter.
+          @param {AudioParam} aParam A WebAudio parameter which will be set/get when this parameter is changed.
+          @param {Function} mapping A mapping function to map values between the mapped SPAudioParam and the underlying WebAudio AudioParam.
+          @param {Function} setter A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.
+          @param {AudioContext} audioContext A WebAudio AudioContext for timing.
           **/
-        function SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mapping, audioContext ) {
+        function SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mapping, setter, audioContext ) {
             // Min diff between set and actual
             // values to stop updates.
             var MIN_DIFF = 0.0001;
@@ -87,7 +95,13 @@ define(
                             // Map if mapping is defined
                             value = mapping( value );
                         }
-                        aParam.value = value;
+                        if (typeof setter === 'function'){
+                            // If setter is defined call it
+                            setter(aParam, value);
+                        }else{
+                            aParam.value = value;
+                        }
+
                     } else {
                         // If Psuedo param
                         value_ = value;
@@ -330,11 +344,13 @@ define(
         @param {Number} maxValue The maximum value of the parameter.
         @param {Number} defaultValue The default and starting value of the parameter.
         @param {AudioParam} aParam A WebAudio parameter which will be set/get when this parameter is changed.
-        @param {Function} mapping A mapping function to map values between the mapped SPAudioParam and the underlying WebAudio AudioParam.
+        @param {Function} mapping A mapping function to map values between the mapped
+        SPAudioParam and the underlying WebAudio AudioParam.
+        @param {Function} setter A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.
         **/
-        SPAudioParam.createMappedParam = function ( name, minValue, maxValue, defaultValue, aParam, mapping ) {
+        SPAudioParam.createMappedParam = function ( name, minValue, maxValue, defaultValue, aParam, mapping, setter ) {
 
-            return new SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mapping );
+            return new SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mapping, setter );
         };
 
         return SPAudioParam;
