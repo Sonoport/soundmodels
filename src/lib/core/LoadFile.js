@@ -41,57 +41,57 @@ define( [ 'core/LoopMarker' ], function ( loopMarker ) {
      * Get a buffer based on the start and end markers.
      * @private
      * @method sliceBuffer
-     * @param {Number} nStart The start of the buffer to load.
-     * @param {Number} nEnd The end of the buffer to load.
+     * @param {Number} start The start of the buffer to load.
+     * @param {Number} end The end of the buffer to load.
      * @returns {AudioBuffer} The trimmed buffer.
      */
-    function sliceBuffer_( nStart, nEnd ) {
+    function sliceBuffer_( start, end ) {
 
         var aChannels = [];
         var nChannels = buffer_.numberOfChannels;
         var nLength = buffer_.length;
         var newBuffer;
 
-        // Set nEnd if it is missing
-        if ( typeof nEnd === "undefined" ) {
+        // Set end if it is missing
+        if ( typeof end === "undefined" ) {
 
-            nEnd = buffer_.length;
+            end = buffer_.length;
 
         }
 
         // Verify parameters
-        if ( !isInt_( nStart ) ) {
+        if ( !isInt_( start ) ) {
 
             console.log( "getBuffer Start parameter is not an integer" );
             return;
 
-        } else if ( !isInt_( nEnd ) ) {
+        } else if ( !isInt_( end ) ) {
 
             console.log( "getBuffer End parameter is not an integer" );
             return;
 
         }
 
-        // Check if nStart is smaller than nEnd
-        if ( nStart > nEnd ) {
+        // Check if start is smaller than end
+        if ( start > end ) {
 
             console.log( "getBuffer Start parameter should be bigger than End parameter" );
             return;
 
         }
 
-        // Check if nStart is beyong buffer size
-        if ( nStart > buffer_.length ) {
+        // Check if start is beyong buffer size
+        if ( start > buffer_.length ) {
 
             console.log( "getBuffer Start parameter should be withing buffer length" );
             return;
 
         }
 
-        // Check if nEnd is larger that the buffer size and adjust accordingly
-        if ( nEnd > buffer_.length ) {
+        // Check if end is larger that the buffer size and adjust accordingly
+        if ( end > buffer_.length ) {
 
-            nEnd = -1;
+            end = -1;
 
         }
 
@@ -99,7 +99,7 @@ define( [ 'core/LoopMarker' ], function ( loopMarker ) {
         for ( var i = 0; i < nChannels; i++ ) {
 
             var aData = new Float32Array( buffer_.getChannelData( i ) );
-            aChannels[ i ] = aData.subarray( nStart, nEnd );
+            aChannels[ i ] = aData.subarray( start, end );
 
         }
 
@@ -130,22 +130,22 @@ define( [ 'core/LoopMarker' ], function ( loopMarker ) {
      * @param {Number} end the end index
      * @returns {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
      */
-    var getBuffer = function ( nStart, nEnd ) {
+    var getBuffer = function ( start, end ) {
 
         // Do trimming if it is not a wave file
         if ( bIsNotWavFile_ ) {
 
-            if ( nEnd + loopMarker.getStartMarker() > loopMarker.getEndMarker() ) {
+            if ( end + loopMarker.getStartMarker() > loopMarker.getEndMarker() ) {
 
-                nEnd = loopMarker.getEndMarker();
+                end = loopMarker.getEndMarker();
 
             }
 
-            return sliceBuffer_( nStart + loopMarker.getStartMarker(), nEnd + loopMarker.getStartMarker() );
+            return sliceBuffer_( start + loopMarker.getStartMarker(), end + loopMarker.getStartMarker() );
 
         }
 
-        return sliceBuffer_( nStart, nEnd );
+        return sliceBuffer_( start, end );
 
     };
 

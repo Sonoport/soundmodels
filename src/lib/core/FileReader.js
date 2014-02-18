@@ -42,17 +42,16 @@ define( [ 'core/LoadFile' ], function ( loadFile ) {
          * @method open
          * @param {String} link The link of the file to load.
          * @param {Function} callback The function to call when file loads.
-         *
          */
-        open: function ( sLink, fCallback ) {
+        open: function ( link, callback ) {
 
             if ( window.AudioContext || window.webkitAudioContext ) {
 
-                loadFile.load( sLink, this.context, {
+                loadFile.load( link, this.context, {
 
                     success: function () {
 
-                        fCallback();
+                        callback();
 
                     }
 
@@ -84,9 +83,9 @@ define( [ 'core/LoadFile' ], function ( loadFile ) {
          * @param {Number} end the end index
          * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed.
          */
-        getBuffer: function ( nStart, nEnd ) {
+        getBuffer: function ( start, end ) {
 
-            return loadFile.getBuffer( nStart, nEnd );
+            return loadFile.getBuffer( start, end );
 
         },
 

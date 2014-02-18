@@ -81,9 +81,9 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         @property bufferSource
         @type Object
         **/
-        this.bufferSource = this.audioContext.createOscillator();
+        //        this.bufferSource = this.audioContext.createOscillator();
         // Connects source to release gain node
-        this.bufferSource.connect( this.releaseGainNode );
+        //        this.bufferSource.connect( this.releaseGainNode );
         // Connects release gain node to the destination node
         this.connect( this.audioContext.destination );
     }
