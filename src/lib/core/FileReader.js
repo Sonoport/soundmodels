@@ -5,7 +5,7 @@
  * @description Read contents of file.
  * @module FileReader
  */
-define( [ 'core/LoadFile' ], function ( LoadFile ) {
+define( [ 'core/LoadFile' ], function ( loadFile ) {
 
     "use strict";
 
@@ -17,7 +17,13 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
 
         }
 
-        var loadFile_;
+        // Determine if AudioContext was pass as a parameter. If not make one.
+        if ( typeof context === "undefined" ) {
+
+            console.log( "No AudioContext instance found. Creating a new AudioContext." );
+            context = new AudioContext();
+
+        }
 
         /**
          * @property context
@@ -25,7 +31,11 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
          */
         this.context = context;
 
-        // Public functions
+    }
+
+    FileReader.prototype = {
+
+        constructor: FileReader,
 
         /**
          * Load a file from URI.
@@ -33,31 +43,15 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
          * @param {String} link The link of the file to load.
          * @param {Function} callback The function to call when file loads.
          */
-        this.open = function ( link, callback ) {
-
-            loadFile_ = new LoadFile();
+        open: function ( link, callback ) {
 
             if ( window.AudioContext || window.webkitAudioContext ) {
 
-                loadFile_.load( link, this.context, {
+                loadFile.load( link, this.context, {
 
                     success: function () {
 
-                        if ( typeof callback !== "undefined" && typeof callback === "function" ) {
-
-                            callback( true );
-
-                        }
-
-                    },
-
-                    error: function () {
-
-                        if ( typeof callback !== "undefined" && typeof callback === "function" ) {
-
-                            callback( false );
-
-                        }
+                        callback();
 
                     }
 
@@ -69,18 +63,18 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
 
             }
 
-        };
+        },
 
         /**
          * Determine if file is loaded.
          * @method isLoaded
          * @return {Boolean} True if file is loaded. False if file is not loaded.
          */
-        this.isLoaded = function () {
+        isLoaded: function () {
 
-            return loadFile_.isLoaded();
+            return loadFile.isLoaded();
 
-        };
+        },
 
         /**
          * Get the AudioContext buffer.
@@ -89,40 +83,22 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
          * @param {Number} end the end index
          * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed.
          */
-        this.getBuffer = function ( start, end ) {
+        getBuffer: function ( start, end ) {
 
-            return loadFile_.getBuffer( start, end );
+            return loadFile.getBuffer( start, end );
 
-        };
+        },
 
         /**
          * Get the original buffer.
          * @method getRawBuffer
          * @returns {AudioBuffer} The original AudioBuffer.
          */
-        this.getRawBuffer = function () {
+        getRawBuffer: function () {
 
-            return loadFile_.getRawBuffer();
-
-        };
-
-        // Init
-
-        // Determine if AudioContext was pass as a parameter. If not make one.
-        if ( typeof context === "undefined" ) {
-
-            console.log( "No AudioContext instance found. Creating a new AudioContext." );
-            this.context = new AudioContext();
+            return loadFile.getRawBuffer();
 
         }
-
-    }
-
-    // Public functions
-
-    FileReader.prototype = {
-
-        constructor: FileReader
 
     };
 
