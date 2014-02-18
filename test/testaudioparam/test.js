@@ -10,10 +10,17 @@ require(["core/SPAudioParam"], function (SPAudioParam) {
 
 	console.log(SPAudioParam);
 
-	p = new SPAudioParam(null,null,null,null,o.frequency,function (value) {
-		return value*2;
-	}, null);
+	mapping = function (value){
+		return value;
+	}
+	setter = function (aParam, value, audioContext){
+		aParam.linearRampToValueAtTime(value, audioContext.currentTime + 3);
+	}
 
-	q = new SPAudioParam("test",0,10000,0.1,null,null, context);
+	p = new SPAudioParam(null,null,null,null,o.frequency, mapping, null, context);
+
+	o.start(0);
+
+	//q = new SPAudioParam("test",0,10000,0.1,null,null, context);
 
 });
