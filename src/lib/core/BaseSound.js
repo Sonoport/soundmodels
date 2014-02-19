@@ -75,17 +75,8 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         **/
         this.isPlaying = false;
         /**
-        Temp: Create a sine wave oscillator buffer as a temporary source.
-        Will be replaced by FileReader and parse in an AudioBuffer
-
-        @property bufferSource
-        @type Object
+        Removed bufferSource property from BaseSound
         **/
-        this.bufferSource = this.audioContext.createOscillator();
-        // Connects source to release gain node
-        this.bufferSource.connect( this.releaseGainNode );
-        // Connects release gain node to the destination node
-        this.connect( this.audioContext.destination );
     }
 
     /**
@@ -111,26 +102,24 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.releaseGainNode.disconnect( output );
     };
     /**
-    Start audio at this current time.
+    Start audio at this current time. Abstract method. Override this method when a buffer is defined. 
 
     @method start
     @return null
     @param {Number} currTime Time in (seconds) that audio will start.
     **/
     BaseSound.prototype.start = function ( currTime ) {
-        this.bufferSource.start( currTime );
         this.isPlaying = true;
         console.log( "start the buffer " + this.isPlaying );
     };
     /**
-    Stop audio at this current time.
+    Stop audio at this current time. Abstract method. Override this method when a buffer is defined. 
 
     @method stop
     @return null
     @param {Number} currTime Time in (seconds) that audio will stop.
     **/
     BaseSound.prototype.stop = function ( currTime ) {
-        this.bufferSource.stop( currTime );
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         this.isPlaying = false;
         console.log( "stop the buffer " + this.isPlaying );
@@ -152,16 +141,23 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
     };
     /**
-    Play sound after connecting the (release) Gain Node to the destination node.
+    Play sound. Abstract method. Override this method when a buffer is defined. 
 
     @method play
     @return null
     **/
     BaseSound.prototype.play = function () {
         console.log( "play sound" );
-        this.start( 0 );
     };
+    /**
+    Pause sound. Abstract method. Override this method when a buffer is defined. 
 
+    @method pause
+    @return null
+    **/
+    BaseSound.prototype.pause = function () {
+        console.log( "pause sound" );
+    };
     // Return constructor function
     return BaseSound;
 
