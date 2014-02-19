@@ -10,16 +10,38 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
     "use strict";
 
     var baseSound_;
-    var aFileReaders_;
     var spAudioParam_;
 
-    function Looper( sounds ) {
+    var aFileReaders_;
+    var aAudioBuffers_;
+    var aSources_;
+
+    var bParameterIsString_;
+    var bParameterIsAnAudioBuffer_;
+    var bParameterIsAnArray_;
+
+    var nNumberOfSourcesLoaded_;
+    var nNumberOfSourcesTotal_;
+    
+    var fCallback_;
+
+    function Looper( sounds, callback ) {
 
         if ( !( this instanceof Looper ) ) {
 
             throw new TypeError( "Looper constructor cannot be called as a function." );
 
         }
+
+        aFileReaders_ = [];
+        aAudioBuffers_ = [];
+        aSources_ = [];
+
+        bParameterIsString_ = false;
+        bParameterIsAnAudioBuffer_ = false;
+        bParameterIsAnArray_ = false;
+
+        nNumberOfSourcesLoaded_ = 0;
 
         // Do validation of constructor parameter
         if ( !bParameterValid_( sounds ) ) {
@@ -29,6 +51,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         }
 
         baseSound_ = new BaseSound();
+        fCallback_ = callback;
         parseParameters_( sounds );
 
     }
@@ -51,10 +74,11 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         }
 
         // Check if it is not a just a blank string
-        if ( typeof sounds === String ) {
+        if ( typeof sounds === "string" ) {
 
             if ( /\S/.test( sounds ) ) {
 
+                bParameterIsString_ = true;
                 return true;
 
             }
@@ -64,6 +88,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         // Check if it an AudioBuffer
         if ( Object.prototype.toString.call( sounds ) === '[object AudioBuffer]' ) {
 
+            bParameterIsAnAudioBuffer_ = true;
             return true;
 
         }
@@ -71,12 +96,21 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         // Check if it is an array
         if ( Object.prototype.toString.call( sounds ) === '[object Array]' ) {
 
+            bParameterIsAnArray_ = true;
             return true;
 
         }
 
         console.log( "Error. Wrong parameter for Looper." );
         return false;
+
+    }
+
+    function onLoadSuccess_() {
+ 
+        
+        nNumberOfSourcesLoaded_++;
+        console.log( "Loaded: " + nNumberOfSourcesLoaded_ );
 
     }
 
@@ -89,21 +123,46 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
      */
     function parseParameters_( sounds ) {
 
-        aFileReaders_ = [];
+        console.log( "bParameterIsString_: " + bParameterIsString_ );
+        console.log( "bParameterIsAnAudioBuffer_: " + bParameterIsAnAudioBuffer_ );
+        console.log( "bParameterIsAnArray_: " + bParameterIsAnArray_ );
 
-        for ( var i = 0; i < sounds.length; i++ ) {
+        nNumberOfSourcesTotal_ = 1;
 
-            aFileReaders_[ i ] = new FileReader( baseSound_.audioContext );
-            aFileReaders_[ i ].open( sounds[ i ], ok );
-            console.log( sounds[ i ] );
+        if ( bParameterIsString_ ) {
 
-        }
+            var frString = new FileReader();
+            
+            aFileReaders_.push(frString);
+            
+            frString.open( sounds, onLoadSuccess_ );
+      
+        } 
+        
+//      else if (bParameterIsAnAudioBuffer_) {
+//          
+//          
+//          
+//        }
 
-    }
 
-    function ok() {
+        //        if (bParameterIsAnAudioBuffer_) {
+        //          
+        //          aAudioBuffers_.push(sounds);
+        //          
+        //        }
+        //        
+        //        console.log(aFileReaders_.length);
+        //        console.log(aAudioBuffers_.length)
 
-        console.log( "ok" );
+        //
+        //        for ( var i = 0; i < sounds.length; i++ ) {
+        //
+        //            aFileReaders_[ i ] = new FileReader( baseSound_.audioContext );
+        //            aFileReaders_[ i ].open( sounds[ i ], ok );
+        //            console.log( sounds[ i ] );
+        //
+        //        }
 
     }
 

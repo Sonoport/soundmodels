@@ -222,6 +222,7 @@ define( [ 'core/LoopMarker' ], function ( loopMarker ) {
         var onError = function () {
 
             console.log( "Error loading URL" );
+            fCallback.error();
 
         };
 

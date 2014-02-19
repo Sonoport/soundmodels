@@ -51,7 +51,13 @@ define( [ 'core/LoadFile' ], function ( loadFile ) {
 
                     success: function () {
 
-                        callback();
+                        callback(true);
+
+                    },
+                    
+                    error: function () {
+
+                        callback(false);
 
                     }
 
