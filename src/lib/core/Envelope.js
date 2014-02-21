@@ -84,11 +84,11 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
             console.log( "sustained" );
             // Cancel all audioparam in ADSR
             var now = this.audioContext.currentTime;
-            this.releaseGainNode.gain.cancelScheduledValues( now );
+            //this.releaseGainNode.gain.cancelScheduledValues( now );
             // Anchor gain value
             //this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, now );
             // Set release again
-            this.releaseGainNode.gain.linearRampToValueAtTime( 0, now + fadeTime );
+            this.releaseGainNode.gain.linearRampToValueAtTime( 0, now + this.attackDur + this.decayDur + this.sustainDur + fadeTime );
             // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
         }
     };

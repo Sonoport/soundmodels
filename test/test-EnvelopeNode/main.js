@@ -48,7 +48,7 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		// Pass in ADSR envelope
 		//envTest.initADSR(false);
 		
-		//envTest.initADSR(true, 0.1, 0.1, 0.4, 0.1, 0.5);
+		envTest.initADSR(true, 0.1, 0.1, 0.1, 0.1, 0.5);
 		
 		
 		// Connects oscillator source's gain node to an envelope's gain node
