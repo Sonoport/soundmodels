@@ -7,12 +7,20 @@ define(
 
           @class SPAudioParam
           @constructor
+          @param {String} name The name of the parameter.
+          @param {Number} minValue The minimum value of the parameter.
+          @param {Number} maxValue The maximum value of the parameter.
+          @param {Number} defaultValue The default and starting value of the parameter.
+          @param {AudioParam} aParam A WebAudio parameter which will be set/get when this parameter is changed.
+          @param {Function} mappingFunction A mapping function to map values between the mapped SPAudioParam and the underlying WebAudio AudioParam.
+          @param {Function} setter A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.
+          @param {AudioContext} audioContext A WebAudio AudioContext for timing.
           **/
-        function SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mapping, audioContext ) {
+        function SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mappingFunction, setter, audioContext ) {
             // Min diff between set and actual
             // values to stop updates.
             var MIN_DIFF = 0.0001;
-            var UPDATE_INTERVAL_MS = 100;
+            var UPDATE_INTERVAL_MS = 500;
 
             var intervalID_;
 
@@ -82,12 +90,18 @@ define(
 
                     if ( aParam ) {
                         // If mapped param
-                        // Map if mapping is defined
-                        if ( typeof mapping === 'function' ) {
-                            // Map if mapping is defined
-                            value = mapping( value );
+                        // Map if mappingFunction is defined
+                        if ( typeof mappingFunction === 'function' ) {
+                            // Map if mappingFunction is defined
+                            value = mappingFunction( value );
                         }
-                        aParam.value = value;
+                        if ( typeof setter === 'function' && audioContext ) {
+                            // If setter is defined call it
+                            setter( aParam, value, audioContext );
+                        } else {
+                            aParam.value = value;
+                        }
+
                     } else {
                         // If Psuedo param
                         value_ = value;
@@ -137,8 +151,8 @@ define(
             @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
             **/
             this.setValueAtTime = function ( value, startTime ) {
-                if ( typeof mapping === 'function' ) {
-                    value = mapping( value );
+                if ( typeof mappingFunction === 'function' ) {
+                    value = mappingFunction( value );
                 }
 
                 if ( aParam ) {
@@ -167,8 +181,8 @@ define(
             @param {Number} timeConstant The timeConstant parameter is the time-constant value of first-order filter (exponential) approach to the target value. The larger this value is, the slower the transition will be.
             **/
             this.setTargetAtTime = function ( target, startTime, timeConstant ) {
-                if ( typeof mapping === 'function' ) {
-                    target = mapping( target );
+                if ( typeof mappingFunction === 'function' ) {
+                    target = mappingFunction( target );
                 }
                 if ( aParam ) {
                     aParam.setTargetAtTime( target, startTime, timeConstant );
@@ -203,9 +217,9 @@ define(
             @param {Number} duration The duration parameter is the amount of time in seconds (after the startTime parameter) where values will be calculated according to the values parameter.
             **/
             this.setValueCurveAtTime = function ( values, startTime, duration ) {
-                if ( typeof mapping === 'function' ) {
+                if ( typeof mappingFunction === 'function' ) {
                     for ( var index = 0; index < values.length; index++ ) {
-                        values[ index ] = mapping( values[ index ] );
+                        values[ index ] = mappingFunction( values[ index ] );
                     }
                 }
                 if ( aParam ) {
@@ -237,8 +251,8 @@ define(
             @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
             **/
             this.exponentialRampToValueAtTime = function ( value, endTime ) {
-                if ( typeof mapping === 'function' ) {
-                    value = mapping( value );
+                if ( typeof mappingFunction === 'function' ) {
+                    value = mappingFunction( value );
                 }
                 if ( aParam ) {
                     aParam.exponentialRampToValueAtTime( value, endTime );
@@ -265,8 +279,8 @@ define(
             @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
             **/
             this.linearRampToValueAtTime = function ( value, endTime ) {
-                if ( typeof mapping === 'function' ) {
-                    value = mapping( value );
+                if ( typeof mappingFunction === 'function' ) {
+                    value = mappingFunction( value );
                 }
                 if ( aParam ) {
                     aParam.linearRampToValueAtTime( value, endTime );
@@ -330,11 +344,13 @@ define(
         @param {Number} maxValue The maximum value of the parameter.
         @param {Number} defaultValue The default and starting value of the parameter.
         @param {AudioParam} aParam A WebAudio parameter which will be set/get when this parameter is changed.
-        @param {Function} mapping A mapping function to map values between the mapped SPAudioParam and the underlying WebAudio AudioParam.
+        @param {Function} mappingFunction A mapping function to map values between the mapped
+        SPAudioParam and the underlying WebAudio AudioParam.
+        @param {Function} setter A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.
         **/
-        SPAudioParam.createMappedParam = function ( name, minValue, maxValue, defaultValue, aParam, mapping ) {
+        SPAudioParam.createMappedParam = function ( name, minValue, maxValue, defaultValue, aParam, mappingFunction, setter, audioContext ) {
 
-            return new SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mapping );
+            return new SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mappingFunction, setter, audioContext );
         };
 
         return SPAudioParam;
