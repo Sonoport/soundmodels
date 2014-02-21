@@ -3,12 +3,23 @@ require.config({
 });
 
 // Start app logic
-require(['core/BaseSound','core/Envelope','require'],
-	function(BaseSound, Envelope, require) {
+require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','require'],
+	function(BaseSound, Envelope, BSOscillator, require) {
 		console.log("main app loaded.");
 
+		// =============== Animation related ==================
+		// cancel animation frame
+		window.cancelRequestAnimFrame = ( function() {
+    return window.cancelAnimationFrame          ||
+        window.webkitCancelRequestAnimationFrame    ||
+        window.mozCancelRequestAnimationFrame       ||
+        window.oCancelRequestAnimationFrame     ||
+        window.msCancelRequestAnimationFrame        ||
+        clearTimeout
+	} )();
 		// shim layer with setTimeout fallback
-		window.requestAnimFrame = (function(){
+		// Start animation frame
+	  window.requestAnimFrame = (function(){
  			return  window.requestAnimationFrame       ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame    ||
@@ -17,14 +28,47 @@ require(['core/BaseSound','core/Envelope','require'],
           };
 		})();
 
-		// Create an envelope.
-		var envTest = new Envelope();
-		//envTest.play();
-		//envTest.release();
+		var reqID;
+		
+		
+		// =============== Sound related ==================
+		// Global AudioContext
+		//var ac = new AudioContext();
 
-		function runTimer() {
-			console.log("timing "+bs.audioContext.currentTime);
-			requestAnimFrame(runTimer);
+		// Create a Oscillator source
+		var bsosc = new BSOscillator();
+		//bsosc.connect(bsosc.audioContext.destination);
+		bsosc.start();
+
+		// Create an envelope.
+		//**************** ISSUE ALERT *******************
+		// Currently, the second variable needs to pass in the previous created AudioContext in order to use the same context being defined
+		// Need to resolve this issue.
+		var envTest = new Envelope(bsosc.audioContext);
+		// Pass in ADSR envelope
+		//envTest.initADSR(false);
+		
+		//envTest.initADSR(true, 0.1, 0.1, 0.4, 0.1, 0.5);
+		
+		
+		// Connects oscillator source's gain node to an envelope's gain node
+		bsosc.connect(envTest.releaseGainNode);
+		envTest.connect(bsosc.audioContext.destination);
+		
+		//bsosc.release();
+		envTest.release();
+
+		// =============== Animation related ==================
+		// Using this to print values in order not to exceed browser's console stack.
+		function startAni() {
+			reqID = requestAnimFrame(startAni);
+			console.log(envTest.releaseGainNode.gain.value);
 		}
-		//runTimer();
+		// Start animation loop
+		startAni();
+
+		// cancel animation loop in some (2) seconds
+		setTimeout(function() {
+			cancelRequestAnimFrame(reqID);
+		}, 2*1000);
 });

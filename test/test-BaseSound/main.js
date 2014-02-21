@@ -20,8 +20,8 @@ require(['core/BaseSound', 'require' ],
 		
 		// Create a new BaseSound
 		var bs = new BaseSound();
-		//bs.play();
-		//bs.release();
+		bs.play();
+		bs.release();
 
 		//var gainNode = bs.audioContext.createGain();
 		//bs.connect(gainNode);

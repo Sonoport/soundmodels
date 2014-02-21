@@ -11,7 +11,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
 define( [ 'core/AudioContextMonkeyPatch' ], function () {
     'use strict';
 
-    function BaseSound( audioContext ) {
+    function BaseSound( context ) {
         /**
         Define one audioContext from Web Audio API's AudioContext class.
 
@@ -19,12 +19,11 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         @type AudioContext
         @default audioContext
         **/
-        if ( typeof audioContext === "undefined" ) {
-            // Need to check for prefixes for AudioContext
+        if ( typeof context === "undefined" ) {
             this.audioContext = new AudioContext();
             console.log( "new audioContext" );
         } else {
-            this.audioContext = audioContext;
+            this.audioContext = context;
             console.log( "current ac" );
         }
         /**
