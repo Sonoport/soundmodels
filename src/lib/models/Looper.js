@@ -240,6 +240,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         /**
          * Populate sources
+         * @method populateSources
          * @private
          */
         this.populateSources_ = function () {
@@ -253,23 +254,11 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
                     var source = this.audioContext.createBufferSource();
 
-                    /////
-
-                    var gainNode = this.audioContext.createGain();
-
-                    source.connect( gainNode );
-
-
-                    /////
-
+                    source.connect( this.releaseGainNode );
                     source.loop = true;
                     source.buffer = this.getFileReaders_()[ i ].getBuffer();
-                    //                    source.connect( this.audioContext.destination );
 
-                    gainNode.connect( this.audioContext.destination );
-                    gainNode.gain.value = 0.1;
-
-                    //
+                    this.releaseGainNode.connect( this.audioContext.destination );
                     this.getSources_()
                         .push( source );
 
@@ -282,6 +271,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         /**
          * Handler for successfull file / buffer loads
          * @private
+         * @method onLoadSuccess
          * @param {Boolean} bSuccess The result if it was a success (true) or not (false).
          */
         this.onLoadSuccess_ = function ( bSuccess ) {
@@ -391,6 +381,12 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         constructor: Looper,
 
+        /**
+         * Start playing after specific time and on what part of the sound.
+         * @method start
+         * @param {Number} currTime The delay in seconds before playing the sound
+         * @param {Number} offset The starting position of the playhead
+         */
         start: function ( currTime, offset ) {
 
             if ( typeof currTime === "undefined" ) {
@@ -425,6 +421,10 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         },
 
+        /**
+         * Stops the sound and resets play head to 0.
+         * @method stop
+         */
         stop: function () {
 
             if ( this.isPlaying ) {
@@ -443,6 +443,10 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         },
 
+        /**
+         * Plays the sound at position 0.
+         * @method play
+         */
         play: function () {
 
             this.setPlayPosition_( 0 );
@@ -450,14 +454,18 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         },
 
+        /**
+         * Pause the currently playing sound
+         * @method pause
+         */
         pause: function () {
 
             if ( this.isPlaying ) {
 
-                var temp = this.getPlayPosition_();
+                var currentPlayPosition = this.getPlayPosition_();
 
                 this.stop();
-                this.setPlayPosition_( this.audioContext.currentTime - this.getStartPosition_() + temp );
+                this.setPlayPosition_( this.audioContext.currentTime - this.getStartPosition_() + currentPlayPosition );
 
             } else {
 
@@ -465,29 +473,42 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
             }
 
+        },
+
+        /**
+         * Linearly ramp down the gain of the audio in time (seconds) to 0.
+         * @method release
+         * @param {Number} fadeTime Amount of time it takes for linear ramp down to happen.
+         */
+        release: function ( fadeTime ) {
+
+            BaseSound.prototype.release.call( this, fadeTime );
+
+        },
+
+        /**
+         * Connects release Gain Node to an AudioNode or AudioParam.
+         * @method connect
+         * @param {Object} output Connects to an AudioNode or AudioParam.
+         */
+        connect: function ( output ) {
+
+            this.getBaseSound_()
+                .connect( output );
+
+        },
+
+        /**
+         * Disconnects release Gain Node from an AudioNode or AudioParam.
+         * @param {Object} output Takes in an AudioNode or AudioParam.
+         */
+        disconnect: function ( output ) {
+
+            this.getBaseSound_()
+                .connect( output );
+
         }
-        //
-        //        release: function () {
-        //
-        //            this.getBaseSound_()
-        //                .release();
-        //
-        //        },
-        //
-        //        connect: function ( output ) {
-        //
-        //            this.getBaseSound_()
-        //                .connect( output );
-        //
-        //        },
-        //
-        //        disconnect: function ( output ) {
-        //
-        //            this.getBaseSound_()
-        //                .connect( output );
-        //
-        //        },
-        //
+
         //        playSpeed: function ( value ) {
         //
         //            this.getSpAudioParam_()

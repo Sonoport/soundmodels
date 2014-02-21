@@ -149,7 +149,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.releaseGainNode.gain.linearRampToValueAtTime( 0, this.audioContext.currentTime + fadeTime );
         console.log( "release: linear ramp down after " + fadeTime + " seconds." );
         // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
-        this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
+        //this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
     };
     /**
     Play sound after connecting the (release) Gain Node to the destination node.
