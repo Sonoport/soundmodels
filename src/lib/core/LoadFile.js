@@ -7,236 +7,377 @@
  * @param {String} sLink The URL
  * @return {ArrayBuffer} An ArrayBuffer.
  */
-define( [ 'core/LoopMarker' ], function ( loopMarker ) {
+define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
 
     "use strict";
 
-    var buffer_;
-    var bIsNotWavFile_ = false;
-    var bSoundLoaded_ = false;
-    var context_;
-    var sLink_;
+    function LoadFile() {
 
-    /**
-     * Check if a value is an integer.
-     * @private
-     * @param {Object} value
-     * @returns {Boolean} Result of test.
-     */
-    function isInt_( value ) {
+        if ( !( this instanceof LoadFile ) ) {
 
-        var er = /^[0-9]+$/;
-
-        if ( er.test( value ) ) {
-
-            return true;
+            throw new TypeError( "LoadFile constructor cannot be called as a function." );
 
         }
 
-        return false;
+        var loopMarker_;
+        var buffer_;
+        var bIsNotWavFile_ = false;
+        var bSoundLoaded_ = false;
+        var context_;
+        var sName_ = Math.random();
 
-    }
+        //        console.log( "LoadFile created: " + sName_ );
 
-    /**
-     * Get a buffer based on the start and end markers.
-     * @private
-     * @method sliceBuffer
-     * @param {Number} start The start of the buffer to load.
-     * @param {Number} end The end of the buffer to load.
-     * @returns {AudioBuffer} The trimmed buffer.
-     */
-    function sliceBuffer_( start, end ) {
+        // Privilege functions
 
-        var aChannels = [];
-        var nChannels = buffer_.numberOfChannels;
-        var nLength = buffer_.length;
-        var newBuffer;
+        this.setLoopMarker_ = function ( value ) {
 
-        // Set end if it is missing
-        if ( typeof end === "undefined" ) {
+            loopMarker_ = value;
 
-            end = buffer_.length;
+        };
 
-        }
+        this.getLoopMarker_ = function () {
 
-        // Verify parameters
-        if ( !isInt_( start ) ) {
+            return loopMarker_;
 
-            console.log( "getBuffer Start parameter is not an integer" );
-            return;
+        };
 
-        } else if ( !isInt_( end ) ) {
+        this.setBuffer_ = function ( value ) {
 
-            console.log( "getBuffer End parameter is not an integer" );
-            return;
+            buffer_ = value;
 
-        }
+        };
 
-        // Check if start is smaller than end
-        if ( start > end ) {
+        this.getBuffer_ = function () {
 
-            console.log( "getBuffer Start parameter should be bigger than End parameter" );
-            return;
+            return buffer_;
 
-        }
+        };
 
-        // Check if start is beyong buffer size
-        if ( start > buffer_.length ) {
+        this.setIsNotWavFile_ = function ( value ) {
 
-            console.log( "getBuffer Start parameter should be withing buffer length" );
-            return;
+            bIsNotWavFile_ = value;
 
-        }
+        };
 
-        // Check if end is larger that the buffer size and adjust accordingly
-        if ( end > buffer_.length ) {
+        this.getIsNotWavFile_ = function () {
 
-            end = -1;
+            return bIsNotWavFile_;
 
-        }
+        };
 
-        // Start trimming
-        for ( var i = 0; i < nChannels; i++ ) {
+        this.setSoundLoaded_ = function ( value ) {
 
-            var aData = new Float32Array( buffer_.getChannelData( i ) );
-            aChannels[ i ] = aData.subarray( start, end );
+            bSoundLoaded_ = value;
 
-        }
+        };
 
-        if ( aChannels.length > 0 ) {
+        this.getSoundLoaded_ = function () {
 
-            nLength = aChannels[ 0 ].length;
+            return bSoundLoaded_;
 
-        }
+        };
 
-        // Create the new buffer
-        newBuffer = context_.createBuffer( buffer_.numberOfChannels, nLength, buffer_.sampleRate );
+        this.setContext_ = function ( value ) {
 
-        for ( var j = 0; j < nChannels; j++ ) {
+            context_ = value;
 
-            newBuffer.getChannelData( j )
-                .set( aChannels[ j ] );
+        };
 
-        }
+        this.getContext_ = function () {
 
-        return newBuffer;
+            return context_;
 
-    }
+        };
 
-    /**
-     * Get the current buffer.
-     * @method getBuffer
-     * @param {Number} start The start index
-     * @param {Number} end the end index
-     * @returns {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
-     */
-    var getBuffer = function ( start, end ) {
+        this.setName_ = function ( value ) {
 
-        // Do trimming if it is not a wave file
-        if ( bIsNotWavFile_ ) {
+            sName_ = value;
 
-            if ( end + loopMarker.getStartMarker() > loopMarker.getEndMarker() ) {
+        };
 
-                end = loopMarker.getEndMarker();
+        this.getName_ = function () {
+
+            return sName_;
+
+        };
+
+        // Private functions
+
+        /**
+         * Check if a value is an integer.
+         * @private
+         * @param {Object} value
+         * @returns {Boolean} Result of test.
+         */
+        this.isInt_ = function ( value ) {
+
+            var er = /^[0-9]+$/;
+
+            if ( er.test( value ) ) {
+
+                return true;
 
             }
 
-            return sliceBuffer_( start + loopMarker.getStartMarker(), end + loopMarker.getStartMarker() );
+            return false;
 
-        }
+        };
 
-        return sliceBuffer_( start, end );
+        /**
+         * Get a buffer based on the start and end markers.
+         * @private
+         * @method sliceBuffer
+         * @param {Number} start The start of the buffer to load.
+         * @param {Number} end The end of the buffer to load.
+         * @returns {AudioBuffer} The trimmed buffer.
+         */
+        this.sliceBuffer_ = function ( start, end ) {
 
-    };
+            var aChannels = [];
+            var nChannels = buffer_.numberOfChannels;
+            var nLength = buffer_.length;
+            var newBuffer;
 
-    /**
-     * Get the original buffer.
-     * @method getRawBuffer
-     * @returns {AudioBuffer} The original AudioBuffer.
-     */
-    var getRawBuffer = function () {
+            // Set end if it is missing
+            if ( typeof end === "undefined" ) {
 
-        return buffer_;
+                end = buffer_.length;
 
-    };
+            }
 
-    /**
-     * Check if sound is already loaded.
-     * @method isLoaded
-     * @returns {Boolean} True if file is loaded. Flase if file is not yeat loaded.
-     */
-    var isLoaded = function () {
+            // Verify parameters
+            if ( !this.isInt_( start ) ) {
 
-        return bSoundLoaded_;
+                console.log( "getBuffer Start parameter is not an integer" );
+                return;
 
-    };
+            } else if ( !this.isInt_( end ) ) {
 
-    /**
-     * Load a file based on the URI.
-     * @method load
-     * @param {String} link The link of the file to load.
-     * @param {AudioContext} context The Audio context.
-     * @param {Function} callback The function to call when file loads.
-     */
-    var load = function ( sLink, context, fCallback ) {
+                console.log( "getBuffer End parameter is not an integer" );
+                return;
 
-        var request = new XMLHttpRequest();
+            }
 
-        bSoundLoaded_ = false;
-        bIsNotWavFile_ = false;
-        context_ = context;
-        sLink_ = sLink.toLocaleLowerCase();
+            // Check if start is smaller than end
+            if ( start > end ) {
 
-        request.open( 'GET', sLink, true );
-        request.responseType = 'arraybuffer';
+                console.log( "getBuffer Start parameter should be bigger than End parameter" );
+                return;
 
-        // Handler for onLoad
-        request.onload = function () {
+            }
 
-            context.decodeAudioData( request.response, function ( buffer ) {
+            // Check if start is beyong buffer size
+            if ( start > buffer_.length ) {
 
-                var aEr = /[^.]+$/.exec( sLink_ );
+                console.log( "getBuffer Start parameter should be within buffer length" );
+                return;
 
-                console.log( "File successfully loaded" );
+            }
 
-                bSoundLoaded_ = true;
-                buffer_ = buffer;
+            // Check if end is larger that the buffer size and adjust accordingly
+            if ( end > buffer_.length ) {
 
-                // Do trimming if it is not a wave file
-                if ( aEr[ 0 ] !== "wav" ) {
+                end = -1;
 
-                    bIsNotWavFile_ = true;
+            }
 
-                    // Detect loop markers
-                    loopMarker.detectMarkers( buffer_ );
+            // Start trimming
+            for ( var i = 0; i < nChannels; i++ ) {
+
+                var aData = new Float32Array( buffer_.getChannelData( i ) );
+                aChannels[ i ] = aData.subarray( start, end );
+
+            }
+
+            if ( aChannels.length > 0 ) {
+
+                nLength = aChannels[ 0 ].length;
+
+            }
+
+            // Create the new buffer
+            newBuffer = context_.createBuffer( buffer_.numberOfChannels, nLength, buffer_.sampleRate );
+
+            for ( var j = 0; j < nChannels; j++ ) {
+
+                newBuffer.getChannelData( j )
+                    .set( aChannels[ j ] );
+
+            }
+
+            return newBuffer;
+
+        };
+
+        /**
+         * Check the link type
+         * @param {String | Array | AudioBuffer} link
+         * @returns {String} The link type
+         */
+        this.checkLinkType_ = function ( link ) {
+
+            if ( typeof link === "string" ) {
+
+                return "string";
+
+            } else if ( Object.prototype.toString.call( link ) === '[object AudioBuffer]' ) {
+
+                return "audiobuffer";
+            }
+
+            return "unknown";
+
+        };
+
+    }
+
+    // Public functions
+
+    LoadFile.prototype = {
+
+        constructor: LoadFile,
+
+        /**
+         * Get the current buffer.
+         * @method getBuffer
+         * @param {Number} start The start index
+         * @param {Number} end the end index
+         * @returns {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
+         */
+        getBuffer: function ( start, end ) {
+
+            // Set start if it is missing
+            if ( typeof start === "undefined" ) {
+
+                start = 0;
+
+            }
+
+            // Set end if it is missing
+            if ( typeof end === "undefined" ) {
+
+                end = this.getBuffer_()
+                    .length;
+
+            }
+
+            // Do trimming if it is not a wave file
+            if ( this.getIsNotWavFile_() ) {
+
+                if ( end + this.getLoopMarker_()
+                    .getStartMarker() > this.getLoopMarker_()
+                    .getEndMarker() ) {
+
+                    end = this.getLoopMarker_()
+                        .getEndMarker();
 
                 }
 
-                fCallback.success();
+                return this.sliceBuffer_( start + this.getLoopMarker_()
+                    .getStartMarker(), end + this.getLoopMarker_()
+                    .getStartMarker() );
 
-            }, onError );
+            }
 
-        };
+            return this.sliceBuffer_( start, end );
 
-        // Handler for onError
-        var onError = function () {
+        },
 
-            console.log( "Error loading URL" );
+        /**
+         * Get the original buffer.
+         * @method getRawBuffer
+         * @returns {AudioBuffer} The original AudioBuffer.
+         */
+        getRawBuffer: function () {
 
-        };
+            return this.getBuffer_();
 
-        request.send();
+        },
+
+        /**
+         * Check if sound is already loaded.
+         * @method isLoaded
+         * @returns {Boolean} True if file is loaded. Flase if file is not yeat loaded.
+         */
+        isLoaded: function () {
+
+            return this.getSoundLoaded_();
+
+        },
+
+        /**
+         * Load a file based on the URI.
+         * @method load
+         * @param {String} link The link of the file to load.
+         * @param {AudioContext} context The Audio context.
+         * @param {Function} callback The function to call when file loads.
+         */
+        load: function ( link, context, callback ) {
+
+            var that = this;
+            var request = new XMLHttpRequest();
+
+            this.setSoundLoaded_( false );
+            this.setIsNotWavFile_( false );
+            this.setContext_( context );
+
+            if ( this.checkLinkType_( link ) === "audiobuffer" ) {
+
+                this.setSoundLoaded_( true );
+                this.setBuffer_( link );
+                callback.success();
+
+                return;
+
+            }
+
+            request.open( 'GET', link, true );
+            request.responseType = 'arraybuffer';
+
+            // Handler for onLoad
+            request.onload = function () {
+
+                context.decodeAudioData( request.response, function ( buffer ) {
+
+                    var aEr = /[^.]+$/.exec( link );
+
+                    that.setSoundLoaded_( true );
+                    that.setBuffer_( buffer );
+
+                    // Do trimming if it is not a wave file
+                    if ( aEr[ 0 ] !== "wav" ) {
+
+                        that.setIsNotWavFile_( true );
+
+                        // Detect loop markers
+                        that.setLoopMarker_( new LoopMarker() );
+
+                        that.getLoopMarker_()
+                            .detectMarkers( that.getBuffer_() );
+
+                    }
+
+                    callback.success();
+
+                }, onError );
+
+            };
+
+            // Handler for onError
+            var onError = function () {
+
+                console.log( "Error loading URL" );
+                callback.error();
+
+            };
+
+            request.send();
+
+        }
 
     };
 
-    // Exposed methods
-    return {
-
-        isLoaded: isLoaded,
-        load: load,
-        getBuffer: getBuffer,
-        getRawBuffer: getRawBuffer
-
-    };
+    return LoadFile;
 
 } );
