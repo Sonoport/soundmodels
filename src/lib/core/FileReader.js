@@ -5,7 +5,7 @@
  * @description Read contents of file.
  * @module FileReader
  */
-define( [ 'core/LoadFile' ], function ( loadFile ) {
+define( [ 'core/LoadFile' ], function ( LoadFile ) {
 
     "use strict";
 
@@ -17,13 +17,10 @@ define( [ 'core/LoadFile' ], function ( loadFile ) {
 
         }
 
-        // Determine if AudioContext was pass as a parameter. If not make one.
-        if ( typeof context === "undefined" ) {
+        var loadFile_;
+        var sName_ = Math.random();
 
-            console.log( "No AudioContext instance found. Creating a new AudioContext." );
-            context = new AudioContext();
-
-        }
+        //console.log( "FileReader created: " + sName_ );
 
         /**
          * @property context
@@ -31,7 +28,45 @@ define( [ 'core/LoadFile' ], function ( loadFile ) {
          */
         this.context = context;
 
+        // Privilege functions
+
+        this.setLoadFile_ = function ( value ) {
+
+            loadFile_ = value;
+
+        };
+
+        this.getLoadFile_ = function () {
+
+            return loadFile_;
+
+        };
+
+        this.setName_ = function ( value ) {
+
+            sName_ = value;
+
+        };
+
+        this.getName_ = function () {
+
+            return sName_;
+
+        };
+
+        // Init
+
+        // Determine if AudioContext was pass as a parameter. If not make one.
+        if ( typeof context === "undefined" ) {
+
+            console.log( "No AudioContext instance found. Creating a new AudioContext." );
+            this.context = new AudioContext();
+
+        }
+
     }
+
+    // Public functions
 
     FileReader.prototype = {
 
@@ -45,23 +80,26 @@ define( [ 'core/LoadFile' ], function ( loadFile ) {
          */
         open: function ( link, callback ) {
 
+            this.setLoadFile_( new LoadFile() );
+
             if ( window.AudioContext || window.webkitAudioContext ) {
 
-                loadFile.load( link, this.context, {
+                this.getLoadFile_()
+                    .load( link, this.context, {
 
-                    success: function () {
+                        success: function () {
 
-                        callback(true);
+                            callback( true );
 
-                    },
-                    
-                    error: function () {
+                        },
 
-                        callback(false);
+                        error: function () {
 
-                    }
+                            callback( false );
 
-                } );
+                        }
+
+                    } );
 
             } else {
 
@@ -78,7 +116,8 @@ define( [ 'core/LoadFile' ], function ( loadFile ) {
          */
         isLoaded: function () {
 
-            return loadFile.isLoaded();
+            return this.getLoadFile_()
+                .isLoaded();
 
         },
 
@@ -91,7 +130,8 @@ define( [ 'core/LoadFile' ], function ( loadFile ) {
          */
         getBuffer: function ( start, end ) {
 
-            return loadFile.getBuffer( start, end );
+            return this.getLoadFile_()
+                .getBuffer( start, end );
 
         },
 
@@ -102,7 +142,8 @@ define( [ 'core/LoadFile' ], function ( loadFile ) {
          */
         getRawBuffer: function () {
 
-            return loadFile.getRawBuffer();
+            return this.getLoadFile_()
+                .getRawBuffer();
 
         }
 

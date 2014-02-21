@@ -85,7 +85,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         // Connects source to release gain node
         //        this.bufferSource.connect( this.releaseGainNode );
         // Connects release gain node to the destination node
-        this.connect( this.audioContext.destination );
+        //        this.connect( this.audioContext.destination );
     }
 
     /**
@@ -118,7 +118,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     @param {Number} currTime Time in (seconds) that audio will start.
     **/
     BaseSound.prototype.start = function ( currTime ) {
-        this.bufferSource.start( currTime );
+        //        this.bufferSource.start( currTime );
         this.isPlaying = true;
         console.log( "start the buffer " + this.isPlaying );
     };
