@@ -35,19 +35,8 @@ define(['core/BaseSound'], function( BaseSound ) {
 
 	BSOscillator.prototype.release = function release(fadeTime) {
 		BaseSound.prototype.release.call(this, fadeTime);
-		
-    // This stop() function is causgin the linearRampToValueAtTime to stop firing. Could be due to 
-    // audioContext.currentTime +fadeTime + this.FADE_TIME_PAD has already passed. Need to find out why.
-		//this.stop(this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD);
 	};
 
-	BSOscillator.prototype.meme = function (value) {
-		if (value) {
-			console.log(value);
-		} else {
-			throw "no Value defined";
-		}
-	};
 
 	return BSOscillator;
 	

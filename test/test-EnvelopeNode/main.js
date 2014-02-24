@@ -46,17 +46,16 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		// Need to resolve this issue.
 		var envTest = new Envelope(bsosc.audioContext);
 		// Pass in ADSR envelope
-		//envTest.initADSR(false);
+		envTest.initADSR(false);
 		
-		envTest.initADSR(true, 0.1, 0.1, 0.1, 0.1, 0.5);
-		
+		envTest.initADSR(false, 0.1, 0.1, 0.1, 0.1, 0.5);
 		
 		// Connects oscillator source's gain node to an envelope's gain node
 		bsosc.connect(envTest.releaseGainNode);
 		envTest.connect(bsosc.audioContext.destination);
 		
 		//bsosc.release();
-		envTest.release();
+		//envTest.release(3);
 
 		// =============== Animation related ==================
 		// Using this to print values in order not to exceed browser's console stack.
@@ -67,8 +66,18 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		// Start animation loop
 		startAni();
 
+		function stopAni() {
+			if (reqID) {
+				cancelRequestAnimFrame(reqID);
+			}
+			reqID = 0;
+		}
+
 		// cancel animation loop in some (2) seconds
 		setTimeout(function() {
-			cancelRequestAnimFrame(reqID);
+			cancelRequestAnimFrame(reqID);	
+			// Ramp down the sound after 2 seconds
+			envTest.release();
 		}, 2*1000);
+		
 });

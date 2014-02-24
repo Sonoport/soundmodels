@@ -134,6 +134,9 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         if ( typeof fadeTime === "undefined" ) {
             fadeTime = this.FADE_TIME;
         }
+        // Clamp the current gain value at this point of time to prevent sudden jumps.
+        this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, this.audioContext.currentTime );
+        // Now there won't be any glitch and there is a smooth ramp down.
         this.releaseGainNode.gain.linearRampToValueAtTime( 0, this.audioContext.currentTime + fadeTime );
         console.log( "release: linear ramp down after " + fadeTime + " seconds." );
         // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
