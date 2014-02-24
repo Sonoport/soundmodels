@@ -2,11 +2,12 @@
 
 Base class for all sounds.
 
-Pseudo AudioNode class the encapsulates basic functionality of creating a AudioContext and passing in audio file buffer.
+Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. 
+This is where AudioContext will be created and all sounds will be using this AudioContext.
 
 @class BaseSound
 @constructor
-@param {AudioContext} audioContext
+@param {AudioContext} context
 **/
 define( [ 'core/AudioContextMonkeyPatch' ], function () {
     'use strict';

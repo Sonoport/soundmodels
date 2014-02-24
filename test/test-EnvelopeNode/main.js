@@ -16,7 +16,7 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
         window.oCancelRequestAnimationFrame     ||
         window.msCancelRequestAnimationFrame        ||
         clearTimeout
-	} )();
+	  } )();
 		// shim layer with setTimeout fallback
 		// Start animation frame
 	  window.requestAnimFrame = (function(){
@@ -46,16 +46,21 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		// Need to resolve this issue.
 		var envTest = new Envelope(bsosc.audioContext);
 		// Pass in ADSR envelope
-		envTest.initADSR(false);
+		// Default value
+		//envTest.initADSR(false);
 		
+		// Longer envelope duration without sustain
 		envTest.initADSR(false, 0.1, 0.1, 0.1, 0.1, 0.5);
+
+		// Longer envelope duration with sustain
+		//envTest.initADSR(true, 0.1, 0.1, 0.1, 0.1, 0.5);
 		
 		// Connects oscillator source's gain node to an envelope's gain node
 		bsosc.connect(envTest.releaseGainNode);
 		envTest.connect(bsosc.audioContext.destination);
 		
 		//bsosc.release();
-		//envTest.release(3);
+		//envTest.release();
 
 		// =============== Animation related ==================
 		// Using this to print values in order not to exceed browser's console stack.
@@ -74,10 +79,27 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		}
 
 		// cancel animation loop in some (2) seconds
-		setTimeout(function() {
+		/*setTimeout(function() {
 			cancelRequestAnimFrame(reqID);	
 			// Ramp down the sound after 2 seconds
 			envTest.release();
-		}, 2*1000);
+		}, 2*1000);*/
 		
+		// ==================== DOM ========================
+		var envElement = document.getElementById('envBtn');
+		envElement.onclick = fireEnv;
+		function fireEnv() {
+			envTest.reinit();
+			envTest.initADSR(false, 0.1, 0.1, 0.1, 0.1, 0.5);
+		}
+		var logEle = document.getElementById('stopPrintBtn');
+		logEle.onclick = stopPrint;
+		function stopPrint() {
+			stopAni();
+		}
+		var releaseElem = document.getElementById('releaseBtn');
+		releaseElem.onclick = releaseStop;
+		function releaseStop() {
+			envTest.release();
+		}
 });

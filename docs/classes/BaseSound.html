@@ -43,11 +43,21 @@
             
                 <li><a href="../classes/BaseSound.html">BaseSound</a></li>
             
+                <li><a href="../classes/Envelope.html">Envelope</a></li>
+            
+                <li><a href="../classes/FileReader.html">FileReader</a></li>
+            
+                <li><a href="../classes/LoadFile.html">LoadFile</a></li>
+            
+                <li><a href="../classes/LoopMarker.html">LoopMarker</a></li>
+            
                 <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
             
             </ul>
 
             <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/FileReader.html">FileReader</a></li>
             
             </ul>
         </div>
@@ -97,6 +107,10 @@
     
 
     
+        
+            Module: <a href="../modules/FileReader.html">FileReader</a>
+        
+    
 
     
 </div>
@@ -104,8 +118,9 @@
 
 
 <div class="box intro">
-    <p>Base class for all sounds. 
-Pseudo AudioNode class the encapsulates basic functionality of creating a AudioContext and passing in audio file buffer.</p>
+    <p>Base class for all sounds.
+Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. 
+This is where AudioContext will be created and all sounds will be using this AudioContext.</p>
 
 </div>
 
@@ -121,7 +136,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
                 <li class="arg">
                     
-                        <code>audioContext</code>
+                        <code>context</code>
                     
                 </li>
             
@@ -176,7 +191,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
                 <li class="param">
                     
-                        <code class="param-name">audioContext</code>
+                        <code class="param-name">context</code>
                         <span class="type">AudioContext</span>
                     
 
@@ -240,6 +255,13 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
                             </li>
                         
                             <li class="index-item method">
+                                <a href="#method_pause">pause</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
                                 <a href="#method_play">play</a>
 
                                 
@@ -279,13 +301,6 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
                         
                             <li class="index-item property">
                                 <a href="#property_audioContext">audioContext</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_bufferSource">bufferSource</a>
 
                                 
                                 
@@ -393,7 +408,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l91"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:91</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l82"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:82</code></a>
         
         </p>
 
@@ -498,7 +513,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l102"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:102</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l93"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:93</code></a>
         
         </p>
 
@@ -557,6 +572,77 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
 </div>
 
                 
+                    <div id="method_pause" class="method item">
+    <h3 class="name"><code>pause</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type"></span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_lib_core_BaseSound.js.html#l155"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:155</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Pause sound. Abstract method. Override this method when a buffer is defined.</p>
+
+    </div>
+
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                    <p>null</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
                     <div id="method_play" class="method item">
     <h3 class="name"><code>play</code></h3>
 
@@ -593,7 +679,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l154"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:154</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l146"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:146</code></a>
         
         </p>
 
@@ -604,7 +690,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
     </div>
 
     <div class="description">
-        <p>Play sound after connecting the (release) Gain Node to the destination node.</p>
+        <p>Play sound. Abstract method. Override this method when a buffer is defined.</p>
 
     </div>
 
@@ -674,7 +760,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l138"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:138</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l127"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:127</code></a>
         
         </p>
 
@@ -779,7 +865,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l113"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:113</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l104"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:104</code></a>
         
         </p>
 
@@ -790,7 +876,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
     </div>
 
     <div class="description">
-        <p>Start audio at this current time.</p>
+        <p>Start audio at this current time. Abstract method. Override this method when a buffer is defined.</p>
 
     </div>
 
@@ -884,7 +970,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l125"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:125</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l115"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:115</code></a>
         
         </p>
 
@@ -895,7 +981,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
     </div>
 
     <div class="description">
-        <p>Stop audio at this current time.</p>
+        <p>Stop audio at this current time. Abstract method. Override this method when a buffer is defined.</p>
 
     </div>
 
@@ -974,7 +1060,7 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l15"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:15</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l16"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:16</code></a>
         
         </p>
 
@@ -990,52 +1076,6 @@ Pseudo AudioNode class the encapsulates basic functionality of creating a AudioC
 
     
         <p><strong>Default:</strong> audioContext</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_bufferSource" class="property item">
-    <h3 class="name"><code>bufferSource</code></h3>
-    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/src_lib_core_BaseSound.js.html#l77"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:77</code></a>
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Temp: Create a sine wave oscillator buffer as a temporary source.
-Will be replaced by FileReader and parse in an AudioBuffer</p>
-
-    </div>
-
     
 
     
