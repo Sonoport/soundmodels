@@ -33,20 +33,21 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         var nNumberOfSourcesTotal_;
         var nStartPosition_ = 0;
         var nPlayPosition_ = 0;
+        var nOldPlaySpeed_ = 0;
 
         var fCallback_ = callback;
         var sName_ = Math.random();
 
         var aSpPlaySpeeds_ = [];
-        var aSpDecayTimes_ = [];
         var aSpMaxLoops_ = [];
         var aSpStartPoints_ = [];
         var aSpMultiTrackGains_ = [];
 
         // Global audioParams
 
-        var nRiseTime_ = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, null );
         var nPlaySpeed_ = new SPAudioParam( "playSpeed", -10.0, 10, 1, null, null, null, null );
+        var nRiseTime_ = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, null );
+        var nDecayTime_ = new SPAudioParam( "decayTime", 0.05, 10, 1, null, null, null, null );
 
         // Bug fix
         nPlaySpeed_.value = 0;
@@ -61,6 +62,18 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         // console.log( "Looper created: " + sName_ );
 
         // Privilege functions
+
+        this.setDecayTime_ = function ( value ) {
+
+            nDecayTime_.value = value;
+
+        };
+
+        this.getDecayTime_ = function () {
+
+            return nDecayTime_;
+
+        };
 
         this.setRiseTime_ = function ( value ) {
 
@@ -85,6 +98,19 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             return nPlaySpeed_;
 
         };
+
+        this.setOldPlaySpeed_ = function ( value ) {
+
+            nOldPlaySpeed_ = value;
+
+        };
+
+        this.getOldPlaySpeed_ = function () {
+
+            return nOldPlaySpeed_;
+
+        };
+
 
         this.setSpMultiTrackGains_ = function ( value ) {
 
@@ -119,18 +145,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         this.getSpMaxLoops_ = function () {
 
             return aSpMaxLoops_;
-
-        };
-
-        this.setSpDecayTimes_ = function ( value ) {
-
-            aSpDecayTimes_ = value;
-
-        };
-
-        this.getSpDecayTimes_ = function () {
-
-            return aSpDecayTimes_;
 
         };
 
@@ -330,10 +344,26 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         };
 
-        this.riseTimeSetter = function ( aParam, value, audioContext ) {
+        /**
+         * Setter for riseTime
+         * @method playSpeedSetter
+         * @param {AudioParam} aParam
+         * @param {Number} value
+         * @param {Audiocontext} audioContext
+         */
+        this.playSpeedSetter = function ( aParam, value, audioContext ) {
 
-            aParam.linearRampToValueAtTime( value, audioContext.currentTime + that.getRiseTime_()
-                .value );
+            if ( value > that.getOldPlaySpeed_() ) {
+
+                aParam.linearRampToValueAtTime( value, audioContext.currentTime + that.getRiseTime_()
+                    .value );
+
+            } else {
+
+                aParam.linearRampToValueAtTime( value, audioContext.currentTime + that.getDecayTime_()
+                    .value );
+
+            }
 
         };
 
@@ -353,11 +383,9 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
                 .name, this.getPlaySpeed_()
                 .minValue, this.getPlaySpeed_()
                 .maxValue, this.getPlaySpeed_()
-                .defaultValue, source.playbackRate, null, this.riseTimeSetter, this.audioContext );
+                .defaultValue, source.playbackRate, null, this.playSpeedSetter, this.audioContext );
 
             aSpPlaySpeeds_.push( spPlaySpeed );
-
-            //this.riseTimeSetter(source.playbackRate, this.getPlaySpeed_().value, this.audioContext)
 
             //            // Create decayTime
             //            var spDecayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
@@ -387,7 +415,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             // Reset all AudioParams list
             this.setSources_( [] );
             this.setSpPlaySpeeds_( [] );
-            this.setSpDecayTimes_( [] );
             this.setSpMaxLoops_( [] );
             this.setSpStartPoints_( [] );
             this.setSpMultiTrackGains_( [] );
@@ -539,6 +566,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
          */
         set playSpeed( value ) {
 
+            this.setOldPlaySpeed_( this.getPlaySpeed_()
+                .value );
             this.setPlaySpeed_( value );
 
             for ( var i = 0; i < this.getSpPlaySpeeds_()
@@ -585,6 +614,31 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         get riseTime() {
 
             return this.getRiseTime_()
+                .value;
+
+        },
+
+        /**
+         * Setter for decayTime
+         * @property decayTime
+         * @type Number
+         * @param {Number} value The decayTime
+         */
+        set decayTime( value ) {
+
+            this.setDecayTime_( value );
+
+        },
+
+        /**
+         * Getter for decayTime
+         * @property decayTime
+         * @type Number
+         * @returns {Number} The decayTime
+         */
+        get decayTime() {
+
+            return this.getDecayTime_()
                 .value;
 
         },
@@ -719,28 +773,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
             this.getBaseSound_()
                 .connect( output );
-
-        },
-
-        //        riseTime: function ( value ) {
-        //
-        //            for ( var i = 0; i < this.getSpRiseTimes_()
-        //                .length; i++ ) {
-        //
-        //                //              this.getSpRiseTimes_()[i].value = value;
-        //
-        //            }
-        //
-        //        },
-
-        decayTime: function ( value ) {
-
-            for ( var i = 0; i < this.getSpDecayTimes_()
-                .length; i++ ) {
-
-                //              this.getSpDecayTimes_()[i].value = value;
-
-            }
 
         },
 
