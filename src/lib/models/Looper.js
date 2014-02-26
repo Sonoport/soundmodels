@@ -29,6 +29,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         var bParameterIsAnAudioBuffer_ = false;
         var bParameterIsAnArray_ = false;
 
+        var bFromPausedState_ = false;
+
         var nNumberOfSourcesLoaded_ = 0;
         var nNumberOfSourcesTotal_;
         var nStartPosition_ = 0;
@@ -63,9 +65,21 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         // Privilege functions
 
+        this.setFromPausedState_ = function ( value ) {
+
+            bFromPausedState_ = value;
+
+        };
+
+        this.getFromPausedState_ = function () {
+
+            return bFromPausedState_;
+
+        };
+
         this.setDecayTime_ = function ( value ) {
 
-            nDecayTime_.value = value;
+            nDecayTime_.value = parseFloat( value );
 
         };
 
@@ -77,7 +91,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         this.setRiseTime_ = function ( value ) {
 
-            nRiseTime_.value = value;
+            nRiseTime_.value = parseFloat( value );
 
         };
 
@@ -89,7 +103,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         this.setPlaySpeed_ = function ( value ) {
 
-            nPlaySpeed_.value = value;
+            nPlaySpeed_.value = parseFloat( value );
 
         };
 
@@ -352,6 +366,14 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
          * @param {Audiocontext} audioContext
          */
         this.playSpeedSetter = function ( aParam, value, audioContext ) {
+
+            if ( that.getFromPausedState_() ) {
+
+                aParam.linearRampToValueAtTime( value, audioContext.currentTime );
+
+                return;
+
+            }
 
             if ( value > that.getOldPlaySpeed_() ) {
 
@@ -679,12 +701,20 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
                 this.getSpPlaySpeeds_()[ i ].value = this.getPlaySpeed_()
                     .value;
-                //                this.getSpRiseTimes_()[ i ].value = this.getRiseTime_();
+                console.log( "Starting playspeed:" + this.getPlaySpeed_()
+                    .value );
+                console.log( "Starting conditions:" + this.audioContext.currentTime + currTime + ", " + ( offset % this.getSources_()[ i ].buffer.duration ) );
                 this.getSources_()[ i ].start( this.audioContext.currentTime + currTime, offset % this.getSources_()[ i ].buffer.duration );
 
             }
 
             this.isPlaying = true;
+
+            if ( this.getFromPausedState_() ) {
+
+                this.setFromPausedState_( false );
+
+            }
 
         },
 
@@ -730,12 +760,14 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             if ( this.isPlaying ) {
 
                 var currentPlayPosition = this.getPlayPosition_();
-
+                console.log( "currentPlayPosition before: " + currentPlayPosition );
                 this.stop();
                 this.setPlayPosition_( this.audioContext.currentTime - this.getStartPosition_() + currentPlayPosition );
-
+                console.log( "currentPlayPosition after: " + this.getPlayPosition_() );
             } else {
+                console.log( "currentPlayPosition resume: " + this.getPlayPosition_() );
 
+                this.setFromPausedState_( true );
                 this.start( 0, this.getPlayPosition_() );
 
             }
