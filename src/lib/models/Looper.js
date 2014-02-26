@@ -33,6 +33,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         var nNumberOfSourcesLoaded_ = 0;
         var nNumberOfSourcesTotal_;
+
         var nStartPosition_ = 0;
         var nPlayPosition_ = 0;
         var nOldPlaySpeed_ = 0;
@@ -370,7 +371,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             if ( that.getFromPausedState_() ) {
 
                 aParam.linearRampToValueAtTime( value, audioContext.currentTime );
-
                 return;
 
             }
@@ -693,28 +693,27 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
             }
 
-            this.populateSources_();
             this.setStartPosition_( this.audioContext.currentTime );
+            this.populateSources_();
 
             for ( var i = 0; i < this.getSources_()
                 .length; i++ ) {
 
                 this.getSpPlaySpeeds_()[ i ].value = this.getPlaySpeed_()
                     .value;
-                console.log( "Starting playspeed:" + this.getPlaySpeed_()
+
+                this.getSources_()[ i ].start( currTime, offset % this.getSources_()[ i ].buffer.duration * this.getPlaySpeed_()
                     .value );
-                console.log( "Starting conditions:" + this.audioContext.currentTime + currTime + ", " + ( offset % this.getSources_()[ i ].buffer.duration ) );
-                this.getSources_()[ i ].start( this.audioContext.currentTime + currTime, offset % this.getSources_()[ i ].buffer.duration );
 
             }
-
-            this.isPlaying = true;
 
             if ( this.getFromPausedState_() ) {
 
                 this.setFromPausedState_( false );
 
             }
+
+            this.isPlaying = true;
 
         },
 
@@ -760,12 +759,10 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             if ( this.isPlaying ) {
 
                 var currentPlayPosition = this.getPlayPosition_();
-                console.log( "currentPlayPosition before: " + currentPlayPosition );
                 this.stop();
-                this.setPlayPosition_( this.audioContext.currentTime - this.getStartPosition_() + currentPlayPosition );
-                console.log( "currentPlayPosition after: " + this.getPlayPosition_() );
+                this.setPlayPosition_( currentPlayPosition + this.audioContext.currentTime - this.getStartPosition_() );
+
             } else {
-                console.log( "currentPlayPosition resume: " + this.getPlayPosition_() );
 
                 this.setFromPausedState_( true );
                 this.start( 0, this.getPlayPosition_() );
