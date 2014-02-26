@@ -32,17 +32,17 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
 
         @property numberOfInputs
         @type Number
-        @default 1
+        @default 0
         **/
-        this.numberOfInputs = 1; // Defaults to 1
+        this.numberOfInputs = 0; // Defaults to 0
         /**
         Number of outputs
 
         @property numberOfOutputs
         @type Number
-        @default 1
+        @default 0
         **/
-        this.numberOfOutputs = 1; // Defaults to 1
+        this.numberOfOutputs = 1; // Defaults to 0
         /**
         Release Gain Node
 
@@ -70,36 +70,69 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         Checks if the sound is currently playing.
 
         @property isPlaying
-        @type boolean
+        @type Boolean
         @default false
         **/
         this.isPlaying = false;
+
+        var isAbleConnectInput_ = false;
         /**
-        Removed bufferSource property from BaseSound
+        Determine if this node's input can be connected.
+
+        @property isAbleConnectInput
+        @type Boolean
+        @default false
+        @readOnly
         **/
+        this.isAbleConnectInput = function () {
+            return isAbleConnectInput_;
+        };
     }
 
     /**
-    Connects release Gain Node to an AudioNode or AudioParam.
+    If the output is an AudioNode, it connects to the releaseGainNode. If the output is a BaseSound, it will connect 
+    BaseSound's releaseGainNode to the output's releaseGainNode.
 
 	@method connect
 	@return null
-    @param {Object} output Connects to an AudioNode or AudioParam.
+    @param {Object} output Connects to an AudioNode or BaseSound.
 	**/
     BaseSound.prototype.connect = function ( output ) {
-        console.log( "connects to release Gain Node" );
-        this.releaseGainNode.connect( output );
+        try {
+            if ( output instanceof BaseSound ) {
+                if ( output.isAbleConnectInput() ) {
+                    this.releaseGainNode.connect( output.releaseGainNode );
+                    console.log( "connects internally to output releaseGainNode ", output.isAbleConnectInput() );
+                } else {
+                    throw new Error( "No connection made." );
+                }
+            } else if ( output instanceof AudioNode ) {
+                console.log( "connects to release Gain Node" );
+                this.releaseGainNode.connect( output );
+            }
+        } catch ( e ) {
+            if ( e ) {
+                console.log( e.message );
+            }
+        }
+
     };
     /**
-    Disconnects release Gain Node from an AudioNode or AudioParam.
+    If the output is an AudioNode, it disconnects from the releaseGainNode. If the output is a BaseSound, it will disconnect 
+    BaseSound's releaseGainNode to the output's releaseGainNode.
 
     @method disconnect
     @return null
-    @param {Object} output Takes in an AudioNode or AudioParam.
+    @param {Object} output Takes in an AudioNode or BaseSound.
     **/
     BaseSound.prototype.disconnect = function ( output ) {
-        console.log( "disconnect from Gain Node" );
-        this.releaseGainNode.disconnect( output );
+        if ( output instanceof BaseSound ) {
+            console.log( "disconnect from releaseGainNode " );
+            this.releaseGainNode.disconnect( output.releaseGainNode );
+        } else if ( output instanceof AudioNode ) {
+            console.log( "disconnect from Gain Node" );
+            this.releaseGainNode.disconnect( output );
+        }
     };
     /**
     Start audio at this current time. Abstract method. Override this method when a buffer is defined. 
@@ -161,6 +194,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     BaseSound.prototype.pause = function () {
         console.log( "pause sound" );
     };
+
     // Return constructor function
     return BaseSound;
 

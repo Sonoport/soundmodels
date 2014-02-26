@@ -4,6 +4,7 @@ Envelope class that extends BaseSound which implements an EnvelopeNode.
 @class Envelope
 @param {AudioContext} context
 @constructor
+@extends BaseSound
 **/
 define( [ 'core/BaseSound' ], function ( BaseSound ) {
     'use strict';
@@ -29,6 +30,20 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
             this.audioContext = context;
             console.log( "env current audioContext" );
         }
+        this.numberOfInputs = 1;
+
+        var isAbleConnectInput_ = true;
+        /**
+        Determine if this node's input can be connected.
+
+        @property isAbleConnectInput
+        @type Boolean
+        @default false
+        @readOnly
+        **/
+        this.isAbleConnectInput = function () {
+            return isAbleConnectInput_;
+        };
         /**
         Attack duration of the ADSR Envelope.
 

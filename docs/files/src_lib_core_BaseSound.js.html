@@ -132,17 +132,17 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
 
         @property numberOfInputs
         @type Number
-        @default 1
+        @default 0
         **/
-        this.numberOfInputs = 1; // Defaults to 1
+        this.numberOfInputs = 0; // Defaults to 0
         /**
         Number of outputs
 
         @property numberOfOutputs
         @type Number
-        @default 1
+        @default 0
         **/
-        this.numberOfOutputs = 1; // Defaults to 1
+        this.numberOfOutputs = 1; // Defaults to 0
         /**
         Release Gain Node
 
@@ -170,36 +170,70 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
         Checks if the sound is currently playing.
 
         @property isPlaying
-        @type boolean
+        @type Boolean
         @default false
         **/
         this.isPlaying = false;
+
+        var isAbleConnectInput_ = false;
         /**
-        Removed bufferSource property from BaseSound
+        Determine if this node&#x27;s input can be connected.
+
+        @property isAbleConnectInput
+        @type Boolean
+        @default false
+        @readOnly
         **/
+        this.isAbleConnectInput = function () {
+            return isAbleConnectInput_;
+        };
     }
 
     /**
-    Connects release Gain Node to an AudioNode or AudioParam.
+    If the output is an AudioNode, it connects to the releaseGainNode. If the output is a BaseSound, it will connect 
+    BaseSound&#x27;s releaseGainNode to the output&#x27;s releaseGainNode.
 
 	@method connect
 	@return null
-    @param {Object} output Connects to an AudioNode or AudioParam.
+    @param {Object} output Connects to an AudioNode or BaseSound.
 	**/
     BaseSound.prototype.connect = function ( output ) {
-        console.log( &quot;connects to release Gain Node&quot; );
-        this.releaseGainNode.connect( output );
+        // console.log( &quot;inputConnected &quot;, this.inputConnected, &quot;outputConnected: &quot;, this.outputConnected );
+        try {
+            if ( output instanceof BaseSound ) {
+                if ( output.isAbleConnectInput() ) {
+                    this.releaseGainNode.connect( output.releaseGainNode );
+                    console.log( &quot;connects internally to output releaseGainNode &quot;, output.isAbleConnectInput() );
+                } else {
+                    throw new Error( &quot;No connection made with the Node of the same class.&quot; );
+                }
+            } else if ( output instanceof AudioNode ) {
+                console.log( &quot;connects to release Gain Node&quot; );
+                this.releaseGainNode.connect( output );
+            }
+        } catch ( e ) {
+            if ( e ) {
+                console.log( e.message );
+            }
+        }
+
     };
     /**
-    Disconnects release Gain Node from an AudioNode or AudioParam.
+    If the output is an AudioNode, it disconnects from the releaseGainNode. If the output is a BaseSound, it will disconnect 
+    BaseSound&#x27;s releaseGainNode to the output&#x27;s releaseGainNode.
 
     @method disconnect
     @return null
-    @param {Object} output Takes in an AudioNode or AudioParam.
+    @param {Object} output Takes in an AudioNode or BaseSound.
     **/
     BaseSound.prototype.disconnect = function ( output ) {
-        console.log( &quot;disconnect from Gain Node&quot; );
-        this.releaseGainNode.disconnect( output );
+        if ( output instanceof BaseSound ) {
+            this.outputConnected = null;
+            this.releaseGainNode.disconnect( output.releaseGainNode );
+        } else if ( output instanceof AudioNode ) {
+            console.log( &quot;disconnect from Gain Node&quot; );
+            this.releaseGainNode.disconnect( output );
+        }
     };
     /**
     Start audio at this current time. Abstract method. Override this method when a buffer is defined. 
@@ -261,6 +295,7 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
     BaseSound.prototype.pause = function () {
         console.log( &quot;pause sound&quot; );
     };
+
     // Return constructor function
     return BaseSound;
 

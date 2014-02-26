@@ -38,7 +38,14 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		// Create a Oscillator source
 		var bsosc = new BSOscillator();
 		//bsosc.connect(bsosc.audioContext.destination);
-		bsosc.start();
+		bsosc.start(0);
+
+		var o = new BSOscillator(bsosc.audioContext);
+		// Error
+		//bsosc.connect(o);
+
+		//o.connect(bsosc.audioContext.destination)
+
 
 		// Create an envelope.
 		//**************** ISSUE ALERT *******************
@@ -54,13 +61,17 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 
 		// Longer envelope duration with sustain
 		//envTest.initADSR(true, 0.1, 0.1, 0.1, 0.1, 0.5);
+
+		// Connect oscillator to envelope node
+		bsosc.connect(envTest);
+		//bsosc.disconnect(envTest);
+		// Error :
+		//envTest.connect(o);
 		
 		// Connects oscillator source's gain node to an envelope's gain node
-		bsosc.connect(envTest.releaseGainNode);
+		//bsosc.connect(envTest.releaseGainNode);
 		envTest.connect(bsosc.audioContext.destination);
-		
-		//bsosc.release();
-		//envTest.release();
+		//envTest.disconnect(bsosc.audioContext.destination);
 
 		// =============== Animation related ==================
 		// Using this to print values in order not to exceed browser's console stack.
@@ -69,7 +80,7 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 			console.log(envTest.releaseGainNode.gain.value);
 		}
 		// Start animation loop
-		startAni();
+		//startAni();
 
 		function stopAni() {
 			if (reqID) {

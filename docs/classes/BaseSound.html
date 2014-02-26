@@ -321,6 +321,13 @@ This is where AudioContext will be created and all sounds will be using this Aud
                             </li>
                         
                             <li class="index-item property">
+                                <a href="#property_isAbleConnectInput">isAbleConnectInput</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
                                 <a href="#property_isPlaying">isPlaying</a>
 
                                 
@@ -408,7 +415,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l82"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:82</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l92"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:92</code></a>
         
         </p>
 
@@ -419,7 +426,8 @@ This is where AudioContext will be created and all sounds will be using this Aud
     </div>
 
     <div class="description">
-        <p>Connects release Gain Node to an AudioNode or AudioParam.</p>
+        <p>If the output is an AudioNode, it connects to the releaseGainNode. If the output is a BaseSound, it will connect 
+BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
 
     </div>
 
@@ -438,7 +446,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
                     
 
                     <div class="param-description">
-                        <p>Connects to an AudioNode or AudioParam.</p>
+                        <p>Connects to an AudioNode or BaseSound.</p>
 
                     </div>
 
@@ -513,7 +521,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l93"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:93</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l121"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:121</code></a>
         
         </p>
 
@@ -524,7 +532,8 @@ This is where AudioContext will be created and all sounds will be using this Aud
     </div>
 
     <div class="description">
-        <p>Disconnects release Gain Node from an AudioNode or AudioParam.</p>
+        <p>If the output is an AudioNode, it disconnects from the releaseGainNode. If the output is a BaseSound, it will disconnect 
+BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
 
     </div>
 
@@ -543,7 +552,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
                     
 
                     <div class="param-description">
-                        <p>Takes in an AudioNode or AudioParam.</p>
+                        <p>Takes in an AudioNode or BaseSound.</p>
 
                     </div>
 
@@ -608,7 +617,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l155"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:155</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l189"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:189</code></a>
         
         </p>
 
@@ -679,7 +688,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l146"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:146</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l180"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:180</code></a>
         
         </p>
 
@@ -760,7 +769,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l127"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:127</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l161"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:161</code></a>
         
         </p>
 
@@ -865,7 +874,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l104"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:104</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l138"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:138</code></a>
         
         </p>
 
@@ -970,7 +979,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l115"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:115</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l149"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:149</code></a>
         
         </p>
 
@@ -1178,6 +1187,53 @@ This is where AudioContext will be created and all sounds will be using this Aud
 </div>
 
                 
+                    <div id="property_isAbleConnectInput" class="property item">
+    <h3 class="name"><code>isAbleConnectInput</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_lib_core_BaseSound.js.html#l79"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:79</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Determine if this node&#39;s input can be connected.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> false</p>
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="property_isPlaying" class="property item">
     <h3 class="name"><code>isPlaying</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
@@ -1263,7 +1319,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
     </div>
 
     
-        <p><strong>Default:</strong> 1</p>
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -1310,7 +1366,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
     </div>
 
     
-        <p><strong>Default:</strong> 1</p>
+        <p><strong>Default:</strong> 0</p>
     
 
     
