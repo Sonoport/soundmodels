@@ -24,6 +24,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         var aFileReaders_ = [];
         var aSources_ = [];
+        var aLocalGainNodes = [];
 
         var bParameterIsString_ = false;
         var bParameterIsAnAudioBuffer_ = false;
@@ -42,8 +43,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         var sName_ = Math.random();
 
         var aSpPlaySpeeds_ = [];
+
         var aSpMaxLoops_ = [];
-        var aSpStartPoints_ = [];
         var aSpMultiTrackGains_ = [];
 
         // Global audioParams
@@ -52,21 +53,28 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         var nRiseTime_ = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, null );
         var nDecayTime_ = new SPAudioParam( "decayTime", 0.05, 10, 1, null, null, null, null );
         var nStartPoint_ = new SPAudioParam( "startPoint", 0.0, 0.99, 1, null, null, null, null );
+        var nMultiTrackGain_ = new SPAudioParam( "multiTrackGain", 0.0, 1, 1, null, null, null, null );
 
         // Bug fix
         nPlaySpeed_.value = 0;
         nStartPoint_.value = 0;
-
-        //        var nRiseTime_ = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
-
-        //         var spRiseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
-        //            aSpRiseTimes_.push( spRiseTime );
-
-
+        nMultiTrackGain_.value = 0;
 
         // console.log( "Looper created: " + sName_ );
 
         // Privilege functions
+
+        this.setLocalGainNodes = function ( value ) {
+
+            aLocalGainNodes = value;
+
+        };
+
+        this.getLocalGainNodes = function () {
+
+            return aLocalGainNodes;
+
+        };
 
         this.setStartPoint_ = function ( value ) {
 
@@ -140,7 +148,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         };
 
-
         this.setSpMultiTrackGains_ = function ( value ) {
 
             aSpMultiTrackGains_ = value;
@@ -149,19 +156,36 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         this.getSpMultiTrackGains_ = function () {
 
+            for ( var i = 0; i < aSpMultiTrackGains_.length; i++ ) {
+
+                if ( isNaN( aSpMultiTrackGains_[ i ] ) ) {
+
+                    aSpMultiTrackGains_[ i ] = nMultiTrackGain_.defaultValue;
+
+                } else {
+
+                    nMultiTrackGain_.value = parseFloat( aSpMultiTrackGains_[ i ] );
+                    aSpMultiTrackGains_[ i ] = nMultiTrackGain_.value;
+
+                }
+
+            }
+
+            // Update individual gains
+
+            for ( var j = 0; j < aSources_.length; j++ ) {
+
+                aLocalGainNodes[ j ].gain.value = aSpMultiTrackGains_[ j ];
+
+            }
+
             return aSpMultiTrackGains_;
 
         };
 
-        this.setSpStartPoints_ = function ( value ) {
+        this.getMultiTrackGain_ = function () {
 
-            aSpStartPoints_ = value;
-
-        };
-
-        this.getSpStartPoints_ = function () {
-
-            return aSpStartPoints_;
+            return nMultiTrackGain_;
 
         };
 
@@ -423,22 +447,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
             aSpPlaySpeeds_.push( spPlaySpeed );
 
-            //            // Create decayTime
-            //            var spDecayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
-            //            aSpDecayTimes_.push( spDecayTime );
-            //
-            //            // Create maxLoops
-            //            var spMaxLoop = new SPAudioParam( "maxLoops", -1, 1000, -1, null, null, null, this.audioContext );
-            //            aSpMaxLoops_.push( spMaxLoop );
-            //
-            //            // Create startPoints
-            //            var spStartPoint = new SPAudioParam( "startPoint", 0, 0.99, 0, null, null, null, this.audioContext );
-            //            aSpMaxLoops_.push( spStartPoint );
-            //
-            //            // Create multiTrackGain
-            //            var spMultiTrackGain = new SPAudioParam( "gain", 0, 1, 1, source.gain, null, null, this.audioContext );
-            //            aSpMultiTrackGains_.push( spMultiTrackGain );
-
         };
 
         /**
@@ -448,12 +456,12 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
          */
         this.populateSources_ = function () {
 
-            // Reset all AudioParams list
+            var aGain = [];
+
+            // Reset all AudioParams and Array list
             this.setSources_( [] );
             this.setSpPlaySpeeds_( [] );
-            this.setSpMaxLoops_( [] );
-            this.setSpStartPoints_( [] );
-            this.setSpMultiTrackGains_( [] );
+            this.setLocalGainNodes( [] );
 
             for ( var i = 0; i < this.getFileReaders_()
                 .length; i++ ) {
@@ -462,16 +470,34 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
                     var source = this.audioContext.createBufferSource();
 
-                    source.connect( this.releaseGainNode );
-                    source.buffer = this.getFileReaders_()[ i ].getBuffer();
+                    var localGainNode = this.audioContext.createGain();
 
+                    if ( typeof this.getSpMultiTrackGains_()[ i ] !== "undefined" ) {
+
+                        aGain.push( this.getSpMultiTrackGains_()[ i ] );
+
+                    } else {
+
+                        aGain.push( this.getMultiTrackGain_()
+                            .defaultValue );
+
+                    }
+
+                    source.connect( localGainNode );
+                    source.buffer = this.getFileReaders_()[ i ].getBuffer();
                     source.loopStart = source.buffer.duration * this.getStartPoint_()
                         .value;
                     source.loopEnd = source.buffer.duration;
                     source.loop = true;
 
                     this.createAudioParams_( source );
+
+                    localGainNode.gain.value = aGain[ i ];
+                    localGainNode.connect( this.releaseGainNode );
+
                     this.releaseGainNode.connect( this.audioContext.destination );
+                    this.getLocalGainNodes()
+                        .push( localGainNode );
                     this.getSources_()
                         .push( source );
 
@@ -479,6 +505,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
                 }
 
             }
+
+            this.setSpMultiTrackGains_( aGain );
 
         };
 
@@ -582,6 +610,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         }
 
+
+
         // Start parsing parameters
         this.parseParameters_( sounds );
 
@@ -597,6 +627,18 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         constructor: Looper,
 
         // Setter and Getter functions
+
+        /**
+         * Getter for riseTime
+         * @property riseTime
+         * @type Number
+         * @returns {Number} The riseTime
+         */
+        get multiTrackGain() {
+
+            return this.getSpMultiTrackGains_();
+
+        },
 
         /**
          * Setter for playSpeed
@@ -863,41 +905,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             this.getBaseSound_()
                 .connect( output );
 
-        },
-
-        maxLoops: function ( value ) {
-
-            for ( var i = 0; i < this.getSpMaxLoops_()
-                .length; i++ ) {
-
-                //              this.getSpMaxLoops_()[i].value = value;
-
-            }
-
-        },
-
-        //        faySpeed: value,
-
-        //        startPoint: function ( value ) {
-        //
-        //            for ( var i = 0; i < this.getSpStartPoints_()
-        //                .length; i++ ) {
-        //
-        //                //              this.getSpStartPoints_()[i].value = value;
-        //
-        //            }
-        //
-        //        }
-
-        //        multiTrackGain: function ( value ) {
-        //
-        //            for (var i = 0; i < this.getSpStartPoints_().length; i++) {
-        //              
-        ////              this.getSpStartPoints_()[i].value = value;
-        //              
-        //            }
-        //
-        //        }
+        }
 
     };
 
