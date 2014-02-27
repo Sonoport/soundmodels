@@ -51,9 +51,11 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         var nPlaySpeed_ = new SPAudioParam( "playSpeed", -10.0, 10, 1, null, null, null, null );
         var nRiseTime_ = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, null );
         var nDecayTime_ = new SPAudioParam( "decayTime", 0.05, 10, 1, null, null, null, null );
+        var nStartPoint_ = new SPAudioParam( "startPoint", 0.0, 0.99, 1, null, null, null, null );
 
         // Bug fix
         nPlaySpeed_.value = 0;
+        nStartPoint_.value = 0;
 
         //        var nRiseTime_ = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
 
@@ -65,6 +67,18 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         // console.log( "Looper created: " + sName_ );
 
         // Privilege functions
+
+        this.setStartPoint_ = function ( value ) {
+
+            nStartPoint_.value = parseFloat( value );
+
+        };
+
+        this.getStartPoint_ = function () {
+
+            return nStartPoint_;
+
+        };
 
         this.setFromPausedState_ = function ( value ) {
 
@@ -449,8 +463,12 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
                     var source = this.audioContext.createBufferSource();
 
                     source.connect( this.releaseGainNode );
-                    source.loop = true;
                     source.buffer = this.getFileReaders_()[ i ].getBuffer();
+
+                    source.loopStart = source.buffer.duration * this.getStartPoint_()
+                        .value;
+                    source.loopEnd = source.buffer.duration;
+                    source.loop = true;
 
                     this.createAudioParams_( source );
                     this.releaseGainNode.connect( this.audioContext.destination );
@@ -665,6 +683,39 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         },
 
+        /**
+         * Setter for startPoint
+         * @property startPoint
+         * @type Number
+         * @param {Number} value The startPoint
+         */
+        set startPoint( value ) {
+
+            this.setStartPoint_( value );
+
+            for ( var i = 0; i < this.getSources_()
+                .length; i++ ) {
+
+                this.getSources_()[ i ].loopStart = this.getSources_()[ i ].buffer.duration * this.getStartPoint_()
+                    .value;
+
+            }
+
+        },
+
+        /**
+         * Getter for startPoint
+         * @property startPoint
+         * @type Number
+         * @returns {Number} The startPoint
+         */
+        get startPoint() {
+
+            return this.getStartPoint_()
+                .value;
+
+        },
+
         // Public functions
 
         /**
@@ -699,11 +750,20 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             for ( var i = 0; i < this.getSources_()
                 .length; i++ ) {
 
+                var nPlaySpeed = 1;
+
+                if ( this.getPlaySpeed_()
+                    .value !== 0 ) {
+
+                    nPlaySpeed = this.getPlaySpeed_()
+                        .value;
+
+                }
+
                 this.getSpPlaySpeeds_()[ i ].value = this.getPlaySpeed_()
                     .value;
 
-                this.getSources_()[ i ].start( currTime, offset % this.getSources_()[ i ].buffer.duration * this.getPlaySpeed_()
-                    .value );
+                this.getSources_()[ i ].start( currTime, this.getSources_()[ i ].loopStart + ( offset % this.getSources_()[ i ].buffer.duration * nPlaySpeed ) );
 
             }
 
@@ -818,16 +878,16 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         //        faySpeed: value,
 
-        startPoint: function ( value ) {
-
-            for ( var i = 0; i < this.getSpStartPoints_()
-                .length; i++ ) {
-
-                //              this.getSpStartPoints_()[i].value = value;
-
-            }
-
-        }
+        //        startPoint: function ( value ) {
+        //
+        //            for ( var i = 0; i < this.getSpStartPoints_()
+        //                .length; i++ ) {
+        //
+        //                //              this.getSpStartPoints_()[i].value = value;
+        //
+        //            }
+        //
+        //        }
 
         //        multiTrackGain: function ( value ) {
         //
