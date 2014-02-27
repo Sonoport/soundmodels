@@ -12,18 +12,8 @@ define(['core/BaseSound'], function( BaseSound ) {
          this.audioContext = context;
          console.log( "current" );
     } 
-    var isAbleConnectInput_ = false;
-        /**
-        Determine if this node's input can be connected.
 
-        @atttribute isAbleConnectInput
-        @type Boolean
-        @default false
-        @readOnly
-        **/
-   	this.isAbleConnectInput = function () {
-       return isAbleConnectInput_;
-    };
+    this.inputNode = null;
 		console.log("Oscillator");
 		this.bufferSource = this.audioContext.createOscillator();
 		this.bufferSource.connect(this.releaseGainNode);

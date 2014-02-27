@@ -30,20 +30,22 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
             this.audioContext = context;
             console.log( "env current audioContext" );
         }
-        this.numberOfInputs = 1;
-
-        var isAbleConnectInput_ = true;
         /**
-        Determine if this node's input can be connected.
+        Number of inputs
 
-        @property isAbleConnectInput
-        @type Boolean
-        @default false
-        @readOnly
+        @property numberOfInputs
+        @type Number
+        @default 1
         **/
-        this.isAbleConnectInput = function () {
-            return isAbleConnectInput_;
-        };
+        this.numberOfInputs = 1;
+        /**
+        Number of outputs
+
+        @property numberOfOutputs
+        @type Number
+        @default 1
+        **/
+        this.numberOfOutputs = 1;
         /**
         Attack duration of the ADSR Envelope.
 
@@ -92,7 +94,15 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
         @default false
         **/
         this.useSustain = false;
+        /**
+        The input node that the output node will be connected to. <br />
+        It is currently points to the release gain node.
 
+        @property inputNode
+        @type Object
+        @default null
+        **/
+        this.inputNode = this.releaseGainNode;
         // Set gain to 0
         this.releaseGainNode.gain.value = 0;
 
@@ -147,21 +157,22 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
     Initialize as a classic four-segment ADSR (Attack, Decay, Sustain, Release) envelope.
 
     @method initADSR
-    @param {Boolean} useSustain   If true, hold the sustain end val indefinitely until stop() is called.
-    @param {Number} attackDur     Attack Duration (s)
-    @param {Number} decayDur      Decay Duration (s)
-    @param {Number} releaseDur    Release Duration (s)
-    @param {Number} sustainVal    Sustain Level (s)
+    @param {Object} [options] Values that can be passed in to change the shape of the ADSR Envelope.
+        @param {Boolean} [options.useSustain=false]   If true, hold the sustain end val indefinitely until stop() is called.
+        @param {Number} [options.attackDur=0.01]     Attack Duration (s)
+        @param {Number} [options.decayDur=0.01]      Decay Duration (s)
+        @param {Number} [options.releaseDur=0.01]    Release Duration (s)
+        @param {Number} [options.sustainVal=0.5]    Sustain Level (s)
     @return null
     **/
-    Envelope.prototype.initADSR = function ( useSustain, attackDur, decayDur, sustainDur, releaseDur, sustainVal ) {
+    Envelope.prototype.initADSR = function ( options ) {
 
-        this.useSustain = useSustain || false;
-        this.attackDur = attackDur || this.attackDur;
-        this.decayDur = decayDur || this.decayDur;
-        this.sustainDur = sustainDur || this.sustainDur;
-        this.releaseDur = releaseDur || this.releaseDur;
-        this.sustainVal = sustainVal || this.sustainVal;
+        this.useSustain = options.useSustain || false;
+        this.attackDur = options.attackDur || this.attackDur;
+        this.decayDur = options.decayDur || this.decayDur;
+        this.sustainDur = options.sustainDur || this.sustainDur;
+        this.releaseDur = options.releaseDur || this.releaseDur;
+        this.sustainVal = options.sustainVal || this.sustainVal;
 
         var attackVal = 1;
         var releaseVal = 0;
@@ -185,8 +196,7 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
             this.releaseGainNode.gain.linearRampToValueAtTime( releaseVal, this.audioContext.currentTime + this.attackDur + this.decayDur + this.sustainDur + this.releaseDur );
         }
 
-        // console.log( this.attackDur, this.decayDur, this.sustainDur, this.releaseDur, this.sustainVal, this.useSustain );
-
+        //console.log( this.attackDur, this.decayDur, this.sustainDur, this.releaseDur, this.sustainVal, this.useSustain );
     };
     /**
     Resets all flags and counters to begin a new envelope traversal.

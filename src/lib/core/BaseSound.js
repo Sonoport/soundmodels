@@ -40,9 +40,9 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
 
         @property numberOfOutputs
         @type Number
-        @default 0
+        @default 1
         **/
-        this.numberOfOutputs = 1; // Defaults to 0
+        this.numberOfOutputs = 1; // Defaults to 1
         /**
         Release Gain Node
 
@@ -57,7 +57,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         @constant FADE_TIME
         @default 0.5 (seconds)
         **/
-        this.FADE_TIME = 0.5;
+        this.FADE_TIME = 0.2;
         /**
         Padding time in (seconds) after FADE_TIME to allow sound to fade out smoothly.
 
@@ -74,19 +74,16 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         @default false
         **/
         this.isPlaying = false;
-
-        var isAbleConnectInput_ = false;
         /**
-        Determine if this node's input can be connected.
+        The input node that the output node will be connected to. <br />
+        Set this value to null if no connection can be made on the input ndoe especially for classes which are the sources. <br />
 
-        @property isAbleConnectInput
-        @type Boolean
-        @default false
-        @readOnly
+        @property inputNode
+        @type Object
+        @default null
         **/
-        this.isAbleConnectInput = function () {
-            return isAbleConnectInput_;
-        };
+        this.inputNode = null;
+
     }
 
     /**
@@ -100,19 +97,26 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     BaseSound.prototype.connect = function ( output ) {
         try {
             if ( output instanceof BaseSound ) {
-                if ( output.isAbleConnectInput() ) {
-                    this.releaseGainNode.connect( output.releaseGainNode );
-                    console.log( "connects internally to output releaseGainNode ", output.isAbleConnectInput() );
+                // Check if input is able to be connected
+                if ( output.inputNode ) {
+                    this.releaseGainNode.connect( output.inputNode );
+                    console.log( "connects internally to output's inputNode" );
                 } else {
-                    throw new Error( "No connection made." );
+                    throw -1;
                 }
             } else if ( output instanceof AudioNode ) {
-                console.log( "connects to release Gain Node" );
+                console.log( "connects to inputNode" );
                 this.releaseGainNode.connect( output );
+            } else { // output is neither a BaseSound or an AudioNode
+                throw -2;
             }
         } catch ( e ) {
-            if ( e ) {
-                console.log( e.message );
+            if ( e === -1 ) {
+                // No connection can be made as output node does not allow input connection.
+                console.log( "No connection can be made as output node does not allow input connection." );
+            } else if ( e === -2 ) {
+                // Output has to be a BaseSound or an AudioNode object
+                console.log( "Output has to be a BaseSound or an AudioNode object" );
             }
         }
 
@@ -127,8 +131,8 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     **/
     BaseSound.prototype.disconnect = function ( output ) {
         if ( output instanceof BaseSound ) {
-            console.log( "disconnect from releaseGainNode " );
-            this.releaseGainNode.disconnect( output.releaseGainNode );
+            console.log( "disconnect from output's inputNode" );
+            this.releaseGainNode.disconnect( output.inputNode );
         } else if ( output instanceof AudioNode ) {
             console.log( "disconnect from Gain Node" );
             this.releaseGainNode.disconnect( output );
@@ -165,9 +169,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     @param {Number} fadeTime Amount of time it takes for linear ramp down to happen.
     **/
     BaseSound.prototype.release = function ( fadeTime ) {
-        if ( typeof fadeTime === "undefined" ) {
-            fadeTime = this.FADE_TIME;
-        }
+        fadeTime = fadeTime || this.FADE_TIME;
         // Clamp the current gain value at this point of time to prevent sudden jumps.
         this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, this.audioContext.currentTime );
         // Now there won't be any glitch and there is a smooth ramp down.

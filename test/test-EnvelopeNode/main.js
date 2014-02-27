@@ -37,50 +37,53 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 
 		// Create a Oscillator source
 		var bsosc = new BSOscillator();
-		//bsosc.connect(bsosc.audioContext.destination);
+		bsosc.bufferSource.frequency.value = 300;
 		bsosc.start(0);
 
 		var o = new BSOscillator(bsosc.audioContext);
 		// Error
-		//bsosc.connect(o);
+		//var boo = "meme";
+		//bsosc.connect(boo);
 
-		//o.connect(bsosc.audioContext.destination)
-
-
+		// Wavy Jones audio visualizer
+		var visualizer = new WavyJones(bsosc.audioContext, 'oscilloscope');
+		visualizer.lineColor = '#000000';
+		visualizer.lineThickness = 2;
 		// Create an envelope.
 		//**************** ISSUE ALERT *******************
 		// Currently, the second variable needs to pass in the previous created AudioContext in order to use the same context being defined
 		// Need to resolve this issue.
 		var envTest = new Envelope(bsosc.audioContext);
 		// Pass in ADSR envelope
-		// Default value
-		//envTest.initADSR(false);
+		// Default 
+		//envTest.initADSR();
 		
 		// Longer envelope duration without sustain
-		envTest.initADSR(false, 0.1, 0.1, 0.1, 0.1, 0.5);
+		envTest.initADSR({attackDur: 0.1, decayDur: 0.1, sustainDur: 0.1, releaseDur: 0.1});
 
-		// Longer envelope duration with sustain
-		//envTest.initADSR(true, 0.1, 0.1, 0.1, 0.1, 0.5);
-
+		var env2 = new Envelope(bsosc.audioContext);
+		env2.initADSR({useSustain: true});
 		// Connect oscillator to envelope node
 		bsosc.connect(envTest);
-		//bsosc.disconnect(envTest);
+		bsosc.connect(env2);
 		// Error :
 		//envTest.connect(o);
 		
-		// Connects oscillator source's gain node to an envelope's gain node
-		//bsosc.connect(envTest.releaseGainNode);
-		envTest.connect(bsosc.audioContext.destination);
-		//envTest.disconnect(bsosc.audioContext.destination);
+		// Connect to visualizer
+		env2.connect(visualizer);
+		envTest.connect(visualizer);
+
+		// Output to destination
+		visualizer.connect(bsosc.audioContext.destination);
 
 		// =============== Animation related ==================
 		// Using this to print values in order not to exceed browser's console stack.
 		function startAni() {
 			reqID = requestAnimFrame(startAni);
-			console.log(envTest.releaseGainNode.gain.value);
+			console.log(envTest.releaseGainNode.gain.value, env2.releaseGainNode.gain.value);
 		}
 		// Start animation loop
-		//startAni();
+		startAni();
 
 		function stopAni() {
 			if (reqID) {
@@ -101,7 +104,9 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		envElement.onclick = fireEnv;
 		function fireEnv() {
 			envTest.reinit();
-			envTest.initADSR(false, 0.1, 0.1, 0.1, 0.1, 0.5);
+			envTest.initADSR({attackDur: 0.1, decayDur: 0.1, sustainDur: 0.1, releaseDur: 0.1});
+			env2.reinit();
+			env2.initADSR({attackDur: 0.1, decayDur: 0.1, sustainDur: 0.1, releaseDur: 0.1});
 		}
 		var logEle = document.getElementById('stopPrintBtn');
 		logEle.onclick = stopPrint;
@@ -112,5 +117,7 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		releaseElem.onclick = releaseStop;
 		function releaseStop() {
 			envTest.release();
+			env2.release();
 		}
+
 });

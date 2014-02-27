@@ -321,7 +321,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_isAbleConnectInput">isAbleConnectInput</a>
+                                <a href="#property_inputNode">inputNode</a>
 
                                 
                                 
@@ -415,7 +415,7 @@ This is where AudioContext will be created and all sounds will be using this Aud
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l92"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:92</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l89"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:89</code></a>
         
         </p>
 
@@ -521,7 +521,7 @@ BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l121"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:121</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l124"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:124</code></a>
         
         </p>
 
@@ -617,7 +617,7 @@ BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l189"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:189</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l190"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:190</code></a>
         
         </p>
 
@@ -688,7 +688,7 @@ BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l180"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:180</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l181"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:181</code></a>
         
         </p>
 
@@ -769,7 +769,7 @@ BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l161"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:161</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l164"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:164</code></a>
         
         </p>
 
@@ -874,7 +874,7 @@ BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l138"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:138</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l141"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:141</code></a>
         
         </p>
 
@@ -979,7 +979,7 @@ BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l149"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:149</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l152"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:152</code></a>
         
         </p>
 
@@ -1187,9 +1187,9 @@ BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
 </div>
 
                 
-                    <div id="property_isAbleConnectInput" class="property item">
-    <h3 class="name"><code>isAbleConnectInput</code></h3>
-    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                    <div id="property_inputNode" class="property item">
+    <h3 class="name"><code>inputNode</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
 
     
 
@@ -1210,7 +1210,7 @@ BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
             
         
         
-        <a href="../files/src_lib_core_BaseSound.js.html#l79"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:79</code></a>
+        <a href="../files/src_lib_core_BaseSound.js.html#l77"><code>src&#x2F;lib&#x2F;core&#x2F;BaseSound.js:77</code></a>
         
         </p>
 
@@ -1220,12 +1220,13 @@ BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
     </div>
 
     <div class="description">
-        <p>Determine if this node&#39;s input can be connected.</p>
+        <p>The input node that the output node will be connected to. <br />
+Set this value to null if no connection can be made on the input ndoe especially for classes which are the sources. <br /></p>
 
     </div>
 
     
-        <p><strong>Default:</strong> false</p>
+        <p><strong>Default:</strong> null</p>
     
 
     
@@ -1366,7 +1367,7 @@ BaseSound&#39;s releaseGainNode to the output&#39;s releaseGainNode.</p>
     </div>
 
     
-        <p><strong>Default:</strong> 0</p>
+        <p><strong>Default:</strong> 1</p>
     
 
     

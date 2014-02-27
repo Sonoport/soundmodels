@@ -6,7 +6,12 @@
     <title>Test - Envelope Node</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <style>
+      #oscilloscope {
+        width: 400px;
+        height: 200px;
+      }
+    </style>
     <script data-main="main" src="../require.js"></script>
 
   </head>
@@ -24,5 +29,9 @@
       <button id="releaseBtn">Release sound</button>
       <button id="envBtn">Envelope</button>
     </div>
+
+    <div id="oscilloscope"></div>
+
+    <script src="wavy-jones.js"></script>
   </body>
 </html>
