@@ -22,10 +22,8 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         **/
         if ( typeof context === "undefined" ) {
             this.audioContext = new AudioContext();
-            console.log( "new audioContext" );
         } else {
             this.audioContext = context;
-            console.log( "current ac" );
         }
         /**
         Number of inputs
@@ -57,7 +55,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         @constant FADE_TIME
         @default 0.5 (seconds)
         **/
-        this.FADE_TIME = 0.2;
+        this.FADE_TIME = 0.5;
         /**
         Padding time in (seconds) after FADE_TIME to allow sound to fade out smoothly.
 
@@ -95,48 +93,40 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     @param {Object} output Connects to an AudioNode or BaseSound.
 	**/
     BaseSound.prototype.connect = function ( output ) {
-        try {
-            if ( output instanceof BaseSound ) {
-                // Check if input is able to be connected
-                if ( output.inputNode ) {
-                    this.releaseGainNode.connect( output.inputNode );
-                    console.log( "connects internally to output's inputNode" );
-                } else {
-                    throw -1;
+        if ( output instanceof BaseSound ) {
+            // Check if input is able to be connected
+            if ( output.inputNode ) {
+                this.releaseGainNode.connect( output.inputNode );
+            } else {
+                throw {
+                    name: "No Input Connection Exception",
+                    message: "Attempts to connect " + ( typeof output ) + " to " + ( typeof this ),
+                    toString: function () {
+                        return this.name + ": " + this.message;
+                    }
+                };
+            }
+        } else if ( output instanceof AudioNode ) {
+            this.releaseGainNode.connect( output );
+        } else { // output is neither a BaseSound or an AudioNode
+            throw {
+                name: "Incorrect Output Exception",
+                message: "Attempts to connect " + ( typeof output ) + " to " + ( typeof this ),
+                toString: function () {
+                    return this.name + ": " + this.message;
                 }
-            } else if ( output instanceof AudioNode ) {
-                console.log( "connects to inputNode" );
-                this.releaseGainNode.connect( output );
-            } else { // output is neither a BaseSound or an AudioNode
-                throw -2;
-            }
-        } catch ( e ) {
-            if ( e === -1 ) {
-                // No connection can be made as output node does not allow input connection.
-                console.log( "No connection can be made as output node does not allow input connection." );
-            } else if ( e === -2 ) {
-                // Output has to be a BaseSound or an AudioNode object
-                console.log( "Output has to be a BaseSound or an AudioNode object" );
-            }
+            };
         }
-
     };
     /**
-    If the output is an AudioNode, it disconnects from the releaseGainNode. If the output is a BaseSound, it will disconnect 
-    BaseSound's releaseGainNode to the output's releaseGainNode.
+    The outputIndex parameter is an index describing which output of the releaseGainNode to disconnect.
 
     @method disconnect
     @return null
-    @param {Object} output Takes in an AudioNode or BaseSound.
+    @param {Number} outputIndex Takes in an AudioNode or BaseSound.
     **/
-    BaseSound.prototype.disconnect = function ( output ) {
-        if ( output instanceof BaseSound ) {
-            console.log( "disconnect from output's inputNode" );
-            this.releaseGainNode.disconnect( output.inputNode );
-        } else if ( output instanceof AudioNode ) {
-            console.log( "disconnect from Gain Node" );
-            this.releaseGainNode.disconnect( output );
-        }
+    BaseSound.prototype.disconnect = function ( outputIndex ) {
+        this.releaseGainNode.disconnect( outputIndex );
     };
     /**
     Start audio at this current time. Abstract method. Override this method when a buffer is defined. 
@@ -147,19 +137,22 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     **/
     BaseSound.prototype.start = function ( currTime ) {
         this.isPlaying = true;
-        console.log( "start the buffer " + this.isPlaying );
     };
     /**
-    Stop audio at this current time. Abstract method. Override this method when a buffer is defined. 
+    Stop audio after startTime. Abstract method. Override this method when a buffer is defined. 
 
     @method stop
     @return null
-    @param {Number} currTime Time in (seconds) that audio will stop.
+    @param {Number} startTime Time in (seconds) that audio will stop.
     **/
-    BaseSound.prototype.stop = function ( currTime ) {
+    BaseSound.prototype.stop = function ( startTime ) {
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         this.isPlaying = false;
-        console.log( "stop the buffer " + this.isPlaying );
+        if ( typeof startTime === "undefined" ) {
+            startTime = 0;
+        }
+        // cancel all scheduled ramps on this releaseGainNode
+        this.releaseGainNode.gain.cancelScheduledValues( this.audioContext.currentTime + startTime );
     };
     /**
     Linearly ramp down the gain of the audio in time (seconds) to 0.
@@ -174,7 +167,6 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, this.audioContext.currentTime );
         // Now there won't be any glitch and there is a smooth ramp down.
         this.releaseGainNode.gain.linearRampToValueAtTime( 0, this.audioContext.currentTime + fadeTime );
-        console.log( "release: linear ramp down after " + fadeTime + " seconds." );
         // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
         this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
     };
@@ -184,18 +176,14 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     @method play
     @return null
     **/
-    BaseSound.prototype.play = function () {
-        console.log( "play sound" );
-    };
+    BaseSound.prototype.play = function () {};
     /**
     Pause sound. Abstract method. Override this method when a buffer is defined. 
 
     @method pause
     @return null
     **/
-    BaseSound.prototype.pause = function () {
-        console.log( "pause sound" );
-    };
+    BaseSound.prototype.pause = function () {};
 
     // Return constructor function
     return BaseSound;

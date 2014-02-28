@@ -28,7 +28,6 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
         **/
         if ( typeof context !== "undefined" ) {
             this.audioContext = context;
-            console.log( "env current audioContext" );
         }
         /**
         Number of inputs
@@ -106,15 +105,26 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
         // Set gain to 0
         this.releaseGainNode.gain.value = 0;
 
-        console.log( "Envelope Node " );
-
     }
     // Inherits from BaseSound
     // Use Object.create() to setup inheritance but does not invoke any constructor
     // Using new ChildClass(); will invoke the constructor and create a senario which it is being called twice.
     Envelope.prototype = Object.create( BaseSound.prototype );
     Envelope.prototype.constructor = Envelope;
+    /**
+    Stop sound.
 
+    @method stop
+    @return null
+    **/
+    Envelope.prototype.stop = function stop( startTime ) {
+        BaseSound.prototype.stop.call( this, startTime );
+        if ( typeof startTime === "undefined" ) {
+            startTime = 0;
+        }
+        // cancel all scheduled ramps on this releaseGainNode
+        this.releaseGainNode.gain.cancelScheduledValues( this.audioContext.currentTime + startTime );
+    };
     // Envelope class methods
     /**
     Connect to release Gain Node.
@@ -130,11 +140,11 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
     Disconnect from release Gain Node.
 
     @method disconnect
-    @param {Object} output disconnects releaseGainnode from an Audio Node.
+    @param {Number} outputIndex disconnects releaseGainnode from an Audio Node.
     @return null
     **/
-    Envelope.prototype.disconnect = function disconnect( output ) {
-        BaseSound.prototype.disconnect.call( this, output );
+    Envelope.prototype.disconnect = function disconnect( outputIndex ) {
+        BaseSound.prototype.disconnect.call( this, outputIndex );
     };
     /**
     Linearly ramps down the gain of releaseGainNode from current value to 0 in fadeTime (s).
@@ -146,12 +156,10 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
     **/
     Envelope.prototype.release = function release( fadeTime ) {
         BaseSound.prototype.release.call( this, fadeTime );
-        // If there is sustain
-        if ( this.useSustain ) {
-            console.log( "sustained" );
-            // Set release again
-            this.releaseGainNode.gain.linearRampToValueAtTime( 0, this.audioContext.currentTime + fadeTime );
-        }
+        fadeTime = fadeTime || this.FADE_TIME;
+        // Clamp the current gain value at this point of time to prevent sudden jumps.
+        this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, this.audioContext.currentTime );
+        this.releaseGainNode.gain.linearRampToValueAtTime( 0, this.audioContext.currentTime + fadeTime );
     };
     /**
     Initialize as a classic four-segment ADSR (Attack, Decay, Sustain, Release) envelope.
@@ -166,13 +174,14 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
     @return null
     **/
     Envelope.prototype.initADSR = function ( options ) {
-
-        this.useSustain = options.useSustain || false;
-        this.attackDur = options.attackDur || this.attackDur;
-        this.decayDur = options.decayDur || this.decayDur;
-        this.sustainDur = options.sustainDur || this.sustainDur;
-        this.releaseDur = options.releaseDur || this.releaseDur;
-        this.sustainVal = options.sustainVal || this.sustainVal;
+        if ( options ) {
+            this.useSustain = options.useSustain || false;
+            this.attackDur = options.attackDur || 0.01;
+            this.decayDur = options.decayDur || 0.01;
+            this.sustainDur = options.sustainDur || 0.01;
+            this.releaseDur = options.releaseDur || 0.01;
+            this.sustainVal = options.sustainVal || 0.5;
+        }
 
         var attackVal = 1;
         var releaseVal = 0;
@@ -188,15 +197,10 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
         this.releaseGainNode.gain.linearRampToValueAtTime( this.sustainVal, this.audioContext.currentTime + this.attackDur + this.decayDur );
         // Sustain
         this.releaseGainNode.gain.linearRampToValueAtTime( this.sustainVal, this.audioContext.currentTime + this.attackDur + this.decayDur + this.sustainDur );
-        if ( this.useSustain ) {
-            // Continue sustaining until release() is called.
-            this.releaseGainNode.gain.linearRampToValueAtTime( this.sustainVal, this.audioContext.currentTime + this.attackDur + this.decayDur + this.sustainDur + this.releaseDur );
-        } else {
+        if ( !this.useSustain ) {
             // Release
             this.releaseGainNode.gain.linearRampToValueAtTime( releaseVal, this.audioContext.currentTime + this.attackDur + this.decayDur + this.sustainDur + this.releaseDur );
         }
-
-        //console.log( this.attackDur, this.decayDur, this.sustainDur, this.releaseDur, this.sustainVal, this.useSustain );
     };
     /**
     Resets all flags and counters to begin a new envelope traversal.

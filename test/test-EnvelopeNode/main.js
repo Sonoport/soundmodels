@@ -56,10 +56,10 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		var envTest = new Envelope(bsosc.audioContext);
 		// Pass in ADSR envelope
 		// Default 
-		//envTest.initADSR();
-		
+		envTest.initADSR();
+
 		// Longer envelope duration without sustain
-		envTest.initADSR({attackDur: 0.1, decayDur: 0.1, sustainDur: 0.1, releaseDur: 0.1});
+		//envTest.initADSR({attackDur: 0.1, decayDur: 0.1, sustainDur: 0.1, releaseDur: 0.1});
 
 		var env2 = new Envelope(bsosc.audioContext);
 		env2.initADSR({useSustain: true});
@@ -72,7 +72,6 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		// Connect to visualizer
 		env2.connect(visualizer);
 		envTest.connect(visualizer);
-
 		// Output to destination
 		visualizer.connect(bsosc.audioContext.destination);
 
@@ -104,7 +103,7 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		envElement.onclick = fireEnv;
 		function fireEnv() {
 			envTest.reinit();
-			envTest.initADSR({attackDur: 0.1, decayDur: 0.1, sustainDur: 0.1, releaseDur: 0.1});
+			envTest.initADSR({useSustain: true});
 			env2.reinit();
 			env2.initADSR({attackDur: 0.1, decayDur: 0.1, sustainDur: 0.1, releaseDur: 0.1});
 		}
@@ -118,6 +117,17 @@ require(['core/BaseSound','core/Envelope', 'test-EnvelopeNode/BSOscillator','req
 		function releaseStop() {
 			envTest.release();
 			env2.release();
+		}
+		var startElm = document.getElementById('startBtn');
+		startElm.onclick = startSnd;
+		function startSnd() {
+			bsosc.start();
+		}
+		var stopElm = document.getElementById('stopBtn');
+		stopElm.onclick = stopEnv; 
+		function stopEnv() {
+			envTest.stop();
+			env2.stop();
 		}
 
 });
