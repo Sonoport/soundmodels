@@ -2,16 +2,17 @@
 
 Base class for all sounds.
 
-Pseudo AudioNode class the encapsulates basic functionality of creating a AudioContext and passing in audio file buffer.
+Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. 
+This is where AudioContext will be created and all sounds will be using this AudioContext.
 
 @class BaseSound
 @constructor
-@param {AudioContext} audioContext
+@param {AudioContext} context
 **/
 define( [ 'core/AudioContextMonkeyPatch' ], function () {
     'use strict';
 
-    function BaseSound( audioContext ) {
+    function BaseSound( context ) {
         /**
         Define one audioContext from Web Audio API's AudioContext class.
 
@@ -19,22 +20,19 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         @type AudioContext
         @default audioContext
         **/
-        if ( typeof audioContext === "undefined" ) {
-            // Need to check for prefixes for AudioContext
+        if ( typeof context === "undefined" ) {
             this.audioContext = new AudioContext();
-            console.log( "new audioContext" );
         } else {
-            this.audioContext = audioContext;
-            console.log( "current ac" );
+            this.audioContext = context;
         }
         /**
         Number of inputs
 
         @property numberOfInputs
         @type Number
-        @default 1
+        @default 0
         **/
-        this.numberOfInputs = 1; // Defaults to 1
+        this.numberOfInputs = 0; // Defaults to 0
         /**
         Number of outputs
 
@@ -70,70 +68,91 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         Checks if the sound is currently playing.
 
         @property isPlaying
-        @type boolean
+        @type Boolean
         @default false
         **/
         this.isPlaying = false;
         /**
-        Temp: Create a sine wave oscillator buffer as a temporary source.
-        Will be replaced by FileReader and parse in an AudioBuffer
+        The input node that the output node will be connected to. <br />
+        Set this value to null if no connection can be made on the input ndoe especially for classes which are the sources. <br />
 
-        @property bufferSource
+        @property inputNode
         @type Object
+        @default null
         **/
-        this.bufferSource = this.audioContext.createOscillator();
-        // Connects source to release gain node
-        this.bufferSource.connect( this.releaseGainNode );
-        // Connects release gain node to the destination node
-        this.connect( this.audioContext.destination );
+        this.inputNode = null;
+
     }
 
     /**
-    Connects release Gain Node to an AudioNode or AudioParam.
+    If the output is an AudioNode, it connects to the releaseGainNode. If the output is a BaseSound, it will connect 
+    BaseSound's releaseGainNode to the output's releaseGainNode.
 
 	@method connect
 	@return null
-    @param {Object} output Connects to an AudioNode or AudioParam.
+    @param {Object} output Connects to an AudioNode or BaseSound.
 	**/
     BaseSound.prototype.connect = function ( output ) {
-        console.log( "connects to release Gain Node" );
-        this.releaseGainNode.connect( output );
+        if ( output instanceof BaseSound ) {
+            // Check if input is able to be connected
+            if ( output.inputNode ) {
+                this.releaseGainNode.connect( output.inputNode );
+            } else {
+                throw {
+                    name: "No Input Connection Exception",
+                    message: "Attempts to connect " + ( typeof output ) + " to " + ( typeof this ),
+                    toString: function () {
+                        return this.name + ": " + this.message;
+                    }
+                };
+            }
+        } else if ( output instanceof AudioNode ) {
+            this.releaseGainNode.connect( output );
+        } else { // output is neither a BaseSound or an AudioNode
+            throw {
+                name: "Incorrect Output Exception",
+                message: "Attempts to connect " + ( typeof output ) + " to " + ( typeof this ),
+                toString: function () {
+                    return this.name + ": " + this.message;
+                }
+            };
+        }
     };
     /**
-    Disconnects release Gain Node from an AudioNode or AudioParam.
+    The outputIndex parameter is an index describing which output of the releaseGainNode to disconnect.
 
     @method disconnect
     @return null
-    @param {Object} output Takes in an AudioNode or AudioParam.
+    @param {Number} outputIndex Takes in an AudioNode or BaseSound.
     **/
-    BaseSound.prototype.disconnect = function ( output ) {
-        console.log( "disconnect from Gain Node" );
-        this.releaseGainNode.disconnect( output );
+    BaseSound.prototype.disconnect = function ( outputIndex ) {
+        this.releaseGainNode.disconnect( outputIndex );
     };
     /**
-    Start audio at this current time.
+    Start audio at this current time. Abstract method. Override this method when a buffer is defined. 
 
     @method start
     @return null
     @param {Number} currTime Time in (seconds) that audio will start.
     **/
     BaseSound.prototype.start = function ( currTime ) {
-        this.bufferSource.start( currTime );
         this.isPlaying = true;
-        console.log( "start the buffer " + this.isPlaying );
     };
     /**
-    Stop audio at this current time.
+    Stop audio after startTime. Abstract method. Override this method when a buffer is defined. 
 
     @method stop
     @return null
-    @param {Number} currTime Time in (seconds) that audio will stop.
+    @param {Number} startTime Time in (seconds) that audio will stop.
     **/
-    BaseSound.prototype.stop = function ( currTime ) {
-        this.bufferSource.stop( currTime );
+    BaseSound.prototype.stop = function ( startTime ) {
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         this.isPlaying = false;
-        console.log( "stop the buffer " + this.isPlaying );
+        if ( typeof startTime === "undefined" ) {
+            startTime = 0;
+        }
+        // cancel all scheduled ramps on this releaseGainNode
+        this.releaseGainNode.gain.cancelScheduledValues( this.audioContext.currentTime + startTime );
     };
     /**
     Linearly ramp down the gain of the audio in time (seconds) to 0.
@@ -143,24 +162,28 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     @param {Number} fadeTime Amount of time it takes for linear ramp down to happen.
     **/
     BaseSound.prototype.release = function ( fadeTime ) {
-        if ( typeof fadeTime === "undefined" ) {
-            fadeTime = this.FADE_TIME;
-        }
+        fadeTime = fadeTime || this.FADE_TIME;
+        // Clamp the current gain value at this point of time to prevent sudden jumps.
+        this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, this.audioContext.currentTime );
+        // Now there won't be any glitch and there is a smooth ramp down.
         this.releaseGainNode.gain.linearRampToValueAtTime( 0, this.audioContext.currentTime + fadeTime );
-        console.log( "release: linear ramp down after " + fadeTime + " seconds." );
         // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
         this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
     };
     /**
-    Play sound after connecting the (release) Gain Node to the destination node.
+    Play sound. Abstract method. Override this method when a buffer is defined. 
 
     @method play
     @return null
     **/
-    BaseSound.prototype.play = function () {
-        console.log( "play sound" );
-        this.start( 0 );
-    };
+    BaseSound.prototype.play = function () {};
+    /**
+    Pause sound. Abstract method. Override this method when a buffer is defined. 
+
+    @method pause
+    @return null
+    **/
+    BaseSound.prototype.pause = function () {};
 
     // Return constructor function
     return BaseSound;

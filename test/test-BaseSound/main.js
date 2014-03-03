@@ -1,12 +1,9 @@
 require.config({
-	baseUrl: '/',
-	paths: {
-		baseSndURL: 'test-BaseSound/BaseSound'
-	}
+	baseUrl: '/'
 });
 
 // Start app logic
-require(['baseSndURL','require'],
+require(['core/BaseSound', 'require' ],
 	function(BaseSound, require) {
 		console.log("main app loaded.");
 
@@ -23,18 +20,17 @@ require(['baseSndURL','require'],
 		
 		// Create a new BaseSound
 		var bs = new BaseSound();
-		bs.FADE_TIME = 3;
 		bs.play();
 		bs.release();
 
-		var gainNode = bs.audioContext.createGain();
-		bs.connect(gainNode);
-		gainNode.connect(bs.audioContext.destination);
+		//var gainNode = bs.audioContext.createGain();
+		//bs.connect(gainNode);
+		//gainNode.connect(bs.audioContext.destination);
 
-		function runTimer() {
-			console.log("timing "+bs.audioContext.currentTime);
-			requestAnimFrame(runTimer);
-			console.log(bs.isPlaying);
-		}
+		//function runTimer() {
+			//console.log("timing "+bs.audioContext.currentTime);
+			//requestAnimFrame(runTimer);
+			//console.log(bs.isPlaying);
+		//}
 		//runTimer();
 });
