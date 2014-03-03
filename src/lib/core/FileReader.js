@@ -18,10 +18,7 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
         }
 
         var loadFile_;
-        var sName_ = Math.random();
-
-        //console.log( "FileReader created: " + sName_ );
-
+        
         /**
          * @property context
          * @type @new;AudioContext
@@ -39,18 +36,6 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
         this.getLoadFile_ = function () {
 
             return loadFile_;
-
-        };
-
-        this.setName_ = function ( value ) {
-
-            sName_ = value;
-
-        };
-
-        this.getName_ = function () {
-
-            return sName_;
 
         };
 

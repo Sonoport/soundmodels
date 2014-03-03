@@ -22,14 +22,11 @@ define( function () {
         var nLoopStart_ = 0;
         var nLoopEnd_ = 0;
         var nLoopLength_ = 0;
-        var sName_ = Math.random();
-
+        
         this.PREPOSTFIX_LEN = 5000;
         this.SPIKE_THRESH = 0.5;
         this.MAX_MP3_SILENCE = 20000;
         this.SILENCE_THRESH = 0.1;
-
-        //        console.log( "LoopMarker created: " + sName_ );
 
         // Privilege functions
 
@@ -90,18 +87,6 @@ define( function () {
         this.getLoopLength_ = function () {
 
             return nLoopLength_;
-
-        };
-
-        this.setName_ = function ( value ) {
-
-            sName_ = value;
-
-        };
-
-        this.getName_ = function () {
-
-            return sName_;
 
         };
 

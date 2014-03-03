@@ -49,10 +49,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         var nStartPoint_ = new SPAudioParam( "startPoint", 0.0, 0.99, 1, null, null, null, null );
         var nMultiTrackGain_ = new SPAudioParam( "multiTrackGain", 0.0, 1, 1, null, null, null, null );
 
-        nPlaySpeed_.value = 1;
-
-        // console.log( "Looper created: " + sName_ );
-
         // Privilege functions
 
         this.setStartPoint_ = function ( value ) {

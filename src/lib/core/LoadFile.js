@@ -24,10 +24,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
         var bIsNotWavFile_ = false;
         var bSoundLoaded_ = false;
         var context_;
-        var sName_ = Math.random();
-
-        //        console.log( "LoadFile created: " + sName_ );
-
+        
         // Privilege functions
 
         this.setLoopMarker_ = function ( value ) {
@@ -89,19 +86,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
             return context_;
 
         };
-
-        this.setName_ = function ( value ) {
-
-            sName_ = value;
-
-        };
-
-        this.getName_ = function () {
-
-            return sName_;
-
-        };
-
+        
         // Private functions
 
         /**
