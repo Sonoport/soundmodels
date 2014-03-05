@@ -22,7 +22,7 @@ define( function () {
         var nLoopStart_ = 0;
         var nLoopEnd_ = 0;
         var nLoopLength_ = 0;
-        
+
         this.PREPOSTFIX_LEN = 5000;
         this.SPIKE_THRESH = 0.5;
         this.MAX_MP3_SILENCE = 20000;

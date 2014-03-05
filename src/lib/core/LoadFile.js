@@ -24,7 +24,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
         var bIsNotWavFile_ = false;
         var bSoundLoaded_ = false;
         var context_;
-        
+
         // Privilege functions
 
         this.setLoopMarker_ = function ( value ) {
@@ -86,7 +86,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
             return context_;
 
         };
-        
+
         // Private functions
 
         /**

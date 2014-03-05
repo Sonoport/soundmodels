@@ -18,7 +18,7 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
         }
 
         var loadFile_;
-        
+
         /**
          * @property context
          * @type @new;AudioContext
