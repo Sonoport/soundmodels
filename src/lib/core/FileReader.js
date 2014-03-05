@@ -61,7 +61,7 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
 
             }
 
-        }
+        };
 
         /**
          * Determine if file is loaded.

@@ -19,73 +19,13 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
 
         }
 
+        var that = this;
+        
         var loopMarker_;
         var buffer_;
         var bIsNotWavFile_ = false;
         var bSoundLoaded_ = false;
         var context_;
-
-        // Privilege functions
-
-        this.setLoopMarker_ = function ( value ) {
-
-            loopMarker_ = value;
-
-        };
-
-        this.getLoopMarker_ = function () {
-
-            return loopMarker_;
-
-        };
-
-        this.setBuffer_ = function ( value ) {
-
-            buffer_ = value;
-
-        };
-
-        this.getBuffer_ = function () {
-
-            return buffer_;
-
-        };
-
-        this.setIsNotWavFile_ = function ( value ) {
-
-            bIsNotWavFile_ = value;
-
-        };
-
-        this.getIsNotWavFile_ = function () {
-
-            return bIsNotWavFile_;
-
-        };
-
-        this.setSoundLoaded_ = function ( value ) {
-
-            bSoundLoaded_ = value;
-
-        };
-
-        this.getSoundLoaded_ = function () {
-
-            return bSoundLoaded_;
-
-        };
-
-        this.setContext_ = function ( value ) {
-
-            context_ = value;
-
-        };
-
-        this.getContext_ = function () {
-
-            return context_;
-
-        };
 
         // Private functions
 
@@ -95,7 +35,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
          * @param {Object} value
          * @returns {Boolean} Result of test.
          */
-        this.isInt_ = function ( value ) {
+        var isInt_ = function ( value ) {
 
             var er = /^[0-9]+$/;
 
@@ -117,7 +57,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
          * @param {Number} end The end of the buffer to load.
          * @returns {AudioBuffer} The trimmed buffer.
          */
-        this.sliceBuffer_ = function ( start, end ) {
+        var sliceBuffer_ = function ( start, end ) {
 
             var aChannels = [];
             var nChannels = buffer_.numberOfChannels;
@@ -132,12 +72,12 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
             }
 
             // Verify parameters
-            if ( !this.isInt_( start ) ) {
+            if ( !isInt_( start ) ) {
 
                 console.log( "getBuffer Start parameter is not an integer" );
                 return;
 
-            } else if ( !this.isInt_( end ) ) {
+            } else if ( !isInt_( end ) ) {
 
                 console.log( "getBuffer End parameter is not an integer" );
                 return;
@@ -200,7 +140,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
          * @param {String | Array | AudioBuffer} link
          * @returns {String} The link type
          */
-        this.checkLinkType_ = function ( link ) {
+        var checkLinkType_ = function ( link ) {
 
             if ( typeof link === "string" ) {
 
@@ -214,15 +154,9 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
             return "unknown";
 
         };
-
-    }
-
-    // Public functions
-
-    LoadFile.prototype = {
-
-        constructor: LoadFile,
-
+        
+        // Public functions
+        
         /**
          * Get the current buffer.
          * @method getBuffer
@@ -230,7 +164,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
          * @param {Number} end the end index
          * @returns {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
          */
-        getBuffer: function ( start, end ) {
+        this.getBuffer = function ( start, end ) {
 
             // Set start if it is missing
             if ( typeof start === "undefined" ) {
@@ -242,54 +176,48 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
             // Set end if it is missing
             if ( typeof end === "undefined" ) {
 
-                end = this.getBuffer_()
-                    .length;
+                end = buffer_.length;
 
             }
 
             // Do trimming if it is not a wave file
-            if ( this.getIsNotWavFile_() ) {
+            if ( bIsNotWavFile_ ) {
 
-                if ( end + this.getLoopMarker_()
-                    .getStartMarker() > this.getLoopMarker_()
-                    .getEndMarker() ) {
+                if ( end + loopMarker_.getStartMarker() > loopMarker_.getEndMarker() ) {
 
-                    end = this.getLoopMarker_()
-                        .getEndMarker();
+                    end = loopMarker_.getEndMarker();
 
                 }
 
-                return this.sliceBuffer_( start + this.getLoopMarker_()
-                    .getStartMarker(), end + this.getLoopMarker_()
-                    .getStartMarker() );
+                return sliceBuffer_( start + loopMarker_.getStartMarker(), end + loopMarker_.getStartMarker() );
 
             }
 
-            return this.sliceBuffer_( start, end );
+            return sliceBuffer_( start, end );
 
-        },
+        };
 
         /**
          * Get the original buffer.
          * @method getRawBuffer
          * @returns {AudioBuffer} The original AudioBuffer.
          */
-        getRawBuffer: function () {
+        this.getRawBuffer = function () {
 
-            return this.getBuffer_();
+            return buffer_;
 
-        },
+        };
 
         /**
          * Check if sound is already loaded.
          * @method isLoaded
          * @returns {Boolean} True if file is loaded. Flase if file is not yeat loaded.
          */
-        isLoaded: function () {
+        this.isLoaded = function () {
 
-            return this.getSoundLoaded_();
+            return bSoundLoaded_;
 
-        },
+        };
 
         /**
          * Load a file based on the URI.
@@ -298,19 +226,19 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
          * @param {AudioContext} context The Audio context.
          * @param {Function} callback The function to call when file loads.
          */
-        load: function ( link, context, callback ) {
+        this.load = function ( link, context, callback ) {
 
-            var that = this;
+            var localThat = this;
             var request = new XMLHttpRequest();
 
-            this.setSoundLoaded_( false );
-            this.setIsNotWavFile_( false );
-            this.setContext_( context );
+            bSoundLoaded_ = false;
+            bIsNotWavFile_ = false;
+            context_ = context;
 
-            if ( this.checkLinkType_( link ) === "audiobuffer" ) {
+            if ( checkLinkType_( link ) === "audiobuffer" ) {
 
-                this.setSoundLoaded_( true );
-                this.setBuffer_( link );
+                bSoundLoaded_ = true;
+                buffer_ = link;
                 callback.success();
 
                 return;
@@ -327,19 +255,18 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
 
                     var aEr = /[^.]+$/.exec( link );
 
-                    that.setSoundLoaded_( true );
-                    that.setBuffer_( buffer );
+                    localThat.bSoundLoaded_ = true;
+                    localThat.buffer_ = buffer;
 
                     // Do trimming if it is not a wave file
                     if ( aEr[ 0 ] !== "wav" ) {
 
-                        that.setIsNotWavFile_( true );
+                        localThat.bIsNotWavFile_ = true;
 
                         // Detect loop markers
-                        that.setLoopMarker_( new LoopMarker() );
+                        localThat.loopMarker_ = new LoopMarker();
 
-                        that.getLoopMarker_()
-                            .detectMarkers( that.getBuffer_() );
+                        localThat.loopMarker_.detectMarkers( localThat.buffer_ );
 
                     }
 
@@ -359,7 +286,15 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
 
             request.send();
 
-        }
+        };
+
+    }
+
+    // Public functions
+
+    LoadFile.prototype = {
+
+        constructor: LoadFile
 
     };
 
