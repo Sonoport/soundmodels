@@ -18,9 +18,6 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
         }
 
         var loadFile_;
-        var sName_ = Math.random();
-
-        //console.log( "FileReader created: " + sName_ );
 
         /**
          * @property context
@@ -28,29 +25,76 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
          */
         this.context = context;
 
-        // Privilege functions
+        // Public functions
 
-        this.setLoadFile_ = function ( value ) {
+        /**
+         * Load a file from URI.
+         * @method open
+         * @param {String} link The link of the file to load.
+         * @param {Function} callback The function to call when file loads.
+         */
+        this.open = function ( link, callback ) {
 
-            loadFile_ = value;
+            loadFile_ = new LoadFile();
+
+            if ( window.AudioContext || window.webkitAudioContext ) {
+
+                loadFile_.load( link, this.context, {
+
+                    success: function () {
+
+                        callback( true );
+
+                    },
+
+                    error: function () {
+
+                        callback( false );
+
+                    }
+
+                } );
+
+            } else {
+
+                console.log( "Web Audio API is not supported. Failed to open file." );
+
+            }
 
         };
 
-        this.getLoadFile_ = function () {
+        /**
+         * Determine if file is loaded.
+         * @method isLoaded
+         * @return {Boolean} True if file is loaded. False if file is not loaded.
+         */
+        this.isLoaded = function () {
 
-            return loadFile_;
+            return loadFile_.isLoaded();
 
         };
 
-        this.setName_ = function ( value ) {
+        /**
+         * Get the AudioContext buffer.
+         * @method getBuffer
+         * @param {Number} start The start index
+         * @param {Number} end the end index
+         * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed.
+         */
+        this.getBuffer = function ( start, end ) {
 
-            sName_ = value;
+            return loadFile_.getBuffer( start, end );
 
         };
 
-        this.getName_ = function () {
+        /**
+         * Get the original buffer.
+         * @method getRawBuffer
+         * @returns {AudioBuffer} The original AudioBuffer.
+         */
+        this.getRawBuffer = function () {
 
-            return sName_;
+            return loadFile_.getRawBuffer();
 
         };
 
@@ -70,82 +114,7 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
 
     FileReader.prototype = {
 
-        constructor: FileReader,
-
-        /**
-         * Load a file from URI.
-         * @method open
-         * @param {String} link The link of the file to load.
-         * @param {Function} callback The function to call when file loads.
-         */
-        open: function ( link, callback ) {
-
-            this.setLoadFile_( new LoadFile() );
-
-            if ( window.AudioContext || window.webkitAudioContext ) {
-
-                this.getLoadFile_()
-                    .load( link, this.context, {
-
-                        success: function () {
-
-                            callback( true );
-
-                        },
-
-                        error: function () {
-
-                            callback( false );
-
-                        }
-
-                    } );
-
-            } else {
-
-                console.log( "Web Audio API is not supported. Failed to open file." );
-
-            }
-
-        },
-
-        /**
-         * Determine if file is loaded.
-         * @method isLoaded
-         * @return {Boolean} True if file is loaded. False if file is not loaded.
-         */
-        isLoaded: function () {
-
-            return this.getLoadFile_()
-                .isLoaded();
-
-        },
-
-        /**
-         * Get the AudioContext buffer.
-         * @method getBuffer
-         * @param {Number} start The start index
-         * @param {Number} end the end index
-         * @returns {AudioBuffer} The new AudioBuffer that was marked then trimmed.
-         */
-        getBuffer: function ( start, end ) {
-
-            return this.getLoadFile_()
-                .getBuffer( start, end );
-
-        },
-
-        /**
-         * Get the original buffer.
-         * @method getRawBuffer
-         * @returns {AudioBuffer} The original AudioBuffer.
-         */
-        getRawBuffer: function () {
-
-            return this.getLoadFile_()
-                .getRawBuffer();
-
-        }
+        constructor: FileReader
 
     };
 
