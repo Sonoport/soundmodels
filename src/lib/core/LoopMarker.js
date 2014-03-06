@@ -18,16 +18,16 @@ define( function () {
         }
 
         // Private vars
-        
+
         var that = this;
         var aRightChannel_;
         var aLeftChannel_;
         var nLoopStart_ = 0;
         var nLoopEnd_ = 0;
         var nLoopLength_ = 0;
-        
+
         // Public vars
-        
+
         this.PREPOSTFIX_LEN = 5000;
         this.SPIKE_THRESH = 0.5;
         this.MAX_MP3_SILENCE = 20000;
@@ -199,9 +199,9 @@ define( function () {
             }
 
         };
-        
+
         // Public functions
-        
+
         /**
          * Detect loop markers in the audio file and create if there is none.
          * @method detectMarkers
@@ -218,7 +218,7 @@ define( function () {
             }
 
         };
-        
+
         /**
          * Get the end marker.
          * @method getEndMarker
@@ -229,7 +229,7 @@ define( function () {
             return nLoopEnd_;
 
         };
-        
+
         /**
          * Get the start marker.
          * @method getStartMarker

@@ -20,7 +20,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
         }
 
         var that = this;
-        
+
         var loopMarker_;
         var buffer_;
         var bIsNotWavFile_ = false;
@@ -154,9 +154,9 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
             return "unknown";
 
         };
-        
+
         // Public functions
-        
+
         /**
          * Get the current buffer.
          * @method getBuffer

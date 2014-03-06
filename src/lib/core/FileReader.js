@@ -26,7 +26,7 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
         this.context = context;
 
         // Public functions
-        
+
         /**
          * Load a file from URI.
          * @method open
@@ -41,19 +41,19 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
 
                 loadFile_.load( link, this.context, {
 
-                        success: function () {
+                    success: function () {
 
-                            callback( true );
+                        callback( true );
 
-                        },
+                    },
 
-                        error: function () {
+                    error: function () {
 
-                            callback( false );
+                        callback( false );
 
-                        }
+                    }
 
-                    } );
+                } );
 
             } else {
 

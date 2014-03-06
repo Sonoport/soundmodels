@@ -280,11 +280,14 @@ define(
             **/
             this.linearRampToValueAtTime = function ( value, endTime ) {
                 if ( typeof mappingFunction === 'function' ) {
+                    console.log( "aaa " );
                     value = mappingFunction( value );
                 }
                 if ( aParam ) {
+                    console.log( "bbb " );
                     aParam.linearRampToValueAtTime( value, endTime );
                 } else {
+                    console.log( "ccc " );
                     var self = this;
                     var initValue_ = self.value;
                     var initTime_ = audioContext.currentTime;
@@ -306,9 +309,12 @@ define(
             @param {Number} startTime The startTime parameter is the starting time at and after which any previously scheduled parameter changes will be cancelled.
             **/
             this.cancelScheduledValues = function ( startTime ) {
+                console.log( "zzz" );
                 if ( aParam ) {
+                    console.log( "yyy" );
                     aParam.cancelScheduledValues( startTime );
                 } else {
+                    console.log( "www" );
                     window.clearInterval( intervalID_ );
                 }
             };
@@ -328,7 +334,7 @@ define(
         **/
         SPAudioParam.createPsuedoParam = function ( name, minValue, maxValue, defaultValue, audioContext ) {
 
-            return new SPAudioParam( name, minValue, maxValue, defaultValue, null, null, audioContext );
+            return new SPAudioParam( name, minValue, maxValue, defaultValue, null, null, null, audioContext );
 
         };
 

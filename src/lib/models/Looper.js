@@ -44,6 +44,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         /**
          * Adjust the time according to decayTime and riseTime
+         * @private
+         * @method adjustTime
          * @param {Float} newValue
          * @param {Float} currentValue
          * @param {Number} time
@@ -122,6 +124,12 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         };
 
+        /**
+         * Create gain nodes for each sources
+         * @private
+         * @method createGainNode
+         * @param {AudioBuffer} source
+         */
         var createGainNode_ = function ( source ) {
 
             var gainNode = that.audioContext.createGain();
@@ -186,6 +194,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         /**
          * Populate sources
+         * @private
          * @method populateSources
          * @private
          */
@@ -315,6 +324,12 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         };
 
+        /**
+         * Reset AudioParam setting
+         * @param {AudioParam} aParam
+         * @method resetAudioParam
+         * @returns {AudioParam}
+         */
         var resetAudioParam_ = function ( aParam ) {
 
             aParam.cancelScheduledValues( that.audioContext.currentTime );
@@ -326,6 +341,14 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         // AudioParam Mappers and Setters
 
+        /**
+         * Setter for multiTrackGain SPAudioParam
+         * @private
+         * @method multiTrackGainSetter
+         * @param {AudioParam} aParam
+         * @param {Number} value
+         * @param {AudioContext} audioContext
+         */
         var multiTrackGainSetter_ = function ( aParam, value, audioContext ) {
 
             var nTime = audioContext.currentTime;
@@ -343,6 +366,14 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         };
 
+        /**
+         * Setter for playSpeed SPAudioParam
+         * @private
+         * @method playSpeedSetter
+         * @param {AudioParam} aParam
+         * @param {Number} value
+         * @param {AudioContext} audioContext
+         */
         var playSpeedSetter_ = function ( aParam, value, audioContext ) {
 
             for ( var i = 0; i < aSources_.length; i++ ) {
@@ -364,6 +395,12 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         };
 
+        /**
+         * Mapper for startPoint SPAudioParam
+         * @private
+         * @method startPointMapper
+         * @param {Number} value
+         */
         var startPointMapper_ = function ( value ) {
 
             for ( var i = 0; i < aSources_.length; i++ ) {
@@ -376,13 +413,40 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         };
 
+        /**
+         * Mapper for riseTime SPAudioParam
+         * @private
+         * @method riseTimeMapper
+         * @param {Number} value
+         */
+        var riseTimeMapper_ = function ( value ) {
+
+            that.riseTime.cancelScheduledValues( 0 );
+            return value;
+
+        };
+
+        /**
+         * Mapper for decayTime SPAudioParam
+         * @private
+         * @method decayTimeMapper
+         * @param {Number} value
+         */
+        var decayTimeMapper_ = function ( value ) {
+
+            that.decayTime.cancelScheduledValues( 0 );
+            return value;
+
+        };
+
         // Public vars
 
         // AudioParams
 
-        this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 1, this.audioContext );
-        this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10, 1, this.audioContext );
-        this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 1, true, startPointMapper_, null, null );
+        this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, riseTimeMapper_, null, this.audioContext );
+        this.decayTime = new SPAudioParam( "decayTime", 0.05, 10, 1, null, decayTimeMapper_, null, this.audioContext );
+
+        this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 1, true, startPointMapper_, null, this.audioContext );
         this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, true, null, playSpeedSetter_, this.audioContext );
 
         this.playSpeed.setValueAtTime = function ( value, startTime ) {
