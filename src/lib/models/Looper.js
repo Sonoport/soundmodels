@@ -224,7 +224,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
                     aSources_.push( source );
 
-                }
+                } else {console.log("Not loaded")}
 
             }
 
@@ -394,22 +394,44 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             }
 
         };
-
+        
         /**
-         * Mapper for startPoint SPAudioParam
+         * Setter for startPoint SPAudioParam
          * @private
-         * @method startPointMapper
+         * @method startPointSetter
+         * @param {AudioParam} aParam
          * @param {Number} value
+         * @param {AudioContext} audioContext
          */
-        var startPointMapper_ = function ( value ) {
-
+        var innerStartPointSetter_ = function ( aParam, value, audioContext ) {
+            
             for ( var i = 0; i < aSources_.length; i++ ) {
 
                 aSources_[ i ].loopStart = aSources_[ i ].buffer.duration * value;
 
             }
 
-            return value;
+        };
+        
+        /**
+         * Setter for startPoint SPAudioParam
+         * @private
+         * @method startPointSetter
+         * @param {AudioParam} aParam
+         * @param {Number} value
+         * @param {AudioContext} audioContext
+         */
+        var startPointSetter_ = function ( aParam, value, audioContext ) {
+console.log("&&& looper setter " + value);
+//console.log(that.startPoint.name);
+//            that.startPoint.cancelScheduledValues( 0 );
+            
+
+            for ( var i = 0; i < aSources_.length; i++ ) {
+
+                aSources_[ i ].loopStart = aSources_[ i ].buffer.duration * value;
+
+            }
 
         };
 
@@ -438,16 +460,32 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             return value;
 
         };
+        
+        var startPointMapper_ = function ( value ) {
+console.log("*** looper mapper " + value);
+//console.log(that.startPoint.name);
+//            that.decayTime.cancelScheduledValues( 0 );
+            return value;
+
+        };
 
         // Public vars
 
         // AudioParams
 
         this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, riseTimeMapper_, null, this.audioContext );
-        this.decayTime = new SPAudioParam( "decayTime", 0.05, 10, 1, null, decayTimeMapper_, null, this.audioContext );
-
-        this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 1, true, startPointMapper_, null, this.audioContext );
+        this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, decayTimeMapper_, null, this.audioContext );
+        this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.0, true, startPointMapper_, startPointSetter_, this.audioContext );
         this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, true, null, playSpeedSetter_, this.audioContext );
+        
+        var innerStartPoint_ = new SPAudioParam( "startPoint", 0.0, 0.99, 0.0, true, null, innerStartPointSetter_, this.audioContext );
+        
+        this.startPoint.exponentialRampToValueAtTime = function ( value, endTime ) {
+
+              innerStartPoint_.cancelScheduledValues( 0 );
+              innerStartPoint_.exponentialRampToValueAtTime(value, adjustTime_( value, innerStartPoint_.value, endTime ));
+
+        };
 
         this.playSpeed.setValueAtTime = function ( value, startTime ) {
 
@@ -681,7 +719,9 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         // Init
 
-        this.startPoint.value = 0;
+        this.riseTime.value = 0.01;
+        this.decayTime.value = 0.01;
+//        this.startPoint.value = 0.01;
 
         // Do validation of constructor parameter
         if ( !bParameterValid_( sounds ) ) {
