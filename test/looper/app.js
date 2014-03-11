@@ -2,7 +2,7 @@ require.config({
 	baseUrl: 'src/lib/'
 	
 });
- 
+
 require(['models/Looper', 'core/FileReader'], function (Looper) {
 
 var context;
@@ -21,26 +21,24 @@ function loadDogSound(url) {
     context.decodeAudioData(request.response, function(buffer) {
   
       // buffer only
-      //lp = new Looper([buffer], onLoad);
+      lp = new Looper([buffer], onLoad);
 
       // buffer and link
-      lp = new Looper([buffer, 'http://localhost:8383/javascript-sound-models/bullet.mp3'], onLoad);
-  
+      //lp = new Looper([buffer, 'http://localhost:8383/javascript-sound-models/bullet.mp3'], onLoad);
+      //lp = new Looper([buffer, 'http://localhost:8383/javascript-sound-models/bullet.mp3'], function(){});
+      //lp = new Looper('https://dl.dropboxusercontent.com/u/77191118/deep_loop.wav', function() {});
 
     }, onError);
   };
   request.send();
 }
 
-function onError() {
-  
-  
-  
-}
+function onError() {};
 
-loadDogSound('http://localhost:8383/javascript-sound-models/short.mp3');
+//lp = new Looper('https://dl.dropboxusercontent.com/u/77191118/deep_loop.wav', function() {console.log("hello!!");});
+//loadDogSound('http://localhost:8383/javascript-sound-models/short.mp3');
 //loadDogSound('http://localhost:8383/javascript-sound-models/long.mp3');
-//loadDogSound('http://localhost:8383/javascript-sound-models/bullet.mp3');
+loadDogSound('http://localhost:8383/javascript-sound-models/bullet.mp3');
 
 function onLoad(bResult) {
   
@@ -51,13 +49,26 @@ function onLoad(bResult) {
   
   function handlePlay(e) {
     
+    lp.decayTime.value = 5;
+    lp.riseTime.value = 5;
     lp.play();
+    
+    for (var i = 0; i < lp.multiTrackGain.length; i++) {
+      
+      var nTime = 0.5;
+      lp.multiTrackGain[i].value = nTime;
+      
+    }
    
   }
   
   function handleStop(e) {
     
-      lp.stop();
+    var nTime = Math.random() * 20;
+    
+    console.log("Stopping in " + (context.currentTime + nTime) );
+    
+    lp.stop(context.currentTime + nTime);
    
   }
   
@@ -73,58 +84,64 @@ function onLoad(bResult) {
       
       console.log("Setting playSpeed to " + nTime);
       
-      lp.playSpeed = nTime;
+      lp.playSpeed.exponentialRampToValueAtTime( nTime);
       
   }
   
   function handleRiseTime(e) {
       
-      var nTime = Math.random() * 5;
+      var nTime = Math.random() * 10;
       
       console.log("Setting riseTime to " + nTime);
       
-      lp.riseTime = nTime;
+      lp.riseTime.value = nTime;
    
   }
   
   function handleDecayTime(e) {
       
-      var nTime = Math.random() * 5;
+      var nTime = Math.random() * 10;
       
       console.log("Setting decayTime to " + nTime);
       
-      lp.decayTime = nTime;
-   
+      lp.decayTime.value = nTime;
+      
   }
   
   function handleStartPoint(e) {
       
-      var nTime = Math.random() * 1;
+    var nTime = Math.random() * 1;
       
-      console.log("Setting startPoint to " + nTime);
+    console.log("Setting startPoint to " + nTime);
       
-      lp.startPoint = nTime;
-   
+    lp.startPoint.value = nTime;
+    //lp.startPoint.exponentialRampToValueAtTime( nTime);
+  
   }
   
   function handleRelease(e) {
     
-      lp.release(5);
+      var nTime = Math.random() * 1;
+    
+      console.log("Setting release to " + nTime);
+      
+      lp.release(nTime);
    
   }
   
   function handleGain(e) {
     
-    //lp.multiTrackGain[5] = 666;
-    
     for (var i = 0; i < lp.multiTrackGain.length; i++) {
       
-      lp.multiTrackGain[i] = Math.random() * 1;
+      var nTime = Math.random() * 1;
+      
+      console.log("Setting gain to " + nTime);
+      
+      lp.multiTrackGain[i].value = nTime; 
+      //lp.multiTrackGain[i].exponentialRampToValueAtTime(nTime); 
       
     }
     
-    console.log("Setting individual gains to: " + lp.multiTrackGain);
-   
   }
 
   document.getElementById('bPlay').addEventListener('click', handlePlay, false);
