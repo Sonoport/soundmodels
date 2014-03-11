@@ -104,7 +104,6 @@ define(
                         }
 
                     } else if ( aParam ) {
-                        //                      console.log("Setting " + value);
                         // If mapped param
                         // Map if mappingFunction is defined
                         if ( typeof mappingFunction === 'function' ) {

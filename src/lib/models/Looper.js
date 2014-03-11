@@ -520,7 +520,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.03, true, startPointMapper_, startPointSetter_, this.audioContext );
         this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, true, null, playSpeedSetter_, this.audioContext );
 
-        var innerStartPoint_ = new SPAudioParam( "startPoint", this.startPoint.minValue, this.startPoint.maxValue, this.startPoint.defaultValue, true, innerStartPointMapper_, innerStartPointSetter_, this.audioContext );
+        var innerStartPoint_ = new SPAudioParam( "innerStartPoint", this.startPoint.minValue, this.startPoint.maxValue, this.startPoint.defaultValue, true, innerStartPointMapper_, innerStartPointSetter_, this.audioContext );
 
         // startPoint Overrides
         this.startPoint.setValueAtTime = function ( value, startTime ) {
