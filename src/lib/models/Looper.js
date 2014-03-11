@@ -40,6 +40,9 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         var fCallback_ = callback;
 
+        var bInnerLoopInitialized_ = false;
+        var bInnerLoopCall_ = false;
+
         // Private functions  
 
         /**
@@ -139,6 +142,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
             var spGainNode = new SPAudioParam( "gainNode", 0.0, 1, 1, gainNode.gain, null, multiTrackGainSetter_, that.audioContext );
 
+            // spGainNode Overrides
             spGainNode.setValueAtTime = function ( value, startTime ) {
 
                 var aParam = resetAudioParam_( gainNode.gain );
@@ -224,7 +228,9 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
                     aSources_.push( source );
 
-                } else {console.log("Not loaded")}
+                } else {
+                    console.log( "Not loaded" );
+                }
 
             }
 
@@ -394,37 +400,21 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             }
 
         };
-        
+
         /**
-         * Setter for startPoint SPAudioParam
+         * Setter for innerStartPoint SPAudioParam
          * @private
-         * @method startPointSetter
+         * @method innerStartPointSetter
          * @param {AudioParam} aParam
          * @param {Number} value
          * @param {AudioContext} audioContext
          */
         var innerStartPointSetter_ = function ( aParam, value, audioContext ) {
-            
-            console.log("^^^ inner setter");
+
+            bInnerLoopCall_ = false;
 
         };
-        
-        var innerStartPointMapper_ = function ( value ) {
-          console.log("^^^ inner mapper");  
-            if (!bInnerLoopInitialized_) {
-              
-              that.startPoint.value = value;
-              
-            } else {
-              
-              bInnerLoopInitialized_ = false;
-              
-            }
-            
-            return value;
 
-        };
-        
         /**
          * Setter for startPoint SPAudioParam
          * @private
@@ -434,19 +424,63 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
          * @param {AudioContext} audioContext
          */
         var startPointSetter_ = function ( aParam, value, audioContext ) {
-console.log("*** outside setter " + value);
 
-        };
-        
-        var startPointMapper_ = function ( value ) {
-console.log("*** outside mapper " + value); // + " " + aSources_[ 0 ].loopStart);
+            if ( !bInnerLoopCall_ ) {
 
-            for ( var i = 0; i < aSources_.length; i++ ) {
+                if ( typeof innerStartPoint_ !== "undefined" ) {
 
-                aSources_[ i ].loopStart = aSources_[ i ].buffer.duration * value;
+                    innerStartPoint_.cancelScheduledValues( 0 );
+                    bInnerLoopInitialized_ = true;
+                    innerStartPoint_.linearRampToValueAtTime( value, adjustTime_( value, that.startPoint.value ) );
+
+                }
 
             }
-              
+
+        };
+
+        /**
+         * Mapper for startPoint SPAudioParam
+         * @private
+         * @method startPointMapper
+         * @param {Number} value
+         */
+        var startPointMapper_ = function ( value ) {
+
+            if ( bInnerLoopCall_ ) {
+
+                for ( var i = 0; i < aSources_.length; i++ ) {
+
+                    aSources_[ i ].loopStart = aSources_[ i ].buffer.duration * value;
+
+                }
+
+            }
+
+            return value;
+
+        };
+
+        /**
+         * Mapper for innerStartPoint SPAudioParam
+         * @private
+         * @method innerStartPointMapper
+         * @param {Number} value
+         */
+        var innerStartPointMapper_ = function ( value ) {
+
+            bInnerLoopCall_ = true;
+
+            if ( !bInnerLoopInitialized_ ) {
+
+                that.startPoint.value = value;
+
+            } else {
+
+                bInnerLoopInitialized_ = false;
+
+            }
+
             return value;
 
         };
@@ -476,7 +510,7 @@ console.log("*** outside mapper " + value); // + " " + aSources_[ 0 ].loopStart)
             return value;
 
         };
-        
+
         // Public vars
 
         // AudioParams
@@ -485,10 +519,10 @@ console.log("*** outside mapper " + value); // + " " + aSources_[ 0 ].loopStart)
         this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, decayTimeMapper_, null, this.audioContext );
         this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.03, true, startPointMapper_, startPointSetter_, this.audioContext );
         this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, true, null, playSpeedSetter_, this.audioContext );
-        
+
         var innerStartPoint_ = new SPAudioParam( "startPoint", this.startPoint.minValue, this.startPoint.maxValue, this.startPoint.defaultValue, true, innerStartPointMapper_, innerStartPointSetter_, this.audioContext );
-        var bInnerLoopInitialized_ = false;
-        
+
+        // startPoint Overrides
         this.startPoint.setValueAtTime = function ( value, startTime ) {
 
             innerStartPoint_.cancelScheduledValues( 0 );
@@ -506,12 +540,12 @@ console.log("*** outside mapper " + value); // + " " + aSources_[ 0 ].loopStart)
             innerStartPoint_.setTargetAtTime( target, adjustTime_( target, that.startPoint.value, startTime ), timeConstant );
 
         };
-        
+
         this.startPoint.setValueCurveAtTime = function ( values, startTime, duration ) {
 
             innerStartPoint_.cancelScheduledValues( 0 );
             bInnerLoopInitialized_ = true;
-            
+
             if ( isNaN( startTime ) || typeof startTime === "undefined" ) {
 
                 startTime = this.audioContext.currentTime;
@@ -521,25 +555,23 @@ console.log("*** outside mapper " + value); // + " " + aSources_[ 0 ].loopStart)
             innerStartPoint_.setValueCurveAtTime( values, startTime, duration );
 
         };
-        
+
         this.startPoint.exponentialRampToValueAtTime = function ( value, endTime ) {
 
-          console.log("??????" + innerStartPoint_.value + " === " + that.startPoint.value);
-
-          innerStartPoint_.cancelScheduledValues( 0 );
-          bInnerLoopInitialized_ = true;
-          innerStartPoint_.exponentialRampToValueAtTime(value, adjustTime_( value, that.startPoint.value, endTime ));
+            innerStartPoint_.cancelScheduledValues( 0 );
+            bInnerLoopInitialized_ = true;
+            innerStartPoint_.exponentialRampToValueAtTime( value, adjustTime_( value, that.startPoint.value, endTime ) );
 
         };
-        
+
         this.startPoint.linearRampToValueAtTime = function ( value, endTime ) {
-          
-          innerStartPoint_.cancelScheduledValues( 0 );
-          bInnerLoopInitialized_ = true;
-          innerStartPoint_.linearRampToValueAtTime(value, adjustTime_( value, that.startPoint.value, endTime ));
-          
+
+            innerStartPoint_.cancelScheduledValues( 0 );
+            bInnerLoopInitialized_ = true;
+            innerStartPoint_.linearRampToValueAtTime( value, adjustTime_( value, that.startPoint.value, endTime ) );
+
         };
-        
+
         this.startPoint.cancelScheduledValues = function ( startTime ) {
 
             bInnerLoopInitialized_ = true;
@@ -547,6 +579,7 @@ console.log("*** outside mapper " + value); // + " " + aSources_[ 0 ].loopStart)
 
         };
 
+        // playSpeed Overrides
         this.playSpeed.setValueAtTime = function ( value, startTime ) {
 
             for ( var i = 0; i < aSources_.length; i++ ) {
@@ -620,6 +653,10 @@ console.log("*** outside mapper " + value); // + " " + aSources_[ 0 ].loopStart)
 
         };
 
+        /**
+         * Getter for multiTrackGain
+         * @type Arguments
+         */
         this.__defineGetter__( 'multiTrackGain', function () {
 
             return aMultiTrackGains_;
@@ -778,9 +815,6 @@ console.log("*** outside mapper " + value); // + " " + aSources_[ 0 ].loopStart)
         };
 
         // Init
-
-        this.riseTime.value = 10;
-        this.decayTime.value = 10;
 
         // Do validation of constructor parameter
         if ( !bParameterValid_( sounds ) ) {

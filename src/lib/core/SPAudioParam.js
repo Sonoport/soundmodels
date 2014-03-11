@@ -25,7 +25,7 @@ define(
 
             var intervalID_;
             var that = this;
-            
+
             /**
             @property defaultValue
             @type Number/Boolean
@@ -59,7 +59,7 @@ define(
             @type Number/Boolean
             @default 0
             **/
-            var value_ = 0; 
+            var value_ = 0;
             Object.defineProperty( this, 'value', {
                 enumerable: true,
                 configurable: true,
@@ -89,7 +89,7 @@ define(
                         }
                     }
 
-                    if ( aParam && aParam instanceof AudioParam  ) {
+                    if ( aParam && aParam instanceof AudioParam ) {
                         // If mapped param
                         // Map if mappingFunction is defined
                         if ( typeof mappingFunction === 'function' ) {
@@ -98,14 +98,14 @@ define(
                         }
                         if ( typeof setter === 'function' && audioContext ) {
                             // If setter is defined call it
-                            setter( aParam, value, audioContext ); 
+                            setter( aParam, value, audioContext );
                         } else if ( aParam ) {
                             aParam.value = value;
-                        } 
-                        
-                    } else if (aParam) {
-//                      console.log("Setting " + value);
-                      // If mapped param
+                        }
+
+                    } else if ( aParam ) {
+                        //                      console.log("Setting " + value);
+                        // If mapped param
                         // Map if mappingFunction is defined
                         if ( typeof mappingFunction === 'function' ) {
                             // Map if mappingFunction is defined
@@ -113,13 +113,13 @@ define(
                         }
                         if ( typeof setter === 'function' && audioContext ) {
                             // If setter is defined call it
-                            setter( aParam, value, audioContext ); 
-                        } 
-                          
+                            setter( aParam, value, audioContext );
+                        }
+
                         if ( aParam ) {
                             value_ = value;
-                        } 
-                    
+                        }
+
                     } else {
                         // If Psuedo param
                         value_ = value;
@@ -142,9 +142,9 @@ define(
                 this.name = aParam.name;
             }
 
-            if ( defaultValue || defaultValue === 0) {
+            if ( defaultValue || defaultValue === 0 ) {
                 this.defaultValue = defaultValue;
-                this.value = defaultValue; 
+                this.value = defaultValue;
             }
 
             if ( name ) {
@@ -155,7 +155,7 @@ define(
                 this.minValue = minValue;
             }
 
-            if ( maxValue || maxValue === 0  ) {
+            if ( maxValue || maxValue === 0 ) {
                 this.maxValue = maxValue;
             }
 
@@ -272,33 +272,28 @@ define(
                 if ( typeof mappingFunction === 'function' ) {
                     value = mappingFunction( value );
                 }
-                if ( aParam && aParam instanceof AudioParam ) { 
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.exponentialRampToValueAtTime( value, endTime );
-                } else { 
+                } else {
                     var self = this;
                     var initValue_ = self.value;
                     var initTime_ = audioContext.currentTime;
-                    
-                    if (initValue_ === 0) {
-                      
-                      initValue_ = 0.01;
-                      
+
+                    if ( initValue_ === 0 ) {
+
+                        initValue_ = 0.01;
+
                     }
-                    console.log("EXPO LOOP START");
-                    intervalID_ = window.setInterval(function () {
+                    intervalID_ = window.setInterval( function () {
                         var timeRatio = ( audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
                         self.value = initValue_ * Math.pow( value / initValue_, timeRatio );
-//                        value_ = self.value;
                         if ( audioContext.currentTime >= endTime ) {
-                          console.log("Final " + self.value);
-                          console.log("EXPO LOOP END");
                             window.clearInterval( intervalID_ );
                         }
-                    }
-                    , UPDATE_INTERVAL_MS, initTime_, initValue_, value_, value, endTime );
+                    }, UPDATE_INTERVAL_MS, initTime_, initValue_, value_, value, endTime );
                 }
             };
-            
+
             /**
             Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.
 

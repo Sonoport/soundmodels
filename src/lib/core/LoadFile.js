@@ -156,14 +156,14 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
             return "unknown";
 
         };
-        
+
         /**
          * Handler for the load file request
          * @private
          * @method onLoad
          * @returns {undefined}
          */
-        var onLoad_ = function() {
+        var onLoad_ = function () {
 
             context_.decodeAudioData( request_.response, function ( buffer ) {
 
@@ -289,7 +289,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
             request_.open( 'GET', link_, true );
             request_.responseType = 'arraybuffer';
             request_.onload = onLoad_;
-            
+
             request_.send();
 
         };
