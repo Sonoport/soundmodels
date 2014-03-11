@@ -24,8 +24,8 @@ define(
             var UPDATE_INTERVAL_MS = 500;
 
             var intervalID_;
-
-
+            var that = this;
+            
             /**
             @property defaultValue
             @type Number/Boolean
@@ -59,12 +59,12 @@ define(
             @type Number/Boolean
             @default 0
             **/
-            var value_ = 0;
+            var value_ = 0; 
             Object.defineProperty( this, 'value', {
                 enumerable: true,
                 configurable: true,
                 set: function ( value ) {
-if (name === "startPoint") console.log("setter " + value);
+
                     // Sanitize the value with min/max
                     // bounds first.
                     if ( typeof value !== typeof defaultValue ) {
@@ -88,8 +88,8 @@ if (name === "startPoint") console.log("setter " + value);
                             value = minValue;
                         }
                     }
-if (name === "startPoint") console.log("setter new value " + value);
-                    if ( aParam ) {
+
+                    if ( aParam && aParam instanceof AudioParam  ) {
                         // If mapped param
                         // Map if mappingFunction is defined
                         if ( typeof mappingFunction === 'function' ) {
@@ -98,17 +98,28 @@ if (name === "startPoint") console.log("setter new value " + value);
                         }
                         if ( typeof setter === 'function' && audioContext ) {
                             // If setter is defined call it
-                            setter( aParam, value, audioContext );
-                        } else {
+                            setter( aParam, value, audioContext ); 
+                        } else if ( aParam ) {
                             aParam.value = value;
-                        }
+                        } 
                         
-                        if (typeof aParam === "boolean" ) {
-                         
-                          value_ = value;
-                          
+                    } else if (aParam) {
+//                      console.log("Setting " + value);
+                      // If mapped param
+                        // Map if mappingFunction is defined
+                        if ( typeof mappingFunction === 'function' ) {
+                            // Map if mappingFunction is defined
+                            value = mappingFunction( value );
                         }
-
+                        if ( typeof setter === 'function' && audioContext ) {
+                            // If setter is defined call it
+                            setter( aParam, value, audioContext ); 
+                        } 
+                          
+                        if ( aParam ) {
+                            value_ = value;
+                        } 
+                    
                     } else {
                         // If Psuedo param
                         value_ = value;
@@ -117,7 +128,7 @@ if (name === "startPoint") console.log("setter new value " + value);
                 get: function () {
                     if ( aParam && aParam instanceof AudioParam ) {
                         return aParam.value;
-                    } else { 
+                    } else {
                         return value_;
                     }
                 }
@@ -133,7 +144,7 @@ if (name === "startPoint") console.log("setter new value " + value);
 
             if ( defaultValue || defaultValue === 0) {
                 this.defaultValue = defaultValue;
-                this.value = defaultValue;if (name === "startPoint") console.log("this.defaultValue " + this.defaultValue + " this.value " + this.value);
+                this.value = defaultValue; 
             }
 
             if ( name ) {
@@ -257,13 +268,13 @@ if (name === "startPoint") console.log("setter new value " + value);
             @param {Number} value The value parameter is the value the parameter will exponentially ramp to at the given time.
             @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
             **/
-            this.exponentialRampToValueAtTime = function ( value, endTime ) {console.log("@@@ orig expo");
+            this.exponentialRampToValueAtTime = function ( value, endTime ) {
                 if ( typeof mappingFunction === 'function' ) {
                     value = mappingFunction( value );
                 }
-                if ( aParam && aParam instanceof AudioParam ) { //console.log("no expo");
+                if ( aParam && aParam instanceof AudioParam ) { 
                     aParam.exponentialRampToValueAtTime( value, endTime );
-                } else { //console.log("# expo");
+                } else { 
                     var self = this;
                     var initValue_ = self.value;
                     var initTime_ = audioContext.currentTime;
@@ -273,17 +284,21 @@ if (name === "startPoint") console.log("setter new value " + value);
                       initValue_ = 0.01;
                       
                     }
-                    
-                    intervalID_ = window.setInterval( function () {console.log("expo loop");
-                        var timeRatio = ( audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );console.log("Math.pow: " + timeRatio);// / initValue_, timeRatio ));
+                    console.log("EXPO LOOP START");
+                    intervalID_ = window.setInterval(function () {
+                        var timeRatio = ( audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
                         self.value = initValue_ * Math.pow( value / initValue_, timeRatio );
+//                        value_ = self.value;
                         if ( audioContext.currentTime >= endTime ) {
+                          console.log("Final " + self.value);
+                          console.log("EXPO LOOP END");
                             window.clearInterval( intervalID_ );
                         }
-                    }, UPDATE_INTERVAL_MS );
+                    }
+                    , UPDATE_INTERVAL_MS, initTime_, initValue_, value_, value, endTime );
                 }
             };
-
+            
             /**
             Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.
 

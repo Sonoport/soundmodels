@@ -405,11 +405,23 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
          */
         var innerStartPointSetter_ = function ( aParam, value, audioContext ) {
             
-            for ( var i = 0; i < aSources_.length; i++ ) {
+            console.log("^^^ inner setter");
 
-                aSources_[ i ].loopStart = aSources_[ i ].buffer.duration * value;
-
+        };
+        
+        var innerStartPointMapper_ = function ( value ) {
+          console.log("^^^ inner mapper");  
+            if (!bInnerLoopInitialized_) {
+              
+              that.startPoint.value = value;
+              
+            } else {
+              
+              bInnerLoopInitialized_ = false;
+              
             }
+            
+            return value;
 
         };
         
@@ -422,16 +434,20 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
          * @param {AudioContext} audioContext
          */
         var startPointSetter_ = function ( aParam, value, audioContext ) {
-console.log("&&& looper setter " + value);
-//console.log(that.startPoint.name);
-//            that.startPoint.cancelScheduledValues( 0 );
-            
+console.log("*** outside setter " + value);
+
+        };
+        
+        var startPointMapper_ = function ( value ) {
+console.log("*** outside mapper " + value); // + " " + aSources_[ 0 ].loopStart);
 
             for ( var i = 0; i < aSources_.length; i++ ) {
 
                 aSources_[ i ].loopStart = aSources_[ i ].buffer.duration * value;
 
             }
+              
+            return value;
 
         };
 
@@ -461,29 +477,73 @@ console.log("&&& looper setter " + value);
 
         };
         
-        var startPointMapper_ = function ( value ) {
-console.log("*** looper mapper " + value);
-//console.log(that.startPoint.name);
-//            that.decayTime.cancelScheduledValues( 0 );
-            return value;
-
-        };
-
         // Public vars
 
         // AudioParams
 
         this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, riseTimeMapper_, null, this.audioContext );
         this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, decayTimeMapper_, null, this.audioContext );
-        this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.0, true, startPointMapper_, startPointSetter_, this.audioContext );
+        this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.03, true, startPointMapper_, startPointSetter_, this.audioContext );
         this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, true, null, playSpeedSetter_, this.audioContext );
         
-        var innerStartPoint_ = new SPAudioParam( "startPoint", 0.0, 0.99, 0.0, true, null, innerStartPointSetter_, this.audioContext );
+        var innerStartPoint_ = new SPAudioParam( "startPoint", this.startPoint.minValue, this.startPoint.maxValue, this.startPoint.defaultValue, true, innerStartPointMapper_, innerStartPointSetter_, this.audioContext );
+        var bInnerLoopInitialized_ = false;
+        
+        this.startPoint.setValueAtTime = function ( value, startTime ) {
+
+            innerStartPoint_.cancelScheduledValues( 0 );
+            bInnerLoopInitialized_ = true;
+
+            innerStartPoint_.setValueAtTime( value, adjustTime_( value, that.startPoint.value, startTime ) );
+
+        };
+
+        this.startPoint.setTargetAtTime = function ( target, startTime, timeConstant ) {
+
+            innerStartPoint_.cancelScheduledValues( 0 );
+            bInnerLoopInitialized_ = true;
+
+            innerStartPoint_.setTargetAtTime( target, adjustTime_( target, that.startPoint.value, startTime ), timeConstant );
+
+        };
+        
+        this.startPoint.setValueCurveAtTime = function ( values, startTime, duration ) {
+
+            innerStartPoint_.cancelScheduledValues( 0 );
+            bInnerLoopInitialized_ = true;
+            
+            if ( isNaN( startTime ) || typeof startTime === "undefined" ) {
+
+                startTime = this.audioContext.currentTime;
+
+            }
+
+            innerStartPoint_.setValueCurveAtTime( values, startTime, duration );
+
+        };
         
         this.startPoint.exponentialRampToValueAtTime = function ( value, endTime ) {
 
-              innerStartPoint_.cancelScheduledValues( 0 );
-              innerStartPoint_.exponentialRampToValueAtTime(value, adjustTime_( value, innerStartPoint_.value, endTime ));
+          console.log("??????" + innerStartPoint_.value + " === " + that.startPoint.value);
+
+          innerStartPoint_.cancelScheduledValues( 0 );
+          bInnerLoopInitialized_ = true;
+          innerStartPoint_.exponentialRampToValueAtTime(value, adjustTime_( value, that.startPoint.value, endTime ));
+
+        };
+        
+        this.startPoint.linearRampToValueAtTime = function ( value, endTime ) {
+          
+          innerStartPoint_.cancelScheduledValues( 0 );
+          bInnerLoopInitialized_ = true;
+          innerStartPoint_.linearRampToValueAtTime(value, adjustTime_( value, that.startPoint.value, endTime ));
+          
+        };
+        
+        this.startPoint.cancelScheduledValues = function ( startTime ) {
+
+            bInnerLoopInitialized_ = true;
+            innerStartPoint_.cancelScheduledValues( startTime );
 
         };
 
@@ -517,7 +577,7 @@ console.log("*** looper mapper " + value);
 
                 if ( isNaN( startTime ) || typeof startTime === "undefined" ) {
 
-                    startTime = that.audioContext.currentTime;
+                    startTime = this.audioContext.currentTime;
 
                 }
 
@@ -644,7 +704,7 @@ console.log("*** looper mapper " + value);
 
             if ( typeof value === "undefined" ) {
 
-                value = that.audioContext.currentTime;
+                value = this.audioContext.currentTime;
 
             }
 
@@ -719,9 +779,8 @@ console.log("*** looper mapper " + value);
 
         // Init
 
-        this.riseTime.value = 0.01;
-        this.decayTime.value = 0.01;
-//        this.startPoint.value = 0.01;
+        this.riseTime.value = 10;
+        this.decayTime.value = 10;
 
         // Do validation of constructor parameter
         if ( !bParameterValid_( sounds ) ) {
