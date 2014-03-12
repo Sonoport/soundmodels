@@ -257,15 +257,20 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             // If all possible sources loaded
             if ( nNumberOfSourcesLoaded_ === nNumberOfSourcesTotal_ ) {
 
-                if ( nNumberOfSourcesLoaded_ > 0 ) {
 
-                    // Execute successful callback
-                    fCallback_( true );
+                if ( typeof fCallback_ !== "undefined" && typeof fCallback_ === "function" ) {
 
-                } else {
+                    if ( nNumberOfSourcesLoaded_ > 0 ) {
 
-                    // Execute fail callback
-                    fCallback_( false );
+                        // Execute successful callback
+                        fCallback_( true );
+
+                    } else {
+
+                        // Execute fail callback
+                        fCallback_( false );
+
+                    }
 
                 }
 
@@ -285,7 +290,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
             if ( bParameterIsString_ || bParameterIsAnAudioBuffer_ ) {
 
-                var frSingle = new FileReader( audioContext );
+                var frSingle = new FileReader( that.audioContext );
 
                 aFileReaders_.push( frSingle );
                 frSingle.open( sounds, onLoadSuccess_ );

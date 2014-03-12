@@ -184,12 +184,22 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
 
                 }
 
-                callback_.success();
+                if ( typeof callback_ !== "undefined" && typeof callback_ === "function" ) {
+
+                    callback_.success();
+
+                }
+
 
             }, function () {
 
                 console.log( "Error loading URL" );
-                callback_.error();
+
+                if ( typeof callback_ !== "undefined" && typeof callback_ === "function" ) {
+
+                    callback_.error();
+
+                }
 
             } );
 
@@ -280,7 +290,12 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
 
                 bSoundLoaded_ = true;
                 buffer_ = link_;
-                callback.success();
+
+                if ( typeof callback !== "undefined" && typeof callback === "function" ) {
+
+                    callback.success();
+
+                }
 
                 return;
 
