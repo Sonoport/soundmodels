@@ -662,9 +662,13 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
          * Getter for multiTrackGain
          * @type Arguments
          */
-        this.__defineGetter__( 'multiTrackGain', function () {
+        Object.defineProperty( this, 'multiTrackGain', {
 
-            return aMultiTrackGains_;
+            get: function () {
+
+                return aMultiTrackGains_;
+
+            }
 
         } );
 

@@ -190,7 +190,6 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
 
                 }
 
-
             }, function () {
 
                 console.log( "Error loading URL" );

@@ -24,7 +24,6 @@ define(
             var UPDATE_INTERVAL_MS = 500;
 
             var intervalID_;
-            var that = this;
 
             /**
             @property defaultValue
