@@ -257,7 +257,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             // If all possible sources loaded
             if ( nNumberOfSourcesLoaded_ === nNumberOfSourcesTotal_ ) {
 
-
                 if ( typeof fCallback_ !== "undefined" && typeof fCallback_ === "function" ) {
 
                     if ( nNumberOfSourcesLoaded_ > 0 ) {
