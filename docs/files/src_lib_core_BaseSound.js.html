@@ -43,12 +43,20 @@
             
                 <li><a href="../classes/BaseSound.html">BaseSound</a></li>
             
+<<<<<<< HEAD
                 <li><a href="../classes/Envelope.html">Envelope</a></li>
             
+=======
+>>>>>>> origin/looper
                 <li><a href="../classes/FileReader.html">FileReader</a></li>
             
                 <li><a href="../classes/LoadFile.html">LoadFile</a></li>
             
+<<<<<<< HEAD
+=======
+                <li><a href="../classes/Looper.html">Looper</a></li>
+            
+>>>>>>> origin/looper
                 <li><a href="../classes/LoopMarker.html">LoopMarker</a></li>
             
                 <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
@@ -59,6 +67,11 @@
             
                 <li><a href="../modules/FileReader.html">FileReader</a></li>
             
+<<<<<<< HEAD
+=======
+                <li><a href="../modules/Looper.html">Looper</a></li>
+            
+>>>>>>> origin/looper
             </ul>
         </div>
     </div>
@@ -112,7 +125,11 @@ This is where AudioContext will be created and all sounds will be using this Aud
 define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
     &#x27;use strict&#x27;;
 
+<<<<<<< HEAD
     function BaseSound( context ) {
+=======
+    function BaseSound( audioContext ) {
+>>>>>>> origin/looper
         /**
         Define one audioContext from Web Audio API&#x27;s AudioContext class.
 
@@ -120,11 +137,20 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
         @type AudioContext
         @default audioContext
         **/
+<<<<<<< HEAD
         if ( typeof context === &quot;undefined&quot; ) {
             this.audioContext = new AudioContext();
             console.log( &quot;new audioContext&quot; );
         } else {
             this.audioContext = context;
+=======
+        if ( typeof audioContext === &quot;undefined&quot; ) {
+            // Need to check for prefixes for AudioContext
+            this.audioContext = new AudioContext();
+            console.log( &quot;new audioContext&quot; );
+        } else {
+            this.audioContext = audioContext;
+>>>>>>> origin/looper
             console.log( &quot;current ac&quot; );
         }
         /**
@@ -175,15 +201,28 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
         **/
         this.isPlaying = false;
         /**
+<<<<<<< HEAD
         The input node that the output node will be connected to. &lt;br /&gt;
         Set this value to null if no connection can be made on the input ndoe especially for classes which are the sources. &lt;br /&gt;
+=======
+        Temp: Create a sine wave oscillator buffer as a temporary source.
+        Will be replaced by FileReader and parse in an AudioBuffer
+>>>>>>> origin/looper
 
         @property inputNode
         @type Object
         @default null
         **/
+<<<<<<< HEAD
         this.inputNode = null;
 
+=======
+        //        this.bufferSource = this.audioContext.createOscillator();
+        // Connects source to release gain node
+        //        this.bufferSource.connect( this.releaseGainNode );
+        // Connects release gain node to the destination node
+        //        this.connect( this.audioContext.destination );
+>>>>>>> origin/looper
     }
 
     /**
@@ -195,6 +234,7 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
     @param {Object} output Connects to an AudioNode or BaseSound.
 	**/
     BaseSound.prototype.connect = function ( output ) {
+<<<<<<< HEAD
         try {
             if ( output instanceof BaseSound ) {
                 // Check if input is able to be connected
@@ -220,6 +260,10 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
             }
         }
 
+=======
+        console.log( &quot;connects to release Gain Node&quot; );
+        this.releaseGainNode.connect( output );
+>>>>>>> origin/looper
     };
     /**
     If the output is an AudioNode, it disconnects from the releaseGainNode. If the output is a BaseSound, it will disconnect 
@@ -230,6 +274,7 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
     @param {Object} output Takes in an AudioNode or BaseSound.
     **/
     BaseSound.prototype.disconnect = function ( output ) {
+<<<<<<< HEAD
         if ( output instanceof BaseSound ) {
             console.log( &quot;disconnect from output&#x27;s inputNode&quot; );
             this.releaseGainNode.disconnect( output.inputNode );
@@ -237,6 +282,10 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
             console.log( &quot;disconnect from Gain Node&quot; );
             this.releaseGainNode.disconnect( output );
         }
+=======
+        console.log( &quot;disconnect from Gain Node&quot; );
+        this.releaseGainNode.disconnect( output );
+>>>>>>> origin/looper
     };
     /**
     Start audio at this current time. Abstract method. Override this method when a buffer is defined. 
@@ -246,6 +295,10 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
     @param {Number} currTime Time in (seconds) that audio will start.
     **/
     BaseSound.prototype.start = function ( currTime ) {
+<<<<<<< HEAD
+=======
+        //        this.bufferSource.start( currTime );
+>>>>>>> origin/looper
         this.isPlaying = true;
         console.log( &quot;start the buffer &quot; + this.isPlaying );
     };
@@ -257,6 +310,10 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
     @param {Number} currTime Time in (seconds) that audio will stop.
     **/
     BaseSound.prototype.stop = function ( currTime ) {
+<<<<<<< HEAD
+=======
+        this.bufferSource.stop( currTime );
+>>>>>>> origin/looper
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         this.isPlaying = false;
         console.log( &quot;stop the buffer &quot; + this.isPlaying );
@@ -269,6 +326,7 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
     @param {Number} fadeTime Amount of time it takes for linear ramp down to happen.
     **/
     BaseSound.prototype.release = function ( fadeTime ) {
+<<<<<<< HEAD
         fadeTime = fadeTime || this.FADE_TIME;
         // Clamp the current gain value at this point of time to prevent sudden jumps.
         this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, this.audioContext.currentTime );
@@ -277,6 +335,15 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
         console.log( &quot;release: linear ramp down after &quot; + fadeTime + &quot; seconds.&quot; );
         // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
         this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
+=======
+        if ( typeof fadeTime === &quot;undefined&quot; ) {
+            fadeTime = this.FADE_TIME;
+        }
+        this.releaseGainNode.gain.linearRampToValueAtTime( 0, this.audioContext.currentTime + fadeTime );
+        console.log( &quot;release: linear ramp down after &quot; + fadeTime + &quot; seconds.&quot; );
+        // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
+        //this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
+>>>>>>> origin/looper
     };
     /**
     Play sound. Abstract method. Override this method when a buffer is defined. 
@@ -286,6 +353,7 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
     **/
     BaseSound.prototype.play = function () {
         console.log( &quot;play sound&quot; );
+<<<<<<< HEAD
     };
     /**
     Pause sound. Abstract method. Override this method when a buffer is defined. 
@@ -295,6 +363,9 @@ define( [ &#x27;core/AudioContextMonkeyPatch&#x27; ], function () {
     **/
     BaseSound.prototype.pause = function () {
         console.log( &quot;pause sound&quot; );
+=======
+        this.start( 0 );
+>>>>>>> origin/looper
     };
 
     // Return constructor function

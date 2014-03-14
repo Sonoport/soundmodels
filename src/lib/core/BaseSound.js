@@ -80,6 +80,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         @type Object
         @default null
         **/
+
         this.inputNode = null;
 
     }
@@ -168,7 +169,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         // Now there won't be any glitch and there is a smooth ramp down.
         this.releaseGainNode.gain.linearRampToValueAtTime( 0, this.audioContext.currentTime + fadeTime );
         // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
-        this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
+        //this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
     };
     /**
     Play sound. Abstract method. Override this method when a buffer is defined. 

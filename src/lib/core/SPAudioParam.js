@@ -7,15 +7,23 @@ define(
 
           @class SPAudioParam
           @constructor
+          @param {String} name The name of the parameter.
+          @param {Number} minValue The minimum value of the parameter.
+          @param {Number} maxValue The maximum value of the parameter.
+          @param {Number} defaultValue The default and starting value of the parameter.
+          @param {AudioParam} aParam A WebAudio parameter which will be set/get when this parameter is changed.
+          @param {Function} mappingFunction A mapping function to map values between the mapped SPAudioParam and the underlying WebAudio AudioParam.
+          @param {Function} setter A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.
+          @param {AudioContext} audioContext A WebAudio AudioContext for timing.
+         
           **/
-        function SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mapping, audioContext ) {
+        function SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mappingFunction, setter, audioContext ) {
             // Min diff between set and actual
             // values to stop updates.
             var MIN_DIFF = 0.0001;
             var UPDATE_INTERVAL_MS = 500;
 
             var intervalID_;
-
 
             /**
             @property defaultValue
@@ -58,10 +66,10 @@ define(
 
                     // Sanitize the value with min/max
                     // bounds first.
-                    if ( typeof value !== typeof this.defaultValue ) {
+                    if ( typeof value !== typeof defaultValue ) {
                         throw {
                             name: "Incorrect value type Exception",
-                            message: "Attempt to set a " + ( typeof this.defaultValue ) + " parameter to a " + ( typeof value ) + " value",
+                            message: "Attempt to set a " + ( typeof defaultValue ) + " parameter to a " + ( typeof value ) + " value",
                             toString: function () {
                                 return this.name + ": " + this.message;
                             }
@@ -71,23 +79,45 @@ define(
                     // Sanitize the value with min/max
                     // bounds first.
                     if ( typeof value === "number" ) {
-                        if ( value > this.maxValue ) {
+                        if ( value > maxValue ) {
                             console.log( 'Clamping to max' );
-                            value = this.maxValue;
-                        } else if ( value < this.minValue ) {
+                            value = maxValue;
+                        } else if ( value < minValue ) {
                             console.log( 'Clamping to min' );
-                            value = this.minValue;
+                            value = minValue;
                         }
                     }
 
-                    if ( aParam ) {
+                    if ( aParam && aParam instanceof AudioParam ) {
                         // If mapped param
-                        // Map if mapping is defined
-                        if ( typeof mapping === 'function' ) {
-                            // Map if mapping is defined
-                            value = mapping( value );
+                        // Map if mappingFunction is defined
+                        if ( typeof mappingFunction === 'function' ) {
+                            // Map if mappingFunction is defined
+                            value = mappingFunction( value );
                         }
-                        aParam.value = value;
+                        if ( typeof setter === 'function' && audioContext ) {
+                            // If setter is defined call it
+                            setter( aParam, value, audioContext );
+                        } else if ( aParam ) {
+                            aParam.value = value;
+                        }
+
+                    } else if ( aParam ) {
+                        // If mapped param
+                        // Map if mappingFunction is defined
+                        if ( typeof mappingFunction === 'function' ) {
+                            // Map if mappingFunction is defined
+                            value = mappingFunction( value );
+                        }
+                        if ( typeof setter === 'function' && audioContext ) {
+                            // If setter is defined call it
+                            setter( aParam, value, audioContext );
+                        }
+
+                        if ( aParam ) {
+                            value_ = value;
+                        }
+
                     } else {
                         // If Psuedo param
                         value_ = value;
@@ -110,7 +140,7 @@ define(
                 this.name = aParam.name;
             }
 
-            if ( defaultValue ) {
+            if ( defaultValue || defaultValue === 0 ) {
                 this.defaultValue = defaultValue;
                 this.value = defaultValue;
             }
@@ -119,11 +149,11 @@ define(
                 this.name = name;
             }
 
-            if ( minValue ) {
+            if ( minValue || minValue === 0 ) {
                 this.minValue = minValue;
             }
 
-            if ( maxValue ) {
+            if ( maxValue || maxValue === 0 ) {
                 this.maxValue = maxValue;
             }
 
@@ -137,11 +167,11 @@ define(
             @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
             **/
             this.setValueAtTime = function ( value, startTime ) {
-                if ( typeof mapping === 'function' ) {
-                    value = mapping( value );
+                if ( typeof mappingFunction === 'function' ) {
+                    value = mappingFunction( value );
                 }
 
-                if ( aParam ) {
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.setValueAtTime( value, startTime );
                 } else {
                     // Horrible hack for the case we don't have access to
@@ -167,10 +197,10 @@ define(
             @param {Number} timeConstant The timeConstant parameter is the time-constant value of first-order filter (exponential) approach to the target value. The larger this value is, the slower the transition will be.
             **/
             this.setTargetAtTime = function ( target, startTime, timeConstant ) {
-                if ( typeof mapping === 'function' ) {
-                    target = mapping( target );
+                if ( typeof mappingFunction === 'function' ) {
+                    target = mappingFunction( target );
                 }
-                if ( aParam ) {
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.setTargetAtTime( target, startTime, timeConstant );
                 } else {
                     // Horrible hack for the case we don't have access to
@@ -203,12 +233,12 @@ define(
             @param {Number} duration The duration parameter is the amount of time in seconds (after the startTime parameter) where values will be calculated according to the values parameter.
             **/
             this.setValueCurveAtTime = function ( values, startTime, duration ) {
-                if ( typeof mapping === 'function' ) {
+                if ( typeof mappingFunction === 'function' ) {
                     for ( var index = 0; index < values.length; index++ ) {
-                        values[ index ] = mapping( values[ index ] );
+                        values[ index ] = mappingFunction( values[ index ] );
                     }
                 }
-                if ( aParam ) {
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.setValueCurveAtTime( values, startTime, duration );
                 } else {
                     var self = this;
@@ -237,22 +267,28 @@ define(
             @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
             **/
             this.exponentialRampToValueAtTime = function ( value, endTime ) {
-                if ( typeof mapping === 'function' ) {
-                    value = mapping( value );
+                if ( typeof mappingFunction === 'function' ) {
+                    value = mappingFunction( value );
                 }
-                if ( aParam ) {
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.exponentialRampToValueAtTime( value, endTime );
                 } else {
                     var self = this;
                     var initValue_ = self.value;
                     var initTime_ = audioContext.currentTime;
+
+                    if ( initValue_ === 0 ) {
+
+                        initValue_ = 0.01;
+
+                    }
                     intervalID_ = window.setInterval( function () {
                         var timeRatio = ( audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
                         self.value = initValue_ * Math.pow( value / initValue_, timeRatio );
                         if ( audioContext.currentTime >= endTime ) {
                             window.clearInterval( intervalID_ );
                         }
-                    }, UPDATE_INTERVAL_MS );
+                    }, UPDATE_INTERVAL_MS, initTime_, initValue_, value_, value, endTime );
                 }
             };
 
@@ -265,10 +301,10 @@ define(
             @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
             **/
             this.linearRampToValueAtTime = function ( value, endTime ) {
-                if ( typeof mapping === 'function' ) {
-                    value = mapping( value );
+                if ( typeof mappingFunction === 'function' ) {
+                    value = mappingFunction( value );
                 }
-                if ( aParam ) {
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.linearRampToValueAtTime( value, endTime );
                 } else {
                     var self = this;
@@ -292,7 +328,7 @@ define(
             @param {Number} startTime The startTime parameter is the starting time at and after which any previously scheduled parameter changes will be cancelled.
             **/
             this.cancelScheduledValues = function ( startTime ) {
-                if ( aParam ) {
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.cancelScheduledValues( startTime );
                 } else {
                     window.clearInterval( intervalID_ );
@@ -314,7 +350,7 @@ define(
         **/
         SPAudioParam.createPsuedoParam = function ( name, minValue, maxValue, defaultValue, audioContext ) {
 
-            return new SPAudioParam( name, minValue, maxValue, defaultValue, null, null, audioContext );
+            return new SPAudioParam( name, minValue, maxValue, defaultValue, null, null, null, audioContext );
 
         };
 
@@ -330,11 +366,13 @@ define(
         @param {Number} maxValue The maximum value of the parameter.
         @param {Number} defaultValue The default and starting value of the parameter.
         @param {AudioParam} aParam A WebAudio parameter which will be set/get when this parameter is changed.
-        @param {Function} mapping A mapping function to map values between the mapped SPAudioParam and the underlying WebAudio AudioParam.
+        @param {Function} mappingFunction A mapping function to map values between the mapped
+        SPAudioParam and the underlying WebAudio AudioParam.
+        @param {Function} setter A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.
         **/
-        SPAudioParam.createMappedParam = function ( name, minValue, maxValue, defaultValue, aParam, mapping ) {
+        SPAudioParam.createMappedParam = function ( name, minValue, maxValue, defaultValue, aParam, mappingFunction, setter, audioContext ) {
 
-            return new SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mapping );
+            return new SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mappingFunction, setter, audioContext );
         };
 
         return SPAudioParam;
