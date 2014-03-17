@@ -15,6 +15,7 @@ define(
           @param {Function} mappingFunction A mapping function to map values between the mapped SPAudioParam and the underlying WebAudio AudioParam.
           @param {Function} setter A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.
           @param {AudioContext} audioContext A WebAudio AudioContext for timing.
+         
           **/
         function SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mappingFunction, setter, audioContext ) {
             // Min diff between set and actual
@@ -23,7 +24,6 @@ define(
             var UPDATE_INTERVAL_MS = 500;
 
             var intervalID_;
-
 
             /**
             @property defaultValue
@@ -66,10 +66,10 @@ define(
 
                     // Sanitize the value with min/max
                     // bounds first.
-                    if ( typeof value !== typeof this.defaultValue ) {
+                    if ( typeof value !== typeof defaultValue ) {
                         throw {
                             name: "Incorrect value type Exception",
-                            message: "Attempt to set a " + ( typeof this.defaultValue ) + " parameter to a " + ( typeof value ) + " value",
+                            message: "Attempt to set a " + ( typeof defaultValue ) + " parameter to a " + ( typeof value ) + " value",
                             toString: function () {
                                 return this.name + ": " + this.message;
                             }
@@ -79,16 +79,16 @@ define(
                     // Sanitize the value with min/max
                     // bounds first.
                     if ( typeof value === "number" ) {
-                        if ( value > this.maxValue ) {
+                        if ( value > maxValue ) {
                             console.log( 'Clamping to max' );
-                            value = this.maxValue;
-                        } else if ( value < this.minValue ) {
+                            value = maxValue;
+                        } else if ( value < minValue ) {
                             console.log( 'Clamping to min' );
-                            value = this.minValue;
+                            value = minValue;
                         }
                     }
 
-                    if ( aParam ) {
+                    if ( aParam && aParam instanceof AudioParam ) {
                         // If mapped param
                         // Map if mappingFunction is defined
                         if ( typeof mappingFunction === 'function' ) {
@@ -98,8 +98,24 @@ define(
                         if ( typeof setter === 'function' && audioContext ) {
                             // If setter is defined call it
                             setter( aParam, value, audioContext );
-                        } else {
+                        } else if ( aParam ) {
                             aParam.value = value;
+                        }
+
+                    } else if ( aParam ) {
+                        // If mapped param
+                        // Map if mappingFunction is defined
+                        if ( typeof mappingFunction === 'function' ) {
+                            // Map if mappingFunction is defined
+                            value = mappingFunction( value );
+                        }
+                        if ( typeof setter === 'function' && audioContext ) {
+                            // If setter is defined call it
+                            setter( aParam, value, audioContext );
+                        }
+
+                        if ( aParam ) {
+                            value_ = value;
                         }
 
                     } else {
@@ -124,7 +140,7 @@ define(
                 this.name = aParam.name;
             }
 
-            if ( defaultValue ) {
+            if ( defaultValue || defaultValue === 0 ) {
                 this.defaultValue = defaultValue;
                 this.value = defaultValue;
             }
@@ -133,11 +149,11 @@ define(
                 this.name = name;
             }
 
-            if ( minValue ) {
+            if ( minValue || minValue === 0 ) {
                 this.minValue = minValue;
             }
 
-            if ( maxValue ) {
+            if ( maxValue || maxValue === 0 ) {
                 this.maxValue = maxValue;
             }
 
@@ -155,7 +171,7 @@ define(
                     value = mappingFunction( value );
                 }
 
-                if ( aParam ) {
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.setValueAtTime( value, startTime );
                 } else {
                     // Horrible hack for the case we don't have access to
@@ -184,7 +200,7 @@ define(
                 if ( typeof mappingFunction === 'function' ) {
                     target = mappingFunction( target );
                 }
-                if ( aParam ) {
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.setTargetAtTime( target, startTime, timeConstant );
                 } else {
                     // Horrible hack for the case we don't have access to
@@ -222,7 +238,7 @@ define(
                         values[ index ] = mappingFunction( values[ index ] );
                     }
                 }
-                if ( aParam ) {
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.setValueCurveAtTime( values, startTime, duration );
                 } else {
                     var self = this;
@@ -254,19 +270,25 @@ define(
                 if ( typeof mappingFunction === 'function' ) {
                     value = mappingFunction( value );
                 }
-                if ( aParam ) {
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.exponentialRampToValueAtTime( value, endTime );
                 } else {
                     var self = this;
                     var initValue_ = self.value;
                     var initTime_ = audioContext.currentTime;
+
+                    if ( initValue_ === 0 ) {
+
+                        initValue_ = 0.01;
+
+                    }
                     intervalID_ = window.setInterval( function () {
                         var timeRatio = ( audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
                         self.value = initValue_ * Math.pow( value / initValue_, timeRatio );
                         if ( audioContext.currentTime >= endTime ) {
                             window.clearInterval( intervalID_ );
                         }
-                    }, UPDATE_INTERVAL_MS );
+                    }, UPDATE_INTERVAL_MS, initTime_, initValue_, value_, value, endTime );
                 }
             };
 
@@ -280,14 +302,11 @@ define(
             **/
             this.linearRampToValueAtTime = function ( value, endTime ) {
                 if ( typeof mappingFunction === 'function' ) {
-                    console.log( "aaa " );
                     value = mappingFunction( value );
                 }
-                if ( aParam ) {
-                    console.log( "bbb " );
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.linearRampToValueAtTime( value, endTime );
                 } else {
-                    console.log( "ccc " );
                     var self = this;
                     var initValue_ = self.value;
                     var initTime_ = audioContext.currentTime;
@@ -309,12 +328,9 @@ define(
             @param {Number} startTime The startTime parameter is the starting time at and after which any previously scheduled parameter changes will be cancelled.
             **/
             this.cancelScheduledValues = function ( startTime ) {
-                console.log( "zzz" );
-                if ( aParam ) {
-                    console.log( "yyy" );
+                if ( aParam && aParam instanceof AudioParam ) {
                     aParam.cancelScheduledValues( startTime );
                 } else {
-                    console.log( "www" );
                     window.clearInterval( intervalID_ );
                 }
             };

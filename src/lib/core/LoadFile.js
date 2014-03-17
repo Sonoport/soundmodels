@@ -19,13 +19,14 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
 
         }
 
-        var that = this;
-
         var loopMarker_;
         var buffer_;
         var bIsNotWavFile_ = false;
         var bSoundLoaded_ = false;
         var context_;
+        var callback_;
+        var request_;
+        var link_;
 
         // Private functions
 
@@ -137,6 +138,7 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
 
         /**
          * Check the link type
+         * @private
          * @param {String | Array | AudioBuffer} link
          * @returns {String} The link type
          */
@@ -152,6 +154,53 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
             }
 
             return "unknown";
+
+        };
+
+        /**
+         * Handler for the load file request
+         * @private
+         * @method onLoad
+         * @returns {undefined}
+         */
+        var onLoad_ = function () {
+
+            context_.decodeAudioData( request_.response, function ( buffer ) {
+
+                var aEr = /[^.]+$/.exec( link_ );
+
+                bSoundLoaded_ = true;
+                buffer_ = buffer;
+
+                // Do trimming if it is not a wave file
+                if ( aEr[ 0 ] !== "wav" ) {
+
+                    bIsNotWavFile_ = true;
+
+                    // Detect loop markers
+                    loopMarker_ = new LoopMarker();
+
+                    loopMarker_.detectMarkers( buffer_ );
+
+                }
+
+                if ( typeof callback_ !== "undefined" && typeof callback_ === "function" ) {
+
+                    callback_.success();
+
+                }
+
+            }, function () {
+
+                console.log( "Error loading URL" );
+
+                if ( typeof callback_ !== "undefined" && typeof callback_ === "function" ) {
+
+                    callback_.error();
+
+                }
+
+            } );
 
         };
 
@@ -228,63 +277,34 @@ define( [ 'core/LoopMarker' ], function ( LoopMarker ) {
          */
         this.load = function ( link, context, callback ) {
 
-            var localThat = this;
-            var request = new XMLHttpRequest();
+            request_ = new XMLHttpRequest();
 
             bSoundLoaded_ = false;
             bIsNotWavFile_ = false;
             context_ = context;
+            callback_ = callback;
+            link_ = link;
 
-            if ( checkLinkType_( link ) === "audiobuffer" ) {
+            if ( checkLinkType_( link_ ) === "audiobuffer" ) {
 
                 bSoundLoaded_ = true;
-                buffer_ = link;
-                callback.success();
+                buffer_ = link_;
+
+                if ( typeof callback !== "undefined" && typeof callback === "function" ) {
+
+                    callback.success();
+
+                }
 
                 return;
 
             }
 
-            request.open( 'GET', link, true );
-            request.responseType = 'arraybuffer';
+            request_.open( 'GET', link_, true );
+            request_.responseType = 'arraybuffer';
+            request_.onload = onLoad_;
 
-            // Handler for onLoad
-            request.onload = function () {
-
-                context.decodeAudioData( request.response, function ( buffer ) {
-
-                    var aEr = /[^.]+$/.exec( link );
-
-                    localThat.bSoundLoaded_ = true;
-                    localThat.buffer_ = buffer;
-
-                    // Do trimming if it is not a wave file
-                    if ( aEr[ 0 ] !== "wav" ) {
-
-                        localThat.bIsNotWavFile_ = true;
-
-                        // Detect loop markers
-                        localThat.loopMarker_ = new LoopMarker();
-
-                        localThat.loopMarker_.detectMarkers( localThat.buffer_ );
-
-                    }
-
-                    callback.success();
-
-                }, onError );
-
-            };
-
-            // Handler for onError
-            var onError = function () {
-
-                console.log( "Error loading URL" );
-                callback.error();
-
-            };
-
-            request.send();
+            request_.send();
 
         };
 

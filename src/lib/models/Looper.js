@@ -40,6 +40,9 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         var fCallback_ = callback;
 
+        var bInnerLoopInitialized_ = false;
+        var bInnerLoopCall_ = false;
+
         // Private functions  
 
         /**
@@ -139,6 +142,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
             var spGainNode = new SPAudioParam( "gainNode", 0.0, 1, 1, gainNode.gain, null, multiTrackGainSetter_, that.audioContext );
 
+            // spGainNode Overrides
             spGainNode.setValueAtTime = function ( value, startTime ) {
 
                 var aParam = resetAudioParam_( gainNode.gain );
@@ -224,6 +228,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
                     aSources_.push( source );
 
+                } else {
+                    console.log( "Not loaded" );
                 }
 
             }
@@ -251,15 +257,19 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
             // If all possible sources loaded
             if ( nNumberOfSourcesLoaded_ === nNumberOfSourcesTotal_ ) {
 
-                if ( nNumberOfSourcesLoaded_ > 0 ) {
+                if ( typeof fCallback_ !== "undefined" && typeof fCallback_ === "function" ) {
 
-                    // Execute successful callback
-                    fCallback_( true );
+                    if ( nNumberOfSourcesLoaded_ > 0 ) {
 
-                } else {
+                        // Execute successful callback
+                        fCallback_( true );
 
-                    // Execute fail callback
-                    fCallback_( false );
+                    } else {
+
+                        // Execute fail callback
+                        fCallback_( false );
+
+                    }
 
                 }
 
@@ -279,7 +289,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
             if ( bParameterIsString_ || bParameterIsAnAudioBuffer_ ) {
 
-                var frSingle = new FileReader( audioContext );
+                var frSingle = new FileReader( that.audioContext );
 
                 aFileReaders_.push( frSingle );
                 frSingle.open( sounds, onLoadSuccess_ );
@@ -396,6 +406,44 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         };
 
         /**
+         * Setter for innerStartPoint SPAudioParam
+         * @private
+         * @method innerStartPointSetter
+         * @param {AudioParam} aParam
+         * @param {Number} value
+         * @param {AudioContext} audioContext
+         */
+        var innerStartPointSetter_ = function ( aParam, value, audioContext ) {
+
+            bInnerLoopCall_ = false;
+
+        };
+
+        /**
+         * Setter for startPoint SPAudioParam
+         * @private
+         * @method startPointSetter
+         * @param {AudioParam} aParam
+         * @param {Number} value
+         * @param {AudioContext} audioContext
+         */
+        var startPointSetter_ = function ( aParam, value, audioContext ) {
+
+            if ( !bInnerLoopCall_ ) {
+
+                if ( typeof innerStartPoint_ !== "undefined" ) {
+
+                    innerStartPoint_.cancelScheduledValues( 0 );
+                    bInnerLoopInitialized_ = true;
+                    innerStartPoint_.linearRampToValueAtTime( value, adjustTime_( value, that.startPoint.value ) );
+
+                }
+
+            }
+
+        };
+
+        /**
          * Mapper for startPoint SPAudioParam
          * @private
          * @method startPointMapper
@@ -403,9 +451,37 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
          */
         var startPointMapper_ = function ( value ) {
 
-            for ( var i = 0; i < aSources_.length; i++ ) {
+            if ( bInnerLoopCall_ ) {
 
-                aSources_[ i ].loopStart = aSources_[ i ].buffer.duration * value;
+                for ( var i = 0; i < aSources_.length; i++ ) {
+
+                    aSources_[ i ].loopStart = aSources_[ i ].buffer.duration * value;
+
+                }
+
+            }
+
+            return value;
+
+        };
+
+        /**
+         * Mapper for innerStartPoint SPAudioParam
+         * @private
+         * @method innerStartPointMapper
+         * @param {Number} value
+         */
+        var innerStartPointMapper_ = function ( value ) {
+
+            bInnerLoopCall_ = true;
+
+            if ( !bInnerLoopInitialized_ ) {
+
+                that.startPoint.value = value;
+
+            } else {
+
+                bInnerLoopInitialized_ = false;
 
             }
 
@@ -444,11 +520,70 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         // AudioParams
 
         this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, riseTimeMapper_, null, this.audioContext );
-        this.decayTime = new SPAudioParam( "decayTime", 0.05, 10, 1, null, decayTimeMapper_, null, this.audioContext );
-
-        this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 1, true, startPointMapper_, null, this.audioContext );
+        this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, decayTimeMapper_, null, this.audioContext );
+        this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.03, true, startPointMapper_, startPointSetter_, this.audioContext );
         this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, true, null, playSpeedSetter_, this.audioContext );
 
+        var innerStartPoint_ = new SPAudioParam( "innerStartPoint", this.startPoint.minValue, this.startPoint.maxValue, this.startPoint.defaultValue, true, innerStartPointMapper_, innerStartPointSetter_, this.audioContext );
+
+        // startPoint Overrides
+        this.startPoint.setValueAtTime = function ( value, startTime ) {
+
+            innerStartPoint_.cancelScheduledValues( 0 );
+            bInnerLoopInitialized_ = true;
+
+            innerStartPoint_.setValueAtTime( value, adjustTime_( value, that.startPoint.value, startTime ) );
+
+        };
+
+        this.startPoint.setTargetAtTime = function ( target, startTime, timeConstant ) {
+
+            innerStartPoint_.cancelScheduledValues( 0 );
+            bInnerLoopInitialized_ = true;
+
+            innerStartPoint_.setTargetAtTime( target, adjustTime_( target, that.startPoint.value, startTime ), timeConstant );
+
+        };
+
+        this.startPoint.setValueCurveAtTime = function ( values, startTime, duration ) {
+
+            innerStartPoint_.cancelScheduledValues( 0 );
+            bInnerLoopInitialized_ = true;
+
+            if ( isNaN( startTime ) || typeof startTime === "undefined" ) {
+
+                startTime = this.audioContext.currentTime;
+
+            }
+
+            innerStartPoint_.setValueCurveAtTime( values, startTime, duration );
+
+        };
+
+        this.startPoint.exponentialRampToValueAtTime = function ( value, endTime ) {
+
+            innerStartPoint_.cancelScheduledValues( 0 );
+            bInnerLoopInitialized_ = true;
+            innerStartPoint_.exponentialRampToValueAtTime( value, adjustTime_( value, that.startPoint.value, endTime ) );
+
+        };
+
+        this.startPoint.linearRampToValueAtTime = function ( value, endTime ) {
+
+            innerStartPoint_.cancelScheduledValues( 0 );
+            bInnerLoopInitialized_ = true;
+            innerStartPoint_.linearRampToValueAtTime( value, adjustTime_( value, that.startPoint.value, endTime ) );
+
+        };
+
+        this.startPoint.cancelScheduledValues = function ( startTime ) {
+
+            bInnerLoopInitialized_ = true;
+            innerStartPoint_.cancelScheduledValues( startTime );
+
+        };
+
+        // playSpeed Overrides
         this.playSpeed.setValueAtTime = function ( value, startTime ) {
 
             for ( var i = 0; i < aSources_.length; i++ ) {
@@ -479,7 +614,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
                 if ( isNaN( startTime ) || typeof startTime === "undefined" ) {
 
-                    startTime = that.audioContext.currentTime;
+                    startTime = this.audioContext.currentTime;
 
                 }
 
@@ -522,9 +657,17 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
         };
 
-        this.__defineGetter__( 'multiTrackGain', function () {
+        /**
+         * Getter for multiTrackGain
+         * @type Arguments
+         */
+        Object.defineProperty( this, 'multiTrackGain', {
 
-            return aMultiTrackGains_;
+            get: function () {
+
+                return aMultiTrackGains_;
+
+            }
 
         } );
 
@@ -606,7 +749,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
 
             if ( typeof value === "undefined" ) {
 
-                value = that.audioContext.currentTime;
+                value = this.audioContext.currentTime;
 
             }
 
@@ -680,8 +823,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileReader' ], function (
         };
 
         // Init
-
-        this.startPoint.value = 0;
 
         // Do validation of constructor parameter
         if ( !bParameterValid_( sounds ) ) {

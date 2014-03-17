@@ -43,13 +43,21 @@ define( [ 'core/LoadFile' ], function ( LoadFile ) {
 
                     success: function () {
 
-                        callback( true );
+                        if ( typeof callback !== "undefined" && typeof callback === "function" ) {
+
+                            callback( true );
+
+                        }
 
                     },
 
                     error: function () {
 
-                        callback( false );
+                        if ( typeof callback !== "undefined" && typeof callback === "function" ) {
+
+                            callback( false );
+
+                        }
 
                     }
 

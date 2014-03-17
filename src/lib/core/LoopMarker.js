@@ -12,7 +12,9 @@ define( function () {
     function LoopMarker( context ) {
 
         if ( !( this instanceof LoopMarker ) ) {
+
             throw new TypeError( "LoopMarker constructor cannot be called as a function." );
+
         }
 
         // Private vars
