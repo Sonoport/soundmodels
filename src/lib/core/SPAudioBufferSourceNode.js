@@ -90,7 +90,7 @@ define( [ 'core/SPPlaybackRateParam' ],
                 set: function ( buffer ) {
                     bufferSourceNode.buffer = buffer;
                 },
-                get: function ( ) {
+                get: function () {
                     return bufferSourceNode.buffer;
                 }
             } );
