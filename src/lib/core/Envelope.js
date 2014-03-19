@@ -104,7 +104,6 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
         this.inputNode = this.releaseGainNode;
         // Set gain to 0
         this.releaseGainNode.gain.value = 0;
-
     }
     // Inherits from BaseSound
     // Use Object.create() to setup inheritance but does not invoke any constructor
@@ -182,10 +181,8 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
             this.releaseDur = options.releaseDur || 0.01;
             this.sustainVal = options.sustainVal || 0.5;
         }
-
         var attackVal = 1;
         var releaseVal = 0;
-
         // Set the ADSR using Web Audio default audio param
         // Clamp the current gain value at this time
         // If this is not done, the attack linearRampToValueAtTime does not ramp up to 1 smoothly, rather it jumps to 1.
@@ -210,9 +207,7 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
     @return null
     **/
     Envelope.prototype.reinit = function ( hard ) {
-
         hard = hard || false;
-
         if ( hard ) {
             // cancel all scheduled ramps on this releaseGainNode
             this.releaseGainNode.gain.cancelScheduledValues( this.audioContext.currentTime );
@@ -223,7 +218,6 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
             // If this is not done, the attack linearRampToValueAtTime does not ramp up to 1 smoothly, rather it jumps to 1.
             this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, this.audioContext.currentTime );
         }
-
     };
     // Return constructor function
     return Envelope;

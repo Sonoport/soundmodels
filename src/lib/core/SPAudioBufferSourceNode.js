@@ -4,21 +4,17 @@ define( [ 'core/SPPlaybackRateParam' ],
 
         function SPAudioBufferSourceNode( audioContext ) {
             var bufferSourceNode = audioContext.createBufferSource();
-
             var lastPos = 0;
             var lastEventTime = 0;
             var lastEventValue = bufferSourceNode.playbackRate.defaultValue;
             var pendingEvents = [];
-
             this.channelCount = bufferSourceNode.channelCount;
             this.channelCountMode = bufferSourceNode.channelCountMode;
             this.channelInterpretation = bufferSourceNode.channelInterpretation;
             this.numberOfInputs = bufferSourceNode.numberOfInputs;
             this.numberOfOutputs = bufferSourceNode.numberOfOutputs;
             this.playbackState = bufferSourceNode.playbackState;
-
             this.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, this );
-
             Object.defineProperty( this, 'loopEnd', {
                 enumerable: true,
                 set: function ( loopEnd ) {
@@ -28,7 +24,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                     return bufferSourceNode.loopEnd;
                 }
             } );
-
             Object.defineProperty( this, 'loopStart', {
                 enumerable: true,
                 set: function ( loopStart ) {
@@ -38,7 +33,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                     return bufferSourceNode.loopStart;
                 }
             } );
-
             Object.defineProperty( this, 'onended', {
                 enumerable: true,
                 set: function ( onended ) {
@@ -48,7 +42,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                     return bufferSourceNode.onended;
                 }
             } );
-
             Object.defineProperty( this, 'gain', {
                 enumerable: true,
                 set: function ( gain ) {
@@ -58,7 +51,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                     return bufferSourceNode.gain;
                 }
             } );
-
             Object.defineProperty( this, 'loop', {
                 enumerable: true,
                 set: function ( loop ) {
@@ -68,7 +60,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                     return bufferSourceNode.loop;
                 }
             } );
-
             Object.defineProperty( this, 'playbackPosition', {
                 enumerable: true,
                 get: function () {
@@ -84,7 +75,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                     }
                 }
             } );
-
             Object.defineProperty( this, 'buffer', {
                 enumerable: true,
                 set: function ( buffer ) {
@@ -94,7 +84,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                     return bufferSourceNode.buffer;
                 }
             } );
-
             this.addNewEvent = function ( nEvent ) {
                 for ( var index = 0; index < pendingEvents.length; index++ ) {
                     var cEvent = pendingEvents[ index ];
@@ -107,7 +96,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                 }
                 pendingEvents.splice( index, 0, nEvent );
             };
-
             this.cancelScheduledValues = function ( time ) {
                 processCompletedEvents();
                 for ( var index = 0; index < pendingEvents.length; index++ ) {
@@ -117,21 +105,17 @@ define( [ 'core/SPPlaybackRateParam' ],
                     }
                 }
             };
-
             this.connect = function ( audioNode ) {
                 bufferSourceNode.connect( audioNode );
             };
-
             this.start = function ( time ) {
                 bufferSourceNode.start( time );
-
                 if ( time > audioContext.currentTime ) {
                     lastEventTime = time;
                 } else {
                     lastEventTime = audioContext.currentTime;
                 }
             };
-
             this.stop = function ( time ) {
                 bufferSourceNode.stop( time );
                 this.addNewEvent( {
@@ -140,23 +124,17 @@ define( [ 'core/SPPlaybackRateParam' ],
                     value: 0
                 } );
             };
-
-
             var processCompletedEvents = function () {
                 var cTime = audioContext.currentTime;
-
                 for ( var index = 0; index < pendingEvents.length; index++ ) {
                     var thisEvent = pendingEvents[ index ];
                     var nextEvent = index < ( pendingEvents.length - 1 ) ? pendingEvents[ index + 1 ] : null;
-
                     var endTime = getEndTime( thisEvent, nextEvent );
                     if ( endTime < cTime ) {
                         // Event that have ended can be processed till the end
                         var timeIncrease = calculateTimeIncrease( thisEvent, endTime );
                         lastPos += ( timeIncrease * bufferSourceNode.buffer.sampleRate ) % bufferSourceNode.buffer.length;
-
                         console.log( "Processed " + thisEvent.type + "  (" + lastEventTime + ") " + thisEvent.time + "-" + endTime + " @ " + thisEvent.value + " = " + timeIncrease + " => " + lastPos );
-
                         lastEventTime = endTime;
                         lastEventValue = thisEvent.value || ( thisEvent.curve ? thisEvent.curve[ thisEvent.curve.length - 1 ] : lastEventValue );
                         // remove event;
@@ -165,7 +143,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                     }
                 }
             };
-
             var getEndTime = function ( tEvent, nEvent ) {
                 var endTime = 0;
                 if ( tEvent.type === "linear" || tEvent.type === "exponential" ) {
@@ -181,7 +158,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                 }
                 return endTime;
             };
-
             var indexSinceLastEventToTime = function ( time ) {
                 var increase = 0;
                 var rEvent = runningEvent();
@@ -195,7 +171,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                 var newPos = lastPos + increase * bufferSourceNode.buffer.sampleRate;
                 return newPos % bufferSourceNode.buffer.length;
             };
-
             var calculateTimeIncrease = function ( event, endTime ) {
                 var timeIncrease = 0;
                 //console.log(event.type + " till ");
@@ -226,7 +201,6 @@ define( [ 'core/SPPlaybackRateParam' ],
                 }
                 return timeIncrease;
             };
-
             var runningEvent = function () {
                 var cTime = audioContext.currentTime;
                 for ( var index = 0; index < pendingEvents.length; index++ ) {
@@ -240,6 +214,5 @@ define( [ 'core/SPPlaybackRateParam' ],
                 return null;
             };
         }
-
         return SPAudioBufferSourceNode;
     } );

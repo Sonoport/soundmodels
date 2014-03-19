@@ -80,11 +80,8 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         @type Object
         @default null
         **/
-
         this.inputNode = null;
-
     }
-
     /**
     If the output is an AudioNode, it connects to the releaseGainNode. If the output is a BaseSound, it will connect 
     BaseSound's releaseGainNode to the output's releaseGainNode.
@@ -185,8 +182,6 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     @return null
     **/
     BaseSound.prototype.pause = function () {};
-
     // Return constructor function
     return BaseSound;
-
 } );

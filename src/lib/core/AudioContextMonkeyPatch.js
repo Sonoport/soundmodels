@@ -12,7 +12,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
    */
-
 /*
 
 This monkeypatch library is intended to be included in projects that are
@@ -60,10 +59,8 @@ define(
                 param.setTargetAtTime = param.setTargetValueAtTime;
             }
         }
-
         if ( window.hasOwnProperty( 'webkitAudioContext' ) && !window.hasOwnProperty( 'AudioContext' ) ) {
             window.AudioContext = webkitAudioContext;
-
             if ( !AudioContext.prototype.hasOwnProperty( 'createGain' ) ) {
                 AudioContext.prototype.createGain = AudioContext.prototype.createGainNode;
             }
@@ -73,21 +70,18 @@ define(
             if ( !AudioContext.prototype.hasOwnProperty( 'createScriptProcessor' ) ) {
                 AudioContext.prototype.createScriptProcessor = AudioContext.prototype.createJavaScriptNode;
             }
-
             AudioContext.prototype.internal_createGain = AudioContext.prototype.createGain;
             AudioContext.prototype.createGain = function () {
                 var node = this.internal_createGain();
                 fixSetTarget( node.gain );
                 return node;
             };
-
             AudioContext.prototype.internal_createDelay = AudioContext.prototype.createDelay;
             AudioContext.prototype.createDelay = function ( maxDelayTime ) {
                 var node = maxDelayTime ? this.internal_createDelay( maxDelayTime ) : this.internal_createDelay();
                 fixSetTarget( node.delayTime );
                 return node;
             };
-
             AudioContext.prototype.internal_createBufferSource = AudioContext.prototype.createBufferSource;
             AudioContext.prototype.createBufferSource = function () {
                 var node = this.internal_createBufferSource();
@@ -106,7 +100,6 @@ define(
                 fixSetTarget( node.playbackRate );
                 return node;
             };
-
             AudioContext.prototype.internal_createDynamicsCompressor = AudioContext.prototype.createDynamicsCompressor;
             AudioContext.prototype.createDynamicsCompressor = function () {
                 var node = this.internal_createDynamicsCompressor();
@@ -118,7 +111,6 @@ define(
                 fixSetTarget( node.release );
                 return node;
             };
-
             AudioContext.prototype.internal_createBiquadFilter = AudioContext.prototype.createBiquadFilter;
             AudioContext.prototype.createBiquadFilter = function () {
                 var node = this.internal_createBiquadFilter();
@@ -128,7 +120,6 @@ define(
                 fixSetTarget( node.gain );
                 return node;
             };
-
             if ( AudioContext.prototype.hasOwnProperty( 'createOscillator' ) ) {
                 AudioContext.prototype.internal_createOscillator = AudioContext.prototype.createOscillator;
                 AudioContext.prototype.createOscillator = function () {

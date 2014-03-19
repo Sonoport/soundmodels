@@ -3,13 +3,11 @@ define( [],
         "use strict";
 
         function SPPlaybackRateParam( audioParam, parentNode ) {
-
             this.defaultValue = audioParam.defaultValue;
             this.maxValue = audioParam.maxValue;
             this.minValue = audioParam.minValue;
             this.name = audioParam.name;
             this.units = audioParam.units;
-
             Object.defineProperty( this, 'value', {
                 enumerable: true,
                 set: function ( rate ) {
@@ -28,7 +26,6 @@ define( [],
                     return audioParam.value;
                 }
             } );
-
             this.linearRampToValueAtTime = function ( value, endTime ) {
                 audioParam.linearRampToValueAtTime( value, endTime );
                 parentNode.addNewEvent( {
@@ -37,7 +34,6 @@ define( [],
                     time: endTime
                 } );
             };
-
             this.exponentialRampToValueAtTime = function ( value, endTime ) {
                 audioParam.exponentialRampToValueAtTime( value, endTime );
                 parentNode.addNewEvent( {
@@ -46,7 +42,6 @@ define( [],
                     time: endTime
                 } );
             };
-
             this.setValueCurveAtTime = function ( values, startTime, duration ) {
                 audioParam.setValueCurveAtTime( values, startTime, duration );
                 parentNode.addNewEvent( {
@@ -56,7 +51,6 @@ define( [],
                     time: startTime
                 } );
             };
-
             this.setTargetAtTime = function ( target, startTime, timeConstant ) {
                 audioParam.setTargetAtTime( target, startTime, timeConstant );
                 parentNode.addNewEvent( {
@@ -66,7 +60,6 @@ define( [],
                     timeConstant: timeConstant
                 } );
             };
-
             this.setValueAtTime = function ( value, time ) {
                 audioParam.setValueAtTime( value, time );
                 parentNode.addNewEvent( {
@@ -75,14 +68,10 @@ define( [],
                     time: time
                 } );
             };
-
             this.cancelScheduledValues = function ( time ) {
                 audioParam.cancelScheduledValues( time );
                 parentNode.cancelScheduledValues( time );
             };
-
         }
-
         return SPPlaybackRateParam;
-
     } );
