@@ -1,7 +1,7 @@
 var AudioContext = webkitAudioContext;
 var context = new AudioContext();
 
-require(["core/FileLoader"], function (FileLoader) {
+require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
 
     //console.log(Looper);
 
@@ -13,8 +13,12 @@ require(["core/FileLoader"], function (FileLoader) {
      var validURL = url;
 
     lp = new FileLoader(validURL,context, function( status ){
-        console.log("loaded " + status);
-        console.log(lp.getRawBuffer().length);
+        console.log("File Loader Loaded :" + status);
+        //console.log(lp.getRawBuffer().length);
+    });
+
+    looper = new Looper(validURL, function (status) {
+        console.log("Looper Loaded :" + status);
     });
 
 

@@ -18,7 +18,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileLoader' ],
             // Private vars
             var that = this;
 
-            var aFileReaders_ = [];
+            var aFileLoaders_ = [];
             var aSources_ = [];
             var aMultiTrackGains_ = [];
 
@@ -96,35 +96,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileLoader' ],
                 var gainNode = that.audioContext.createGain();
                 source.connect( gainNode );
                 gainNode.connect( that.releaseGainNode );
-                var spGainNode = new SPAudioParam( "gainNode", 0.0, 1, 1, gainNode.gain, null, multiTrackGainSetter_, that.audioContext );
-                // spGainNode Overrides
-                spGainNode.setValueAtTime = function ( value, startTime ) {
-                    var aParam = resetAudioParam_( gainNode.gain );
-                    aParam.setValueAtTime( value, adjustTime_( value, aParam.value, startTime ) );
-                };
-                spGainNode.setTargetAtTime = function ( target, startTime, timeConstant ) {
-                    var aParam = resetAudioParam_( gainNode.gain );
-                    aParam.setTargetAtTime( target, adjustTime_( target, aParam.value, startTime ), timeConstant );
-                };
-                spGainNode.setValueCurveAtTime = function ( values, startTime, duration ) {
-                    var aParam = resetAudioParam_( gainNode.gain );
-                    if ( isNaN( startTime ) || typeof startTime === "undefined" ) {
-                        startTime = that.audioContext.currentTime;
-                    }
-                    aParam.setValueCurveAtTime( values, startTime, duration );
-                };
-                spGainNode.exponentialRampToValueAtTime = function ( value, endTime ) {
-                    var aParam = resetAudioParam_( gainNode.gain );
-                    aParam.exponentialRampToValueAtTime( value, adjustTime_( value, aParam.value, endTime ) );
-                };
-                spGainNode.linearRampToValueAtTime = function ( value, endTime ) {
-                    var aParam = resetAudioParam_( gainNode.gain );
-                    aParam.linearRampToValueAtTime( value, adjustTime_( value, aParam.value, endTime ) );
-                };
-                spGainNode.cancelScheduledValues = function ( startTime ) {
-                    var aParam = resetAudioParam_( gainNode.gain );
-                    aParam.cancelScheduledValues( startTime );
-                };
+                var spGainNode = new SPAudioParam( "gainNode", 0.0, 1, 1, gainNode.gain, null, null, that.audioContext );
                 aMultiTrackGains_.push( spGainNode );
             };
             /**
@@ -137,10 +109,10 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileLoader' ],
                 // Reset values
                 aSources_ = [];
                 aMultiTrackGains_ = [];
-                for ( var i = 0; i < aFileReaders_.length; i++ ) {
-                    if ( aFileReaders_[ i ].isLoaded() ) {
+                for ( var i = 0; i < aFileLoaders_.length; i++ ) {
+                    if ( aFileLoaders_[ i ].isLoaded() ) {
                         var source = that.audioContext.createBufferSource();
-                        source.buffer = aFileReaders_[ i ].getBuffer();
+                        source.buffer = aFileLoaders_[ i ].getBuffer();
                         source.loopStart = source.buffer.duration * that.startPoint.value;
                         source.loopEnd = source.buffer.duration;
                         source.loop = true;
@@ -188,9 +160,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileLoader' ],
             var parseParameters_ = function ( sounds ) {
                 nNumberOfSourcesTotal_ = 1;
                 if ( bParameterIsString_ || bParameterIsAnAudioBuffer_ ) {
-                    var frSingle = new FileReader( that.audioContext );
-                    aFileReaders_.push( frSingle );
-                    frSingle.open( sounds, onLoadSuccess_ );
+                    var frSingle = new FileLoader( sounds, that.audioContext, onLoadSuccess_ );
+                    aFileLoaders_.push( frSingle );
                 } else if ( bParameterIsAnArray_ ) {
                     nNumberOfSourcesTotal_ = sounds.length;
                     for ( var i = 0; i < nNumberOfSourcesTotal_; i++ ) {
@@ -206,9 +177,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileLoader' ],
                         }
                         // If either of the two, go nuts
                         if ( bIsString || bIsBuffer ) {
-                            var frArray = new FileReader( that.audioContext );
-                            aFileReaders_.push( frArray );
-                            frArray.open( sounds[ i ], onLoadSuccess_ );
+                            var frArray = new FileLoader( sounds[ i ], that.audioContext, onLoadSuccess_ );
+                            aFileLoaders_.push( frArray );
                         }
                     }
                 }
@@ -224,25 +194,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileLoader' ],
                 aParam.setValueAtTime( aParam.value, that.audioContext.currentTime );
                 return aParam;
             };
-            // AudioParam Mappers and Setters
-            /**
-             * Setter for multiTrackGain SPAudioParam
-             * @private
-             * @method multiTrackGainSetter
-             * @param {AudioParam} aParam
-             * @param {Number} value
-             * @param {AudioContext} audioContext
-             */
-            var multiTrackGainSetter_ = function ( aParam, value, audioContext ) {
-                var nTime = audioContext.currentTime;
-                aParam = resetAudioParam_( aParam );
-                // Skip delay if from paused position. Need to fix with proper buffer position location
-                if ( bFromPausedState_ ) {
-                    aParam.setValueAtTime( value, nTime );
-                    return;
-                }
-                aParam.linearRampToValueAtTime( value, adjustTime_( value, aParam.value, nTime ) );
-            };
+
             /**
              * Setter for playSpeed SPAudioParam
              * @private
@@ -320,33 +272,16 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileLoader' ],
                 }
                 return value;
             };
-            /**
-             * Mapper for riseTime SPAudioParam
-             * @private
-             * @method riseTimeMapper
-             * @param {Number} value
-             */
-            var riseTimeMapper_ = function ( value ) {
-                that.riseTime.cancelScheduledValues( 0 );
-                return value;
-            };
-            /**
-             * Mapper for decayTime SPAudioParam
-             * @private
-             * @method decayTimeMapper
-             * @param {Number} value
-             */
-            var decayTimeMapper_ = function ( value ) {
-                that.decayTime.cancelScheduledValues( 0 );
-                return value;
-            };
+
             // Public vars
             // AudioParams
-            this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, riseTimeMapper_, null, this.audioContext );
-            this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, decayTimeMapper_, null, this.audioContext );
+            this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
+            this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
+
             this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.03, true, startPointMapper_, startPointSetter_, this.audioContext );
             this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, true, null, playSpeedSetter_, this.audioContext );
             var innerStartPoint_ = new SPAudioParam( "innerStartPoint", this.startPoint.minValue, this.startPoint.maxValue, this.startPoint.defaultValue, true, innerStartPointMapper_, innerStartPointSetter_, this.audioContext );
+
             // startPoint Overrides
             this.startPoint.setValueAtTime = function ( value, startTime ) {
                 innerStartPoint_.cancelScheduledValues( 0 );
@@ -380,46 +315,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileLoader' ],
                 bInnerLoopInitialized_ = true;
                 innerStartPoint_.cancelScheduledValues( startTime );
             };
-            // playSpeed Overrides
-            this.playSpeed.setValueAtTime = function ( value, startTime ) {
-                for ( var i = 0; i < aSources_.length; i++ ) {
-                    var aParam = resetAudioParam_( aSources_[ i ].playbackRate );
-                    aParam.setValueAtTime( value, adjustTime_( value, aParam.value, startTime ) );
-                }
-            };
-            this.playSpeed.setTargetAtTime = function ( target, startTime, timeConstant ) {
-                for ( var i = 0; i < aSources_.length; i++ ) {
-                    var aParam = resetAudioParam_( aSources_[ i ].playbackRate );
-                    aParam.setTargetAtTime( target, adjustTime_( target, aParam.value, startTime ), timeConstant );
-                }
-            };
-            this.playSpeed.setValueCurveAtTime = function ( values, startTime, duration ) {
-                for ( var i = 0; i < aSources_.length; i++ ) {
-                    var aParam = resetAudioParam_( aSources_[ i ].playbackRate );
-                    if ( isNaN( startTime ) || typeof startTime === "undefined" ) {
-                        startTime = this.audioContext.currentTime;
-                    }
-                    aParam.setValueCurveAtTime( values, startTime, duration );
-                }
-            };
-            this.playSpeed.exponentialRampToValueAtTime = function ( value, endTime ) {
-                for ( var i = 0; i < aSources_.length; i++ ) {
-                    var aParam = resetAudioParam_( aSources_[ i ].playbackRate );
-                    aParam.exponentialRampToValueAtTime( value, adjustTime_( value, aParam.value, endTime ) );
-                }
-            };
-            this.playSpeed.linearRampToValueAtTime = function ( value, endTime ) {
-                for ( var i = 0; i < aSources_.length; i++ ) {
-                    var aParam = resetAudioParam_( aSources_[ i ].playbackRate );
-                    aParam.linearRampToValueAtTime( value, adjustTime_( value, aParam.value, endTime ) );
-                }
-            };
-            this.playSpeed.cancelScheduledValues = function ( startTime ) {
-                for ( var i = 0; i < aSources_.length; i++ ) {
-                    var aParam = resetAudioParam_( aSources_[ i ].playbackRate );
-                    aParam.cancelScheduledValues( startTime );
-                }
-            };
+
             /**
              * Getter for multiTrackGain
              * @type Arguments
@@ -533,10 +429,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileLoader' ],
             // Start parsing parameters
             parseParameters_( sounds );
         }
-        // Extend BaseSound
-        Looper.prototype = Object.create( BaseSound.prototype );
-        Looper.prototype = {
-            constructor: Looper
-        };
+
         return Looper;
     } );

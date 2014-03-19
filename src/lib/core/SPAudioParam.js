@@ -91,11 +91,13 @@ define(
                         if ( typeof setter === 'function' && audioContext ) {
                             // If setter is defined call it
                             setter( aParam, value, audioContext );
+                        } else {
+                            // Else set it directly
+                            aParam.value = value;
                         }
-                    } else if ( aParam ) {
-                        aParam.value = value;
                     } else {
                         // If Psuedo param
+                        window.clearInterval( intervalID_ );
                         value_ = value;
                     }
                 },
