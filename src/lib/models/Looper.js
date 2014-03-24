@@ -23,12 +23,14 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             var multiTrackGainNodes_ = [];
             var lastStopPosition_ = [];
 
-            var sourcesToLoad = 0;
+            var sourcesToLoad_ = 0;
+
+            var genericBuffer_ = context.createBufferSource();
 
             var onSingleLoad = function () {
-                sourcesToLoad--;
+                sourcesToLoad_--;
                 lastStopPosition_.push( 0 );
-                if ( sourcesToLoad === 0 ) {
+                if ( sourcesToLoad_ === 0 ) {
                     self.releaseGainNode.connect( context.destination );
                     onLoadCallback( true );
                 }
@@ -77,15 +79,38 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             };
 
             var playSpeedSetter_ = function ( aParam, value, audioContext ) {
+                /* 0.001 - 60dB Drop
+                  e(-n) = 0.001; - Decay Rate of setTargetAtTime.
+                  n = 6.90776;
+                  */
+
+                var t60multiplier = 6.90776;
+
+                var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
+
+                if ( value > currentSpeed ) {
+                    sources_.forEach( function ( thisSource ) {
+                        thisSource.cancelScheduledValues( audioContext.currentTime );
+                        thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.riseTime.value * t60multiplier );
+                    } );
+                } else if ( value < currentSpeed ) {
+                    sources_.forEach( function ( thisSource ) {
+                        thisSource.cancelScheduledValues( audioContext.currentTime );
+                        thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.decayTime.value * t60multiplier );
+                    } );
+                }
 
             };
+
+            // Initialize the sounds.
+            init();
 
             // Public Properties
             this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
             this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
 
-            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, true, null, null, this.audioContext );
-            this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, true, null, playSpeedSetter_, this.audioContext );
+            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, null, this.audioContext );
+            this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, genericBuffer_.playbackRate, null, playSpeedSetter_, this.audioContext );
 
             // Public functions
 
@@ -168,17 +193,19 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                 BaseSound.prototype.stop.call( this, 0 );
             };
 
-            // Load Sounds passed in the Constructor
-            var parameterType = Object.prototype.toString.call( sounds );
+            function init() {
+                // Load Sounds passed in the Constructor
+                var parameterType = Object.prototype.toString.call( sounds );
 
-            if ( parameterType === '[object Array]' ) {
-                sourcesToLoad = sounds.length;
-                sounds.forEach( function ( thisSound ) {
-                    setupSingleSound( thisSound, onSingleLoad );
-                } );
-            } else {
-                sourcesToLoad = 1;
-                setupSingleSound( sounds, onSingleLoad );
+                if ( parameterType === '[object Array]' ) {
+                    sourcesToLoad_ = sounds.length;
+                    sounds.forEach( function ( thisSound ) {
+                        setupSingleSound( thisSound, onSingleLoad );
+                    } );
+                } else {
+                    sourcesToLoad_ = 1;
+                    setupSingleSound( sounds, onSingleLoad );
+                }
             }
         }
 
