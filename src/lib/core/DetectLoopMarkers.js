@@ -8,6 +8,11 @@
 define( function () {
     "use strict";
 
+    /**
+     * DetectLoopMarkers
+     * @method DetectLoopMarkers
+     * @param AudioBuffer buffer A buffer within which Loop Markers need to be detected.
+     */
     function DetectLoopMarkers( buffer ) {
 
         self = this;
@@ -20,6 +25,11 @@ define( function () {
         this.MAX_MP3_SILENCE = 20000;
         this.SILENCE_THRESH = 0.1;
 
+        /**
+         * A helper method to help find the markers in an AudioBuffer.
+         * @method findSilence_
+         * @param AudioBuffer buffer A buffer within which markers needs to be detected.
+         */
         var findMarkers_ = function ( buffer ) {
             var startSpikePos = -1;
             var endSpikePos = -1;
@@ -79,10 +89,24 @@ define( function () {
             return false;
         };
 
-        var checkSilenceThreshold = function ( prev, thisChannel ) {
+        /**
+         * A helper method to help find the silence in findSilence_
+         * @method checkSilenceThreshold_
+         * @param Boolean prev The value from the previous call.
+         * @param Float32Array thisChannel Values from a specific channel of the AudioBuffer.
+         */
+        var checkSilenceThreshold_ = function ( prev, thisChannel ) {
             return prev && thisChannel[ nLoopStart_ ] < self.SILENCE_THRESH;
         };
 
+        /**
+         * A helper method to help find the silence in an AudioBuffer. Used of Loop Markers are not
+         * found in the AudioBuffer.
+         * @method findSilence_
+         * @param AudioBuffer buffer A buffer within which silence needs to be detected.
+         * @returns Object A object with start and end properties indicating the index at which
+         * the loop should start and end.
+         */
         var findSilence_ = function ( buffer ) {
 
             var channels = [];
@@ -96,7 +120,7 @@ define( function () {
             while ( nLoopStart_ < self.MAX_MP3_SILENCE &&
                 nLoopStart_ < buffer.length ) {
 
-                allChannelsSilent = channels.reduce( checkSilenceThreshold, true );
+                allChannelsSilent = channels.reduce( checkSilenceThreshold_, true );
 
                 if ( allChannelsSilent ) {
                     nLoopStart_++;
@@ -109,7 +133,7 @@ define( function () {
             while ( buffer.length - nLoopEnd_ < self.MAX_MP3_SILENCE &&
                 nLoopEnd_ > 0 ) {
 
-                allChannelsSilent = channels.reduce( checkSilenceThreshold, true );
+                allChannelsSilent = channels.reduce( checkSilenceThreshold_, true );
 
                 if ( allChannelsSilent ) {
                     nLoopEnd_++;

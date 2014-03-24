@@ -1,25 +1,37 @@
-var AudioContext = webkitAudioContext;
+"use strict";
+
+var AudioContext = webkitAudioContext || AudioContext;
 var context = new AudioContext();
+
+var looper;
 
 require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
 
     //console.log(Looper);
 
-    var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Marked.mp3"
+    //var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Marked.mp3";
     // var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Original.wav";
-    //var url = "https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.wav";
+    var url = "https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.wav";
 
-     // populate a valid URL of mp3 file
-     var validURL = url;
+    // populate a valid URL of mp3 file
+    var validURL = url;
 
-    lp = new FileLoader(validURL,context, function( status ){
-        console.log("File Loader Loaded :" + status);
-        //console.log(lp.getRawBuffer().length);
-    });
 
-    looper = new Looper(validURL, function (status) {
+    looper = new Looper(url, function (status) {
         console.log("Looper Loaded :" + status);
-    });
+        looper.start(0);
+    }, context);
+
+
+    /*var lp = new FileLoader(validURL,context, function( status ){
+        console.log("File Loader Loaded :" + status);
+        looper = new Looper(lp.getRawBuffer(), function (status) {
+            console.log("Looper Loaded :" + status);
+            looper.start();
+        });
+});*/
+
+
 
 
 
@@ -44,5 +56,5 @@ require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
         lp = new Looper(validAudioBuffer, onLoad);
         lp = new Looper([validURL, validURL], onLoad);
         lp = new Looper([validURL, validAudioBuffer], onLoad);
-     */
-});
+        */
+    });

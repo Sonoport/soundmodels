@@ -2,7 +2,7 @@
 
 Base class for all sounds.
 
-Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. 
+Pseudo AudioNode class the encapsulates basic functionality of an Audio Node.
 This is where AudioContext will be created and all sounds will be using this AudioContext.
 
 @class BaseSound
@@ -83,13 +83,13 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.inputNode = null;
     }
     /**
-    If the output is an AudioNode, it connects to the releaseGainNode. If the output is a BaseSound, it will connect 
+    If the output is an AudioNode, it connects to the releaseGainNode. If the output is a BaseSound, it will connect
     BaseSound's releaseGainNode to the output's releaseGainNode.
 
-	@method connect
-	@return null
+    @method connect
+    @return null
     @param {Object} output Connects to an AudioNode or BaseSound.
-	**/
+    **/
     BaseSound.prototype.connect = function ( output ) {
         if ( output instanceof BaseSound ) {
             // Check if input is able to be connected
@@ -127,7 +127,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.releaseGainNode.disconnect( outputIndex );
     };
     /**
-    Start audio at this current time. Abstract method. Override this method when a buffer is defined. 
+    Start audio at this current time. Abstract method. Override this method when a buffer is defined.
 
     @method start
     @return null
@@ -137,7 +137,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.isPlaying = true;
     };
     /**
-    Stop audio after startTime. Abstract method. Override this method when a buffer is defined. 
+    Stop audio after startTime. Abstract method. Override this method when a buffer is defined.
 
     @method stop
     @return null
@@ -169,14 +169,16 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         //this.stop( this.audioContext.currentTime + fadeTime + this.FADE_TIME_PAD );
     };
     /**
-    Play sound. Abstract method. Override this method when a buffer is defined. 
+    Play sound. Abstract method. Override this method when a buffer is defined.
 
     @method play
     @return null
     **/
-    BaseSound.prototype.play = function () {};
+    BaseSound.prototype.play = function () {
+        this.start( 0 );
+    };
     /**
-    Pause sound. Abstract method. Override this method when a buffer is defined. 
+    Pause sound. Abstract method. Override this method when a buffer is defined.
 
     @method pause
     @return null

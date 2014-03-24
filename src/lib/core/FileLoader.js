@@ -18,16 +18,12 @@ define( [ 'core/DetectLoopMarkers' ],
             if ( !( this instanceof FileLoader ) ) {
                 throw new TypeError( "FileLoader constructor cannot be called as a function." );
             }
-            var buffer_;
-            var nLoopStart_ = 0;
-            var nLoopEnd_ = 0;
-            var nLoopLength_ = 0;
+            var rawBuffer_;
+            var loopStart_ = 0;
+            var loopEnd_ = 0;
+            var loopLength_ = 0;
 
-            var bSoundLoaded_ = false;
-
-            var context_;
-            var callback_;
-            var link_;
+            var isSoundLoaded_ = false;
 
             // Private functions
             /**
@@ -53,12 +49,10 @@ define( [ 'core/DetectLoopMarkers' ],
              * @returns {AudioBuffer} The requested sliced buffer.
              */
             var sliceBuffer_ = function ( start, end ) {
-                var aChannels = [];
-                var nChannels = buffer_.numberOfChannels;
 
                 // Set end if it is missing
                 if ( typeof end === "undefined" ) {
-                    end = buffer_.length;
+                    end = rawBuffer_.length;
                 }
                 // Verify parameters
                 if ( !isInt_( start ) ) {
@@ -89,10 +83,10 @@ define( [ 'core/DetectLoopMarkers' ],
                     };
                 }
                 // Check if start is within the buffer size
-                if ( start > nLoopEnd_ || start < nLoopStart_ ) {
+                if ( start > loopEnd_ || start < loopStart_ ) {
                     throw {
                         name: "Incorrect parameter type Exception",
-                        message: "FileLoader getBuffer start parameter should be within the buffer size : 0-" + buffer_.length,
+                        message: "FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length,
                         toString: function () {
                             return this.name + ": " + this.message;
                         }
@@ -100,24 +94,24 @@ define( [ 'core/DetectLoopMarkers' ],
                 }
 
                 // Check if end is within the buffer size
-                if ( end > nLoopEnd_ || end < nLoopStart_ ) {
+                if ( end > loopEnd_ || end < loopStart_ ) {
                     throw {
                         name: "Incorrect parameter type Exception",
-                        message: "FileLoader getBuffer end parameter should be within the buffer size : 0-" + buffer_.length,
+                        message: "FileLoader getBuffer end parameter should be within the buffer size : 0-" + rawBuffer_.length,
                         toString: function () {
                             return this.name + ": " + this.message;
                         }
                     };
                 }
 
-                nLength = end - start;
+                var length = end - start;
 
                 // Create the new buffer
-                var newBuffer = context_.createBuffer( buffer_.numberOfChannels, nLength, buffer_.sampleRate );
+                var newBuffer = context.createBuffer( rawBuffer_.numberOfChannels, length, rawBuffer_.sampleRate );
 
                 // Start trimming
-                for ( var i = 0; i < nChannels; i++ ) {
-                    var aData = new Float32Array( buffer_.getChannelData( i ) );
+                for ( var i = 0; i < rawBuffer_.numberOfChannels; i++ ) {
+                    var aData = new Float32Array( rawBuffer_.getChannelData( i ) );
                     newBuffer.getChannelData( i )
                         .set( aData.subarray( start, end ) );
                 }
@@ -140,10 +134,10 @@ define( [ 'core/DetectLoopMarkers' ],
                 }
                 // Set end if it is missing
                 if ( typeof end === "undefined" ) {
-                    end = nLoopEnd_ - nLoopStart_;
+                    end = loopEnd_ - loopStart_;
                 }
 
-                return sliceBuffer_( nLoopStart_ + start, nLoopStart_ + end );
+                return sliceBuffer_( loopStart_ + start, loopStart_ + end );
             };
 
             /**
@@ -152,7 +146,7 @@ define( [ 'core/DetectLoopMarkers' ],
              * @returns {AudioBuffer} The original AudioBuffer.
              */
             this.getRawBuffer = function () {
-                return buffer_;
+                return rawBuffer_;
             };
 
             /**
@@ -161,41 +155,36 @@ define( [ 'core/DetectLoopMarkers' ],
              * @returns {Boolean} True if file is loaded. Flase if file is not yeat loaded.
              */
             this.isLoaded = function () {
-                return bSoundLoaded_;
+                return isSoundLoaded_;
             };
 
-            context_ = context;
-            callback_ = onloadCallback;
-            link_ = URL;
-
             // Make a request
+            var fileExtension = /[^.]+$/.exec( URL );
             var request = new XMLHttpRequest();
-            request.open( 'GET', link_, true );
+            request.open( 'GET', URL, true );
             request.responseType = 'arraybuffer';
             request.onload = function () {
-                context_.decodeAudioData( request.response, function ( buffer ) {
-                    var fileExtension = /[^.]+$/.exec( link_ );
-                    bSoundLoaded_ = true;
-                    buffer_ = buffer;
+                context.decodeAudioData( request.response, function ( buffer ) {
+                    isSoundLoaded_ = true;
+                    rawBuffer_ = buffer;
                     // Do trimming if it is not a wave file
+                    loopStart_ = 0;
+                    loopEnd_ = rawBuffer_.length;
                     if ( fileExtension[ 0 ] !== "wav" ) {
                         // Trim Buffer based on Markers
-                        var markers = detectLoopMarkers( buffer_ );
+                        var markers = detectLoopMarkers( rawBuffer_ );
                         if ( markers ) {
-                            nLoopStart_ = markers.start;
-                            nLoopEnd_ = markers.end;
-                        } else {
-                            nLoopStart_ = 0;
-                            nLoopEnd_ = buffer_.length;
+                            loopStart_ = markers.start;
+                            loopEnd_ = markers.end;
                         }
                     }
-                    if ( typeof callback_ !== "undefined" && typeof callback_ === "function" ) {
-                        callback_( true );
+                    if ( onloadCallback && typeof onloadCallback === "function" ) {
+                        onloadCallback( true );
                     }
                 }, function () {
-                    console.log( "Error loading URL" );
-                    if ( typeof callback_ !== "undefined" && typeof callback_ === "function" ) {
-                        callback_( false );
+                    console.log( "Error Decoding " + URL );
+                    if ( onloadCallback && typeof onloadCallback === "function" ) {
+                        onloadCallback( false );
                     }
                 } );
             };

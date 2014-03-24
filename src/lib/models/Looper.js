@@ -5,429 +5,181 @@
  * @description A sound model which loads a sound file and allows it to be looped continuously at variable speed.
  * @module Looper
  */
-define( [ 'core/BaseSound', 'core/SPAudioParam', 'core/FileLoader' ],
-    function ( BaseSound, SPAudioParam, FileLoader ) {
+define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode", 'core/FileLoader' ],
+    function ( BaseSound, SPAudioParam, SPAudioBufferSourceNode, FileLoader ) {
         "use strict";
 
-        function Looper( sounds, callback ) {
+        function Looper( sounds, onLoadCallback, context ) {
             if ( !( this instanceof Looper ) ) {
                 throw new TypeError( "Looper constructor cannot be called as a function." );
             }
             // Call superclass constructor
-            BaseSound.call( this );
+            BaseSound.call( this, context );
             // Private vars
-            var that = this;
+            var self = this;
 
-            var aFileLoaders_ = [];
-            var aSources_ = [];
-            var aMultiTrackGains_ = [];
+            var sources_ = [];
+            var multiTrackGains_ = [];
+            var multiTrackGainNodes_ = [];
+            var lastStopPosition_ = [];
 
-            var nNumberOfSourcesLoaded_ = 0;
-            var nNumberOfSourcesTotal_ = 0;
+            var sourcesToLoad = 0;
 
-            var nStartPosition_ = 0;
-            var nPlayPosition_ = 0;
-
-            var fCallback_ = callback;
-            var bInnerLoopInitialized_ = false;
-            var bInnerLoopCall_ = false;
-
-            // Private functions
-            /**
-             * Adjust the time according to decayTime and riseTime
-             * @private
-             * @method adjustTime
-             * @param {Float} newValue
-             * @param {Float} currentValue
-             * @param {Number} time
-             * @returns {Number}
-             */
-            var adjustTime_ = function ( newValue, currentValue, time ) {
-                if ( isNaN( time ) || typeof time === "undefined" ) {
-                    time = that.audioContext.currentTime;
+            var onSingleLoad = function () {
+                sourcesToLoad--;
+                lastStopPosition_.push( 0 );
+                if ( sourcesToLoad === 0 ) {
+                    self.releaseGainNode.connect( context.destination );
+                    onLoadCallback( true );
                 }
-                if ( newValue > currentValue ) {
-                    time += that.riseTime.value;
-                } else {
-                    time += that.decayTime.value;
-                }
-                return time;
             };
-            /**
-             * Checks if parameter passed on the constructor is valid
-             * @private
-             * @method bParameterValid
-             * @param {Object} sounds
-             * @returns {Boolean}
-             */
-            var bParameterValid_ = function ( sounds ) {
-                // Check if there is a parameter
-                if ( typeof sounds === "undefined" ) {
-                    console.log( "Error. Missing Looper constructor parameter." );
-                    return false;
-                }
-                // Check if it is not a just a blank string
-                if ( typeof sounds === "string" ) {
-                    if ( /\S/.test( sounds ) ) {
-                        bParameterIsString_ = true;
-                        return true;
-                    }
-                }
-                // Check if it an AudioBuffer
-                if ( Object.prototype.toString.call( sounds ) === '[object AudioBuffer]' ) {
-                    bParameterIsAnAudioBuffer_ = true;
-                    return true;
-                }
-                // Check if it is an array
-                if ( Object.prototype.toString.call( sounds ) === '[object Array]' ) {
-                    bParameterIsAnArray_ = true;
-                    return true;
-                }
-                console.log( "Error. Wrong parameter for Looper." );
-                return false;
-            };
-            /**
-             * Create gain nodes for each sources
-             * @private
-             * @method createGainNode
-             * @param {AudioBuffer} source
-             */
-            var createGainNode_ = function ( source ) {
-                var gainNode = that.audioContext.createGain();
+
+            var insertBufferSource = function ( audioBuffer ) {
+                var source = new SPAudioBufferSourceNode( self.audioContext );
+                var gainNode = self.audioContext.createGain();
+
+                source.buffer = audioBuffer;
+                source.loopStart = source.buffer.duration * self.startPoint.value;
+                source.loopEnd = source.buffer.duration;
+                source.loop = true;
+
                 source.connect( gainNode );
-                gainNode.connect( that.releaseGainNode );
-                var spGainNode = new SPAudioParam( "gainNode", 0.0, 1, 1, gainNode.gain, null, null, that.audioContext );
-                aMultiTrackGains_.push( spGainNode );
-            };
-            /**
-             * Populate sources
-             * @private
-             * @method populateSources
-             * @private
-             */
-            var populateSources_ = function () {
-                // Reset values
-                aSources_ = [];
-                aMultiTrackGains_ = [];
-                for ( var i = 0; i < aFileLoaders_.length; i++ ) {
-                    if ( aFileLoaders_[ i ].isLoaded() ) {
-                        var source = that.audioContext.createBufferSource();
-                        source.buffer = aFileLoaders_[ i ].getBuffer();
-                        source.loopStart = source.buffer.duration * that.startPoint.value;
-                        source.loopEnd = source.buffer.duration;
-                        source.loop = true;
-                        // Create a gain node
-                        createGainNode_( source );
-                        // Connect to releaseGainNode
-                        that.releaseGainNode.connect( that.audioContext.destination );
-                        aSources_.push( source );
-                    } else {
-                        console.log( "Not loaded" );
-                    }
-                }
-            };
-            /**
-             * Handler for successfull file / buffer loads
-             * @private
-             * @method onLoadSuccess
-             * @param {Boolean} bSuccess The result if it was a success (true) or not (false).
-             */
-            var onLoadSuccess_ = function ( bSuccess ) {
-                if ( bSuccess ) {
-                    nNumberOfSourcesLoaded_++;
-                } else {
-                    nNumberOfSourcesTotal_--;
-                }
-                // If all possible sources loaded
-                if ( nNumberOfSourcesLoaded_ === nNumberOfSourcesTotal_ ) {
-                    if ( typeof fCallback_ !== "undefined" && typeof fCallback_ === "function" ) {
-                        if ( nNumberOfSourcesLoaded_ > 0 ) {
-                            // Execute successful callback
-                            fCallback_( true );
-                        } else {
-                            // Execute fail callback
-                            fCallback_( false );
-                        }
-                    }
-                }
-            };
-            /**
-             * Parse the parameter and look for links and audiobuffers
-             * @private
-             * @method parseParameters
-             * @param {String | Array | AudioBuffer} sounds
-             */
-            var parseParameters_ = function ( sounds ) {
-                nNumberOfSourcesTotal_ = 1;
-                if ( bParameterIsString_ || bParameterIsAnAudioBuffer_ ) {
-                    var frSingle = new FileLoader( sounds, that.audioContext, onLoadSuccess_ );
-                    aFileLoaders_.push( frSingle );
-                } else if ( bParameterIsAnArray_ ) {
-                    nNumberOfSourcesTotal_ = sounds.length;
-                    for ( var i = 0; i < nNumberOfSourcesTotal_; i++ ) {
-                        var bIsString = false;
-                        var bIsBuffer = false;
-                        // Check individually each entry if it is a string
-                        if ( typeof sounds[ i ] === "string" ) {
-                            if ( /\S/.test( sounds[ i ] ) ) {
-                                bIsString = true;
-                            }
-                        } else if ( Object.prototype.toString.call( sounds[ i ] ) === '[object AudioBuffer]' ) {
-                            bIsBuffer = true;
-                        }
-                        // If either of the two, go nuts
-                        if ( bIsString || bIsBuffer ) {
-                            var frArray = new FileLoader( sounds[ i ], that.audioContext, onLoadSuccess_ );
-                            aFileLoaders_.push( frArray );
-                        }
-                    }
-                }
-            };
-            /**
-             * Reset AudioParam setting
-             * @param {AudioParam} aParam
-             * @method resetAudioParam
-             * @returns {AudioParam}
-             */
-            var resetAudioParam_ = function ( aParam ) {
-                aParam.cancelScheduledValues( that.audioContext.currentTime );
-                aParam.setValueAtTime( aParam.value, that.audioContext.currentTime );
-                return aParam;
+                gainNode.connect( self.releaseGainNode );
+
+                var multiChannelGainParam = new SPAudioParam( "gainNode", 0.0, 1, 1, gainNode.gain, null, null, self.audioContext );
+
+                sources_.push( source );
+                multiTrackGainNodes_.push( gainNode );
+                multiTrackGains_.push( multiChannelGainParam );
             };
 
-            /**
-             * Setter for playSpeed SPAudioParam
-             * @private
-             * @method playSpeedSetter
-             * @param {AudioParam} aParam
-             * @param {Number} value
-             * @param {AudioContext} audioContext
-             */
+            var setupSingleSound = function ( sound, onCompleteCallback ) {
+                var parameterType = Object.prototype.toString.call( sounds );
+                if ( parameterType === "[object String]" ) {
+                    var fileLoader = new FileLoader( sound, self.audioContext, function ( status ) {
+                        if ( status ) {
+                            insertBufferSource( fileLoader.getBuffer() );
+                            onCompleteCallback( status );
+                        }
+                    } );
+                } else if ( parameterType === "[object AudioBuffer]" ) {
+                    insertBufferSource( sounds );
+                    onCompleteCallback( true );
+                } else {
+                    throw {
+                        name: "Incorrect Parameter type Exception",
+                        message: "Looper argument is not a URL or AudioBuffer",
+                        toString: function () {
+                            return this.name + ": " + this.message;
+                        }
+                    };
+                }
+            };
+
             var playSpeedSetter_ = function ( aParam, value, audioContext ) {
-                for ( var i = 0; i < aSources_.length; i++ ) {
-                    var nTime = audioContext.currentTime;
-                    aParam = resetAudioParam_( aSources_[ i ].playbackRate );
-                    // Skip delay if from paused position. Need to fix with proper buffer position location
-                    if ( bFromPausedState_ ) {
-                        aParam.setValueAtTime( value, nTime );
-                        return;
-                    }
-                    aParam.linearRampToValueAtTime( value, adjustTime_( value, aParam.value, nTime ) );
-                }
-            };
-            /**
-             * Setter for innerStartPoint SPAudioParam
-             * @private
-             * @method innerStartPointSetter
-             * @param {AudioParam} aParam
-             * @param {Number} value
-             * @param {AudioContext} audioContext
-             */
-            var innerStartPointSetter_ = function ( aParam, value, audioContext ) {
-                bInnerLoopCall_ = false;
-            };
-            /**
-             * Setter for startPoint SPAudioParam
-             * @private
-             * @method startPointSetter
-             * @param {AudioParam} aParam
-             * @param {Number} value
-             * @param {AudioContext} audioContext
-             */
-            var startPointSetter_ = function ( aParam, value, audioContext ) {
-                if ( !bInnerLoopCall_ ) {
-                    if ( typeof innerStartPoint_ !== "undefined" ) {
-                        innerStartPoint_.cancelScheduledValues( 0 );
-                        bInnerLoopInitialized_ = true;
-                        innerStartPoint_.linearRampToValueAtTime( value, adjustTime_( value, that.startPoint.value ) );
-                    }
-                }
-            };
-            /**
-             * Mapper for startPoint SPAudioParam
-             * @private
-             * @method startPointMapper
-             * @param {Number} value
-             */
-            var startPointMapper_ = function ( value ) {
-                if ( bInnerLoopCall_ ) {
-                    for ( var i = 0; i < aSources_.length; i++ ) {
-                        aSources_[ i ].loopStart = aSources_[ i ].buffer.duration * value;
-                    }
-                }
-                return value;
-            };
-            /**
-             * Mapper for innerStartPoint SPAudioParam
-             * @private
-             * @method innerStartPointMapper
-             * @param {Number} value
-             */
-            var innerStartPointMapper_ = function ( value ) {
-                bInnerLoopCall_ = true;
-                if ( !bInnerLoopInitialized_ ) {
-                    that.startPoint.value = value;
-                } else {
-                    bInnerLoopInitialized_ = false;
-                }
-                return value;
+
             };
 
-            // Public vars
-            // AudioParams
+            // Public Properties
             this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
             this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
 
-            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.03, true, startPointMapper_, startPointSetter_, this.audioContext );
+            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, true, null, null, this.audioContext );
             this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, true, null, playSpeedSetter_, this.audioContext );
-            var innerStartPoint_ = new SPAudioParam( "innerStartPoint", this.startPoint.minValue, this.startPoint.maxValue, this.startPoint.defaultValue, true, innerStartPointMapper_, innerStartPointSetter_, this.audioContext );
 
-            // startPoint Overrides
-            this.startPoint.setValueAtTime = function ( value, startTime ) {
-                innerStartPoint_.cancelScheduledValues( 0 );
-                bInnerLoopInitialized_ = true;
-                innerStartPoint_.setValueAtTime( value, adjustTime_( value, that.startPoint.value, startTime ) );
-            };
-            this.startPoint.setTargetAtTime = function ( target, startTime, timeConstant ) {
-                innerStartPoint_.cancelScheduledValues( 0 );
-                bInnerLoopInitialized_ = true;
-                innerStartPoint_.setTargetAtTime( target, adjustTime_( target, that.startPoint.value, startTime ), timeConstant );
-            };
-            this.startPoint.setValueCurveAtTime = function ( values, startTime, duration ) {
-                innerStartPoint_.cancelScheduledValues( 0 );
-                bInnerLoopInitialized_ = true;
-                if ( isNaN( startTime ) || typeof startTime === "undefined" ) {
-                    startTime = this.audioContext.currentTime;
-                }
-                innerStartPoint_.setValueCurveAtTime( values, startTime, duration );
-            };
-            this.startPoint.exponentialRampToValueAtTime = function ( value, endTime ) {
-                innerStartPoint_.cancelScheduledValues( 0 );
-                bInnerLoopInitialized_ = true;
-                innerStartPoint_.exponentialRampToValueAtTime( value, adjustTime_( value, that.startPoint.value, endTime ) );
-            };
-            this.startPoint.linearRampToValueAtTime = function ( value, endTime ) {
-                innerStartPoint_.cancelScheduledValues( 0 );
-                bInnerLoopInitialized_ = true;
-                innerStartPoint_.linearRampToValueAtTime( value, adjustTime_( value, that.startPoint.value, endTime ) );
-            };
-            this.startPoint.cancelScheduledValues = function ( startTime ) {
-                bInnerLoopInitialized_ = true;
-                innerStartPoint_.cancelScheduledValues( startTime );
-            };
-
-            /**
-             * Getter for multiTrackGain
-             * @type Arguments
-             */
-            Object.defineProperty( this, 'multiTrackGain', {
-                get: function () {
-                    return aMultiTrackGains_;
-                }
-            } );
             // Public functions
-            /**
-             * Plays the sound at position 0.
-             * @method play
-             */
-            this.play = function () {
-                nPlayPosition_ = 0;
-                this.start( 0 );
-            };
+
             /**
              * Start playing after specific time and on what part of the sound.
              * @method start
-             * @param {Number} currTime The delay in seconds before playing the sound
+             * @param {Number} startTime The delay in seconds before playing the sound
              * @param {Number} offset The starting position of the playhead
              */
-            this.start = function ( currTime, offset ) {
-                if ( typeof currTime === "undefined" ) {
-                    currTime = 0;
+            this.play = function () {
+
+                if ( !this.isPlaying ) {
+                    sources_.forEach( function ( thisSource, index ) {
+                        var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : 0;
+                        console.log( index + " staring from " + offset );
+                        thisSource.start( 0, offset );
+                    } );
                 }
-                if ( typeof offset === "undefined" ) {
-                    offset = 0;
+
+                BaseSound.prototype.start.call( this, 0 );
+
+            };
+
+            /**
+             * Start playing after specific time and on what part of the sound.
+             * @method start
+             * @param {Number} startTime The delay in seconds before playing the sound
+             * @param {Number} offset The starting position of the playhead
+             */
+            this.start = function ( startTime, offset ) {
+
+                if ( !this.isPlaying ) {
+                    sources_.forEach( function ( thisSource ) {
+                        thisSource.start( startTime, offset );
+                    } );
                 }
-                if ( this.isPlaying ) {
-                    this.stop();
-                }
-                nStartPosition_ = this.audioContext.currentTime;
-                // Get sources again
-                populateSources_();
-                for ( var i = 0; i < aSources_.length; i++ ) {
-                    var nDefaultPlaySpeed = 1;
-                    if ( this.playSpeed.value !== 0 ) {
-                        nDefaultPlaySpeed = this.playSpeed.value;
-                    }
-                    // Not accurate if paused while on transition from one value to another. If the transition completes it's ok.
-                    aSources_[ i ].start( currTime, aSources_[ i ].loopStart + ( offset % aSources_[ i ].buffer.duration * nDefaultPlaySpeed ) );
-                }
-                if ( bFromPausedState_ ) {
-                    bFromPausedState_ = false;
-                }
-                this.isPlaying = true;
+
+                BaseSound.prototype.start.call( this, startTime );
             };
             /**
              * Stops the sound and resets play head to 0.
              * @method stop
-             * @param {Number} value Time offset to stop
+             * @param {Number} startTime Time offset to stop
              */
-            this.stop = function ( value ) {
-                if ( typeof value === "undefined" ) {
-                    value = this.audioContext.currentTime;
-                }
+            this.stop = function ( startTime ) {
+
                 if ( this.isPlaying ) {
-                    for ( var i = 0; i < aSources_.length; i++ ) {
-                        aSources_[ i ].noteOff( value );
-                    }
-                    nPlayPosition_ = 0;
-                    this.isPlaying = false;
+                    sources_.forEach( function ( thisSource ) {
+                        thisSource.stop( startTime );
+                    } );
                 }
+
+                BaseSound.prototype.stop.call( this, startTime );
             };
+
             /**
              * Pause the currently playing sound
              * @method pause
              */
             this.pause = function () {
                 if ( this.isPlaying ) {
-                    // Save current position before being erased at stop method
-                    var currentPlayPosition = nPlayPosition_;
-                    this.stop();
-                    nPlayPosition_ = currentPlayPosition + this.audioContext.currentTime - nStartPosition_;
-                } else {
-                    bFromPausedState_ = true;
-                    this.start( 0, nPlayPosition_ );
+                    sources_ = sources_.map( function ( thisSource, index ) {
+                        thisSource.stop( 0 );
+                        lastStopPosition_[ index ] = thisSource.playbackPosition / thisSource.buffer.sampleRate;
+                        console.log( index + " stopped at " + lastStopPosition_[ index ] );
+
+                        thisSource.disconnect();
+
+                        var newSource = new SPAudioBufferSourceNode( self.audioContext );
+                        newSource.buffer = thisSource.buffer;
+                        newSource.loopStart = newSource.buffer.duration * self.startPoint.value;
+                        newSource.loopEnd = newSource.buffer.duration;
+                        newSource.loop = true;
+                        newSource.connect( multiTrackGainNodes_[ index ] );
+
+                        return newSource;
+                    } );
                 }
+
+                BaseSound.prototype.stop.call( this, 0 );
             };
-            /**
-             * Linearly ramp down the gain of the audio in time (seconds) to 0.
-             * @method release
-             * @param {Number} fadeTime Amount of time it takes for linear ramp down to happen.
-             */
-            this.release = function ( fadeTime ) {
-                BaseSound.prototype.release.call( this, fadeTime );
-            };
-            /**
-             * Connects release Gain Node to an AudioNode or AudioParam.
-             * @method connect
-             * @param {Object} output Connects to an AudioNode or AudioParam.
-             */
-            this.connect = function ( output ) {
-                BaseSound.prototype.connect.call( this, output );
-            };
-            /**
-             * Disconnects release Gain Node from an AudioNode or AudioParam.
-             * @param {Object} output Takes in an AudioNode or AudioParam.
-             */
-            this.disconnect = function ( output ) {
-                BaseSound.prototype.disconnect.call( this, output );
-            };
-            // Init
-            // Do validation of constructor parameter
-            if ( !bParameterValid_( sounds ) ) {
-                return;
+
+            // Load Sounds passed in the Constructor
+            var parameterType = Object.prototype.toString.call( sounds );
+
+            if ( parameterType === '[object Array]' ) {
+                sourcesToLoad = sounds.length;
+                sounds.forEach( function ( thisSound ) {
+                    setupSingleSound( thisSound, onSingleLoad );
+                } );
+            } else {
+                sourcesToLoad = 1;
+                setupSingleSound( sounds, onSingleLoad );
             }
-            // Start parsing parameters
-            parseParameters_( sounds );
         }
 
         return Looper;
