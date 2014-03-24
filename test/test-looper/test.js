@@ -11,25 +11,30 @@ require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
 
     //var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Marked.mp3";
     // var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Original.wav";
-    var url = "https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.wav";
+    // var url = "https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.wav";
+
+    var drums = "https://dl.dropboxusercontent.com/u/77191118/sounds/drum.mp3";
+    var guitar = "https://dl.dropboxusercontent.com/u/77191118/sounds/guitar.mp3";
+    var piano = "https://dl.dropboxusercontent.com/u/77191118/sounds/piano.mp3";
 
     // populate a valid URL of mp3 file
-    var validURL = url;
 
 
-    looper = new Looper(url, function (status) {
-        console.log("Looper Loaded :" + status);
-        looper.start(0);
-    }, context);
+    // Multi Track Test
+    // looper = new Looper([drums, guitar, piano], function (status) {
+    //     console.log("Looper Loaded :" + status);
+    //     looper.start(0);
+    // }, context);
 
 
-    /*var lp = new FileLoader(validURL,context, function( status ){
-        console.log("File Loader Loaded :" + status);
-        looper = new Looper(lp.getRawBuffer(), function (status) {
-            console.log("Looper Loaded :" + status);
-            looper.start();
-        });
-});*/
+    // Mixed input test
+    // var lp = new FileLoader(drums,context, function( status ){
+    //     console.log("File Loader Loaded :" + status);
+    //     looper = new Looper([lp.getBuffer(), guitar, piano], function (status) {
+    //         console.log("Looper Loaded :" + status);
+    //         looper.start(0);
+    //     }, context);
+    // });
 
 
 

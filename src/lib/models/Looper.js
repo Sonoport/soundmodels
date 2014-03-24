@@ -41,8 +41,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                 var gainNode = self.audioContext.createGain();
 
                 source.buffer = audioBuffer;
-                source.loopStart = source.buffer.duration * self.startPoint.value;
-                source.loopEnd = source.buffer.duration;
                 source.loop = true;
 
                 source.connect( gainNode );
@@ -56,7 +54,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             };
 
             var setupSingleSound = function ( sound, onCompleteCallback ) {
-                var parameterType = Object.prototype.toString.call( sounds );
+                var parameterType = Object.prototype.toString.call( sound );
                 if ( parameterType === "[object String]" ) {
                     var fileLoader = new FileLoader( sound, self.audioContext, function ( status ) {
                         if ( status ) {
@@ -65,7 +63,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                         }
                     } );
                 } else if ( parameterType === "[object AudioBuffer]" ) {
-                    insertBufferSource( sounds );
+                    insertBufferSource( sound );
                     onCompleteCallback( true );
                 } else {
                     throw {
@@ -83,7 +81,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                   e(-n) = 0.001; - Decay Rate of setTargetAtTime.
                   n = 6.90776;
                   */
-
                 var t60multiplier = 6.90776;
 
                 var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
@@ -109,8 +106,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
             this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
 
-            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, null, this.audioContext );
             this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, genericBuffer_.playbackRate, null, playSpeedSetter_, this.audioContext );
+            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, null, this.audioContext );
 
             // Public functions
 
