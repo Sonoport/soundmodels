@@ -69,12 +69,11 @@ define( [ 'core/SPPlaybackRateParam' ],
             Object.defineProperty( this, 'playbackPosition', {
                 enumerable: true,
                 get: function () {
-                    //console.log(lastPos);
+                    //console.log( lastPos );
+                    processCompletedEvents();
                     if ( bufferSourceNode.playbackState === bufferSourceNode.FINISHED_STATE ) {
-                        processCompletedEvents();
-                        return lastPos % bufferSourceNode.buffer.length;
+                        return lastPos;
                     } else if ( bufferSourceNode.playbackState === bufferSourceNode.PLAYING_STATE ) {
-                        processCompletedEvents();
                         return indexSinceLastEventToTime( audioContext.currentTime );
                     } else {
                         return 0;
@@ -157,7 +156,8 @@ define( [ 'core/SPPlaybackRateParam' ],
                     if ( endTime <= cTime ) {
                         // Event that have ended can be processed till the end
                         var timeIncrease = calculateTimeIncrease( thisEvent, endTime );
-                        lastPos += ( timeIncrease * bufferSourceNode.buffer.sampleRate ) % bufferSourceNode.buffer.length;
+                        var loopLength = ( bufferSourceNode.loopEnd - bufferSourceNode.loopStart ) * bufferSourceNode.buffer.sampleRate;
+                        lastPos += ( timeIncrease * bufferSourceNode.buffer.sampleRate ) % loopLength;
                         //console.log( "Processed " + thisEvent.type + "  (" + lastEventTime + ") " + thisEvent.time + "-" + endTime + " @ " + thisEvent.value + " = " + timeIncrease + " => " + lastPos );
                         lastEventTime = endTime;
                         lastEventValue = thisEvent.value || ( thisEvent.curve ? thisEvent.curve[ thisEvent.curve.length - 1 ] : lastEventValue );
@@ -195,7 +195,8 @@ define( [ 'core/SPPlaybackRateParam' ],
                     increase = ( time - lastEventTime ) * bufferSourceNode.playbackRate.value;
                 }
                 var newPos = lastPos + increase * bufferSourceNode.buffer.sampleRate;
-                return newPos % bufferSourceNode.buffer.length;
+                var loopLength = ( bufferSourceNode.loopEnd - bufferSourceNode.loopStart ) * bufferSourceNode.buffer.sampleRate;
+                return newPos % loopLength;
             };
 
             var calculateTimeIncrease = function ( event, endTime ) {

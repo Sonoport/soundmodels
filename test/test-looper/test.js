@@ -27,14 +27,15 @@ require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
     // }, context);
 
 
-    // Mixed input test
-    // var lp = new FileLoader(drums,context, function( status ){
-    //     console.log("File Loader Loaded :" + status);
-    //     looper = new Looper([lp.getBuffer(), guitar, piano], function (status) {
-    //         console.log("Looper Loaded :" + status);
-    //         looper.start(0);
-    //     }, context);
-    // });
+    //Mixed input test
+    var lp = new FileLoader(drums,context, function( status ){
+        console.log("File Loader Loaded :" + status);
+        looper = new Looper([lp.getBuffer(), guitar, piano], function (status) {
+            console.log("Looper Loaded :" + status);
+            //looper.startPoint.value = 0.9;
+            looper.start(0);
+        }, context);
+    });
 
 
 

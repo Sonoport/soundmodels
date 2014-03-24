@@ -42,6 +42,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
 
                 source.buffer = audioBuffer;
                 source.loop = true;
+                source.loopEnd = audioBuffer.duration;
 
                 source.connect( gainNode );
                 gainNode.connect( self.releaseGainNode );
@@ -99,17 +100,27 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
 
             };
 
+            var startPointSetter_ = function ( aParam, value ) {
+                sources_.forEach( function ( thisSource ) {
+                    thisSource.loopStart = value * thisSource.buffer.duration;
+                } );
+            };
+
             // Initialize the sounds.
             init();
 
             // Public Properties
-            this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
-            this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, null, null, this.audioContext );
+            this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 1, this.audioContext );
+            this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 1, this.audioContext );
+            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
 
-            this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, genericBuffer_.playbackRate, null, playSpeedSetter_, this.audioContext );
-            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, null, this.audioContext );
+            this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, null, null, playSpeedSetter_, this.audioContext );
 
             // Public functions
+
+            this.getSources = function () {
+                return sources_;
+            };
 
             /**
              * Start playing after specific time and on what part of the sound.

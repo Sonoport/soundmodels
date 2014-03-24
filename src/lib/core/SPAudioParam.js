@@ -81,22 +81,21 @@ define(
                             value = minValue;
                         }
                     }
-                    if ( aParam && aParam instanceof AudioParam ) {
-                        // If mapped param
+
+                    // Map the value first
+                    if ( typeof mappingFunction === 'function' ) {
                         // Map if mappingFunction is defined
-                        if ( typeof mappingFunction === 'function' ) {
-                            // Map if mappingFunction is defined
-                            value = mappingFunction( value );
-                        }
-                        if ( typeof setter === 'function' && audioContext ) {
-                            // If setter is defined call it
-                            setter( aParam, value, audioContext );
-                        } else {
-                            // Else set it directly
-                            aParam.value = value;
-                        }
+                        value = mappingFunction( value );
+                    }
+
+                    // If setter exists, use that
+                    if ( typeof setter === 'function' && audioContext ) {
+                        setter( aParam, value, audioContext );
+                    } else if ( aParam && aParam instanceof AudioParam ) {
+                        // else if param is defined, set directly
+                        aParam.value = value;
                     } else {
-                        // If Psuedo param
+                        // Else if Psuedo param
                         window.clearInterval( intervalID_ );
                         value_ = value;
                     }
@@ -313,23 +312,6 @@ define(
         SPAudioParam.createPsuedoParam = function ( name, minValue, maxValue, defaultValue, audioContext ) {
             return new SPAudioParam( name, minValue, maxValue, defaultValue, null, null, null, audioContext );
         };
-        /**
-        Static helper method to create a parameter which is mapped to an underlying
-        WebAudio AudioParam
 
-        @method createPsuedoParam
-        @return  SPAudioParam
-        @param {String} name The name of the parameter..
-        @param {Number} minValue The minimum value of the parameter.
-        @param {Number} maxValue The maximum value of the parameter.
-        @param {Number} defaultValue The default and starting value of the parameter.
-        @param {AudioParam} aParam A WebAudio parameter which will be set/get when this parameter is changed.
-        @param {Function} mappingFunction A mapping function to map values between the mapped
-        SPAudioParam and the underlying WebAudio AudioParam.
-        @param {Function} setter A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.
-        **/
-        SPAudioParam.createMappedParam = function ( name, minValue, maxValue, defaultValue, aParam, mappingFunction, setter, audioContext ) {
-            return new SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mappingFunction, setter, audioContext );
-        };
         return SPAudioParam;
     } );
