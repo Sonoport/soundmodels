@@ -91,6 +91,7 @@ define(
                     // If setter exists, use that
                     if ( typeof setter === 'function' && audioContext ) {
                         setter( aParam, value, audioContext );
+                        value_ = value;
                     } else if ( aParam && aParam instanceof AudioParam ) {
                         // else if param is defined, set directly
                         aParam.value = value;

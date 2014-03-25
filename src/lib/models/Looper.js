@@ -149,9 +149,11 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
              * @param {Number} offset The starting position of the playhead
              */
             this.start = function ( startTime, offset ) {
-
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource ) {
+                        if ( typeof offset === 'undefined' ) {
+                            offset = self.startPoint.value * thisSource.buffer.duration;
+                        }
                         thisSource.start( startTime, offset );
                     } );
                 }
