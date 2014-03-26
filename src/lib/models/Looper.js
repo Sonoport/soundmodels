@@ -118,7 +118,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                     sounds.forEach( function ( thisSound ) {
                         setupSingleSound( thisSound, onSingleLoad );
                     } );
-                } else {
+                 } else if ( sounds !== undefined && sounds !== null ) {
                     sourcesToLoad_ = 1;
                     setupSingleSound( sounds, onSingleLoad );
                 }
@@ -161,7 +161,9 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             **/
             this.multiTrackGain = [];
 
-            // Public functions
+            this.setSources = function ( sounds, onLoadCallback ) {
+                init();
+            }
 
             /**
              * Plays the sound immediately. If the sound is paused, the sound will be
@@ -191,7 +193,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             this.start = function ( startTime, offset ) {
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource ) {
-                        if ( typeof offset === 'undefined' ) {
+                        if ( typeof offset == 'undefined' ) {
                             offset = self.startPoint.value * thisSource.buffer.duration;
                         }
                         thisSource.start( startTime, offset );
