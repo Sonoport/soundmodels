@@ -5,7 +5,7 @@ var context = new AudioContext();
 
 var looper;
 
-require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
+require(["core/SoundQueue", "models/Looper"], function (SoundQueue, Looper) {
 
     //console.log(Looper);
 
