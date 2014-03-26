@@ -5,7 +5,7 @@ var context = new AudioContext();
 
 var looper;
 
-require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
+require(["core/SoundQueue", "models/Looper"], function (SoundQueue, Looper) {
 
     //console.log(Looper);
 
@@ -28,14 +28,18 @@ require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
 
 
     //Mixed input test
-    var lp = new FileLoader(drums,context, function( status ){
-        console.log("File Loader Loaded :" + status);
-        looper = new Looper([lp.getBuffer(), guitar, piano], function (status) {
-            console.log("Looper Loaded :" + status);
-            //looper.startPoint.value = 0.9;
-            looper.start(0);
-        }, context);
-    });
+    // var lp = new FileLoader(drums,context, function( status ){
+    //     console.log("File Loader Loaded :" + status);
+    //     looper = new Looper([lp.getBuffer(), guitar, piano], function (status) {
+    //         console.log("Looper Loaded :" + status);
+    //         //looper.startPoint.value = 0.9;
+    //         looper.start(0);
+    //     }, context);
+    // });
+
+    var s = new SoundQueue(context);
+
+
 
 
 

@@ -1,6 +1,4 @@
 /**
- * @author Cliburn M. Solano
- * @email cliburn.solano@sonoport.com
  * @class Looper
  * @description A sound model which loads a sound file and allows it to be looped continuously at variable speed.
  * @module Looper
@@ -112,14 +110,15 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             // Public Properties
             this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 1, this.audioContext );
             this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 1, this.audioContext );
+
             this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
 
             this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, null, null, playSpeedSetter_, this.audioContext );
 
             // Public functions
 
-            this.getSources = function () {
-                return sources_;
+            this.setSources = function ( sounds, onLoadCallback ) {
+                init();
             };
 
             /**
@@ -151,7 +150,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             this.start = function ( startTime, offset ) {
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource ) {
-                        if ( typeof offset === 'undefined' ) {
+                        if ( typeof offset == 'undefined' ) {
                             offset = self.startPoint.value * thisSource.buffer.duration;
                         }
                         thisSource.start( startTime, offset );
@@ -212,7 +211,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                     sounds.forEach( function ( thisSound ) {
                         setupSingleSound( thisSound, onSingleLoad );
                     } );
-                } else {
+                } else if ( sounds !== undefined && sounds !== null ) {
                     sourcesToLoad_ = 1;
                     setupSingleSound( sounds, onSingleLoad );
                 }

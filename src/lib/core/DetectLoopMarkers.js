@@ -1,6 +1,4 @@
 /**
- * @author Cliburn M. Solano
- * @email cliburn.solano@sonoport.com
  * @class DetectLoopMarkers
  * @module FileReader
  * @description Detect loop markers.
