@@ -17,6 +17,8 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             }
 
             // Private Variables
+            var self = this;
+
             var eventQueue_ = [];
             var busyVoices_ = [];
             var freeVoices_ = [];
@@ -118,6 +120,8 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             // Public Properties
 
             // Public Functions
+
+            //"QENONE", "QESTOP", "QESTART", "QESETPARAM", "QESETSRC", "QERELEASE"
 
             this.queueStart = function ( timeStamp, eventID ) {
                 eventQueue_.push( new SPEvent( "QESTART", timeStamp, eventID ) );
