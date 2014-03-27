@@ -19,7 +19,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             var self = this;
 
             var sources_ = [];
-            var multiTrackGains_ = [];
             var multiTrackGainNodes_ = [];
             var lastStopPosition_ = [];
 
@@ -51,7 +50,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
 
                 sources_.push( source );
                 multiTrackGainNodes_.push( gainNode );
-                multiTrackGains_.push( multiChannelGainParam );
+                self.multiTrackGain.push( multiChannelGainParam );
             };
 
             var setupSingleSound = function ( sound, onCompleteCallback ) {
@@ -115,6 +114,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
 
             this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, null, null, playSpeedSetter_, this.audioContext );
+
+            this.multiTrackGain = [];
 
             // Public functions
 
