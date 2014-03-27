@@ -1,14 +1,16 @@
 /**
-Envelope class that extends BaseSound which implements an EnvelopeNode.
-
 @class Envelope
-@param {AudioContext} context
-@constructor
+@description Envelope class that extends BaseSound which implements an ASDR Envelope.
+@module Core
 @extends BaseSound
 **/
 define( [ 'core/BaseSound' ], function ( BaseSound ) {
     'use strict';
 
+    /**
+    @constructor
+    @param {AudioContext} context
+    */
     function Envelope( context ) {
         // This first guard ensures that the callee has invoked our Class' constructor function
         // with the `new` keyword - failure to do this will result in the `this` keyword referring
@@ -147,7 +149,7 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
     };
     /**
     Linearly ramps down the gain of releaseGainNode from current value to 0 in fadeTime (s).
-    It is better to call this method on a user initiated event or after some time (in seconds) has passed. 
+    It is better to call this method on a user initiated event or after some time (in seconds) has passed.
 
     @method release
     @param {Number} fadeTime
@@ -187,7 +189,7 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
         // Clamp the current gain value at this time
         // If this is not done, the attack linearRampToValueAtTime does not ramp up to 1 smoothly, rather it jumps to 1.
         this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, this.audioContext.currentTime );
-        // Attack 
+        // Attack
         // now this ramp up nicely
         this.releaseGainNode.gain.linearRampToValueAtTime( attackVal, this.audioContext.currentTime + this.attackDur );
         // Decay

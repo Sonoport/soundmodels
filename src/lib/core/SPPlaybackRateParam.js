@@ -1,7 +1,18 @@
+/**
+ * @class SPPlaybackRateParam
+ * @description Wrapper Around AudioParam playbackRate of AudioBufferSourceNode to help
+                        calculate the playbackPosition of the AudioBufferSourceNode.
+ * @module Core
+ */
 define( [],
     function () {
         "use strict";
 
+        /**
+         * @constructor
+         * @param {AudioParam} the playbackRate of a AudioBufferSourceNode.
+         * @param {AudioNode} a AudioBufferSourceNode.
+         */
         function SPPlaybackRateParam( audioParam, parentNode ) {
             this.defaultValue = audioParam.defaultValue;
             this.maxValue = audioParam.maxValue;

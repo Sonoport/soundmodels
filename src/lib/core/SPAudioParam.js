@@ -1,8 +1,7 @@
 /*
- *
  * @class SPAudioParam
- * Mock AudioParam for external use on Models.
- *
+ * @description Mock AudioParam for external use on Models.
+ * @module Core
  */
 define(
     [],

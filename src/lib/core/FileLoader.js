@@ -1,8 +1,7 @@
 /**
- * @author Cliburn M. Solano
- * @email cliburn.solano@sonoport.com
  * @class FileLoader
  * @description Load file from a URL.
+ * @module Core
  */
 define( [ 'core/DetectLoopMarkers' ],
     function ( detectLoopMarkers ) {
@@ -21,7 +20,6 @@ define( [ 'core/DetectLoopMarkers' ],
             var rawBuffer_;
             var loopStart_ = 0;
             var loopEnd_ = 0;
-            var loopLength_ = 0;
 
             var isSoundLoaded_ = false;
 
@@ -119,6 +117,39 @@ define( [ 'core/DetectLoopMarkers' ],
                 return newBuffer;
             };
 
+            function init() {
+                var fileExtension = /[^.]+$/.exec( URL );
+                var request = new XMLHttpRequest();
+                request.open( 'GET', URL, true );
+                request.responseType = 'arraybuffer';
+                request.onload = function () {
+                    context.decodeAudioData( request.response, function ( buffer ) {
+                        isSoundLoaded_ = true;
+                        rawBuffer_ = buffer;
+                        // Do trimming if it is not a wave file
+                        loopStart_ = 0;
+                        loopEnd_ = rawBuffer_.length;
+                        if ( fileExtension[ 0 ] !== "wav" ) {
+                            // Trim Buffer based on Markers
+                            var markers = detectLoopMarkers( rawBuffer_ );
+                            if ( markers ) {
+                                loopStart_ = markers.start;
+                                loopEnd_ = markers.end;
+                            }
+                        }
+                        if ( onloadCallback && typeof onloadCallback === "function" ) {
+                            onloadCallback( true );
+                        }
+                    }, function () {
+                        console.log( "Error Decoding " + URL );
+                        if ( onloadCallback && typeof onloadCallback === "function" ) {
+                            onloadCallback( false );
+                        }
+                    } );
+                };
+                request.send();
+            }
+
             // Public functions
             /**
              * Get the current buffer.
@@ -159,36 +190,7 @@ define( [ 'core/DetectLoopMarkers' ],
             };
 
             // Make a request
-            var fileExtension = /[^.]+$/.exec( URL );
-            var request = new XMLHttpRequest();
-            request.open( 'GET', URL, true );
-            request.responseType = 'arraybuffer';
-            request.onload = function () {
-                context.decodeAudioData( request.response, function ( buffer ) {
-                    isSoundLoaded_ = true;
-                    rawBuffer_ = buffer;
-                    // Do trimming if it is not a wave file
-                    loopStart_ = 0;
-                    loopEnd_ = rawBuffer_.length;
-                    if ( fileExtension[ 0 ] !== "wav" ) {
-                        // Trim Buffer based on Markers
-                        var markers = detectLoopMarkers( rawBuffer_ );
-                        if ( markers ) {
-                            loopStart_ = markers.start;
-                            loopEnd_ = markers.end;
-                        }
-                    }
-                    if ( onloadCallback && typeof onloadCallback === "function" ) {
-                        onloadCallback( true );
-                    }
-                }, function () {
-                    console.log( "Error Decoding " + URL );
-                    if ( onloadCallback && typeof onloadCallback === "function" ) {
-                        onloadCallback( false );
-                    }
-                } );
-            };
-            request.send();
+            init();
         }
 
         return FileLoader;

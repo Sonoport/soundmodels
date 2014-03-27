@@ -1,9 +1,7 @@
 /**
- * @author Cliburn M. Solano
- * @email cliburn.solano@sonoport.com
  * @class DetectLoopMarkers
- * @module FileReader
  * @description Detect loop markers.
+ * @module Core
  */
 define( function () {
     "use strict";
@@ -11,7 +9,7 @@ define( function () {
     /**
      * DetectLoopMarkers
      * @method DetectLoopMarkers
-     * @param AudioBuffer buffer A buffer within which Loop Markers need to be detected.
+     * @param {AudioBuffer} buffer A buffer within which Loop Markers need to be detected.
      */
     function DetectLoopMarkers( buffer ) {
 
@@ -28,7 +26,7 @@ define( function () {
         /**
          * A helper method to help find the markers in an AudioBuffer.
          * @method findSilence_
-         * @param AudioBuffer buffer A buffer within which markers needs to be detected.
+         * @param {AudioBuffer} buffer A buffer within which markers needs to be detected.
          */
         var findMarkers_ = function ( buffer ) {
             var startSpikePos = -1;
@@ -92,8 +90,8 @@ define( function () {
         /**
          * A helper method to help find the silence in findSilence_
          * @method checkSilenceThreshold_
-         * @param Boolean prev The value from the previous call.
-         * @param Float32Array thisChannel Values from a specific channel of the AudioBuffer.
+         * @param {Boolean} prev The value from the previous call.
+         * @param {Float32Array} thisChannel Values from a specific channel of the AudioBuffer.
          */
         var checkSilenceThreshold_ = function ( prev, thisChannel ) {
             return prev && thisChannel[ nLoopStart_ ] < self.SILENCE_THRESH;
@@ -103,8 +101,8 @@ define( function () {
          * A helper method to help find the silence in an AudioBuffer. Used of Loop Markers are not
          * found in the AudioBuffer.
          * @method findSilence_
-         * @param AudioBuffer buffer A buffer within which silence needs to be detected.
-         * @returns Object A object with start and end properties indicating the index at which
+         * @param {AudioBuffer} buffer A buffer within which silence needs to be detected.
+         * @returns {Object} A object with start and end properties indicating the index at which
          * the loop should start and end.
          */
         var findSilence_ = function ( buffer ) {

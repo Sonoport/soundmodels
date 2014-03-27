@@ -1,20 +1,26 @@
 /**
- * @author Cliburn M. Solano
- * @email cliburn.solano@sonoport.com
  * @class Looper
  * @description A sound model which loads a sound file and allows it to be looped continuously at variable speed.
- * @module Looper
+ * @module Models
+ * @extends BaseSound
  */
 define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode", 'core/FileLoader' ],
     function ( BaseSound, SPAudioParam, SPAudioBufferSourceNode, FileLoader ) {
         "use strict";
 
+        /**
+        @constructor
+        @param {AudioBuffer/String} sounds Single or Array of either URLs or AudioBuffers of sounds.
+        @param {Function} onLoadCallback Callback when all sounds have finished loading.
+        @context {AudioContext} AudioContext to be used.
+        */
         function Looper( sounds, onLoadCallback, context ) {
             if ( !( this instanceof Looper ) ) {
                 throw new TypeError( "Looper constructor cannot be called as a function." );
             }
             // Call superclass constructor
             BaseSound.call( this, context );
+
             // Private vars
             var self = this;
 
@@ -23,8 +29,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             var lastStopPosition_ = [];
 
             var sourcesToLoad_ = 0;
-
-            var genericBuffer_ = context.createBufferSource();
 
             var onSingleLoad = function () {
                 sourcesToLoad_--;
@@ -105,8 +109,20 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                 } );
             };
 
-            // Initialize the sounds.
-            init();
+            function init() {
+                // Load Sounds passed in the Constructor
+                var parameterType = Object.prototype.toString.call( sounds );
+
+                if ( parameterType === '[object Array]' ) {
+                    sourcesToLoad_ = sounds.length;
+                    sounds.forEach( function ( thisSound ) {
+                        setupSingleSound( thisSound, onSingleLoad );
+                    } );
+                } else {
+                    sourcesToLoad_ = 1;
+                    setupSingleSound( sounds, onSingleLoad );
+                }
+            }
 
             // Public Properties
 
@@ -241,20 +257,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                 BaseSound.prototype.stop.call( this, 0 );
             };
 
-            function init() {
-                // Load Sounds passed in the Constructor
-                var parameterType = Object.prototype.toString.call( sounds );
-
-                if ( parameterType === '[object Array]' ) {
-                    sourcesToLoad_ = sounds.length;
-                    sounds.forEach( function ( thisSound ) {
-                        setupSingleSound( thisSound, onSingleLoad );
-                    } );
-                } else {
-                    sourcesToLoad_ = 1;
-                    setupSingleSound( sounds, onSingleLoad );
-                }
-            }
+            // Initialize the sounds.
+            init();
         }
 
         return Looper;

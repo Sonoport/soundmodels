@@ -1,17 +1,17 @@
 /**
-
-Base class for all sounds.
-
 Pseudo AudioNode class the encapsulates basic functionality of an Audio Node.
-This is where AudioContext will be created and all sounds will be using this AudioContext.
 
 @class BaseSound
-@constructor
-@param {AudioContext} context
+@description Base class for all sounds.
+@module Core
 **/
 define( [ 'core/AudioContextMonkeyPatch' ], function () {
     'use strict';
 
+    /*
+     * @constructor
+     * @param {AudioContext} context
+     */
     function BaseSound( context ) {
         /**
         Define one audioContext from Web Audio API's AudioContext class.

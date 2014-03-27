@@ -1,3 +1,9 @@
+/**
+ * @class SPAudioBufferSourceNode
+ * @description A wrapper around the AudioBufferSourceNode to be able to track the current
+ *                      playPosition of a AudioBufferSourceNode.
+ * @module Core
+ */
 define( [ 'core/SPPlaybackRateParam' ],
     function ( SPPlaybackRateParam ) {
         "use strict";
