@@ -109,32 +109,54 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             init();
 
             // Public Properties
+
+            /**
+            @property riseTime
+            @type Number
+            @default 0.05
+            **/
             this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 1, this.audioContext );
+
+            /**
+            @property decayTime
+            @type Number
+            @default 0.05
+            **/
             this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 1, this.audioContext );
+
+            /**
+            @property startPoint
+            @type Number
+            @default 0
+            **/
             this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
 
+            /**
+            @property playSpeed
+            @type Number
+            @default 1.0
+            **/
             this.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, null, null, playSpeedSetter_, this.audioContext );
 
+            /**
+            @property multiTrackGain
+            @type Array of SPAudioParam
+            @default 1.0
+            **/
             this.multiTrackGain = [];
 
             // Public functions
 
-            this.getSources = function () {
-                return sources_;
-            };
-
             /**
-             * Start playing after specific time and on what part of the sound.
+             * Plays the sound immediately. If the sound is paused, the sound will be
+             * played back from the same position as it was paused at.
              * @method start
-             * @param {Number} startTime The delay in seconds before playing the sound
-             * @param {Number} offset The starting position of the playhead
              */
             this.play = function () {
 
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource, index ) {
-                        var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : 0;
-                        console.log( index + " staring from " + offset );
+                        var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : self.startPoint.value * thisSource.buffer.duration;
                         thisSource.start( 0, offset );
                     } );
                 }
@@ -144,7 +166,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             };
 
             /**
-             * Start playing after specific time and on what part of the sound.
+             * Start playing after specific time and from a specific offset. If offset is not defined,
+             * the value of startPoint property is used.
              * @method start
              * @param {Number} startTime The delay in seconds before playing the sound
              * @param {Number} offset The starting position of the playhead
@@ -161,6 +184,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
 
                 BaseSound.prototype.start.call( this, startTime );
             };
+
             /**
              * Stops the sound and resets play head to 0.
              * @method stop
@@ -169,8 +193,19 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             this.stop = function ( startTime ) {
 
                 if ( this.isPlaying ) {
-                    sources_.forEach( function ( thisSource ) {
+                    sources_ = sources_.map( function ( thisSource, index ) {
                         thisSource.stop( startTime );
+                        lastStopPosition_[ index ] = 0;
+
+                        // Create a new source since SourceNodes can't play again.
+                        var newSource = new SPAudioBufferSourceNode( self.audioContext );
+                        newSource.buffer = thisSource.buffer;
+                        newSource.loopStart = newSource.buffer.duration * self.startPoint.value;
+                        newSource.loopEnd = newSource.buffer.duration;
+                        newSource.loop = true;
+                        newSource.connect( multiTrackGainNodes_[ index ] );
+
+                        return newSource;
                     } );
                 }
 
@@ -178,7 +213,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             };
 
             /**
-             * Pause the currently playing sound
+             * Pause the currently playing sound at the current position.
+             * @note Position property is not sample accurate, but accurate enough.
              * @method pause
              */
             this.pause = function () {
@@ -186,10 +222,11 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                     sources_ = sources_.map( function ( thisSource, index ) {
                         thisSource.stop( 0 );
                         lastStopPosition_[ index ] = thisSource.playbackPosition / thisSource.buffer.sampleRate;
-                        console.log( index + " stopped at " + lastStopPosition_[ index ] );
+                        //console.log( index + " stopped at " + lastStopPosition_[ index ] );
 
                         thisSource.disconnect();
 
+                        // Create a new source since SourceNodes can't play again.
                         var newSource = new SPAudioBufferSourceNode( self.audioContext );
                         newSource.buffer = thisSource.buffer;
                         newSource.loopStart = newSource.buffer.duration * self.startPoint.value;

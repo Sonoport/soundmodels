@@ -57,10 +57,10 @@ require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
     // }, context);
 
 
-    var mtlp = new Looper([validURL1, validURL2, validURL3], function(){
-        mtlp.start(0);
-        mtlp.multiTrackGain[0].linearRampToValueAtTime(0.5, context.currentTime + 2 );
-        mtlp.playSpeed.linearRampToValueAtTime(5, context.currentTime + 1 );
+    looper = new Looper([validURL1, validURL2, validURL3], function(){
+        looper.start(0);
+        looper.multiTrackGain[0].linearRampToValueAtTime(0.5, context.currentTime + 2 );
+        looper.playSpeed.linearRampToValueAtTime(5, context.currentTime + 1 );
     }, context);
 
 
