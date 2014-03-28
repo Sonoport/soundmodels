@@ -17,8 +17,6 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             }
 
             // Private Variables
-            var self = this;
-
             var eventQueue_ = [];
             var busyVoices_ = [];
             var freeVoices_ = [];
@@ -29,7 +27,7 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
             // Private Functions
 
-            function soundQueueCallback( timestamp ) {
+            function soundQueueCallback() {
                 processEventsTill( context.currentTime + 1 / NOMINAL_REFRESH_RATE );
                 window.requestAnimationFrame( soundQueueCallback );
             }
@@ -121,8 +119,6 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
             // Public Functions
 
-            //"QENONE", "QESTOP", "QESTART", "QESETPARAM", "QESETSRC", "QERELEASE"
-
             this.queueStart = function ( timeStamp, eventID ) {
                 eventQueue_.push( new SPEvent( "QESTART", timeStamp, eventID ) );
             };
@@ -137,6 +133,16 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             };
             this.queueSetSource = function ( timeStamp, eventID, sourceBuffer ) {
                 eventQueue_.push( new SPEvent( "QESETSRC", timeStamp, eventID, null, null, sourceBuffer ) );
+            };
+
+            this.connect = function ( audioNode ) {
+                freeVoices_.forEach( function ( thisVoice ) {
+                    thisVoice.connect( audioNode );
+                } );
+
+                busyVoices_.forEach( function ( thisVoice ) {
+                    thisVoice.connect( audioNode );
+                } );
             };
 
             init();

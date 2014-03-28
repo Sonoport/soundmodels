@@ -4,8 +4,8 @@
  * @module Models
  * @extends BaseSound
  */
-define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode", 'core/FileLoader' ],
-    function ( BaseSound, SPAudioParam, SPAudioBufferSourceNode, FileLoader ) {
+define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode", 'core/MultiFileLoader' ],
+    function ( BaseSound, SPAudioParam, SPAudioBufferSourceNode, multiFileLoader ) {
         "use strict";
 
         /**
@@ -28,15 +28,14 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             var multiTrackGainNodes_ = [];
             var lastStopPosition_ = [];
 
-            var sourcesToLoad_ = 0;
+            var onAllLoad = function ( status, arrayOfBuffers ) {
+                arrayOfBuffers.forEach( function ( thisBuffer ) {
+                    lastStopPosition_.push( 0 );
+                    insertBufferSource( thisBuffer );
+                } );
 
-            var onSingleLoad = function () {
-                sourcesToLoad_--;
-                lastStopPosition_.push( 0 );
-                if ( sourcesToLoad_ === 0 ) {
-                    self.releaseGainNode.connect( context.destination );
-                    onLoadCallback( true );
-                }
+                self.releaseGainNode.connect( context.destination );
+                onLoadCallback( status );
             };
 
             var insertBufferSource = function ( audioBuffer ) {
@@ -55,29 +54,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                 sources_.push( source );
                 multiTrackGainNodes_.push( gainNode );
                 self.multiTrackGain.push( multiChannelGainParam );
-            };
-
-            var setupSingleSound = function ( sound, onCompleteCallback ) {
-                var parameterType = Object.prototype.toString.call( sound );
-                if ( parameterType === "[object String]" ) {
-                    var fileLoader = new FileLoader( sound, self.audioContext, function ( status ) {
-                        if ( status ) {
-                            insertBufferSource( fileLoader.getBuffer() );
-                            onCompleteCallback( status );
-                        }
-                    } );
-                } else if ( parameterType === "[object AudioBuffer]" ) {
-                    insertBufferSource( sound );
-                    onCompleteCallback( true );
-                } else {
-                    throw {
-                        name: "Incorrect Parameter type Exception",
-                        message: "Looper argument is not a URL or AudioBuffer",
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
-                }
             };
 
             var playSpeedSetter_ = function ( aParam, value, audioContext ) {
@@ -110,18 +86,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             };
 
             function init() {
-                // Load Sounds passed in the Constructor
-                var parameterType = Object.prototype.toString.call( sounds );
-
-                if ( parameterType === '[object Array]' ) {
-                    sourcesToLoad_ = sounds.length;
-                    sounds.forEach( function ( thisSound ) {
-                        setupSingleSound( thisSound, onSingleLoad );
-                    } );
-                 } else if ( sounds !== undefined && sounds !== null ) {
-                    sourcesToLoad_ = 1;
-                    setupSingleSound( sounds, onSingleLoad );
-                }
+                multiFileLoader( sounds, context, onAllLoad );
             }
 
             // Public Properties
@@ -161,9 +126,15 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             **/
             this.multiTrackGain = [];
 
+            /**
+             * Reinitializes a Looper and sets it's sources.
+             * @method setSources
+             *   @param {AudioBuffer/String} sounds Single or Array of either URLs or AudioBuffers of sounds.
+             * @param {Function} onLoadCallback Callback when all sounds have finished loading.
+             */
             this.setSources = function ( sounds, onLoadCallback ) {
                 init();
-            }
+            };
 
             /**
              * Plays the sound immediately. If the sound is paused, the sound will be
