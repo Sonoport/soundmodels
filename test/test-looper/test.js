@@ -38,6 +38,10 @@ require(["core/SoundQueue", "models/Looper"], function (SoundQueue, Looper) {
     // lp = new Looper([validURL, validURL], onLoad, context);
 
 
+    var s = new SoundQueue(context);
+
+
+
     // // Mixed input test
     // var fl = new FileLoader(drums,context, function( status ){
     //     console.log("File Loader Loaded :" + status);

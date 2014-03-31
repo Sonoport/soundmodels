@@ -119,6 +119,8 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
             // Public Functions
 
+            //"QENONE", "QESTOP", "QESTART", "QESETPARAM", "QESETSRC", "QERELEASE"
+
             this.queueStart = function ( timeStamp, eventID ) {
                 eventQueue_.push( new SPEvent( "QESTART", timeStamp, eventID ) );
             };
