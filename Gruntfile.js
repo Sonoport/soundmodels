@@ -4,7 +4,6 @@ module.exports = function ( grunt ) {
     grunt.initConfig( {
         // This line makes your node configurations available for use
         pkg: grunt.file.readJSON( 'package.json' ),
-
         // Define files and locations
         files: {
             jsSrc: 'src/lib/**/*.js'
@@ -60,7 +59,6 @@ module.exports = function ( grunt ) {
                 }
             }
         },
-
         // HTTP server for testing
         connect: {
             test: {
@@ -74,6 +72,12 @@ module.exports = function ( grunt ) {
                     port: 8000,
                     base: [ '<%= dirs.build %>', 'test/' ]
                 }
+            },
+            testlooper: {
+                options: {
+                    port: 8000,
+                    base: [ '<%= dirs.build %>', 'test/test-looper' ]
+                }
             }
         }
     } );
@@ -85,9 +89,9 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-concat' );
     grunt.loadNpmTasks( 'grunt-contrib-requirejs' );
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
-
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc' ] );
-    grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'connect:test', 'watch' ] );
+    grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'requirejs', 'connect:test', 'watch' ] );
     grunt.registerTask( 'testhk', [ 'jsbeautifier', 'jshint', 'connect:testhk', 'watch' ] );
+    grunt.registerTask( 'testlooper', [ 'jsbeautifier', 'jshint', 'requirejs', 'connect:testlooper', 'watch' ] );
 };
