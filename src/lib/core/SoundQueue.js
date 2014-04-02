@@ -35,6 +35,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             var init = function () {
                 for ( var i = 0; i < numberOfVoices; i++ ) {
                     freeVoices_[ i ] = new Looper( null, null, context );
+                    freeVoices_[ i ].maxLoops.value = 1;
                 }
 
                 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||

@@ -147,7 +147,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             @type Maximum number of Loops
             @default -1 (Infinite)
             **/
-            this.maxLoops = SPAudioParam.createPsuedoParam( "maxLoops", -1, 1000, -1, this.audioContext );
+            this.maxLoops = SPAudioParam.createPsuedoParam( "maxLoops", -1, 1, -1, this.audioContext );
 
             /**
              * Reinitializes a Looper and sets it's sources.
