@@ -1,13 +1,7 @@
-<<<<<<< HEAD
-{ << << << < HEAD "name": "javascript-sound-models",
-    "description": "Sonoport Javascript Sound Models",
-    "version": "0.4.0",
-=======
 {
     "name": "javascript-sound-models",
     "description": "Sonoport Javascript Sound Models",
-    "version": "0.3.0",
->>>>>>> Update base Player template. #HT-34
+    "version": "0.4.0",
     "author": "Sonport Asia Pte. Ltd",
     "contributors": [ {
         "name": "Chinmay Pendharkar",
@@ -32,9 +26,9 @@
         "grunt-jsbeautifier": "~0.2.6",
         "grunt-contrib-copy": "~0.5.0",
         "grunt-banner": "~0.2.2",
-<<<<<<< HEAD
         "grunt-contrib-clean": "~0.5.0",
-        "grunt-contrib-compass": "~0.7.2"
+        "grunt-contrib-compass": "~0.7.2",
+        "grunt-bowercopy": "~1.0.0"
         },
         "keywords": [
             "sonoport",
@@ -53,27 +47,4 @@
             "node": ">= 0.8.0"
         },
         "license": "Proprietary"
-    }
-=======
-        "grunt-contrib-compass": "~0.7.2",
-        "grunt-bowercopy": "~1.0.0"
-    },
-    "keywords": [
-        "sonoport",
-        "audio",
-        "webaudio",
-        "soundmodels",
-        "sound",
-        "interactive"
-    ],
-    "repository": "https://chinmaypendharkar@bitbucket.org/sonoport/javascript-sound-models.git",
-    "scripts": {
-        "build": "grunt built",
-        "test": "grunt test"
-    },
-    "engines": {
-        "node": ">= 0.8.0"
-    },
-    "license": "Proprietary"
 }
->>>>>>> Update base Player template. #HT-34
