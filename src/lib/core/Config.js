@@ -9,8 +9,8 @@ define( [],
 
         function Config() {}
 
-        Config.prototype.MAX_VOICES = 8;
-        Config.prototype.NOMINAL_REFRESH_RATE = 60;
+        Config.MAX_VOICES = 8;
+        Config.NOMINAL_REFRESH_RATE = 60;
 
         return Config;
     } );

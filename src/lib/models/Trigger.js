@@ -36,13 +36,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             function init() {
                 soundQueue_ = new SoundQueue( context );
-                multiFileLoader( sounds, context, onAllLoad );
+                multiFileLoader.call( self, sounds, context, onAllLoad );
             }
 
             // Public Properties
-            this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 0.0, 60.0, this.audioContext );
+            this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
 
-            this.pitchRand = SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 0.0, 24.0, this.audioContext );
+            this.pitchRand = SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 24.0, 0, this.audioContext );
 
             this.eventRand = SPAudioParam.createPsuedoParam( "eventRand", true, false, false, this.audioContext );
 
