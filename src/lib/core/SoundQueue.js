@@ -3,8 +3,8 @@
  * @description A sound model which loads a sound file and allows it to be looped continuously at variable speed.
  * @module Looper
  */
-define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
-    function ( Looper, FileLoader, SPEvent ) {
+define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
+    function ( Config, Looper, FileLoader, SPEvent ) {
         "use strict";
 
         function SoundQueue( context, numberOfVoices ) {
@@ -13,7 +13,7 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             }
 
             if ( typeof numberOfVoices === "undefined" ) {
-                numberOfVoices = 4;
+                numberOfVoices = Config.MAX_VOICES;
             }
 
             // Private Variables
@@ -25,12 +25,10 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
             var vIndex;
 
-            var NOMINAL_REFRESH_RATE = 60;
-
             // Private Functions
 
-            function soundQueueCallback( timestamp ) {
-                processEventsTill( context.currentTime + 1 / NOMINAL_REFRESH_RATE );
+            function soundQueueCallback() {
+                processEventsTill( context.currentTime + 1 / Config.NOMINAL_REFRESH_RATE );
                 window.requestAnimationFrame( soundQueueCallback );
             }
 

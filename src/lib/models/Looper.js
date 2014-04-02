@@ -4,8 +4,8 @@
  * @module Models
  * @extends BaseSound
  */
-define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode", 'core/MultiFileLoader' ],
-    function ( BaseSound, SPAudioParam, SPAudioBufferSourceNode, multiFileLoader ) {
+define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode", 'core/MultiFileLoader' ],
+    function ( Config, BaseSound, SPAudioParam, SPAudioBufferSourceNode, multiFileLoader ) {
         "use strict";
 
         /**
@@ -20,6 +20,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             }
             // Call superclass constructor
             BaseSound.call( this, context );
+
+            this.maxSources = Config.MAX_VOICES;
 
             // Private vars
             var self = this;
@@ -41,6 +43,9 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             var insertBufferSource = function ( audioBuffer ) {
                 var source = new SPAudioBufferSourceNode( self.audioContext );
                 var gainNode = self.audioContext.createGain();
+                source.onended = function () {
+                    console.log( "buffer ended" );
+                };
 
                 source.buffer = audioBuffer;
                 source.loop = true;
@@ -67,12 +72,12 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
 
                 if ( value > currentSpeed ) {
                     sources_.forEach( function ( thisSource ) {
-                        thisSource.cancelScheduledValues( audioContext.currentTime );
+                        thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
                         thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.riseTime.value * t60multiplier );
                     } );
                 } else if ( value < currentSpeed ) {
                     sources_.forEach( function ( thisSource ) {
-                        thisSource.cancelScheduledValues( audioContext.currentTime );
+                        thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
                         thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.decayTime.value * t60multiplier );
                     } );
                 }
@@ -86,7 +91,18 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             };
 
             function init() {
-                multiFileLoader.call( self, sounds, context, onAllLoad );
+                var parameterType = Object.prototype.toString.call( sounds );
+                if ( parameterType === "[object AudioBuffer]" && sounds.length > self.maxSources ) {
+                    throw {
+                        name: "Unsupported number of sources",
+                        message: "This sound only supports a maximum of " + self.maxSources + " sources.",
+                        toString: function () {
+                            return this.name + ": " + this.message;
+                        }
+                    };
+                } else {
+                    multiFileLoader.call( self, sounds, context, onAllLoad );
+                }
             }
 
             // Public Properties
@@ -127,6 +143,13 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             this.multiTrackGain = [];
 
             /**
+            @property maxLoops
+            @type Maximum number of Loops
+            @default -1 (Infinite)
+            **/
+            this.maxLoops = SPAudioParam.createPsuedoParam( "maxLoops", -1, 1000, -1, this.audioContext );
+
+            /**
              * Reinitializes a Looper and sets it's sources.
              * @method setSources
              *   @param {AudioBuffer/String} sounds Single or Array of either URLs or AudioBuffers of sounds.
@@ -146,6 +169,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource, index ) {
                         var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : self.startPoint.value * thisSource.buffer.duration;
+                        thisSource.loop = ( self.maxLoops.value !== 1 );
                         thisSource.start( 0, offset );
                     } );
                 }
@@ -167,6 +191,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                         if ( typeof offset == 'undefined' ) {
                             offset = self.startPoint.value * thisSource.buffer.duration;
                         }
+                        thisSource.loop = ( self.maxLoops.value !== 1 );
                         thisSource.start( startTime, offset );
                     } );
                 }
@@ -191,7 +216,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                         newSource.buffer = thisSource.buffer;
                         newSource.loopStart = newSource.buffer.duration * self.startPoint.value;
                         newSource.loopEnd = newSource.buffer.duration;
-                        newSource.loop = true;
                         newSource.connect( multiTrackGainNodes_[ index ] );
 
                         return newSource;
@@ -220,7 +244,6 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                         newSource.buffer = thisSource.buffer;
                         newSource.loopStart = newSource.buffer.duration * self.startPoint.value;
                         newSource.loopEnd = newSource.buffer.duration;
-                        newSource.loop = true;
                         newSource.connect( multiTrackGainNodes_[ index ] );
 
                         return newSource;

@@ -38,18 +38,15 @@ require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
     // lp = new Looper([validURL, validURL], onLoad, context);
 
 
-    var s = new SoundQueue(context);
-
-
-
-    // // Mixed input test
+    // Mixed input test
     // var fl = new FileLoader(drums,context, function( status ){
     //     console.log("File Loader Loaded :" + status);
-    //     lp = new Looper(fl.getBuffer(), onLoad, context);
-    //     lp = new Looper([validURL, fl.getBuffer()], onLoad,context);
+    //     var lp = new Looper([validURL, fl.getBuffer()], function () {
+    //        lp.start(0);
+    //    },context);
     // });
 
-    // lp = new Looper(validURL, function(){
+    // var lp = new Looper(validURL, function(){
     //     lp.playSpeed.value = 2.0;
     //     lp.riseTime.value = 2.0;
     //     lp.startPoint.value = 0.2;
@@ -62,6 +59,7 @@ require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
 
 
     looper = new Looper([validURL1, validURL2, validURL3], function(){
+        looper.maxLoops.value = 1;
         looper.start(0);
         looper.multiTrackGain[0].linearRampToValueAtTime(0.5, context.currentTime + 2 );
         looper.playSpeed.linearRampToValueAtTime(5, context.currentTime + 1 );
