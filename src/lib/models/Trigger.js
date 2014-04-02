@@ -3,8 +3,8 @@
  * @description A sound model which triggers a specific sound file with multiple voices
  * @module Looper
  */
-define( [ 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiFileLoader', 'core/Converter' ],
-    function ( BaseSound, SoundQueue, SPAudioParam, multiFileLoader, Converter ) {
+define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiFileLoader', 'core/Converter' ],
+    function ( Config, BaseSound, SoundQueue, SPAudioParam, multiFileLoader, Converter ) {
         "use strict";
 
         function Trigger( sounds, onLoadCallback, context ) {
@@ -14,6 +14,9 @@ define( [ 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiF
 
             // Call superclass constructor
             BaseSound.call( this, context );
+
+            /*Support upto 8 seperate voices*/
+            this.maxSources = Config.MAX_VOICES;
 
             // Private vars
             var self = this;
