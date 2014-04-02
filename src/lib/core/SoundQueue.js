@@ -17,8 +17,6 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             }
 
             // Private Variables
-            var self = this;
-
             var eventQueue_ = [];
             var busyVoices_ = [];
             var freeVoices_ = [];
