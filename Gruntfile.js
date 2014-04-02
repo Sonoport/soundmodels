@@ -15,7 +15,8 @@ module.exports = function ( grunt ) {
             build: 'build',
             dist: 'dist',
             core: 'src/lib/core',
-            models: 'src/lib/models'
+            models: 'src/lib/models',
+            player: 'jsmplayer'
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
@@ -84,6 +85,15 @@ module.exports = function ( grunt ) {
                 options: {
                     spawn: false
                 }
+            },
+            // Mainly for watching changes in the html and css files
+            playerui: {
+                files: ['<%= dirs.player %>/**/*.scss'],
+                tasks: ['compass:devdist']
+            },
+            livereload: {
+                options: { livereload: true },
+                files: ['<%= dirs.player %>/**/*']
             }
         },
         // YUI Documentation
@@ -124,6 +134,19 @@ module.exports = function ( grunt ) {
                 }
             }
         },
+        // Player related 
+        // To run this will require Sass (3.3.4), Compass (1.0.0-alpha) and Susy (2.1.1) pre-installed.
+        // compile sass files to css using Compass: http://compass-style.org/
+        // Also depends on Susy http://susy.oddbird.net/ to generate css for grids
+        compass: {
+            devdist: {
+                options: {
+                    sassDir: '<%= dirs.player %>/sass',
+                    cssDir: '<%= dirs.player %>/css',
+                    require: 'susy'
+                }
+            }
+        },
         // HTTP server for testing
         connect: {
             test: {
@@ -131,6 +154,13 @@ module.exports = function ( grunt ) {
                     port: 8000,
                     base: [ '<%= dirs.build %>', 'test/models' ],
                     open: true
+                }
+            },
+            player: {
+                options: {
+                    port: 9001,
+                    base: [ '<%= dirs.build %>', '<%= dirs.player %>' ],
+                    livereload: true
                 }
             }
         }
@@ -146,6 +176,13 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
     grunt.loadNpmTasks( 'grunt-banner' );
 
+    // Player related
+    grunt.loadNpmTasks( 'grunt-contrib-compass' );
+
+    // Player css related, probably not necessary to run this unless there is a change in design
+    grunt.registerTask( 'player-build', [ 'compass', 'connect:player', 'watch:livereload', 'watch:playerui'] );
+
+    //grunt.registerTask('player-compile', );
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc' ] );
 
