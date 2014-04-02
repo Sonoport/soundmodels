@@ -1,0 +1,15 @@
+/***
+ main
+**/
+@import "compass/reset";
+
+@import "susy";
+
+body {
+	background: #fff;
+	@include container(80%);
+}
+
+nav {
+
+}

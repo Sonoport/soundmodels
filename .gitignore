@@ -13,6 +13,9 @@ wiki/
 #Build folder
 build/
 
+#sass-cache
+.sass-cache
+
 # Resource files
 
 # Audio Files

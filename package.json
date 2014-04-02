@@ -1,5 +1,4 @@
-{
-    "name": "javascript-sound-models",
+{ << << << < HEAD "name": "javascript-sound-models",
     "description": "Sonoport Javascript Sound Models",
     "version": "0.4.0",
     "author": "Sonport Asia Pte. Ltd",
@@ -26,23 +25,24 @@
         "grunt-jsbeautifier": "~0.2.6",
         "grunt-contrib-copy": "~0.5.0",
         "grunt-banner": "~0.2.2",
-        "grunt-contrib-clean": "~0.5.0"
-    },
-    "keywords": [
-        "sonoport",
-        "audio",
-        "webaudio",
-        "soundmodels",
-        "sound",
-        "interactive"
-    ],
-    "repository": "https://chinmaypendharkar@bitbucket.org/sonoport/javascript-sound-models.git",
-    "scripts": {
-        "build": "grunt built",
-        "test": "grunt test"
-    },
-    "engines": {
-        "node": ">= 0.8.0"
-    },
-    "license": "Proprietary"
-}
+        "grunt-contrib-clean": "~0.5.0",
+        "grunt-contrib-compass": "~0.7.2"
+        },
+        "keywords": [
+            "sonoport",
+            "audio",
+            "webaudio",
+            "soundmodels",
+            "sound",
+            "interactive"
+        ],
+        "repository": "https://chinmaypendharkar@bitbucket.org/sonoport/javascript-sound-models.git",
+        "scripts": {
+            "build": "grunt built",
+            "test": "grunt test"
+        },
+        "engines": {
+            "node": ">= 0.8.0"
+        },
+        "license": "Proprietary"
+    }
