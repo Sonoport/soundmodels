@@ -49,7 +49,7 @@ define( [ 'core/DetectLoopMarkers' ],
             var sliceBuffer_ = function ( start, end ) {
 
                 // Set end if it is missing
-                if ( typeof end === "undefined" ) {
+                if ( typeof end == "undefined" ) {
                     end = rawBuffer_.length;
                 }
                 // Verify parameters
@@ -160,11 +160,11 @@ define( [ 'core/DetectLoopMarkers' ],
              */
             this.getBuffer = function ( start, end ) {
                 // Set start if it is missing
-                if ( typeof start === "undefined" ) {
+                if ( typeof start == "undefined" ) {
                     start = 0;
                 }
                 // Set end if it is missing
-                if ( typeof end === "undefined" ) {
+                if ( typeof end == "undefined" ) {
                     end = loopEnd_ - loopStart_;
                 }
 
