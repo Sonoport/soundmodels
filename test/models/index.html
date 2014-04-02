@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>Sound Model Basic Test</title>
+		<style type="text/css" media="screen">
+			.model {
+						position: relative;
+						display: block;
+						padding: 10px 15px;
+						margin-bottom: -1px;
+						background-color: #ffffff;
+						border: 1px solid #dddddd;
+						color: #555555;
+						font-family: Georgia, "Times New Roman", Times, serif;
+						font-size: 18px;
+						line-height: 1.42857143;
+						width: 180px;
+					}
+		</style>
+
+		<script type="text/javascript">
+			"use strict";
+			window.addEventListener("hashchange",function() {
+				console.log("hello");
+				window.location.reload();
+			});
+
+			window.addEventListener("load", function(){
+				if (location.hash && location.hash !== ""){
+					console.log("world");
+					var s = document.getElementById( 'testscript' );
+					if (s) document.head.removeChild(s);
+					var hash = window.location.hash.split('#')[1];
+					s = document.createElement("script");
+					s.setAttribute('src', 'require.js');
+					s.setAttribute('id', 'testscript');
+					s.setAttribute( 'data-main', hash );
+					document.head.appendChild(s);
+					console.log(s);
+				}
+			});
+		</script>
+		<script id="testscript" ></script>
+	</head>
+
+	<body>
+		<h2 style="padding: 10px 15px">
+			Sound Models
+		</h2>
+		<div>
+			<a class="model" href="#Looper">Looper</a>
+		</div>
+		<div>
+			<a class="model" href="#Trigger">Trigger</a>
+		</div>
+		<div>
+			<a class="model" href="#MultiTrigger">MultiTrigger</a>
+		</div>
+		<div>
+			<a class="model" href="#Activity">Activity</a>
+		</div>
+		<div>
+			<a class="model" href="#Extender">Extender</a>
+		</div>
+		<div>
+			<a class="model" href="#Scrubber">Scrubber</a>
+		</div>
+
+
+	</body>
+
+</html>

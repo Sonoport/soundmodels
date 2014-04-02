@@ -86,7 +86,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             };
 
             function init() {
-                multiFileLoader( sounds, context, onAllLoad );
+                multiFileLoader.call( self, sounds, context, onAllLoad );
             }
 
             // Public Properties

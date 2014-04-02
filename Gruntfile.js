@@ -6,7 +6,8 @@ module.exports = function ( grunt ) {
         pkg: grunt.file.readJSON( 'package.json' ),
         // Define files and locations
         files: {
-            jsSrc: 'src/lib/**/*.js'
+            jsSrc: 'src/lib/**/*.js',
+            testSrc: 'test/**/*.js'
         },
         dirs: {
             src: 'src',
@@ -29,16 +30,45 @@ module.exports = function ( grunt ) {
         requirejs: {
             compile: {
                 options: {
-                    optimize: "none",
-                    appDir: "src/lib/",
+                    optimize: "uglify2",
+                    baseUrl: "src/lib/",
                     dir: "<%= dirs.build %>",
+                    modules: [ {
+                        name: 'models/Looper'
+                    } ],
+                    uglify2: {
+                        compress: {
+                            sequences: true,
+                            properties: true, // optimize property access: a["foo"] → a.foo
+                            dead_code: true, // discard unreachable code
+                            drop_debugger: true, // discard “debugger” statements
+                            unsafe: false, // some unsafe optimizations (see below)
+                            conditionals: true, // optimize if-s and conditional expressions
+                            comparisons: true, // optimize comparisons
+                            evaluate: true, // evaluate constant expressions
+                            booleans: true, // optimize boolean expressions
+                            loops: true, // optimize loops
+                            unused: true, // drop unused variables/functions
+                            hoist_funs: true, // hoist function declarations
+                            hoist_vars: false, // hoist variable declarations
+                            if_return: true, // optimize if-s followed by return/continue
+                            join_vars: true, // join var declarations
+                            cascade: true, // try to cascade `right` into `left` in sequences
+                            side_effects: true, // drop side-effect-free statements
+                            warnings: true, // warn about potentially dangerous optimizations/code
+                            global_defs: {} // global definitions
+                        },
+                        mangle: {
+                            toplevel: true
+                        }
+                    }
                 }
             }
         },
         // Watcher for updating
         watch: {
             scripts: {
-                files: [ '<%= files.jsSrc %>' ],
+                files: [ '<%= files.jsSrc %>', '<%= files.testSrc %>', 'Gruntfile.js', ],
                 tasks: [ 'dev-build' ],
                 options: {
                     spawn: false
@@ -63,20 +93,9 @@ module.exports = function ( grunt ) {
         connect: {
             test: {
                 options: {
-                    port: 8080,
-                    base: [ '<%= dirs.build %>', 'test/testaudioparam' ]
-                }
-            },
-            testhk: {
-                options: {
                     port: 8000,
-                    base: [ '<%= dirs.build %>', 'test/' ]
-                }
-            },
-            testlooper: {
-                options: {
-                    port: 8000,
-                    base: [ '<%= dirs.build %>', 'test/test-looper' ]
+                    base: [ '<%= dirs.build %>', 'test/models' ],
+                    open: true
                 }
             }
         }
@@ -86,12 +105,13 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-watch' );
     grunt.loadNpmTasks( 'grunt-contrib-connect' );
     grunt.loadNpmTasks( 'grunt-contrib-yuidoc' );
-    grunt.loadNpmTasks( 'grunt-contrib-concat' );
     grunt.loadNpmTasks( 'grunt-contrib-requirejs' );
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
+
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc' ] );
-    grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'requirejs', 'connect:test', 'watch' ] );
-    grunt.registerTask( 'testhk', [ 'jsbeautifier', 'jshint', 'connect:testhk', 'watch' ] );
-    grunt.registerTask( 'testlooper', [ 'jsbeautifier', 'jshint', 'requirejs', 'connect:testlooper', 'watch' ] );
+
+    grunt.registerTask( 'release', [ 'jsbeautifier', 'jshint', 'requirejs', 'yuidoc' ] );
+
+    grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'requirejs', 'connect', 'watch' ] );
 };
