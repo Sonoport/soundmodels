@@ -13,6 +13,7 @@ module.exports = function ( grunt ) {
             src: 'src',
             docs: 'docs',
             build: 'build',
+            dist: 'dist',
             core: 'src/lib/core',
             models: 'src/lib/models'
         },
@@ -35,7 +36,17 @@ module.exports = function ( grunt ) {
                     dir: "<%= dirs.build %>",
                     modules: [ {
                         name: 'models/Looper'
-                    } ],
+                    }, {
+                        name: 'models/Extender'
+                    }, {
+                        name: 'models/Scrubber'
+                    }, {
+                        name: 'models/Trigger'
+                    }, {
+                        name: 'models/MultiTrigger'
+                    }, {
+                        name: 'models/Action'
+                    }, ],
                     uglify2: {
                         compress: {
                             sequences: true,
@@ -89,6 +100,30 @@ module.exports = function ( grunt ) {
                 }
             }
         },
+        copy: {
+            main: {
+                files: [ {
+                    expand: true,
+                    src: [ '<%= dirs.build %>/models/*.js' ],
+                    dest: '<%= dirs.dist %>',
+                    filter: 'isFile',
+                    flatten: true
+                }, ]
+            }
+        },
+        usebanner: {
+            main: {
+                options: {
+                    position: 'top',
+                    banner: '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
+                        '<%= grunt.template.today("yyyy-mm-dd") %> */\n',
+                    linebreak: true
+                },
+                files: {
+                    src: [ '<%= dirs.dist %>/*.js' ]
+                }
+            }
+        },
         // HTTP server for testing
         connect: {
             test: {
@@ -104,14 +139,17 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-jshint' );
     grunt.loadNpmTasks( 'grunt-contrib-watch' );
     grunt.loadNpmTasks( 'grunt-contrib-connect' );
+    grunt.loadNpmTasks( 'grunt-contrib-copy' );
     grunt.loadNpmTasks( 'grunt-contrib-yuidoc' );
     grunt.loadNpmTasks( 'grunt-contrib-requirejs' );
+
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
+    grunt.loadNpmTasks( 'grunt-banner' );
 
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc' ] );
 
-    grunt.registerTask( 'release', [ 'jsbeautifier', 'jshint', 'requirejs', 'yuidoc' ] );
+    grunt.registerTask( 'release', [ 'jsbeautifier', 'jshint', 'requirejs', 'yuidoc', 'copy', 'usebanner' ] );
 
     grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'requirejs', 'connect', 'watch' ] );
 };
