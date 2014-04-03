@@ -3,22 +3,61 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>JSM Player</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
         <link rel="stylesheet" href="css/main.css">
-
+        <script></script>
     </head>
     <body>
         <!--[if lt IE 8]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
+        
+    <header>
+        <h1>JSM Player</h1>
+    </header>
+        <div class="container">
+            <div class="player-main">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Models<span class="caret"></span></button>
+                    <span class="dropdown-arrow dropdown-arrow-inverse"></span>
+                  <ul class="dropdown-menu dropdown-inverse">
+                    <li><a href="#fakelink">Looper</a></li>
+                    <li><a href="#fakelink">Sub Menu Element</a></li>
+                    <li><a href="#fakelink">Sub Menu Element</a></li>
+                  </ul>
+                </div>
 
-        <!-- Add your site or application content here -->
-        <h1>JSMPLayer</h1>
-        <p>Hello world! This is HTML5 Boilerplate.</p>
-        <div class="container"></div>
+                <button>Play</button>
+                <button>Pause</button>
+                <button>Load sources</button>
+                
+                <div class="player-params">
+                    <div id="slider" class="ui-slider"></div>
+                    <div id="slider" class="ui-slider"></div>
+                    <div id="slider" class="ui-slider"></div>
+                </div>
+                <form id="reservation">
+                    <label for="minbeds">Minimum number of beds</label>
+                    <select name="minbeds" id="minbeds">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                    <option>6</option>
+                    </select>
+                </form>
+            </div>
+         </div>
+        
+       <footer>Sonoport 2014</footer>
+        <script src="js/vendor/jquery.js"></script>
+        <script src="js/vendor/jquery-ui.min.js"></script>
+        <script src="js/bootstrap-select.js"></script>
+        <script src="js/player.js"></script>
     </body>
 </html>
