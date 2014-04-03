@@ -1,5 +1,5 @@
 // main file
-//"use strict";
+//'use strict';
 
 var AudioContext = webkitAudioContext || AudioContext;
 var context = new AudioContext();
