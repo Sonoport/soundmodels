@@ -34,7 +34,7 @@ define( [],
                 };
             }
 
-            if (( typeof paramName != "undefined" || typeof paramValue != "undefined") && typeof audioBuffer !== "undefined" ) {
+            if ( paramName !== undefined && paramName !== null && audioBuffer !== undefined ) {
                 throw {
                     name: "Incorrect Parameter Type Exception",
                     message: "SPEvent can either have Parameter Information or AudioBuffer defined ",
@@ -55,7 +55,7 @@ define( [],
             }
 
             this.type = type;
-            this.timeStamp = timeStamp;
+            this.time = timeStamp;
             this.eventID = eventID;
             this.paramName = paramName;
             this.paramValue = paramValue;

@@ -137,10 +137,13 @@ define(
             @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
             **/
             this.setValueAtTime = function ( value, startTime ) {
+                console.log( "setting value " + value + " at time " + startTime + " for " + aParam );
+
                 if ( typeof mappingFunction === 'function' ) {
                     value = mappingFunction( value );
                 }
                 if ( aParam && aParam instanceof AudioParam ) {
+                    console.log( "sending to " + aParam );
                     aParam.setValueAtTime( value, startTime );
                 } else {
                     // Horrible hack for the case we don't have access to

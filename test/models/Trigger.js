@@ -15,7 +15,11 @@ require(["models/Trigger"], function (Trigger) {
 
     // Single test
     trigger = new Trigger(tap1, function() {
+        trigger.pitchShift.value = 30;
         trigger.play();
+        window.setTimeout(function(){
+            trigger.play();
+        }, 10);
     }, context);
 
 

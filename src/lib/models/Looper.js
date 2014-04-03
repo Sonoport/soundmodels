@@ -37,7 +37,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 } );
 
                 self.releaseGainNode.connect( context.destination );
-                onLoadCallback( status );
+                if ( typeof onLoadCallback === 'function' )
+                    onLoadCallback( status );
             };
 
             var insertBufferSource = function ( audioBuffer ) {
@@ -90,9 +91,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 } );
             };
 
-            function init() {
+            function init( sounds ) {
                 var parameterType = Object.prototype.toString.call( sounds );
-                if ( parameterType === "[object AudioBuffer]" && sounds.length > self.maxSources ) {
+                if ( parameterType === "[object Array]" && sounds.length > self.maxSources ) {
                     throw {
                         name: "Unsupported number of sources",
                         message: "This sound only supports a maximum of " + self.maxSources + " sources.",
@@ -156,7 +157,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @param {Function} onLoadCallback Callback when all sounds have finished loading.
              */
             this.setSources = function ( sounds, onLoadCallback ) {
-                init();
+                init( sounds );
             };
 
             /**
@@ -191,6 +192,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                         if ( typeof offset == 'undefined' ) {
                             offset = self.startPoint.value * thisSource.buffer.duration;
                         }
+                        console.log( "Playing" );
                         thisSource.loop = ( self.maxLoops.value !== 1 );
                         thisSource.start( startTime, offset );
                     } );
@@ -254,8 +256,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             // Initialize the sounds.
-            init();
+            init( sounds );
         }
+
+        Looper.prototype = Object.create( BaseSound.prototype );
 
         return Looper;
     } );
