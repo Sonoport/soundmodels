@@ -44,54 +44,67 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
             };
 
-            var processSingleEvent = function ( thisEvent ) {
-                if ( thisEvent.type == "QESTART" ) {
-                    if ( freeVoices_.length < 1 ) {
-                        // TODO Steal??
-                        var steal = 0;
-                        steal++;
+            var findVoiceWithID = function ( eventID ) {
+                for ( vIndex = 0; vIndex < busyVoices_.length; vIndex++ ) {
+                    if ( busyVoices_[ vIndex ].eventID == eventID ) {
+                        return busyVoices_[ vIndex ];
                     }
-                    var newVoice = freeVoices_.pop();
-                    newVoice.start( thisEvent.time );
-                    busyVoices_.push( newVoice );
+                }
+                return null;
+            };
+
+            var createNewVoice = function ( eventID ) {
+                if ( freeVoices_.length < 1 ) {
+                    // TODO Steal??
+                    var steal = 0;
+                    steal++;
+                }
+                var newVoice = freeVoices_.pop();
+                newVoice.eventID = eventID;
+                busyVoices_.push( newVoice );
+                return newVoice;
+            };
+
+            var processSingleEvent = function ( thisEvent ) {
+                console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time );
+
+                var selectedVoice = findVoiceWithID( thisEvent.eventID );
+
+                if ( thisEvent.type == "QESTART" ) {
+                    if ( selectedVoice === null ) {
+                        selectedVoice = createNewVoice( thisEvent.eventID );
+                    }
+                    selectedVoice.start( thisEvent.time );
                 } else if ( thisEvent.type == "QERELEASE" ) {
-                    for ( vIndex = 0; vIndex < busyVoices_.length; vIndex++ ) {
-                        if ( busyVoices_[ vIndex ].eventID == thisEvent.eventID ) {
-                            busyVoices_[ vIndex ].release( thisEvent.time );
-                            break;
-                        }
+                    if ( selectedVoice !== null ) {
+                        selectedVoice.release( thisEvent.time );
                     }
                 } else if ( thisEvent.type == "QESTOP" ) {
-                    var resetVoice = function ( index ) {
-                        freeVoices_.push( busyVoices_[ vIndex ] );
-                        busyVoices_.splice( index, 1 );
+                    var resetVoice = function ( selectedVoice ) {
+                        freeVoices_.push( selectedVoice );
+                        busyVoices_.splice( busyVoices_.indexOf( selectedVoice ), 1 );
                     };
 
-                    for ( vIndex = 0; vIndex < busyVoices_.length; vIndex++ ) {
-                        if ( busyVoices_[ vIndex ].eventID == thisEvent.eventID ) {
-                            busyVoices_[ vIndex ].pause( thisEvent.time );
-                            window.setTimeOut( resetVoice( vIndex ), thisEvent.time - context.currentTime );
-                            break;
-                        }
+                    if ( selectedVoice !== null ) {
+                        selectedVoice.pause( thisEvent.time );
+                        window.setTimeout( resetVoice( selectedVoice ), thisEvent.time - context.currentTime );
                     }
+
                 } else if ( thisEvent.type == "QESETPARAM" ) {
-                    for ( vIndex = 0; vIndex < busyVoices_.length; vIndex++ ) {
-                        if ( busyVoices_[ vIndex ].eventID == thisEvent.eventID ) {
-                            busyVoices_[ vIndex ][ thisEvent.parameterName ].setValueAtTime( thisEvent.parameterValue, thisEvent.time );
-                            break;
-                        }
+                    if ( selectedVoice === null ) {
+                        selectedVoice = createNewVoice( thisEvent.eventID );
                     }
+                    console.log( "Setting " + thisEvent.paramName + " to " + thisEvent.paramValue );
+                    selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
                 } else if ( thisEvent.type == "QESETSRC" ) {
-                    var setSource = function ( index, thisEvent ) {
-                        busyVoices_[ index ].setSources( thisEvent.sourceBuffer );
+                    var setSource = function ( selectedVoice, thisEvent ) {
+                        selectedVoice.setSources( thisEvent.audioBuffer );
                     };
 
-                    for ( vIndex = 0; vIndex < busyVoices_.length; vIndex++ ) {
-                        if ( busyVoices_[ vIndex ].eventID == thisEvent.eventID ) {
-                            window.setTimeOut( setSource( vIndex, thisEvent ), thisEvent.time - context.currentTime );
-                            break;
-                        }
+                    if ( selectedVoice === null ) {
+                        selectedVoice = createNewVoice( thisEvent.eventID );
                     }
+                    window.setTimeout( setSource( selectedVoice, thisEvent ), thisEvent.time - context.currentTime );
                 } else {
                     throw {
                         name: "Incorrect Parameter type Exception",
@@ -103,11 +116,11 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                 }
             };
 
-            var processEventsTill = function ( maxTimeStamp ) {
-
+            var processEventsTill = function ( maxTime ) {
+                //console.log( "Processing till " + maxTime);
                 for ( var eventIndex = 0; eventIndex < eventQueue_.length; eventIndex++ ) {
                     var thisEvent = eventQueue_[ eventIndex ];
-                    if ( eventIndex.time <= maxTimeStamp ) {
+                    if ( thisEvent.time <= maxTime ) {
                         processSingleEvent( thisEvent );
                         eventQueue_.splice( eventIndex, 1 );
                         eventIndex--;
@@ -119,20 +132,27 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
             // Public Functions
 
-            this.queueStart = function ( timeStamp, eventID ) {
-                eventQueue_.push( new SPEvent( "QESTART", timeStamp, eventID ) );
+            //"QENONE", "QESTOP", "QESTART", "QESETPARAM", "QESETSRC", "QERELEASE"
+
+            this.queueStart = function ( time, eventID ) {
+                console.log( eventID + ": Enqueing QESTART at " + time );
+                eventQueue_.push( new SPEvent( "QESTART", time, eventID ) );
             };
-            this.queueRelease = function ( timeStamp, eventID ) {
-                eventQueue_.push( new SPEvent( "QERELEASE", timeStamp, eventID ) );
+            this.queueRelease = function ( time, eventID ) {
+                console.log( eventID + ": Enqueing QERELEASE at " + time );
+                eventQueue_.push( new SPEvent( "QERELEASE", time, eventID ) );
             };
-            this.queueStop = function ( timeStamp, eventID ) {
-                eventQueue_.push( new SPEvent( "QESTOP", timeStamp, eventID ) );
+            this.queueStop = function ( time, eventID ) {
+                console.log( eventID + ": Enqueing QESTOP at " + time );
+                eventQueue_.push( new SPEvent( "QESTOP", time, eventID ) );
             };
-            this.queueSetParameter = function ( timeStamp, eventID, parameterName, parameterValue ) {
-                eventQueue_.push( new SPEvent( "QESETPARAM", timeStamp, eventID, parameterName, parameterValue ) );
+            this.queueSetParameter = function ( time, eventID, paramValue, paramName ) {
+                console.log( eventID + ": Enqueing QESETPARAM at " + time );
+                eventQueue_.push( new SPEvent( "QESETPARAM", time, eventID, paramValue, paramName ) );
             };
-            this.queueSetSource = function ( timeStamp, eventID, sourceBuffer ) {
-                eventQueue_.push( new SPEvent( "QESETSRC", timeStamp, eventID, null, null, sourceBuffer ) );
+            this.queueSetSource = function ( time, eventID, sourceBuffer ) {
+                console.log( eventID + ": Enqueing QESETSRC at " + time );
+                eventQueue_.push( new SPEvent( "QESETSRC", time, eventID, null, null, sourceBuffer ) );
             };
 
             this.connect = function ( audioNode ) {

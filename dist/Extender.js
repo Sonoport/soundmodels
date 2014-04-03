@@ -1,3 +1,3 @@
-/*javascript-sound-models - v0.3.0 - 2014-04-02 */
+/*javascript-sound-models - v0.3.0 - 2014-04-07 */
 
 define("models/Extender",function(){});

@@ -35,7 +35,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                 } );
 
                 self.releaseGainNode.connect( context.destination );
-                onLoadCallback( status );
+                if ( typeof onLoadCallback === 'function' )
+                    onLoadCallback( status );
             };
 
             var insertBufferSource = function ( audioBuffer ) {
@@ -85,8 +86,19 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                 } );
             };
 
-            function init() {
-                multiFileLoader.call( self, sounds, context, onAllLoad );
+            function init( sounds ) {
+                var parameterType = Object.prototype.toString.call( sounds );
+                if ( parameterType === "[object Array]" && sounds.length > self.maxSources ) {
+                    throw {
+                        name: "Unsupported number of sources",
+                        message: "This sound only supports a maximum of " + self.maxSources + " sources.",
+                        toString: function () {
+                            return this.name + ": " + this.message;
+                        }
+                    };
+                } else {
+                    multiFileLoader.call( self, sounds, context, onAllLoad );
+                }
             }
 
             // Public Properties
@@ -133,7 +145,7 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
              * @param {Function} onLoadCallback Callback when all sounds have finished loading.
              */
             this.setSources = function ( sounds, onLoadCallback ) {
-                init();
+                init( sounds );
             };
 
             /**
@@ -167,6 +179,8 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
                         if ( typeof offset == 'undefined' ) {
                             offset = self.startPoint.value * thisSource.buffer.duration;
                         }
+                        console.log( "Playing" );
+                        thisSource.loop = ( self.maxLoops.value !== 1 );
                         thisSource.start( startTime, offset );
                     } );
                 }
@@ -231,8 +245,10 @@ define( [ 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode",
             };
 
             // Initialize the sounds.
-            init();
+            init( sounds );
         }
+
+        Looper.prototype = Object.create( BaseSound.prototype );
 
         return Looper;
     } );

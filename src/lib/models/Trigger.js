@@ -28,6 +28,7 @@ define( [ 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiF
 
             var onAllLoad = function ( status, audioBufferArray ) {
                 sourceBuffers_ = audioBufferArray;
+                soundQueue_.connect( self.releaseGainNode );
                 onLoadCallback();
             };
 
@@ -47,18 +48,25 @@ define( [ 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiF
 
             this.play = function () {
 
-                if ( this.eventRand ) {
-                    if ( sounds.length > 2 ) {
-                        currentSourceID_ = ( currentSourceID_ + 1 + Math.floor( Math.random() * ( sounds.length - 1 ) ) ) % sounds.length;
-                    } else {
-                        currentSourceID_ = Math.floor( Math.random() * ( sounds.length - 1 ) );
-                    }
-                } else {
-                    currentSourceID_ = ( currentSourceID_ + 1 ) % sounds.length;
+                var length = 1;
+                if ( Object.prototype.toString.call( sounds ) === '[object Array]' ) {
+                    length = sounds.length;
                 }
 
+                if ( this.eventRand ) {
+                    if ( length > 2 ) {
+                        currentSourceID_ = ( currentSourceID_ + 1 + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
+                    } else {
+                        currentSourceID_ = Math.floor( Math.random() * ( length - 1 ) );
+                    }
+                } else {
+                    currentSourceID_ = ( currentSourceID_ + 1 ) % length;
+                }
+
+                console.log( "Using source # " + currentSourceID_ );
+
                 var timeStamp = context.currentTime;
-                var playSpeed = Converter.semitonesToRatio( this.pitchShift + Math.random() * this.pitchRand );
+                var playSpeed = Converter.semitonesToRatio( this.pitchShift.value + Math.random() * this.pitchRand.value );
 
                 soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
                 soundQueue_.queueSetSource( timeStamp, currentEventID_, sourceBuffers_[ currentSourceID_ ] );
@@ -70,6 +78,8 @@ define( [ 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiF
             init();
 
         }
+
+        Trigger.prototype = Object.create( BaseSound.prototype );
 
         return Trigger;
 

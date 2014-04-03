@@ -1,5 +1,5 @@
 // main file
-//"use strict";
+//'use strict';
 
 var AudioContext = webkitAudioContext || AudioContext;
 var context = new AudioContext();
@@ -39,36 +39,52 @@ require.config( {
 } );
 require( [ "models/Looper" ], function ( Looper ) {
 
-    //var surfURL = "https://dl.dropboxusercontent.com/u/2117088/ocean_edge.mp3";
-
-    var surfURL = "https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3";
+    var surfURL = "https://dl.dropboxusercontent.com/u/2117088/ocean_edge.mp3";
+    var runURL = "https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3";
     var alienURL = "https://dl.dropboxusercontent.com/u/2117088/spaceship_11.mp3";
 
     function startLooper() {
         lp.start( 0 );
     }
 
-    var lp = new Looper( alienURL, onLoad, context );
-    //console.log( lp );
+    var lp = new Looper( surfURL, onLoad, context );
 
     function onLoad( status ) {
         console.log( "Looper Loaded :" + status );
+        lp.start( 0 );
     }
     // toggle sound
     $( "#playbtn" )
         .click( function () {
             // toggle play button
             console.log( "play" );
-            lp.start(0);
+            lp.play();
         } );
     $( "#pausebtn" )
         .click( function () {
             console.log( "pause" );
             lp.pause();
         } );
-    $()
+    $( "#stopbtn" )
         .click( function () {
+            console.log( "stop" );
+            lp.stop();
+        } );
 
+    // Load sources
+
+    // Set Looper url sources
+    $( "#updateSource" )
+        .on( "click", function () {
+            // Get urls
+            var sourceurls = $( "#fileUrls" )
+                .val();
+            console.log( sourceurls );
+            var sources = sourceurls.split( "," );
+            console.log( sources );
+
+            lp.setSources(sources, onLoad);
+            //lp = new Looper( sources, onLoad, context );
         } );
 
 } );

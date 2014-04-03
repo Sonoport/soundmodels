@@ -21,6 +21,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         @default audioContext
         **/
         if ( typeof context === "undefined" ) {
+            console.log( "Making a new AudioContext" );
             this.audioContext = new AudioContext();
         } else {
             this.audioContext = context;
