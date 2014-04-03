@@ -7,7 +7,8 @@ module.exports = function ( grunt ) {
         // Define files and locations
         files: {
             jsSrc: 'src/lib/**/*.js',
-            testSrc: 'test/**/*.js'
+            testSrc: 'test/**/*.js',
+            playerSrc: 'jsmplayer/js/player.js'
         },
         dirs: {
             src: 'src',
@@ -20,14 +21,14 @@ module.exports = function ( grunt ) {
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
-            files: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>' ],
+            files: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>' ],
             options: {
                 config: ".jsbeautifyrc"
             }
         },
         // JSHint
         jshint: {
-            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>' ]
+            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>' ]
         },
         requirejs: {
             compile: {
@@ -88,12 +89,14 @@ module.exports = function ( grunt ) {
             },
             // Mainly for watching changes in the html and css files
             playerui: {
-                files: ['<%= dirs.player %>/**/*.scss'],
-                tasks: ['compass:devdist']
+                files: [ '<%= dirs.player %>/**/*.scss' ],
+                tasks: [ 'compass:devdist' ]
             },
             livereload: {
-                options: { livereload: true },
-                files: ['<%= dirs.player %>/**/*']
+                options: {
+                    livereload: true
+                },
+                files: [ '<%= dirs.player %>/**/*' ]
             }
         },
         // YUI Documentation
@@ -135,7 +138,7 @@ module.exports = function ( grunt ) {
             }
         },
         // Player related 
-        // To run this will require Sass (3.3.4), Compass (1.0.0-alpha) and Susy (2.1.1) pre-installed.
+        // To run this will require Sass (3.3.4), Compass (1.0.0-alpha), breakpoint (2.4.2) and Susy (2.1.1) pre-installed.
         // compile sass files to css using Compass: http://compass-style.org/
         // Also depends on Susy http://susy.oddbird.net/ to generate css for grids
         compass: {
@@ -143,7 +146,21 @@ module.exports = function ( grunt ) {
                 options: {
                     sassDir: '<%= dirs.player %>/sass',
                     cssDir: '<%= dirs.player %>/css',
-                    require: 'susy'
+                    require: [ 'susy', 'breakpoint' ],
+                }
+            }
+        },
+        bowercopy: {
+            options: {
+                srcPrefix: 'bower_components'
+            },
+            scripts: {
+                options: {
+                    destPrefix: '<%= dirs.player %>/js/vendor',
+                },
+                files: {
+                    'jquery.js': 'jquery/dist/jquery.js',
+                    'jquery-ui.min.js': 'jquery-ui/ui/minified/jquery-ui.min.js'
                 }
             }
         },
@@ -159,7 +176,7 @@ module.exports = function ( grunt ) {
             player: {
                 options: {
                     port: 9001,
-                    base: [ '<%= dirs.build %>', '<%= dirs.player %>' ],
+                    base: [ 'bower_components', '<%= dirs.build %>', '<%= dirs.player %>' ],
                     livereload: true
                 }
             }
@@ -178,11 +195,11 @@ module.exports = function ( grunt ) {
 
     // Player related
     grunt.loadNpmTasks( 'grunt-contrib-compass' );
+    grunt.loadNpmTasks( 'grunt-bowercopy' );
 
     // Player css related, probably not necessary to run this unless there is a change in design
-    grunt.registerTask( 'player-build', [ 'compass', 'connect:player', 'watch:livereload', 'watch:playerui'] );
+    grunt.registerTask( 'player-build', [ 'compass', 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
 
-    //grunt.registerTask('player-compile', );
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc' ] );
 

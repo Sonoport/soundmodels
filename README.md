@@ -22,6 +22,10 @@ A concatenated lib file is placed in the build directory.
 
 ``` grunt dev-build```
 
+### Player build
+Install dependencies used by the Player
+
+``` bower install```
 
 ## Wiki
 
