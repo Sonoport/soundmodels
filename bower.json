@@ -1,0 +1,27 @@
+{
+  "name": "javascript-sound-models",
+  "version": "0.3.0",
+  "authors": [
+    "Sonport Asia Pte. Ltd"
+  ],
+  "description": "Sonoport Javascript Sound Models Player",
+  "main": "jsmplayer/js/player.js",
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "sonoport",
+    "audio",
+    "webaudio",
+    "soundmodels",
+    "sound",
+    "interactive"
+  ],
+  "license": "Proprietary",
+  "homepage": "http://www.sonoport.com",
+  "private": true,
+  "dependencies": {
+    "jquery": "~2.1.0",
+    "jquery-ui": "~1.10.4"
+  }
+}

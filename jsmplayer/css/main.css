@@ -66,16 +66,412 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
   display: block;
 }
 
-/* line 8, ../sass/main.scss */
+/****
+Variables
+***/
+/***
+Base styles
+***/
+/* line 11, ../../../../../../.rvm/gems/ruby-2.1.1/gems/susy-2.1.1/sass/susy/language/susy/_box-sizing.scss */
+*, *::before, *::after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* line 15, ../sass/_base.scss */
 body {
   background: #fff;
+  font-size: 1em;
+}
+
+/* line 20, ../sass/_base.scss */
+header, footer {
+  clear: both;
+  width: 100%;
+  float: left;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  background: #ecf0f1;
+  text-align: center;
+  padding: 1em 0;
+}
+
+/* line 27, ../sass/_base.scss */
+footer {
+  font-size: 0.8em;
+}
+
+/* line 31, ../sass/_base.scss */
+.player-main {
+  margin-left: 25%;
+  width: 50%;
+  float: left;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  padding: 1em 0;
+}
+
+/* line 37, ../sass/_base.scss */
+.container {
+  max-width: 60em;
+  margin-left: auto;
+  margin-right: auto;
+  background-image: linear-gradient(to right, rgba(102, 102, 255, 0.25), rgba(179, 179, 255, 0.25));
+  background-size: 8.33333%;
+  background-origin: content-box;
+  background-clip: content-box;
+  background-position: left top;
   max-width: 80%;
   margin-left: auto;
   margin-right: auto;
 }
 /* line 12, ../../../../../../.rvm/gems/ruby-2.1.1/gems/susy-2.1.1/sass/susy/output/support/_clearfix.scss */
-body::after {
+.container::after {
   content: " ";
   display: block;
   clear: both;
+}
+/* line 12, ../../../../../../.rvm/gems/ruby-2.1.1/gems/susy-2.1.1/sass/susy/output/support/_clearfix.scss */
+.container::after {
+  content: " ";
+  display: block;
+  clear: both;
+}
+
+/* line 5, ../sass/modules/_dropdown.scss */
+.dropdown-menu {
+  background-color: #f2f4f5;
+  border: none;
+  display: block;
+  margin-top: 8px;
+  opacity: 0;
+  padding: 0;
+  visibility: hidden;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  -moz-transition: 0.25s;
+  -o-transition: 0.25s;
+  -webkit-transition: 0.25s;
+  transition: 0.25s;
+}
+/* line 17, ../sass/modules/_dropdown.scss */
+.open > .dropdown-menu {
+  margin-top: 18px !important;
+  opacity: 1;
+  visibility: visible;
+}
+/* line 24, ../sass/modules/_dropdown.scss */
+.dropdown-menu li:first-child dt + a {
+  border-radius: 0;
+}
+/* line 27, ../sass/modules/_dropdown.scss */
+.dropdown-menu li:first-child > a {
+  border-radius: 6px 6px 0 0;
+  padding-top: 8px;
+}
+/* line 34, ../sass/modules/_dropdown.scss */
+.dropdown-menu li:last-child > a {
+  border-radius: 0 0 6px 6px;
+  padding-bottom: 10px;
+}
+/* line 42, ../sass/modules/_dropdown.scss */
+.dropdown-menu li.active > a,
+.dropdown-menu li.active > a.highlighted, .dropdown-menu li.selected > a,
+.dropdown-menu li.selected > a.highlighted {
+  background: #1abc9c;
+  color: white;
+}
+/* line 47, ../sass/modules/_dropdown.scss */
+.dropdown-menu li.active > a:hover, .dropdown-menu li.active > a:focus,
+.dropdown-menu li.active > a.highlighted:hover,
+.dropdown-menu li.active > a.highlighted:focus, .dropdown-menu li.selected > a:hover, .dropdown-menu li.selected > a:focus,
+.dropdown-menu li.selected > a.highlighted:hover,
+.dropdown-menu li.selected > a.highlighted:focus {
+  background: #169f84;
+  color: white;
+}
+/* line 54, ../sass/modules/_dropdown.scss */
+.dropdown-menu li > a {
+  color: fade(#34495e, 75%);
+  padding: 6px 15px 8px;
+  text-decoration: none;
+  overflow: hidden;
+  *zoom: 1;
+  -moz-transition: background-color 0.25s;
+  -o-transition: background-color 0.25s;
+  -webkit-transition: background-color 0.25s;
+  transition: background-color 0.25s;
+}
+/* line 61, ../sass/modules/_dropdown.scss */
+.dropdown-menu li > a:hover, .dropdown-menu li > a:active, .dropdown-menu li > a:focus {
+  background: #e0e3e6;
+  color: inherit;
+  outline: none;
+}
+/* line 69, ../sass/modules/_dropdown.scss */
+.dropdown-menu li > a.highlighted {
+  background: #c9ced4;
+  color: white;
+}
+/* line 73, ../sass/modules/_dropdown.scss */
+.dropdown-menu li > a.highlighted:hover, .dropdown-menu li > a.highlighted:focus {
+  background: #b9c1c8;
+  color: white;
+}
+/* line 80, ../sass/modules/_dropdown.scss */
+.dropdown-menu li > a:before {
+  float: right;
+  margin-top: 3px;
+}
+/* line 87, ../sass/modules/_dropdown.scss */
+.dropdown-menu li dt {
+  font-weight: 300;
+  margin-bottom: 3px;
+  margin-top: 12px;
+  padding: 0 15px;
+}
+@media (max-width: 991px) {
+  /* line 5, ../sass/modules/_dropdown.scss */
+  .dropdown-menu {
+    border-radius: 0 0 6px 6px !important;
+  }
+}
+/* line 97, ../sass/modules/_dropdown.scss */
+.dropdown-menu .divider {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+/* line 106, ../sass/modules/_dropdown.scss */
+.dropup .dropdown-menu,
+.navbar-fixed-bottom .dropdown .dropdown-menu {
+  margin-bottom: 8px;
+}
+/* line 109, ../sass/modules/_dropdown.scss */
+.dropup .dropdown-arrow,
+.navbar-fixed-bottom .dropdown .dropdown-arrow {
+  border-bottom: none;
+  border-top: 8px outset #f2f4f5;
+  bottom: 100%;
+  top: auto;
+}
+
+/* line 118, ../sass/modules/_dropdown.scss */
+.navbar-fixed-bottom .nav > li > ul:before {
+  border-bottom: none;
+  border-top: 9px outset #34495e;
+  bottom: 4px;
+  top: auto;
+}
+
+/* line 127, ../sass/modules/_dropdown.scss */
+.open.dropup > .dropdown-menu {
+  margin-bottom: 18px;
+}
+/* line 130, ../sass/modules/_dropdown.scss */
+.open.dropup > .dropdown-arrow {
+  margin-bottom: 10px;
+}
+/* line 133, ../sass/modules/_dropdown.scss */
+.open.dropup > .dropdown-arrow.dropdown-arrow-inverse {
+  border-top-color: #34495e;
+}
+/* line 138, ../sass/modules/_dropdown.scss */
+.open > .dropdown-arrow {
+  margin-top: 11px;
+  opacity: 1;
+}
+
+/* line 146, ../sass/modules/_dropdown.scss */
+.dropdown-arrow {
+  border-style: solid;
+  border-width: 0 8px 7px;
+  border-color: transparent transparent #f2f4f5 transparent;
+  height: 0;
+  margin-top: 0;
+  opacity: 0;
+  position: absolute;
+  right: 19px;
+  top: 100%;
+  width: 0;
+  z-index: 10;
+  -webkit-transform: rotate(360deg);
+  -moz-transition: 0.25s;
+  -o-transition: 0.25s;
+  -webkit-transition: 0.25s;
+  transition: 0.25s;
+}
+
+/* line 164, ../sass/modules/_dropdown.scss */
+.dropdown-inverse {
+  background-color: #34495e;
+  color: #cccccc;
+  padding: 4px 0 6px;
+}
+/* line 169, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li {
+  margin: 0 4px -2px;
+}
+/* line 173, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li:first-child > a, .dropdown-inverse li:last-child > a {
+  border-radius: 2px;
+  padding-bottom: 7px;
+  padding-top: 5px;
+}
+/* line 178, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li:first-child dt + a, .dropdown-inverse li:last-child dt + a {
+  border-radius: 2px;
+}
+/* line 185, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li.active > a, .dropdown-inverse li.selected > a {
+  background: #1abc9c;
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+/* line 192, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li dt {
+  padding-left: 11px;
+  padding-right: 11px;
+}
+/* line 196, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li .divider {
+  margin-left: 11px;
+  margin-right: 11px;
+}
+/* line 200, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li > a {
+  border-radius: 2px;
+  color: white;
+  padding: 5px 11px 7px;
+}
+/* line 205, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li > a:hover, .dropdown-inverse li > a:active, .dropdown-inverse li > a:focus {
+  background: #2c3e4f;
+}
+/* line 210, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li > a.highlighted {
+  background: #526476;
+}
+/* line 212, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li > a.highlighted:hover, .dropdown-inverse li > a.highlighted:focus {
+  background: #667686;
+}
+/* line 218, ../sass/modules/_dropdown.scss */
+.dropdown-inverse li .divider {
+  background-color: #526476;
+  border-bottom-color: #526476;
+}
+
+/* line 7, ../sass/modules/_slider.scss */
+.progress, .ui-slider {
+  background: #eaecee;
+  border-radius: 32px;
+  height: 12px;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+/* line 14, ../sass/modules/_slider.scss */
+.ui-slider {
+  margin-bottom: 20px;
+  position: relative;
+  cursor: pointer;
+}
+
+/* line 21, ../sass/modules/_slider.scss */
+.ui-slider-handle {
+  background-color: #169f84;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 18px;
+  position: absolute;
+  width: 18px;
+  z-index: 2;
+  -moz-transition: background 0.25s;
+  -o-transition: background 0.25s;
+  -webkit-transition: background 0.25s;
+  transition: background 0.25s;
+}
+/* line 31, ../sass/modules/_slider.scss */
+.ui-slider-handle:hover, .ui-slider-handle:focus {
+  background-color: #47c9af;
+  outline: none;
+}
+/* line 36, ../sass/modules/_slider.scss */
+.ui-slider-handle:active {
+  background-color: #169f84;
+}
+
+/* line 41, ../sass/modules/_slider.scss */
+.ui-slider-range {
+  background-color: #1abc9c;
+  display: block;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
+}
+
+/* line 51, ../sass/modules/_slider.scss */
+.ui-slider-segment {
+  background-color: #d8dadc;
+  border-radius: 50%;
+  height: 6px;
+  width: 6px;
+}
+
+/* line 60, ../sass/modules/_slider.scss */
+.ui-slider-value {
+  float: right;
+  font-size: 13px;
+  margin-top: 12px;
+}
+/* line 65, ../sass/modules/_slider.scss */
+.ui-slider-value.first {
+  clear: left;
+  float: left;
+}
+
+/* line 75, ../sass/modules/_slider.scss */
+.ui-slider-horizontal .ui-slider-handle {
+  margin-left: -9px;
+  top: -3px;
+}
+/* line 79, ../sass/modules/_slider.scss */
+.ui-slider-horizontal .ui-slider-handle[style*="100"] {
+  margin-left: -15px;
+}
+/* line 83, ../sass/modules/_slider.scss */
+.ui-slider-horizontal .ui-slider-range {
+  border-radius: 30px 0 0 30px;
+}
+/* line 86, ../sass/modules/_slider.scss */
+.ui-slider-horizontal .ui-slider-segment {
+  float: left;
+  margin: 3px -6px 0 0;
+}
+
+/* line 95, ../sass/modules/_slider.scss */
+.ui-slider-vertical {
+  width: 12px;
+}
+/* line 98, ../sass/modules/_slider.scss */
+.ui-slider-vertical .ui-slider-handle {
+  margin-left: -3px;
+  margin-bottom: -11px;
+  top: auto;
+}
+/* line 103, ../sass/modules/_slider.scss */
+.ui-slider-vertical .ui-slider-range {
+  width: 100%;
+  bottom: 0;
+  border-radius: 0 0 30px 30px;
+}
+/* line 108, ../sass/modules/_slider.scss */
+.ui-slider-vertical .ui-slider-segment {
+  position: absolute;
+  right: 3px;
 }

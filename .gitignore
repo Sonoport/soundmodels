@@ -3,6 +3,7 @@
 
 # Tool Directories
 node_modules/
+bower_components/
 
 # Docs
 docs/

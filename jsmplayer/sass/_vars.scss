@@ -1,0 +1,82 @@
+/****
+Variables
+***/
+// Colours
+
+$wet-asphalt: #34495e !default;
+$midnight-blue: #2c3e50 !default;
+
+$turquoise:  #1abc9c;
+$green-sea:  #16a085;
+
+$emerald:    #2ecc71;
+$nephritis:  #27ae60;
+$clouds:     #ecf0f1;
+$silver:     #bdc3c7;
+
+$concrete:   #95a5a6;
+$asbestos:   #7f8c8d;
+
+// Grays
+$gray:       $silver;
+$gray-light: $clouds;
+$inverse: 	 white;
+
+// Brand colors
+$brand-primary: $wet-asphalt !default;
+$brand-secondary: $turquoise !default;
+//$brand-success: $emerald !default;
+//$brand-warning: $sun-flower !default;
+//$brand-danger: $alizarin !default;
+//$brand-info: $peter-river !default;
+
+$font-size-base: 18px !default;
+
+//== Dropdowns
+//
+//## Dropdown menu container and contents.
+
+//** Background for the dropdown menu.
+$dropdown-background: mix($inverse, $brand-primary, 94%) !default;
+
+//** Default font-size in components
+$component-font-size-base: ceil($font-size-base * 0.833) !default; // ~15px
+
+// Border-radius
+$border-radius-base: 4px !default;
+$border-radius-large: 6px !default;
+$border-radius-small: 3px !default;
+
+// Extra small screen / phone
+$screen-xs-min: 480px !default;
+
+// Small screen / tablet
+$screen-sm-min: 768px !default;
+
+// Medium screen / desktop
+$screen-md-min: 992px !default;
+
+// Large screen / wide desktop
+$screen-lg-min: 1200px !default;
+
+// So media queries don't overlap when required, provide a maximum
+$screen-xs-max: ($screen-sm-min - 1) !default;
+$screen-sm-max: ($screen-md-min - 1) !default;
+$screen-md-max: ($screen-lg-min - 1) !default;
+
+$progress-height: 12px !default;
+
+//== Slider
+//
+//##
+
+$slider-height: 12px !default;
+$slider-value-font-size: floor($component-font-size-base * 0.867); // ~13px !default;
+
+$slider-handle-bg: mix($brand-secondary, black, 85%) !default;
+$slider-handle-hover-bg: mix($brand-secondary, white, 80%) !default;
+$slider-handle-active-bg: mix($brand-secondary, black, 85%) !default;
+
+$slider-range-bg: $brand-secondary !default;
+
+$slider-segment-bg: mix(desaturate($brand-primary, 15%), white, 20%) !default;

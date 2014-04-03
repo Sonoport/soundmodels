@@ -1,0 +1,40 @@
+/***
+Base styles
+***/
+
+//Susy global settings
+$susy: (
+	columns: 12,
+	gutters: 1/4,
+	column-width: 4em,
+	gutter-position: inside-static,
+);
+
+@include border-box-sizing;
+
+body {
+	background: #fff;
+	font-size: 1em;
+}
+
+header, footer {
+	@include full;
+	background: $gray-light;
+	text-align: center;
+	padding: 1em 0;
+}
+
+footer {
+	font-size: 0.8em;
+}
+
+.player-main {
+	@include push(3);
+	@include span(6);
+	padding: 1em 0;
+}
+
+.container {
+	@include container(show);
+	@include container(80%);
+}
