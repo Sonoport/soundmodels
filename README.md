@@ -20,7 +20,6 @@ This project contains the HTML5/Javascript port of Sonoport's sound models.
 ### Development builds
 ``` grunt dev-build```
 
-<<<<<<< HEAD
 A concatenated file per model is placed in the build directory.
 
 ``` grunt test```
@@ -38,12 +37,10 @@ Internal documentation is compiled and placed in the docs directory.
 
 Generates, with time stamps release libraries and external documentation in the dist directory.
 
-=======
 ### Player build
 Install dependencies used by the Player
 
 ``` bower install```
->>>>>>> Update base Player template. #HT-34
 
 ## Wiki
 

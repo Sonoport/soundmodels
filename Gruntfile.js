@@ -28,13 +28,13 @@ module.exports = function ( grunt ) {
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
             files: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>' ],
-                options: {
-                    config: ".jsbeautifyrc"
-                }
+            options: {
+                config: ".jsbeautifyrc"
+            }
         },
         // JSHint
         jshint: {
-            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>' ]
+            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>' ]
         },
         requirejs: {
             compile: {
@@ -176,7 +176,7 @@ module.exports = function ( grunt ) {
                         }
                     }
                 },
-                // Player related 
+        // Player related 
         // To run this will require Sass (3.3.4), Compass (1.0.0-alpha), breakpoint (2.4.2) and Susy (2.1.1) pre-installed.
         // compile sass files to css using Compass: http://compass-style.org/
         // Also depends on Susy http://susy.oddbird.net/ to generate css for grids

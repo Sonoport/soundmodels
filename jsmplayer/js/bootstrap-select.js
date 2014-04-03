@@ -217,6 +217,7 @@
                         select.find( 'button#' + id )
                             .focus();
                     } );
+
             }
             for ( var i = 0; i < classList.length; i++ ) {
                 if ( classList[ i ] != 'selectpicker' ) {
@@ -623,7 +624,6 @@
         },
 
         val: function ( value ) {
-
             if ( value !== undefined ) {
                 this.$element.val( value );
 
