@@ -4,8 +4,8 @@
  *                      playPosition of a AudioBufferSourceNode.
  * @module Core
  */
-define( [],
-    function () {
+define( [ 'core/SPPlaybackRateParam' ],
+    function ( SPPlaybackRateParam ) {
         "use strict";
 
         function SPAudioBufferSourceNode( audioContext ) {
@@ -21,6 +21,7 @@ define( [],
             this.numberOfInputs = bufferSourceNode.numberOfInputs;
             this.numberOfOutputs = bufferSourceNode.numberOfOutputs;
             this.playbackState = bufferSourceNode.playbackState;
+            this.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
 
             Object.defineProperty( this, 'loopEnd', {
                 enumerable: true,
@@ -72,17 +73,6 @@ define( [],
                 },
                 get: function () {
                     return bufferSourceNode.loop;
-                }
-            } );
-
-            Object.defineProperty( this, 'playbackRate', {
-                enumerable: true,
-                set: function ( playbackRate ) {
-                    bufferSourceNode.playbackRate = playbackRate;
-                    counterNode.playbackRate = playbackRate;
-                },
-                get: function () {
-                    return bufferSourceNode.playbackRate;
                 }
             } );
 

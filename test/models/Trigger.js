@@ -15,11 +15,10 @@ require(["models/Trigger"], function (Trigger) {
 
     // Single test
     trigger = new Trigger(tap1, function() {
-        trigger.pitchShift.value = 30;
-        trigger.play();
-        window.setTimeout(function(){
+        var trigButton = document.getElementById('trigger');
+        trigButton.addEventListener('click', function(){
             trigger.play();
-        }, 10);
+        });
     }, context);
 
 

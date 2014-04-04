@@ -71,10 +71,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 var timeStamp = context.currentTime;
                 var playSpeed = Converter.semitonesToRatio( this.pitchShift.value + Math.random() * this.pitchRand.value );
 
-                soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
                 soundQueue_.queueSetSource( timeStamp, currentEventID_, sourceBuffers_[ currentSourceID_ ] );
+                soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
-
                 currentEventID_++;
             };
 
