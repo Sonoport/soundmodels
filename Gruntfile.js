@@ -175,8 +175,8 @@ module.exports = function ( grunt ) {
             },
             player: {
                 options: {
-                    port: 9001,
-                    base: [ 'bower_components', '<%= dirs.build %>', '<%= dirs.player %>' ],
+                    port: 8080,
+                    base: [ '<%= dirs.build %>', '<%= dirs.player %>' ],
                     livereload: true
                 }
             }
