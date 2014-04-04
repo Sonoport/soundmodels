@@ -134,7 +134,7 @@ define( function () {
                 allChannelsSilent = channels.reduce( checkSilenceThreshold_, true );
 
                 if ( allChannelsSilent ) {
-                    nLoopEnd_++;
+                    nLoopEnd_--;
                 } else {
                     break;
                 }
