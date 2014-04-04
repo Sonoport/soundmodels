@@ -17,7 +17,7 @@
     var Dropdown = function ( element ) {
         $( element )
             .on( 'click.bs.dropdown', this.toggle );
-    }
+    };
 
     Dropdown.prototype.toggle = function ( e ) {
         var $this = $( this );
@@ -53,7 +53,7 @@
         }
 
         return false;
-    }
+    };
 
     Dropdown.prototype.keydown = function ( e ) {
         if ( !/(38|40|27)/.test( e.keyCode ) ) return;
@@ -81,13 +81,13 @@
 
         var index = $items.index( $items.filter( ':focus' ) );
 
-        if ( e.keyCode == 38 && index > 0 ) index-- ;// up
+        if ( e.keyCode == 38 && index > 0 ) index--; // up
         if ( e.keyCode == 40 && index < $items.length - 1 ) index++; // down
         if ( !~index ) index = 0;
 
         $items.eq( index )
             .trigger( 'focus' );
-    }
+    };
 
     function clearMenus( e ) {
         $( backdrop )
@@ -97,7 +97,7 @@
                 var $parent = getParent( $( this ) );
                 var relatedTarget = {
                     relatedTarget: this
-                }
+                };
                 if ( !$parent.hasClass( 'open' ) ) return;
                 $parent.trigger( e = $.Event( 'hide.bs.dropdown', relatedTarget ) );
                 if ( e.isDefaultPrevented() ) return;
@@ -131,8 +131,8 @@
 
             if ( !data ) $this.data( 'bs.dropdown', ( data = new Dropdown( this ) ) );
             if ( typeof option == 'string' ) data[ option ].call( $this );
-        } )
-    }
+        } );
+    };
 
     $.fn.dropdown.Constructor = Dropdown;
 
@@ -142,7 +142,7 @@
     $.fn.dropdown.noConflict = function () {
         $.fn.dropdown = old;
         return this;
-    }
+    };
 
     // APPLY TO STANDARD DROPDOWN ELEMENTS
     // ===================================
@@ -171,7 +171,7 @@
         this.options = $.extend( {}, $.fn.selectpicker.defaults, this.$element.data(), typeof options == 'object' && options );
 
         //If we have no title yet, check the attribute 'title' (this is missed by jq as its not a data-attribute
-        if ( this.options.title == null )
+        if ( this.options.title === null )
             this.options.title = this.$element.attr( 'title' );
 
         //Expose public methods
@@ -216,7 +216,7 @@
                     .click( function () {
                         select.find( 'button#' + id )
                             .focus();
-                    } )
+                    } );
             }
             for ( var i = 0; i < classList.length; i++ ) {
                 if ( classList[ i ] != 'selectpicker' ) {
@@ -624,7 +624,7 @@
 
         val: function ( value ) {
 
-            if ( value != undefined ) {
+            if ( value !== undefined ) {
                 this.$element.val( value );
 
                 this.$element.trigger( 'change' );
@@ -653,7 +653,7 @@
                 }
             }
 
-            if ( typeof option == 'string' ) {
+            if ( typeof option === 'string' ) {
                 //Copy the value of option, as once we shift the arguments
                 //it also shifts the value of option.
                 property = option;
@@ -666,7 +666,7 @@
             }
         } );
 
-        if ( value != undefined ) {
+        if ( value !== undefined ) {
             return value;
         } else {
             return chain;
