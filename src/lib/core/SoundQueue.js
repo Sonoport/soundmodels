@@ -3,8 +3,8 @@
  * @description A sound model which loads a sound file and allows it to be looped continuously at variable speed.
  * @module Looper
  */
-define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
-    function ( Looper, FileLoader, SPEvent ) {
+define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
+    function ( Config, Looper, FileLoader, SPEvent ) {
         "use strict";
 
         function SoundQueue( context, numberOfVoices ) {
@@ -13,28 +13,29 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             }
 
             if ( typeof numberOfVoices === "undefined" ) {
-                numberOfVoices = 4;
+                numberOfVoices = Config.MAX_VOICES;
             }
 
             // Private Variables
+            var self = this;
+
             var eventQueue_ = [];
             var busyVoices_ = [];
             var freeVoices_ = [];
 
             var vIndex;
 
-            var NOMINAL_REFRESH_RATE = 60;
-
             // Private Functions
 
-            function soundQueueCallback() {
-                processEventsTill( context.currentTime + 1 / NOMINAL_REFRESH_RATE );
+            function soundQueueCallback( timestamp ) {
+                processEventsTill( context.currentTime + 1 / Config.NOMINAL_REFRESH_RATE );
                 window.requestAnimationFrame( soundQueueCallback );
             }
 
             var init = function () {
                 for ( var i = 0; i < numberOfVoices; i++ ) {
-                    freeVoices_[ i ] = new Looper( null, null, context );
+                    freeVoices_[ i ] = new Looper( null, null, onVoiceEnded, context );
+                    freeVoices_[ i ].maxLoops.value = 1;
                 }
 
                 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
@@ -42,6 +43,12 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
                 window.requestAnimationFrame( soundQueueCallback );
 
+            };
+
+            var onVoiceEnded = function ( endedVoice, trackIndex ) {
+                //console.log( trackIndex + " of " + self );
+                freeVoices_.push( endedVoice );
+                busyVoices_.splice( busyVoices_.indexOf( endedVoice ), 1 );
             };
 
             var findVoiceWithID = function ( eventID ) {
@@ -56,8 +63,7 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             var createNewVoice = function ( eventID ) {
                 if ( freeVoices_.length < 1 ) {
                     // TODO Steal??
-                    var steal = 0;
-                    steal++;
+                    console.log( "Need to steal voices" );
                 }
                 var newVoice = freeVoices_.pop();
                 newVoice.eventID = eventID;
@@ -66,9 +72,9 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             };
 
             var processSingleEvent = function ( thisEvent ) {
-                console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time );
-
                 var selectedVoice = findVoiceWithID( thisEvent.eventID );
+
+                console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice );
 
                 if ( thisEvent.type == "QESTART" ) {
                     if ( selectedVoice === null ) {
@@ -94,7 +100,7 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                     if ( selectedVoice === null ) {
                         selectedVoice = createNewVoice( thisEvent.eventID );
                     }
-                    console.log( "Setting " + thisEvent.paramName + " to " + thisEvent.paramValue );
+                    //console.log( "Setting " + thisEvent.paramName + " to " + thisEvent.paramValue );
                     selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
                 } else if ( thisEvent.type == "QESETSRC" ) {
                     var setSource = function ( selectedVoice, thisEvent ) {
@@ -135,23 +141,23 @@ define( [ 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             //"QENONE", "QESTOP", "QESTART", "QESETPARAM", "QESETSRC", "QERELEASE"
 
             this.queueStart = function ( time, eventID ) {
-                console.log( eventID + ": Enqueing QESTART at " + time );
+                //console.log( eventID + ": Enqueing QESTART at " + time );
                 eventQueue_.push( new SPEvent( "QESTART", time, eventID ) );
             };
             this.queueRelease = function ( time, eventID ) {
-                console.log( eventID + ": Enqueing QERELEASE at " + time );
+                //console.log( eventID + ": Enqueing QERELEASE at " + time );
                 eventQueue_.push( new SPEvent( "QERELEASE", time, eventID ) );
             };
             this.queueStop = function ( time, eventID ) {
-                console.log( eventID + ": Enqueing QESTOP at " + time );
+                //console.log( eventID + ": Enqueing QESTOP at " + time );
                 eventQueue_.push( new SPEvent( "QESTOP", time, eventID ) );
             };
             this.queueSetParameter = function ( time, eventID, paramValue, paramName ) {
-                console.log( eventID + ": Enqueing QESETPARAM at " + time );
+                //console.log( eventID + ": Enqueing QESETPARAM at " + time );
                 eventQueue_.push( new SPEvent( "QESETPARAM", time, eventID, paramValue, paramName ) );
             };
             this.queueSetSource = function ( time, eventID, sourceBuffer ) {
-                console.log( eventID + ": Enqueing QESETSRC at " + time );
+                //console.log( eventID + ": Enqueing QESETSRC at " + time );
                 eventQueue_.push( new SPEvent( "QESETSRC", time, eventID, null, null, sourceBuffer ) );
             };
 

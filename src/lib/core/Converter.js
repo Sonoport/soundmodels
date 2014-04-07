@@ -8,11 +8,9 @@ define( [],
     function () {
         "use strict";
 
-        function Converter() {
+        function Converter() {}
 
-        }
-
-        Converter.prototype.semitonesToRatio = function ( semiTones ) {
+        Converter.semitonesToRatio = function ( semiTones ) {
             return Math.pow( 2.0, semiTones / 12.0 );
         };
 

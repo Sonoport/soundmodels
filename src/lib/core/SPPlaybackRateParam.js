@@ -13,25 +13,18 @@ define( [],
          * @param {AudioParam} the playbackRate of a AudioBufferSourceNode.
          * @param {AudioNode} a AudioBufferSourceNode.
          */
-        function SPPlaybackRateParam( audioParam, parentNode ) {
+        function SPPlaybackRateParam( audioParam, counterParam ) {
             this.defaultValue = audioParam.defaultValue;
             this.maxValue = audioParam.maxValue;
             this.minValue = audioParam.minValue;
             this.name = audioParam.name;
             this.units = audioParam.units;
+
             Object.defineProperty( this, 'value', {
                 enumerable: true,
                 set: function ( rate ) {
-                    var cTime = parentNode.audioContext.currentTime;
-                    var source = parentNode.bufferSourceNode;
-                    if ( source.playbackState === source.PLAYING_STATE ) {
-                        parentNode.addNewEvent( {
-                            type: "set",
-                            value: rate,
-                            time: cTime
-                        } );
-                    }
                     audioParam.value = rate;
+                    counterParam.value = rate;
                 },
                 get: function () {
                     return audioParam.value;
@@ -39,49 +32,29 @@ define( [],
             } );
             this.linearRampToValueAtTime = function ( value, endTime ) {
                 audioParam.linearRampToValueAtTime( value, endTime );
-                parentNode.addNewEvent( {
-                    type: "linear",
-                    value: value,
-                    time: endTime
-                } );
+                counterParam.linearRampToValueAtTime( value, endTime );
             };
             this.exponentialRampToValueAtTime = function ( value, endTime ) {
                 audioParam.exponentialRampToValueAtTime( value, endTime );
-                parentNode.addNewEvent( {
-                    type: "exponential",
-                    value: value,
-                    time: endTime
-                } );
+                counterParam.exponentialRampToValueAtTime( value, endTime );
+
             };
             this.setValueCurveAtTime = function ( values, startTime, duration ) {
                 audioParam.setValueCurveAtTime( values, startTime, duration );
-                parentNode.addNewEvent( {
-                    type: "curve",
-                    curve: values,
-                    duration: duration,
-                    time: startTime
-                } );
+                counterParam.setValueCurveAtTime( values, startTime, duration );
             };
             this.setTargetAtTime = function ( target, startTime, timeConstant ) {
                 audioParam.setTargetAtTime( target, startTime, timeConstant );
-                parentNode.addNewEvent( {
-                    type: "target",
-                    value: target,
-                    time: startTime,
-                    timeConstant: timeConstant
-                } );
+                counterParam.setTargetAtTime( target, startTime, timeConstant );
+
             };
             this.setValueAtTime = function ( value, time ) {
                 audioParam.setValueAtTime( value, time );
-                parentNode.addNewEvent( {
-                    type: "set",
-                    value: value,
-                    time: time
-                } );
+                counterParam.setValueAtTime( value, time );
             };
             this.cancelScheduledValues = function ( time ) {
                 audioParam.cancelScheduledValues( time );
-                parentNode.cancelScheduledValues( time );
+                counterParam.cancelScheduledValues( time );
             };
         }
         return SPPlaybackRateParam;

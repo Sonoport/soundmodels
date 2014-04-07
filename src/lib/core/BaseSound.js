@@ -27,21 +27,14 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
             this.audioContext = context;
         }
         /**
-        Number of inputs
+        Number of sources that can be given to this Sound
 
         @property numberOfInputs
         @type Number
         @default 0
         **/
-        this.numberOfInputs = 0; // Defaults to 0
-        /**
-        Number of outputs
+        this.maxSources = 0; // Defaults to 0
 
-        @property numberOfOutputs
-        @type Number
-        @default 1
-        **/
-        this.numberOfOutputs = 1; // Defaults to 1
         /**
         Release Gain Node
 
