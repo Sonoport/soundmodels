@@ -13,13 +13,13 @@ define(
           @param {Number} minValue The minimum value of the parameter.
           @param {Number} maxValue The maximum value of the parameter.
           @param {Number} defaultValue The default and starting value of the parameter.
-          @param {AudioParam} aParam A WebAudio parameter which will be set/get when this parameter is changed.
+          @param {AudioParam/Array} aParams A WebAudio parameter which will be set/get when this parameter is changed.
           @param {Function} mappingFunction A mapping function to map values between the mapped SPAudioParam and the underlying WebAudio AudioParam.
           @param {Function} setter A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.
           @param {AudioContext} audioContext A WebAudio AudioContext for timing.
 
           **/
-        function SPAudioParam( name, minValue, maxValue, defaultValue, aParam, mappingFunction, setter, audioContext ) {
+        function SPAudioParam( name, minValue, maxValue, defaultValue, aParams, mappingFunction, setter, audioContext ) {
             // Min diff between set and actual
             // values to stop updates.
             var MIN_DIFF = 0.0001;
@@ -89,26 +89,39 @@ define(
 
                     // If setter exists, use that
                     if ( typeof setter === 'function' && audioContext ) {
-                        setter( aParam, value, audioContext );
-                        value_ = value;
-                    } else if ( aParam && aParam instanceof AudioParam ) {
+                        setter( aParams, value, audioContext );
+                    } else if ( aParams ) {
                         // else if param is defined, set directly
-                        aParam.value = value;
+                        if ( aParams instanceof AudioParam ) {
+                            aParams.value = value;
+                        } else if ( aParams instanceof Array ) {
+                            aParams.forEach( function ( thisParam ) {
+                                thisParam.value = value;
+                            } );
+                        }
                     } else {
                         // Else if Psuedo param
                         window.clearInterval( intervalID_ );
-                        value_ = value;
                     }
+
+                    // Set the value_ anyway.
+                    value_ = value;
                 },
                 get: function () {
-                    if ( aParam && aParam instanceof AudioParam ) {
-                        return aParam.value;
-                    } else {
-                        return value_;
+                    if ( aParams ) {
+                        if ( aParams instanceof AudioParam ) {
+                            return aParams.value;
+                        } else if ( aParams instanceof Array ) {
+                            // use a nominal Parameter to populate
+                            return aParams[ 0 ].value;
+                        }
                     }
+                    return value_;
                 }
             } );
-            if ( aParam && aParam instanceof AudioParam ) {
+            if ( aParams && ( aParams instanceof AudioParam || aParams instanceof Array ) ) {
+                // Use a nominal Parameter to populate the values.
+                var aParam = aParams[ 0 ] || aParams;
                 this.defaultValue = aParam.defaultValue;
                 this.minValue = aParam.minValue;
                 this.maxValue = aParam.maxValue;
@@ -137,11 +150,19 @@ define(
             @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
             **/
             this.setValueAtTime = function ( value, startTime ) {
+                console.log( "setting value " + value + " at time " + startTime + " for " + aParams );
+
                 if ( typeof mappingFunction === 'function' ) {
                     value = mappingFunction( value );
                 }
-                if ( aParam && aParam instanceof AudioParam ) {
-                    aParam.setValueAtTime( value, startTime );
+                if ( aParams ) {
+                    if ( aParams instanceof AudioParam ) {
+                        aParams.setValueAtTime( value, startTime );
+                    } else if ( aParams instanceof Array ) {
+                        aParams.forEach( function ( thisParam ) {
+                            thisParam.setValueAtTime( value, startTime );
+                        } );
+                    }
                 } else {
                     // Horrible hack for the case we don't have access to
                     // a real AudioParam.
@@ -168,8 +189,14 @@ define(
                 if ( typeof mappingFunction === 'function' ) {
                     target = mappingFunction( target );
                 }
-                if ( aParam && aParam instanceof AudioParam ) {
-                    aParam.setTargetAtTime( target, startTime, timeConstant );
+                if ( aParams ) {
+                    if ( aParams instanceof AudioParam ) {
+                        aParams.setTargetAtTime( target, startTime, timeConstant );
+                    } else if ( aParams instanceof Array ) {
+                        aParams.forEach( function ( thisParam ) {
+                            thisParam.setTargetAtTime( target, startTime, timeConstant );
+                        } );
+                    }
                 } else {
                     // Horrible hack for the case we don't have access to
                     // a real AudioParam.
@@ -205,8 +232,14 @@ define(
                         values[ index ] = mappingFunction( values[ index ] );
                     }
                 }
-                if ( aParam && aParam instanceof AudioParam ) {
-                    aParam.setValueCurveAtTime( values, startTime, duration );
+                if ( aParams ) {
+                    if ( aParams instanceof AudioParam ) {
+                        aParams.setValueCurveAtTime( values, startTime, duration );
+                    } else if ( aParams instanceof Array ) {
+                        aParams.forEach( function ( thisParam ) {
+                            thisParam.setValueCurveAtTime( values, startTime, duration );
+                        } );
+                    }
                 } else {
                     var self = this;
                     var initTime_ = audioContext.currentTime;
@@ -236,8 +269,14 @@ define(
                 if ( typeof mappingFunction === 'function' ) {
                     value = mappingFunction( value );
                 }
-                if ( aParam && aParam instanceof AudioParam ) {
-                    aParam.exponentialRampToValueAtTime( value, endTime );
+                if ( aParams ) {
+                    if ( aParams instanceof AudioParam ) {
+                        aParams.exponentialRampToValueAtTime( value, endTime );
+                    } else if ( aParams instanceof Array ) {
+                        aParams.forEach( function ( thisParam ) {
+                            thisParam.exponentialRampToValueAtTime( value, endTime );
+                        } );
+                    }
                 } else {
                     var self = this;
                     var initValue_ = self.value;
@@ -266,8 +305,14 @@ define(
                 if ( typeof mappingFunction === 'function' ) {
                     value = mappingFunction( value );
                 }
-                if ( aParam && aParam instanceof AudioParam ) {
-                    aParam.linearRampToValueAtTime( value, endTime );
+                if ( aParams ) {
+                    if ( aParams instanceof AudioParam ) {
+                        aParams.linearRampToValueAtTime( value, endTime );
+                    } else if ( aParams instanceof Array ) {
+                        aParams.forEach( function ( thisParam ) {
+                            thisParam.linearRampToValueAtTime( value, endTime );
+                        } );
+                    }
                 } else {
                     var self = this;
                     var initValue_ = self.value;
@@ -289,8 +334,14 @@ define(
             @param {Number} startTime The startTime parameter is the starting time at and after which any previously scheduled parameter changes will be cancelled.
             **/
             this.cancelScheduledValues = function ( startTime ) {
-                if ( aParam && aParam instanceof AudioParam ) {
-                    aParam.cancelScheduledValues( startTime );
+                if ( aParams ) {
+                    if ( aParams instanceof AudioParam ) {
+                        aParams.cancelScheduledValues( startTime );
+                    } else if ( aParams instanceof Array ) {
+                        aParams.forEach( function ( thisParam ) {
+                            thisParam.cancelScheduledValues( startTime );
+                        } );
+                    }
                 } else {
                     window.clearInterval( intervalID_ );
                 }

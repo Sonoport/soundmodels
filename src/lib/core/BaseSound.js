@@ -21,26 +21,20 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         @default audioContext
         **/
         if ( typeof context === "undefined" ) {
+            console.log( "Making a new AudioContext" );
             this.audioContext = new AudioContext();
         } else {
             this.audioContext = context;
         }
         /**
-        Number of inputs
+        Number of sources that can be given to this Sound
 
         @property numberOfInputs
         @type Number
         @default 0
         **/
-        this.numberOfInputs = 0; // Defaults to 0
-        /**
-        Number of outputs
+        this.maxSources = 0; // Defaults to 0
 
-        @property numberOfOutputs
-        @type Number
-        @default 1
-        **/
-        this.numberOfOutputs = 1; // Defaults to 1
         /**
         Release Gain Node
 
