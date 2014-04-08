@@ -63,7 +63,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             var createNewVoice = function ( eventID ) {
                 if ( freeVoices_.length < 1 ) {
                     // TODO Steal??
-                    console.log( "Need to steal voices" );
+                    console.warn( "Need to steal voices" );
                 }
                 var newVoice = freeVoices_.pop();
                 newVoice.eventID = eventID;
@@ -74,7 +74,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             var processSingleEvent = function ( thisEvent ) {
                 var selectedVoice = findVoiceWithID( thisEvent.eventID );
 
-                console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice );
+                //console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice );
 
                 if ( thisEvent.type == "QESTART" ) {
                     if ( selectedVoice === null ) {

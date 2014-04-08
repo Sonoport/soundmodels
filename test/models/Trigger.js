@@ -14,8 +14,13 @@ require(["models/Trigger"], function (Trigger) {
 
 
     // Single test
-    trigger = new Trigger(tap1, function() {
+    trigger = new Trigger([tap1, tap2, tap3, tap4], function() {
         var trigButton = document.getElementById('trigger');
+        trigButton.disabled = false;
+
+        trigger.pitchRand.value = 10;
+        trigger.eventRand.value = true;
+
         trigButton.addEventListener('click', function(){
             trigger.play();
         });

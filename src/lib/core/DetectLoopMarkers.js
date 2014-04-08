@@ -13,7 +13,7 @@ define( function () {
      */
     function DetectLoopMarkers( buffer ) {
 
-        self = this;
+        var self = this;
 
         var nLoopStart_ = 0;
         var nLoopEnd_ = 0;
@@ -21,7 +21,7 @@ define( function () {
         this.PREPOSTFIX_LEN = 5000;
         this.SPIKE_THRESH = 0.5;
         this.MAX_MP3_SILENCE = 20000;
-        this.SILENCE_THRESH = 0.1;
+        this.SILENCE_THRESH = 0.01;
 
         /**
          * A helper method to help find the markers in an AudioBuffer.
@@ -89,12 +89,13 @@ define( function () {
 
         /**
          * A helper method to help find the silence in findSilence_
-         * @method checkSilenceThreshold_
-         * @param {Boolean} prev The value from the previous call.
-         * @param {Float32Array} thisChannel Values from a specific channel of the AudioBuffer.
+         * @method silenceCheckGenerator_
+         * @param {Number} testIndex The value which is being tested
          */
-        var checkSilenceThreshold_ = function ( prev, thisChannel ) {
-            return prev && thisChannel[ nLoopStart_ ] < self.SILENCE_THRESH;
+        var silenceCheckGenerator_ = function ( testIndex ) {
+            return function ( prev, thisChannel ) {
+                return prev && ( Math.abs( thisChannel[ testIndex ] ) < self.SILENCE_THRESH );
+            };
         };
 
         /**
@@ -118,7 +119,7 @@ define( function () {
             while ( nLoopStart_ < self.MAX_MP3_SILENCE &&
                 nLoopStart_ < buffer.length ) {
 
-                allChannelsSilent = channels.reduce( checkSilenceThreshold_, true );
+                allChannelsSilent = channels.reduce( silenceCheckGenerator_( nLoopStart_ ), true );
 
                 if ( allChannelsSilent ) {
                     nLoopStart_++;
@@ -131,7 +132,7 @@ define( function () {
             while ( buffer.length - nLoopEnd_ < self.MAX_MP3_SILENCE &&
                 nLoopEnd_ > 0 ) {
 
-                allChannelsSilent = channels.reduce( checkSilenceThreshold_, true );
+                allChannelsSilent = channels.reduce( silenceCheckGenerator_( nLoopEnd_ ), true );
 
                 if ( allChannelsSilent ) {
                     nLoopEnd_--;

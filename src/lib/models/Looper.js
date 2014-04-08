@@ -204,7 +204,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                         if ( typeof offset == 'undefined' ) {
                             offset = self.startPoint.value * thisSource.buffer.duration;
                         }
-                        console.log( "Playing" );
+                        //console.log( "Playing" );
                         thisSource.loop = ( self.maxLoops.value !== 1 );
                         thisSource.start( startTime, offset );
                     } );

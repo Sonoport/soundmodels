@@ -56,7 +56,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     length = sounds.length;
                 }
 
-                if ( this.eventRand ) {
+                if ( this.eventRand.value ) {
                     if ( length > 2 ) {
                         currentSourceID_ = ( currentSourceID_ + 1 + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
                     } else {
