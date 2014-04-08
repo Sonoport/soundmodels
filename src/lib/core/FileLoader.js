@@ -9,11 +9,11 @@ define( [ 'core/DetectLoopMarkers' ],
 
         /*
          * @constructor
-         * @param {String} URL URL of the file to be Loaded
+         * @param {File/String} fileDescriptor URL of the file or File to be Loaded
          * @param {String} context AudioContext to be used in decoding the file
-         * @param {String} onloadCallback Callback function to be called when the file loading is complete.
+         * @param {function} onloadCallback Callback function to be called when the file loading is complete.
          */
-        function FileLoader( URL, context, onloadCallback ) {
+        function FileLoader( fileDescriptor, context, onloadCallback ) {
             if ( !( this instanceof FileLoader ) ) {
                 throw new TypeError( "FileLoader constructor cannot be called as a function." );
             }
@@ -118,36 +118,50 @@ define( [ 'core/DetectLoopMarkers' ],
             };
 
             function init() {
-                var fileExtension = /[^.]+$/.exec( URL );
-                var request = new XMLHttpRequest();
-                request.open( 'GET', URL, true );
-                request.responseType = 'arraybuffer';
-                request.onload = function () {
-                    context.decodeAudioData( request.response, function ( buffer ) {
-                        isSoundLoaded_ = true;
-                        rawBuffer_ = buffer;
-                        // Do trimming if it is not a wave file
-                        loopStart_ = 0;
-                        loopEnd_ = rawBuffer_.length;
-                        if ( fileExtension[ 0 ] !== "wav" ) {
-                            // Trim Buffer based on Markers
-                            var markers = detectLoopMarkers( rawBuffer_ );
-                            if ( markers ) {
-                                loopStart_ = markers.start;
-                                loopEnd_ = markers.end;
-                            }
+                var parameterType = Object.prototype.toString.call( fileDescriptor );
+                var fileExtension = /[^.]+$/.exec( fileDescriptor );
+                if ( parameterType === '[object String]' ) {
+                    var request = new XMLHttpRequest();
+                    request.open( 'GET', fileDescriptor, true );
+                    request.responseType = 'arraybuffer';
+                    request.onload = function () {
+                        decodeAudio( request.response, true, fileExtension );
+                    };
+                    request.send();
+                } else if ( parameterType === '[object File]' ) {
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        decodeAudio( reader.result, true, fileExtension );
+                    };
+                    reader.readAsArrayBuffer( fileDescriptor );
+                }
+
+            }
+
+            function decodeAudio( result, evt, fileExt ) {
+                context.decodeAudioData( result, function ( buffer ) {
+                    isSoundLoaded_ = true;
+                    rawBuffer_ = buffer;
+                    // Do trimming if it is not a wave file
+                    loopStart_ = 0;
+                    loopEnd_ = rawBuffer_.length;
+                    if ( fileExt[ 0 ] !== "wav" ) {
+                        // Trim Buffer based on Markers
+                        var markers = detectLoopMarkers( rawBuffer_ );
+                        if ( markers ) {
+                            loopStart_ = markers.start;
+                            loopEnd_ = markers.end;
                         }
-                        if ( onloadCallback && typeof onloadCallback === "function" ) {
-                            onloadCallback( true );
-                        }
-                    }, function () {
-                        console.log( "Error Decoding " + URL );
-                        if ( onloadCallback && typeof onloadCallback === "function" ) {
-                            onloadCallback( false );
-                        }
-                    } );
-                };
-                request.send();
+                    }
+                    if ( onloadCallback && typeof onloadCallback === "function" ) {
+                        onloadCallback( evt );
+                    }
+                }, function () {
+                    console.log( "Error Decoding " + URL );
+                    if ( onloadCallback && typeof onloadCallback === "function" ) {
+                        onloadCallback( !evt );
+                    }
+                } );
             }
 
             // Public functions

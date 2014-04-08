@@ -43,15 +43,11 @@ require( [ "models/Looper" ], function ( Looper ) {
     var runURL = "https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3";
     var alienURL = "https://dl.dropboxusercontent.com/u/2117088/spaceship_11.mp3";
 
-    function startLooper() {
-        lp.start( 0 );
-    }
-
-    var lp = new Looper( surfURL, onLoad, context );
+    // Looper
+    var lp = new Looper( surfURL, onLoad, null, context );
 
     function onLoad( status ) {
         console.log( "Looper Loaded :" + status );
-        lp.start( 0 );
     }
     // toggle sound
     $( "#playbtn" )
@@ -59,6 +55,7 @@ require( [ "models/Looper" ], function ( Looper ) {
             // toggle play button
             console.log( "play" );
             lp.play();
+            //testLocal();
         } );
     $( "#pausebtn" )
         .click( function () {
@@ -68,10 +65,40 @@ require( [ "models/Looper" ], function ( Looper ) {
     $( "#stopbtn" )
         .click( function () {
             console.log( "stop" );
-            lp.stop();
+            lp.stop( 0 );
         } );
 
-    // Load sources
+    // Load local sources
+    var localSources = [];
+
+    var source = null;
+    var audioBuffer = null;
+
+    function testLocal() {
+        source = context.createBufferSource();
+        source.buffer = audioBuffer;
+        source.loop = false;
+        source.connect( context.destination );
+        source.start( 0 );
+    }
+
+    function handleFileSelect( evt ) {
+        // FileList object
+        var files = evt.target.files;
+
+        // files is a FileList of File objects. List some properties.
+        var output = [];
+        for ( var i = 0; i < files.length; i++ ) {
+            var f = files[ i ];
+            localSources.push( f );
+        }
+
+        lp.setSources( localSources, onLoad, null, context );
+
+    }
+
+    $( "#filebtn" )
+        .on( 'change', handleFileSelect );
 
     // Set Looper url sources
     $( "#updateSource" )
@@ -83,7 +110,7 @@ require( [ "models/Looper" ], function ( Looper ) {
             var sources = sourceurls.split( "," );
             console.log( sources );
 
-            lp.setSources(sources, onLoad);
+            lp.setSources( sources, onLoad );
             //lp = new Looper( sources, onLoad, context );
         } );
 

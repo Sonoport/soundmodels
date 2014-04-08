@@ -10,7 +10,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
         /**
         @constructor
-        @param {AudioBuffer/String} sounds Single or Array of either URLs or AudioBuffers of sounds.
+        @param {AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds or File sound object.
         @param {Function} onLoadCallback Callback when all sounds have finished loading.
         @context {AudioContext} AudioContext to be used.
         */
