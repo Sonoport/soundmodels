@@ -41,7 +41,7 @@ define( [ 'core/FileLoader' ],
 
             function loadSingleSound( sound, onSingleLoad ) {
                 var parameterType = Object.prototype.toString.call( sound );
-                if ( parameterType === "[object String]" ) {
+                if ( parameterType === "[object String]" || parameterType === "[object File]" ) {
                     var fileLoader = new FileLoader( sound, self.audioContext, function ( status ) {
                         if ( status ) {
                             onSingleLoad( status, fileLoader.getBuffer() );
