@@ -66,7 +66,7 @@ require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
         looper.start(0);
         looper.multiTrackGain[0].linearRampToValueAtTime(0.5, context.currentTime + 2 );
         looper.playSpeed.linearRampToValueAtTime(5, context.currentTime + 1 );
-    }, context);
+    }, null, context);
 
 
 

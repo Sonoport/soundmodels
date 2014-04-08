@@ -37,8 +37,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     insertBufferSource( thisBuffer, trackIndex );
                 } );
 
-                self.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, rateArray, null, playSpeedSetter_, this.audioContext );
-                self.releaseGainNode.connect( context.destination );
+                self.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
+                self.releaseGainNode.connect( self.audioContext.destination );
 
                 if ( typeof onLoadCallback === 'function' )
                     onLoadCallback( status );
@@ -46,7 +46,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
             var onSourceEnded = function ( event, trackIndex ) {
                 self.isPlaying = false;
-                onEndedCallback( self, trackIndex );
+                if ( typeof onEndedCallback === 'function' )
+                    onEndedCallback( self, trackIndex );
             };
 
             var insertBufferSource = function ( audioBuffer, trackIndex ) {
