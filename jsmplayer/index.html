@@ -8,6 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
+        <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
         <link rel="stylesheet" href="css/main.css">
         <script data-main="js/player" src="vendor/require.js"></script>
     </head>
@@ -39,13 +40,17 @@
                 <output id="filelist"></output>
             </p>
                 <br />
-                <span>Load audio from urls: (separate by each url by a , )</span> <br />
+                <span>Load audio from urls: (separate each url by a comma (,) )</span> <br />
                 <textarea id="fileUrls" placeholder="Enter source urls" rows="5" cols="50"></textarea>
                 <input id="updateSource" type="submit" width="100%" />
+
                 <div class="player-params">
-                    <div id="slider" class="ui-slider"></div>
-                    <div id="slider" class="ui-slider"></div>
-                    <div id="slider" class="ui-slider"></div>
+                    <!-- <div class="param-box">
+                        <label>Param name</label>
+                        <div id="slider" class="ui-slider"></div>
+                        <input type="text" id="amount"/>
+                    </div> -->
+                    
                 </div>
             </div>
          </div>

@@ -87,7 +87,7 @@ module.exports = function ( grunt ) {
         // Watcher for updating
         watch: {
             scripts: {
-                files: [ '<%= files.jsSrc %>', '<%= files.testSrc %>', 'Gruntfile.js', ],
+                files: [ '<%= files.jsSrc %>', '<%= files.testSrc %>', 'Gruntfile.js', '<%= files.playerSrc %>' ],
                 tasks: [ 'dev-build' ],
                 options: {
                     spawn: false

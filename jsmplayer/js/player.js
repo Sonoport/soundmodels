@@ -152,4 +152,61 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
             } );
     }
 
+    // Generate parameter sliders
+    // Looper param list
+    var LooperProps = {
+        riseTime: "riseTime",
+        decayTime: "decayTime",
+        startPoint: "startPoint",
+        playSpeed: "playSpeed",
+        maxLoops: "maxLoops",
+        releaseGainNode: "releaseGainNode"
+    };
+
+    function generateParam() {
+        // Loop through all the properties in Looper
+        for ( var param in lp ) {
+            var prop = lp[ param ];
+            var parameterType = Object.prototype.toString.call( prop );
+            if ( LooperProps[ param ] ) {
+
+                console.log( "props existed", param );
+                var labelnode = "<label class='param-name'>" + param + "</label>";
+                var slider = "<div id='" + param + "' class='ui-slider'></div>";
+                var outputVal = "<input type='text' id='" + param + "val' class='amount' />";
+                $( ".player-params" )
+                    .append( "<div class='param-box'>" + labelnode + slider + outputVal + "</div>" );
+                // Get properties that are of SPAudioParam
+                if ( prop instanceof SPAudioParam ) {
+                    makeSlider( param, prop.value, prop.minValue, prop.maxValue, 0.1 );
+                }
+
+                if ( prop instanceof GainNode ) {
+                    makeSlider( param, prop.gain.value, prop.minValue, prop.maxValue, 0.1 );
+                }
+
+            }
+        }
+
+    }
+
+    function makeSlider( id, val, min, max, step ) {
+        $( "#" + id )
+            .slider( {
+                range: "true",
+                value: val,
+                min: min,
+                max: max,
+                step: step,
+                slide: function ( event, ui ) {
+                    $( "#" + id + "val" )
+                        .val( ui.value );
+                }
+            } );
+
+        $( "#" + id + "val" )
+            .val( $( "#" + id )
+                .slider( "value" ) );
+    }
+
 } );
