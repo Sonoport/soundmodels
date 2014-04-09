@@ -125,20 +125,20 @@ define( [ 'core/DetectLoopMarkers' ],
                     request.open( 'GET', fileDescriptor, true );
                     request.responseType = 'arraybuffer';
                     request.onload = function () {
-                        decodeAudio( request.response, true, fileExtension );
+                        decodeAudio( request.response, fileExtension );
                     };
                     request.send();
                 } else if ( parameterType === '[object File]' ) {
                     var reader = new FileReader();
                     reader.onload = function () {
-                        decodeAudio( reader.result, true, fileExtension );
+                        decodeAudio( reader.result, fileExtension );
                     };
                     reader.readAsArrayBuffer( fileDescriptor );
                 }
 
             }
 
-            function decodeAudio( result, evt, fileExt ) {
+            function decodeAudio( result, fileExt ) {
                 context.decodeAudioData( result, function ( buffer ) {
                     isSoundLoaded_ = true;
                     rawBuffer_ = buffer;
@@ -154,12 +154,12 @@ define( [ 'core/DetectLoopMarkers' ],
                         }
                     }
                     if ( onloadCallback && typeof onloadCallback === "function" ) {
-                        onloadCallback( evt );
+                        onloadCallback( true );
                     }
                 }, function () {
                     console.log( "Error Decoding " + URL );
                     if ( onloadCallback && typeof onloadCallback === "function" ) {
-                        onloadCallback( !evt );
+                        onloadCallback( false );
                     }
                 } );
             }

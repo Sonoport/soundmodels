@@ -37,7 +37,7 @@ $( function () {
 require.config( {
     baseUrl: "./"
 } );
-require( [ "models/Looper" ], function ( Looper ) {
+require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioParam ) {
 
     var surfURL = "https://dl.dropboxusercontent.com/u/2117088/ocean_edge.mp3";
     var runURL = "https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3";
@@ -48,6 +48,9 @@ require( [ "models/Looper" ], function ( Looper ) {
 
     function onLoad( status ) {
         console.log( "Looper Loaded :" + status );
+
+        // After the files have loaded generate param
+        generateParam();
     }
     // toggle sound
     $( "#playbtn" )
@@ -55,7 +58,6 @@ require( [ "models/Looper" ], function ( Looper ) {
             // toggle play button
             console.log( "play" );
             lp.play();
-            //testLocal();
         } );
     $( "#pausebtn" )
         .click( function () {
@@ -71,22 +73,11 @@ require( [ "models/Looper" ], function ( Looper ) {
     // Load local sources
     var localSources = [];
 
-    var source = null;
-    var audioBuffer = null;
-
-    function testLocal() {
-        source = context.createBufferSource();
-        source.buffer = audioBuffer;
-        source.loop = false;
-        source.connect( context.destination );
-        source.start( 0 );
-    }
-
     function handleFileSelect( evt ) {
         // FileList object
         var files = evt.target.files;
 
-        // files is a FileList of File objects. List some properties.
+        // files is a FileList of File objects.
         var output = [];
         for ( var i = 0; i < files.length; i++ ) {
             var f = files[ i ];
@@ -110,8 +101,64 @@ require( [ "models/Looper" ], function ( Looper ) {
             var sources = sourceurls.split( "," );
             console.log( sources );
 
-            lp.setSources( sources, onLoad );
-            //lp = new Looper( sources, onLoad, context );
+            lp.setSources( sources, onLoad, null, context );
         } );
+
+    // Generate parameter sliders
+    // Looper param list
+    var LooperProps = {
+        riseTime: "riseTime",
+        decayTime: "decayTime",
+        startPoint: "startPoint",
+        playSpeed: "playSpeed",
+        maxLoops: "maxLoops",
+        releaseGainNode: "releaseGainNode"
+    };
+
+    function generateParam() {
+        // Loop through all the properties in Looper
+        for ( var param in lp ) {
+            var prop = lp[ param ];
+            var parameterType = Object.prototype.toString.call( prop );
+            if ( LooperProps[ param ] ) {
+
+                console.log( "props existed", param );
+                var labelnode = "<label class='param-name'>" + param + "</label>";
+                var slider = "<div id='" + param + "' class='ui-slider'></div>";
+                var outputVal = "<input type='text' id='" + param + "val' class='amount' />";
+                $( ".player-params" )
+                    .append( "<div class='param-box'>" + labelnode + slider + outputVal + "</div>" );
+                // Get properties that are of SPAudioParam
+                if ( prop instanceof SPAudioParam ) {
+                    makeSlider( param, prop.value, prop.minValue, prop.maxValue, 0.1 );
+                }
+
+                if ( prop instanceof GainNode ) {
+                    makeSlider( param, prop.gain.value, prop.minValue, prop.maxValue, 0.1 );
+                }
+
+            }
+        }
+
+    }
+
+    function makeSlider( id, val, min, max, step ) {
+        $( "#" + id )
+            .slider( {
+                range: "true",
+                value: val,
+                min: min,
+                max: max,
+                step: step,
+                slide: function ( event, ui ) {
+                    $( "#" + id + "val" )
+                        .val( ui.value );
+                }
+            } );
+
+        $( "#" + id + "val" )
+            .val( $( "#" + id )
+                .slider( "value" ) );
+    }
 
 } );
