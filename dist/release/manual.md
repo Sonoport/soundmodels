@@ -3,6 +3,9 @@
 ## Introduction
 
 
+## Version
+
+
 ## Download and Install
 
 
@@ -12,4 +15,4 @@
 ## Advanced Options
 
 
-## Contact Details
+## Raising Issues

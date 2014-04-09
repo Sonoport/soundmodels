@@ -5,7 +5,7 @@ var context = new AudioContext();
 
 var looper;
 
-require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
+require(["core/Envelope", "models/Looper"], function (Envelope, Looper) {
 
     //console.log(Looper);
 
@@ -23,6 +23,9 @@ require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
     var validURL3 =  piano;
 
     // populate a valid URL of mp3 file
+
+    var e = new Envelope(context);
+    e.initADSR({attackDur : 1, releaseDur: 1});
 
     function onLoad (status) {
         console.log("Looper Loaded :" + status);
@@ -64,11 +67,14 @@ require(["core/FileLoader", "models/Looper"], function (FileLoader, Looper) {
     looper = new Looper([validURL1, validURL2, validURL3], function(){
         looper.maxLoops.value = 1;
         looper.start(0);
+        e.start(0);
         looper.multiTrackGain[0].linearRampToValueAtTime(0.5, context.currentTime + 2 );
         looper.playSpeed.linearRampToValueAtTime(5, context.currentTime + 1 );
     }, null, context);
 
-
+    looper.disconnect();
+    looper.connect(e);
+    e.connect(context.destination);
 
      /*
         window.AudioContext = window.AudioContext || window.webkitAudioContext;

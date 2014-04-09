@@ -38,7 +38,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 } );
 
                 self.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
-                self.releaseGainNode.connect( self.audioContext.destination );
 
                 if ( typeof onLoadCallback === 'function' )
                     onLoadCallback( status );
@@ -117,6 +116,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     self.multiTrackGain = [];
                     multiFileLoader.call( self, sounds, context, onAllLoad );
                 }
+
+                self.releaseGainNode.connect( self.audioContext.destination );
             }
 
             // Public Properties
