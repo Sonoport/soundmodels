@@ -14,6 +14,7 @@ module.exports = function ( grunt ) {
             docs: 'docs',
             build: 'build',
             dist: 'dist',
+            release: 'dist/release',
             core: 'src/lib/core',
             models: 'src/lib/models'
         },
@@ -95,7 +96,7 @@ module.exports = function ( grunt ) {
         },
         // YUI Documentation
         yuidoc: {
-            compile: {
+            dev: {
                 name: '<%= pkg.name %>',
                 description: '<%= pkg.description %>',
                 version: '<%= pkg.version %>',
@@ -103,6 +104,17 @@ module.exports = function ( grunt ) {
                 options: {
                     paths: '<%= dirs.src %>',
                     outdir: '<%= dirs.docs %>',
+                    linkNatives: "true"
+                }
+            },
+            release: {
+                name: '<%= pkg.name %>',
+                description: '<%= pkg.description %>',
+                version: '<%= pkg.version %>',
+                url: '<%= pkg.homepage %>',
+                options: {
+                    paths: ['<%= dirs.models %>'],
+                    outdir: '<%= dirs.release %>',
                     linkNatives: "true"
                 }
             }
@@ -154,9 +166,9 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-banner' );
 
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
-    grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc' ] );
+    grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc:dev' ] );
 
-    grunt.registerTask( 'release', [ 'jsbeautifier', 'jshint', 'requirejs', 'yuidoc', 'copy', 'usebanner' ] );
+    grunt.registerTask( 'release', [ 'jsbeautifier', 'jshint', 'requirejs', 'yuidoc:release', 'copy', 'usebanner' ] );
 
     grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'requirejs', 'connect', 'watch' ] );
 };

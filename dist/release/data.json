@@ -1,0 +1,346 @@
+{
+    "project": {
+        "name": "javascript-sound-models",
+        "description": "Sonoport Javascript Sound Models",
+        "version": "0.4.0",
+        "url": ""
+    },
+    "files": {
+        "src/lib/models/Action.js": {
+            "name": "src/lib/models/Action.js",
+            "modules": {
+                "Models": 1
+            },
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/models/Extender.js": {
+            "name": "src/lib/models/Extender.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/models/Looper.js": {
+            "name": "src/lib/models/Looper.js",
+            "modules": {},
+            "classes": {
+                "Looper": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/models/MultiTrigger.js": {
+            "name": "src/lib/models/MultiTrigger.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/models/Scrubber.js": {
+            "name": "src/lib/models/Scrubber.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/models/Trigger.js": {
+            "name": "src/lib/models/Trigger.js",
+            "modules": {},
+            "classes": {
+                "Trigger": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "Models": {
+            "name": "Models",
+            "submodules": {},
+            "classes": {
+                "Looper": 1,
+                "Trigger": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/lib/models/Trigger.js",
+            "line": 8
+        }
+    },
+    "classes": {
+        "Looper": {
+            "name": "Looper",
+            "shortname": "Looper",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Models",
+            "namespace": "",
+            "file": "src/lib/models/Looper.js",
+            "line": 8,
+            "description": "A sound model which loads a sound file and allows it to be looped continuously at variable speed.",
+            "is_constructor": 1,
+            "extends": "BaseSound",
+            "params": [
+                {
+                    "name": "sounds",
+                    "description": "Single or Array of either URLs or AudioBuffers or File of sounds.",
+                    "type": "Array/String/AudioBuffer/File"
+                },
+                {
+                    "name": "onLoadCallback",
+                    "description": "Callback when all sounds have finished loading.",
+                    "type": "Function",
+                    "optional": true
+                },
+                {
+                    "name": "onEndedCallback",
+                    "description": "Callback when the Looper has finished playing.",
+                    "type": "Function",
+                    "optional": true
+                },
+                {
+                    "name": "context",
+                    "description": "AudioContext to be used.",
+                    "type": "AudioContext"
+                }
+            ]
+        },
+        "Trigger": {
+            "name": "Trigger",
+            "shortname": "Trigger",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Models",
+            "namespace": "",
+            "file": "src/lib/models/Trigger.js",
+            "line": 8,
+            "description": "A sound model which triggers a single or multiple sound files with multiple voices (polyphony).",
+            "is_constructor": 1,
+            "extends": "BaseSound",
+            "params": [
+                {
+                    "name": "sounds",
+                    "description": "Single or Array of either URLs or AudioBuffers or File of sounds.",
+                    "type": "Array/String/AudioBuffer/File"
+                },
+                {
+                    "name": "onLoadCallback",
+                    "description": "Callback when all sounds have finished loading.",
+                    "type": "Function",
+                    "optional": true
+                },
+                {
+                    "name": "onEndedCallback",
+                    "description": "Callback when the Trigger has finished playing.",
+                    "type": "Function",
+                    "optional": true
+                },
+                {
+                    "name": "context",
+                    "description": "AudioContext to be used.",
+                    "type": "AudioContext"
+                }
+            ]
+        }
+    },
+    "classitems": [
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 129,
+            "itemtype": "property",
+            "name": "riseTime",
+            "type": "SPAudioParam",
+            "default": "0.05",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 136,
+            "itemtype": "property",
+            "name": "decayTime",
+            "type": "SPAudioParam",
+            "default": "0.05",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 143,
+            "itemtype": "property",
+            "name": "startPoint",
+            "type": "SPAudioParam",
+            "default": "0",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 150,
+            "itemtype": "property",
+            "name": "playSpeed",
+            "type": "SPAudioParam",
+            "default": "1.0",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 157,
+            "itemtype": "property",
+            "name": "multiTrackGain",
+            "type": "Array of SPAudioParams",
+            "default": "1.0",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 164,
+            "itemtype": "property",
+            "name": "maxLoops",
+            "type": "SPAudioParam",
+            "default": "-1 (Infinite)",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 171,
+            "description": "Reinitializes a Looper and sets it's sources.",
+            "itemtype": "method",
+            "name": "setSources",
+            "params": [
+                {
+                    "name": "sounds",
+                    "description": "Single or Array of either URLs or AudioBuffers of sounds.",
+                    "type": "Array/AudioBuffer/String/File"
+                },
+                {
+                    "name": "onLoadCallback",
+                    "description": "Callback when all sounds have finished loading.",
+                    "type": "Function",
+                    "optional": true
+                }
+            ],
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 182,
+            "description": "Plays the sound immediately. If the sound is paused, the sound will be played back from the same position as it was paused at.",
+            "itemtype": "method",
+            "name": "play",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 202,
+            "description": "Start playing after specific time and from a specific offset. If offset is not defined,\nthe value of startPoint property is used.",
+            "itemtype": "method",
+            "name": "start",
+            "params": [
+                {
+                    "name": "when",
+                    "description": "The delay in seconds before playing the sound",
+                    "type": "Number"
+                },
+                {
+                    "name": "offset",
+                    "description": "The starting position of the playhead",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 225,
+            "description": "Stops the sound and resets play head to 0.",
+            "itemtype": "method",
+            "name": "stop",
+            "params": [
+                {
+                    "name": "when",
+                    "description": "Time offset to stop",
+                    "type": "Number"
+                }
+            ],
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 254,
+            "description": "Pause the currently playing sound at the current position.",
+            "itemtype": "method",
+            "name": "pause",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Trigger.js",
+            "line": 57,
+            "description": "Pitch shift of the triggered voices in semitones.",
+            "itemtype": "property",
+            "name": "pitchShift",
+            "type": "SPAudioParam",
+            "default": "0",
+            "class": "Trigger",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Trigger.js",
+            "line": 66,
+            "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
+            "itemtype": "property",
+            "name": "pitchRand",
+            "type": "SPAudioParam",
+            "default": "0",
+            "class": "Trigger",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Trigger.js",
+            "line": 75,
+            "description": "Enable randomness in the order of sources which are triggered.",
+            "itemtype": "property",
+            "name": "eventRand",
+            "type": "SPAudioParam",
+            "default": "false",
+            "class": "Trigger",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Trigger.js",
+            "line": 86,
+            "description": "Triggers a single voice.",
+            "itemtype": "method",
+            "name": "play",
+            "params": [
+                {
+                    "name": "when",
+                    "description": "At what time (in seconds) the sound be triggered",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Trigger",
+            "module": "Models"
+        }
+    ],
+    "warnings": []
+}
