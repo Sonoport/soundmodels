@@ -84,6 +84,13 @@ module.exports = function ( grunt ) {
                 options: {
                     spawn: false
                 }
+            },
+            docs: {
+                files: [ '<%= files.jsSrc %>', '<%= files.testSrc %>', 'Gruntfile.js', ],
+                tasks: [ 'make-doc' ],
+                options: {
+                    spawn: false
+                }
             }
         },
         // YUI Documentation

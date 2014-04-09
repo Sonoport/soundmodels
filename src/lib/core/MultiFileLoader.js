@@ -1,13 +1,22 @@
 /**
+ * @module Core
+ *
  * @class MuliFileLoader
- * @description Helper class to loader multiple files etc.
- * @module Models
- * @extends BaseSound
+ * @static
  */
 define( [ 'core/FileLoader' ],
     function ( FileLoader ) {
         "use strict";
 
+        /**
+         * Helper class to loader multiple sounds from URL String, File or AudioBuffer Objects.
+         *
+         *
+         * @method MuliFileLoader
+         * @param {Array/String/File} sounds Array of or Individual String, AudioBuffer or File Objects which define the sounds to be loaded
+         * @param {String} audioContext AudioContext to be used in decoding the file
+         * @param {String} [onAllLoad] Callback function to be called when all sounds are loaded
+         */
         function MultiFileLoader( sounds, audioContext, onAllLoad ) {
 
             //Private variables

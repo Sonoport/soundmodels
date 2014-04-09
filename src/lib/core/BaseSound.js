@@ -10,7 +10,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      * @class BaseSound
      * @constructor
      * @requires AudioContextMonkeyPatch
-     * @param {AudioContext} context
+     * @param {AudioContext} [context] AudioContext in which this Sound is defined.
      */
     function BaseSound( context ) {
         /**
@@ -25,6 +25,24 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         } else {
             this.audioContext = context;
         }
+
+        /**
+         * Number of inputs
+         *
+         * @property numberOfInputs
+         * @type Number
+         * @default 1
+         */
+        this.numberOfInputs = 0;
+
+        /**
+         * Number of outputs
+         *
+         * @property numberOfOutputs
+         * @type Number
+         * @default 1
+         */
+        this.numberOfOutputs = 0;
 
         /**
          *Number of sources that can be given to this Sound
@@ -44,25 +62,6 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
          * @final
          */
         this.releaseGainNode = this.audioContext.createGain();
-
-        /**
-         * Fading time in (seconds)
-         *
-         *
-         * @property FADE_TIME
-         * @default 0.5 (seconds)
-         * @final
-         */
-        this.FADE_TIME = 0.5;
-
-        /**
-         * Padding time in (seconds) after FADE_TIME to allow sound to fade out smoothly.
-         *
-         * @property FADE_TIME_PAD
-         * @default 1 (seconds)
-         * @final
-         */
-        this.FADE_TIME_PAD = 1;
 
         /**
          *  If Sound is currently playing.
@@ -89,9 +88,11 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      * If the output is a BaseSound, it will connect BaseSound's releaseGainNode to the output's inputNode.
      *
      * @method connect
-     * @param {Object} output Connects to an AudioNode or BaseSound.
+     * @param {AudioNode} destination AudioNode to connect to.
+     * @param {Number} [output] Index describing which output of the AudioNode from which to connect.
+     * @param {Number} [input] Index describing which input of the destination AudioNode to connect to.
      */
-    BaseSound.prototype.connect = function ( output ) {
+    BaseSound.prototype.connect = function ( destination, output, input ) {
         if ( output instanceof AudioNode ) {
             this.releaseGainNode.connect( output );
         } else if ( output.inputNode instanceof AudioNode ) {
@@ -108,10 +109,10 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     };
 
     /**
-     * The outputIndex parameter is an index describing which output of the releaseGainNode to disconnect.
+     * Disconnects the Sound from the AudioNode Chain.
      *
      * @method disconnect
-     * @param {Number} outputIndex Index describing which output of the AudioNode to disconnect.
+     * @param {Number} [outputIndex] Index describing which output of the AudioNode to disconnect.
      **/
     BaseSound.prototype.disconnect = function ( outputIndex ) {
         this.releaseGainNode.disconnect( outputIndex );
@@ -121,9 +122,9 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      * Start the AudioNode. Abstract method. Override this method when a Node is defined.
      *
      * @method start
-     * @param {Number} when At what time (in seconds) the sound should start playing.
-     * @param {Number} offset Offset time in the buffer (in seconds) where playback will begin.
-     * @param {Number} duration Duration of the portion (in seconds) to be played.
+     * @param {Number} [when] At what time (in seconds) the sound should start playing.
+     * @param {Number} [offset] Offset time in the buffer (in seconds) where playback will begin.
+     * @param {Number} [duration] Duration of the portion (in seconds) to be played.
      */
     BaseSound.prototype.start = function ( when, offset, duration ) {
         this.isPlaying = true;
@@ -133,7 +134,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      * Stop the AudioNode. Abstract method. Override this method when a Node is defined.
      *
      * @method stop
-     * @param {Number} when Time (in seconds) the sound should stop playing
+     * @param {Number} [when] Time (in seconds) the sound should stop playing
      */
     BaseSound.prototype.stop = function ( when ) {
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
@@ -142,22 +143,26 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
             when = 0;
         }
         // cancel all scheduled ramps on this releaseGainNode
-        this.releaseGainNode.gain.cancelScheduledValues( this.audioContext.currentTime + when );
+        this.releaseGainNode.gain.cancelScheduledValues( when );
     };
 
     /**
      * Linearly ramp down the gain of the audio in time (seconds) to 0.
      *
      * @method release
-     * @param {Number} fadeTime Amount of time (seconds) it takes for linear ramp down to happen.
-     * @param {Number} when Time (in seconds) at which the Envelope will release.
+     * @param {Number} [fadeTime] Amount of time (seconds) it takes for linear ramp down to happen.
+     * @param {Number} [when] Time (in seconds) at which the Envelope will release.
      */
     BaseSound.prototype.release = function ( fadeTime, when ) {
+
+        var FADE_TIME = 0.5;
+        var FADE_TIME_PAD = 1;
+
         if ( typeof when === "undefined" ) {
             when = this.audioContext.currentTime;
         }
 
-        fadeTime = fadeTime || this.FADE_TIME;
+        fadeTime = fadeTime || FADE_TIME;
         // Clamp the current gain value at this point of time to prevent sudden jumps.
         this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, when );
 
@@ -165,7 +170,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.releaseGainNode.gain.linearRampToValueAtTime( 0, when + fadeTime );
 
         // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
-        this.stop( when + fadeTime + this.FADE_TIME_PAD );
+        this.stop( when + fadeTime + FADE_TIME_PAD );
     };
 
     /**

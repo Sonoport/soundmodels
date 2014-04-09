@@ -1,13 +1,17 @@
 /**
- * @class SPAudioBufferSourceNode
- * @description A wrapper around the AudioBufferSourceNode to be able to track the current
- *                      playPosition of a AudioBufferSourceNode.
  * @module Core
  */
 define( [ 'core/SPPlaybackRateParam' ],
     function ( SPPlaybackRateParam ) {
         "use strict";
 
+        /**
+         * A wrapper around the AudioBufferSourceNode to be able to track the current playPosition of a AudioBufferSourceNode.
+         *
+         * @class SPAudioBufferSourceNode
+         * @constructor
+         * @param {AudioContext} AudioContext to be used in timing the parameter automation events
+         */
         function SPAudioBufferSourceNode( audioContext ) {
             var bufferSourceNode = audioContext.createBufferSource();
             var counterNode = audioContext.createBufferSource();
@@ -21,8 +25,25 @@ define( [ 'core/SPPlaybackRateParam' ],
             this.numberOfInputs = bufferSourceNode.numberOfInputs;
             this.numberOfOutputs = bufferSourceNode.numberOfOutputs;
             this.playbackState = bufferSourceNode.playbackState;
+
+            /**
+             * The speed at which to render the audio stream. Its default value is 1. This parameter is a-rate.
+             *
+             * @property playbackRate
+             * @type AudioParam
+             * @default 1
+             *
+             */
             this.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
 
+            /**
+             * An optional value in seconds where looping should end if the loop attribute is true.
+             *
+             * @property loopEnd
+             * @type Number
+             * @default 0
+             *
+             */
             Object.defineProperty( this, 'loopEnd', {
                 enumerable: true,
                 set: function ( loopEnd ) {
@@ -34,6 +55,14 @@ define( [ 'core/SPPlaybackRateParam' ],
                 }
             } );
 
+            /**
+             * An optional value in seconds where looping should begin if the loop attribute is true.
+             *
+             * @property loopStart
+             * @type Number
+             * @default 0
+             *
+             */
             Object.defineProperty( this, 'loopStart', {
                 enumerable: true,
                 set: function ( loopStart ) {
@@ -45,6 +74,14 @@ define( [ 'core/SPPlaybackRateParam' ],
                 }
             } );
 
+            /**
+             * A property used to set the EventHandler for the ended event that is dispatched to AudioBufferSourceNode node types
+             *
+             * @property onended
+             * @type Function
+             * @default null
+             *
+             */
             Object.defineProperty( this, 'onended', {
                 enumerable: true,
                 set: function ( onended ) {
@@ -55,16 +92,14 @@ define( [ 'core/SPPlaybackRateParam' ],
                 }
             } );
 
-            Object.defineProperty( this, 'gain', {
-                enumerable: true,
-                set: function ( gain ) {
-                    bufferSourceNode.gain = gain;
-                },
-                get: function () {
-                    return bufferSourceNode.gain;
-                }
-            } );
-
+            /**
+             * Indicates if the audio data should play in a loop.
+             *
+             * @property loop
+             * @type Boolean
+             * @default false
+             *
+             */
             Object.defineProperty( this, 'loop', {
                 enumerable: true,
                 set: function ( loop ) {
@@ -76,6 +111,14 @@ define( [ 'core/SPPlaybackRateParam' ],
                 }
             } );
 
+            /**
+             * Position (in seconds) of the last frame played back by the AudioContext
+             *
+             * @property playbackPosition
+             * @type Number
+             * @default 0
+             *
+             */
             Object.defineProperty( this, 'playbackPosition', {
                 enumerable: true,
                 get: function () {
@@ -83,6 +126,14 @@ define( [ 'core/SPPlaybackRateParam' ],
                 }
             } );
 
+            /**
+             * Represents the audio asset to be played.
+             *
+             * @property buffer
+             * @type AudioBuffer
+             * @default null
+             *
+             */
             Object.defineProperty( this, 'buffer', {
                 enumerable: true,
                 set: function ( buffer ) {
@@ -94,24 +145,56 @@ define( [ 'core/SPPlaybackRateParam' ],
                 }
             } );
 
-            this.connect = function ( audioNode ) {
-                bufferSourceNode.connect( audioNode );
-                scopeNode.connect( audioNode );
+            /**
+             * Connects the AudioNode to the input of another AudioNode.
+             *
+             * @method connect
+             * @param {AudioNode} destination AudioNode to connect to.
+             * @param {Number} [output] Index describing which output of the AudioNode from which to connect.
+             * @param {Number} [input] Index describing which input of the destination AudioNode to connect to.
+             *
+             */
+            this.connect = function ( destination, output, input ) {
+                bufferSourceNode.connect( destination, output, input );
+                scopeNode.connect( destination, output, input );
             };
 
+            /**
+             * Disconnects the AudioNode from the input of another AudioNode.
+             *
+             * @method disconnect
+             * @param {Number} [output] Index describing which output of the AudioNode to disconnect.
+             *
+             */
             this.disconnect = function ( output ) {
                 bufferSourceNode.disconnect( output );
                 scopeNode.disconnect( output );
             };
 
-            this.start = function ( time, offset ) {
-                bufferSourceNode.start( time, offset );
-                counterNode.start( time, offset );
+            /**
+             * Schedules a sound to playback at an exact time.
+             *
+             * @method start
+             * @param {Number} when Time (in seconds) when the sound should start playing.
+             * @param {Number} [offset] Offset time in the buffer (in seconds) where playback will begin
+             * @param {Number} [duration] Duration of the portion (in seconds) to be played
+             *
+             */
+            this.start = function ( when, offset, duration ) {
+                bufferSourceNode.start( when, offset, duration );
+                counterNode.start( when, offset, duration );
             };
 
-            this.stop = function ( time ) {
-                bufferSourceNode.stop( time );
-                counterNode.stop( time );
+            /**
+             * Schedules a sound to stop playback at an exact time.
+             *
+             * @method stop
+             * @param {Number} when Time (in seconds) when the sound should stop playing.
+             *
+             */
+            this.stop = function ( when ) {
+                bufferSourceNode.stop( when );
+                counterNode.stop( when );
             };
 
             // Private Methods

@@ -1,19 +1,21 @@
 /**
- * @class Looper
- * @description A sound model which loads a sound file and allows it to be looped continuously at variable speed.
  * @module Models
- * @extends BaseSound
  */
 define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode", 'core/MultiFileLoader' ],
     function ( Config, BaseSound, SPAudioParam, SPAudioBufferSourceNode, multiFileLoader ) {
         "use strict";
 
         /**
-        @constructor
-        @param {AudioBuffer/String} sounds Single or Array of either URLs or AudioBuffers of sounds.
-        @param {Function} onLoadCallback Callback when all sounds have finished loading.
-        @context {AudioContext} AudioContext to be used.
-        */
+         *
+         * A sound model which loads a sound file and allows it to be looped continuously at variable speed.
+         * @class Looper
+         * @constructor
+         * @extends BaseSound
+         * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
+         * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onEndedCallback] Callback when the Looper has finished playing.
+         * @param {AudioContext} context AudioContext to be used.
+         */
         function Looper( sounds, onLoadCallback, onEndedCallback, context ) {
             if ( !( this instanceof Looper ) ) {
                 throw new TypeError( "Looper constructor cannot be called as a function." );
@@ -22,6 +24,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             BaseSound.call( this, context );
 
             this.maxSources = Config.MAX_VOICES;
+            this.numberOfInputs = 1;
+            this.numberOfOutputs = 1;
 
             // Private vars
             var self = this;
@@ -123,61 +127,63 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             // Public Properties
 
             /**
-            @property riseTime
-            @type Number
-            @default 0.05
-            **/
+             * @property riseTime
+             * @type Number
+             * @default 0.05
+             */
             this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 1, this.audioContext );
 
             /**
-            @property decayTime
-            @type Number
-            @default 0.05
-            **/
+             * @property decayTime
+             * @type Number
+             * @default 0.05
+             */
             this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 1, this.audioContext );
 
             /**
-            @property startPoint
-            @type Number
-            @default 0
-            **/
+             * @property startPoint
+             * @type Number
+             * @default 0
+             */
             this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
 
             /**
-            @property playSpeed
-            @type Number
-            @default 1.0
-            **/
+             * @property playSpeed
+             * @type Number
+             * @default 1.0
+             */
             this.playSpeed = null;
 
             /**
-            @property multiTrackGain
-            @type Array of SPAudioParam
-            @default 1.0
-            **/
+             * @property multiTrackGain
+             * @type Array of SPAudioParam
+             * @default 1.0
+             */
             this.multiTrackGain = [];
 
             /**
-            @property maxLoops
-            @type Maximum number of Loops
-            @default -1 (Infinite)
-            **/
+             * @property maxLoops
+             * @type Maximum number of Loops
+             * @default -1 (Infinite)
+             */
             this.maxLoops = SPAudioParam.createPsuedoParam( "maxLoops", -1, 1, -1, this.audioContext );
 
             /**
              * Reinitializes a Looper and sets it's sources.
+             *
              * @method setSources
-             *   @param {AudioBuffer/String} sounds Single or Array of either URLs or AudioBuffers of sounds.
-             * @param {Function} onLoadCallback Callback when all sounds have finished loading.
+             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
+             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 init( sounds );
             };
 
             /**
-             * Plays the sound immediately. If the sound is paused, the sound will be
-             * played back from the same position as it was paused at.
-             * @method start
+             * Plays the sound immediately. If the sound is paused, the sound will be played back from the same position as it was paused at.
+             *
+             * @method play
+             *
              */
             this.play = function () {
 
@@ -196,11 +202,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             /**
              * Start playing after specific time and from a specific offset. If offset is not defined,
              * the value of startPoint property is used.
+             *
              * @method start
-             * @param {Number} startTime The delay in seconds before playing the sound
-             * @param {Number} offset The starting position of the playhead
+             * @param {Number} when The delay in seconds before playing the sound
+             * @param {Number} [offset] The starting position of the playhead
              */
-            this.start = function ( startTime, offset ) {
+            this.start = function ( when, offset ) {
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource ) {
                         if ( typeof offset == 'undefined' ) {
@@ -208,23 +215,23 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                         }
                         //console.log( "Playing" );
                         thisSource.loop = ( self.maxLoops.value !== 1 );
-                        thisSource.start( startTime, offset );
+                        thisSource.start( when, offset );
                     } );
                 }
 
-                BaseSound.prototype.start.call( this, startTime );
+                BaseSound.prototype.start.call( this, when );
             };
 
             /**
              * Stops the sound and resets play head to 0.
              * @method stop
-             * @param {Number} startTime Time offset to stop
+             * @param {Number} when Time offset to stop
              */
-            this.stop = function ( startTime ) {
+            this.stop = function ( when ) {
 
                 if ( this.isPlaying ) {
                     sources_ = sources_.map( function ( thisSource, index ) {
-                        thisSource.stop( startTime );
+                        thisSource.stop( when );
                         lastStopPosition_[ index ] = 0;
 
                         // Create a new source since SourceNodes can't play again.
@@ -241,12 +248,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     } );
                 }
 
-                BaseSound.prototype.stop.call( this, startTime );
+                BaseSound.prototype.stop.call( this, when );
             };
 
             /**
              * Pause the currently playing sound at the current position.
-             * @note Position property is not sample accurate, but accurate enough.
+             *
              * @method pause
              */
             this.pause = function () {

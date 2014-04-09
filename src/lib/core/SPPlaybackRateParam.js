@@ -1,7 +1,4 @@
 /**
- * @class SPPlaybackRateParam
- * @description Wrapper Around AudioParam playbackRate of AudioBufferSourceNode to help
-                        calculate the playbackPosition of the AudioBufferSourceNode.
  * @module Core
  */
 define( [],
@@ -9,9 +6,12 @@ define( [],
         "use strict";
 
         /**
+         * Wrapper around AudioParam playbackRate of SPAudioBufferSourceNode to help calculate the playbackPosition of the AudioBufferSourceNode.
+         *
+         * @class SPPlaybackRateParam
          * @constructor
-         * @param {AudioParam} the playbackRate of a AudioBufferSourceNode.
-         * @param {AudioNode} a AudioBufferSourceNode.
+         * @param {AudioParam} audioParam The playbackRate of a source AudioBufferSourceNode.
+         * @param {AudioParam} counterParam The playbackRate of counter AudioBufferSourceNode.
          */
         function SPPlaybackRateParam( audioParam, counterParam ) {
             this.defaultValue = audioParam.defaultValue;
@@ -30,28 +30,34 @@ define( [],
                     return audioParam.value;
                 }
             } );
+
             this.linearRampToValueAtTime = function ( value, endTime ) {
                 audioParam.linearRampToValueAtTime( value, endTime );
                 counterParam.linearRampToValueAtTime( value, endTime );
             };
+
             this.exponentialRampToValueAtTime = function ( value, endTime ) {
                 audioParam.exponentialRampToValueAtTime( value, endTime );
                 counterParam.exponentialRampToValueAtTime( value, endTime );
 
             };
+
             this.setValueCurveAtTime = function ( values, startTime, duration ) {
                 audioParam.setValueCurveAtTime( values, startTime, duration );
                 counterParam.setValueCurveAtTime( values, startTime, duration );
             };
+
             this.setTargetAtTime = function ( target, startTime, timeConstant ) {
                 audioParam.setTargetAtTime( target, startTime, timeConstant );
                 counterParam.setTargetAtTime( target, startTime, timeConstant );
 
             };
+
             this.setValueAtTime = function ( value, time ) {
                 audioParam.setValueAtTime( value, time );
                 counterParam.setValueAtTime( value, time );
             };
+
             this.cancelScheduledValues = function ( time ) {
                 audioParam.cancelScheduledValues( time );
                 counterParam.cancelScheduledValues( time );

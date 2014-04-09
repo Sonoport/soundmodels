@@ -19,7 +19,7 @@ define( [],
          *
          * @method semitonesToRatio
          * @static
-         * @param {Number} Value in semitones to be converted to ratio.
+         * @param {Number} semiTones Value in semitones to be converted to ratio.
          *
          */
         Converter.semitonesToRatio = function ( semiTones ) {

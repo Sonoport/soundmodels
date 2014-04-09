@@ -1,17 +1,18 @@
 /**
- * @class FileLoader
- * @description Load file from a URL.
  * @module Core
  */
 define( [ 'core/DetectLoopMarkers' ],
     function ( detectLoopMarkers ) {
         "use strict";
 
-        /*
+        /**
+         * Load a single file from a URL or a File object.
+         *
+         * @class FileLoader
          * @constructor
-         * @param {String} URL URL of the file to be Loaded
+         * @param {String/File} URL URL of the file to be Loaded
          * @param {String} context AudioContext to be used in decoding the file
-         * @param {String} onloadCallback Callback function to be called when the file loading is complete.
+         * @param {String} [onloadCallback] Callback function to be called when the file loading is complete.
          */
         function FileLoader( URL, context, onloadCallback ) {
             if ( !( this instanceof FileLoader ) ) {

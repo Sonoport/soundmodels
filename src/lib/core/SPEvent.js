@@ -1,15 +1,26 @@
 /**
- * @class Trigger
- * @description A sound model which triggers a specific sound file with multiple voices
- * @module Looper
+ * @module Core
  */
 define( [],
     function () {
         "use strict";
 
+        /**
+         * Defines a Queued event on Sound Models. Currently supports these types of events. </br>
+         * [ "QENONE", "QESTOP", "QESTART", "QESETPARAM", "QESETSRC", "QERELEASE" ]
+         *
+         * @class SPEvent
+         * @constructor
+         * @param {String} type The type of event to be created.
+         * @param {String} timeStamp The time (in seconds) when this event will be triggered.
+         * @param {String} eventID An arbitary number used to keep track of related events.
+         * @param {String} [paramName] Name of the parameter to be changed in this event.
+         * @param {String} [paramValue] The value of parameter to be changed in this event.
+         * @param {String} [audioBuffer] The AudioBuffer source to be set in this event.
+         */
         function SPEvent( type, timeStamp, eventID, paramName, paramValue, audioBuffer ) {
             if ( !( this instanceof SPEvent ) ) {
-                throw new TypeError( "Looper constructor cannot be called as a function." );
+                throw new TypeError( "SPEvents constructor cannot be called as a function." );
             }
 
             var validEvents = [ "QENONE", "QESTOP", "QESTART", "QESETPARAM", "QESETSRC", "QERELEASE" ];

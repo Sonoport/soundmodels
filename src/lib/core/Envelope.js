@@ -10,7 +10,7 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
      * @class Envelope
      * @constructor
      * @extends BaseSound
-     * @param {AudioContext} context
+     * @param {AudioContext} context AudioContext in which this Sound is defined.
      */
     function Envelope( context ) {
         // This first guard ensures that the callee has invoked our Class' constructor function
@@ -28,24 +28,8 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
             this.audioContext = context;
         }
 
-        /**
-         * Number of inputs
-         *
-         * @property numberOfInputs
-         * @type Number
-         * @default 1
-         */
         this.numberOfInputs = 1;
-
-        /**
-         * Number of outputs
-         *
-         * @property numberOfOutputs
-         * @type Number
-         * @default 1
-         */
         this.numberOfOutputs = 1;
-
         /**
          * The input node that the output node will be connected to.
          *
@@ -73,13 +57,12 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
         /**
          * Start the Envelope.
          *
-         * @method Start
-         * @param {Number} when Time (in seconds) at which the Envelope will start.
+         * @method start
+         * @param {Number} [when] Time (in seconds) at which the Envelope will start.
          */
         this.start = function start( when ) {
             BaseSound.prototype.start.call( this, when );
             if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
-                console.log( "starting now " );
                 when = this.audioContext.currentTime;
             }
 
@@ -107,7 +90,7 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
          * Stop the Envelope.
          *
          * @method stop
-         * @param {Number} when Time (in seconds) at which the Envelope will stop.
+         * @param {Number} [when] Time (in seconds) at which the Envelope will stop.
          */
         this.stop = function stop( when ) {
             BaseSound.prototype.stop.call( this, when );
@@ -122,17 +105,19 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
          * Connect to release Gain Node.
          *
          * @method connect
-         * @param {Object} output connects releaseGainNode to another Audio Node.
+         * @param {AudioNode} destination AudioNode to connect to.
+         * @param {Number} [output] Index describing which output of the AudioNode from which to connect.
+         * @param {Number} [input] Index describing which input of the destination AudioNode to connect to.
          */
-        this.connect = function connect( output ) {
-            BaseSound.prototype.connect.call( this, output );
+        this.connect = function connect( destination, output, input ) {
+            BaseSound.prototype.connect.call( this, destination, output, input );
         };
 
         /**
          * Disconnect from release Gain Node.
          *
          * @method disconnect
-         * @param {Number} outputIndex  Index describing which output of the AudioNode to disconnect.
+         * @param {Number} [outputIndex]  Index describing which output of the AudioNode to disconnect.
          */
         this.disconnect = function disconnect( outputIndex ) {
             BaseSound.prototype.disconnect.call( this, outputIndex );
@@ -142,8 +127,8 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
          * Linearly ramps down the gain of releaseGainNode from current value to 0 in fadeTime (s). It is better to call this method on a user initiated event or after some time (in seconds) has passed.
          *
          * @method release
-         * @param {Number} fadeTime Amount of time (seconds) taken to release or fade out the sound.
-         * @param {Number} when Time (in seconds) at which the Envelope will release.
+         * @param {Number} [fadeTime] Amount of time (seconds) taken to release or fade out the sound.
+         * @param {Number} [when] Time (in seconds) at which the Envelope will release.
          */
         this.release = function release( fadeTime, when ) {
             if ( typeof when === "undefined" ) {
@@ -192,11 +177,14 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
          * Resets all flags and counters to begin a new envelope traversal.
          *
          * @method reinit
-         * @param {Boolean} hard  If true, do 'hard' reinit, otherwise attempt to smoothly continue current envelope value.
-         * @param {Number} when Time (in seconds) at which the Envelope will reinit.
+         * @param {Boolean} [hard]  If true, do 'hard' reinit, otherwise attempt to smoothly continue current envelope value.
+         * @param {Number} [when] Time (in seconds) at which the Envelope will reinit.
          */
         this.reinit = function ( hard, when ) {
             hard = hard || false;
+            if ( typeof when === "undefined" ) {
+                when = this.audioContext.currentTime;
+            }
             if ( hard ) {
                 // cancel all scheduled ramps on this releaseGainNode
                 this.releaseGainNode.gain.cancelScheduledValues( when );
