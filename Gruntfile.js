@@ -108,14 +108,18 @@ module.exports = function ( grunt ) {
                 }
             },
             release: {
-                name: '<%= pkg.name %>',
+                name: '<%= pkg.description %>',
                 description: '<%= pkg.description %>',
                 version: '<%= pkg.version %>',
                 url: '<%= pkg.homepage %>',
+                logo: 'http://sonoport.com/img/Logo.png',
                 options: {
-                    paths: ['<%= dirs.models %>'],
-                    outdir: '<%= dirs.release %>',
-                    linkNatives: "true"
+                    // SPAudioParam.js, BaseSound.js, Envelope.js
+                    paths: [ '<%= dirs.models %>'],
+                    outdir: '<%= dirs.release %>/docs',
+                    linkNatives: "true",
+                    nocode: "true"
+
                 }
             }
         },
@@ -124,7 +128,7 @@ module.exports = function ( grunt ) {
                 files: [ {
                     expand: true,
                     src: [ '<%= dirs.build %>/models/*.js' ],
-                    dest: '<%= dirs.dist %>',
+                    dest: '<%= dirs.release %>/lib',
                     filter: 'isFile',
                     flatten: true
                 }, ]
@@ -139,7 +143,7 @@ module.exports = function ( grunt ) {
                     linebreak: true
                 },
                 files: {
-                    src: [ '<%= dirs.dist %>/*.js' ]
+                    src: [ '<%= dirs.release %>/lib/*.js' ]
                 }
             }
         },
