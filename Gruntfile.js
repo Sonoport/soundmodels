@@ -4,6 +4,15 @@ module.exports = function ( grunt ) {
     grunt.initConfig( {
         // This line makes your node configurations available for use
         pkg: grunt.file.readJSON( 'package.json' ),
+        // Define a banner
+        banner: '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
+            '<%= grunt.template.today("yyyy-mm-dd") %> */ \n' +
+            'console.log("   ____                           __ ");' +
+            'console.log("  / _____  ___ ___  ___ ___  ____/ /_");' +
+            'console.log(" _\\\\ \\\\/ _ \\\\/ _ / _ \\\\/ _ / _ \\\\/ __/ __/");' +
+            'console.log("/___/\\\\___/_//_\\\\___/ .__\\\\___/_/  \\\\__/ ");' +
+            'console.log("                 /_/                 ");' +
+            'console.log("Thanks for using Sonoport Dynamic Sound Library!");\n',
         // Define files and locations
         files: {
             jsSrc: 'src/lib/**/*.js',
@@ -116,7 +125,7 @@ module.exports = function ( grunt ) {
                 logo: 'http://sonoport.com/img/Logo.png',
                 options: {
                     // SPAudioParam.js, BaseSound.js, Envelope.js
-                    paths: [ '<%= dirs.models %>', 'src/lib/temp'],
+                    paths: [ '<%= dirs.models %>', 'src/lib/temp' ],
                     outdir: '<%= dirs.release %>/docs',
                     linkNatives: "true",
                     nocode: "true"
@@ -137,7 +146,7 @@ module.exports = function ( grunt ) {
             temp: {
                 files: [ {
                     expand: true,
-                    src: [ '<%= dirs.core %>/{SPAudioParam,BaseSound,Envelope}.js'],
+                    src: [ '<%= dirs.core %>/{SPAudioParam,BaseSound,Envelope}.js' ],
                     dest: '<%= dirs.temp %>',
                     filter: 'isFile',
                     flatten: true
@@ -145,27 +154,33 @@ module.exports = function ( grunt ) {
             }
         },
         clean: {
-          temp: ['<%= dirs.temp %>'],
-      },
-      usebanner: {
-        main: {
-            options: {
-                position: 'top',
-                banner: '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
-                '<%= grunt.template.today("yyyy-mm-dd") %> */\n',
-                linebreak: true
-            },
-            files: {
-                src: [ '<%= dirs.release %>/lib/*.js' ]
+            temp: [ '<%= dirs.temp %>' ],
+        },
+        usebanner: {
+            main: {
+                options: {
+                    position: 'top',
+                    banner: '<%= banner %>',
+                    linebreak: true
+                },
+                files: {
+                    src: [ '<%= dirs.release %>/lib/*.js' ]
+                }
             }
-        }
-    },
+        },
         // HTTP server for testing
         connect: {
-            test: {
+            build: {
                 options: {
                     port: 8000,
                     base: [ '<%= dirs.build %>', 'test/models' ],
+                    open: true
+                }
+            },
+            release: {
+                options: {
+                    port: 8000,
+                    base: [ '<%= dirs.release %>/lib', 'test/models' ],
                     open: true
                 }
             }
@@ -178,7 +193,7 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-copy' );
     grunt.loadNpmTasks( 'grunt-contrib-yuidoc' );
     grunt.loadNpmTasks( 'grunt-contrib-requirejs' );
-    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks( 'grunt-contrib-clean' );
 
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
     grunt.loadNpmTasks( 'grunt-banner' );
@@ -188,5 +203,6 @@ module.exports = function ( grunt ) {
 
     grunt.registerTask( 'release', [ 'jshint', 'requirejs', 'copy:temp', 'yuidoc:release', 'clean:temp', 'copy:dist', 'usebanner' ] );
 
-    grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'requirejs', 'connect', 'watch' ] );
+    grunt.registerTask( 'test', [ 'dev-build', 'connect:build', 'watch' ] );
+    grunt.registerTask( 'test-release', [ 'release', 'connect:release', 'watch' ] );
 };
