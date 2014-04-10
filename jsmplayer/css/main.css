@@ -139,6 +139,11 @@ footer {
   clear: both;
 }
 
+/* line 42, ../sass/_base.scss */
+.param-box {
+  width: 500px;
+}
+
 /* line 5, ../sass/modules/_dropdown.scss */
 .dropdown-menu {
   background-color: #f2f4f5;
@@ -364,3 +369,201 @@ footer {
   background-color: #526476;
   border-bottom-color: #526476;
 }
+
+/* line 8, ../sass/modules/_slider.scss */
+.ui-slider-wrapper {
+  position: relative;
+}
+
+/* line 9, ../sass/modules/_slider.scss */
+.ui-slider-wrapper .ui-slider-horizontal {
+  width: 100%;
+}
+
+/* line 11, ../sass/modules/_slider.scss */
+.ui-slider-labels {
+  position: absolute;
+  border: 1px solid transparent;
+}
+
+/* line 12, ../sass/modules/_slider.scss */
+.ui-slider-label-ticks {
+  border: 1px solid transparent;
+  position: absolute;
+  white-space: nowrap;
+}
+
+/* line 13, ../sass/modules/_slider.scss */
+.ui-slider-label-ticks span {
+  font-size: 0.9em;
+  min-width: 1.2em;
+}
+
+/* line 15, ../sass/modules/_slider.scss */
+.ui-slider-wrapper.horizontal {
+  height: 3em;
+}
+
+/* line 16, ../sass/modules/_slider.scss */
+.horizontal .ui-slider-labels {
+  left: 0;
+  right: 0;
+  top: 0.7em;
+}
+
+/* line 17, ../sass/modules/_slider.scss */
+.horizontal .ui-slider-label-ticks {
+  width: 1.2em;
+  height: .5em;
+  text-align: center;
+  border-left: 1px solid #999;
+}
+
+/* line 18, ../sass/modules/_slider.scss */
+.horizontal .ui-slider-label-ticks span {
+  position: relative;
+  display: inline-block;
+  margin-left: -1.2em;
+  top: .8em;
+}
+
+/* line 20, ../sass/modules/_slider.scss */
+.ui-slider-wrapper.vertical {
+  width: 4.5em;
+}
+
+/* line 21, ../sass/modules/_slider.scss */
+.vertical .ui-slider-labels {
+  top: 1px;
+  bottom: 0;
+  left: 0.7em;
+}
+
+/* line 22, ../sass/modules/_slider.scss */
+.vertical .ui-slider-label-ticks {
+  height: 1.2em;
+  width: 0.8em;
+  border-bottom: 1px solid #999;
+}
+
+/* line 23, ../sass/modules/_slider.scss */
+.vertical .ui-slider-label-ticks span {
+  position: relative;
+  display: inline-block;
+  margin-left: 1em;
+  top: .6em;
+}
+
+/* line 25, ../sass/modules/_slider.scss */
+.ui-slider {
+  width: 400px;
+}
+
+/*
+.progress {
+  background: mix($brand-primary, white, 10%);
+  border-radius: 32px;
+  height: $progress-height;
+  @include box-shadow(none);
+}
+
+.ui-slider {
+  @extend .progress;
+  margin-bottom: 20px;
+  position: relative;
+  cursor: pointer;
+}
+
+.ui-slider-handle {
+  background-color: $slider-handle-bg;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 18px;
+  position: absolute;
+  width: 18px;
+  z-index: 2;
+  @include transition(background .25s);
+  
+  &:hover,
+  &:focus {
+    background-color: $slider-handle-hover-bg;
+    outline: none;
+  }
+  &:active {
+    background-color: $slider-handle-active-bg;
+  }
+}
+
+.ui-slider-range {
+  background-color: $slider-range-bg;
+  display: block;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
+}
+
+// Segments
+// -------------------------
+.ui-slider-segment {
+  background-color: $slider-segment-bg;
+  border-radius: 50%;
+  height: 6px;
+  width: 6px;
+}
+
+// Values
+// -------------------------
+.ui-slider-value {
+  float: right;
+  font-size: $slider-value-font-size;
+  margin-top: $slider-height;
+  
+  &.first {
+    clear: left;
+    float: left;
+  }
+}
+
+// Horizontal orientation
+// -------------------------
+
+.ui-slider-horizontal {
+  .ui-slider-handle {
+    margin-left: -9px;
+    top: -3px;
+
+    &[style*="100"] {
+      margin-left: -15px;
+    }
+  }
+  .ui-slider-range {
+    border-radius: 30px 0 0 30px;
+  }
+  .ui-slider-segment {
+    float: left;
+    margin: 3px -6px 0 0;
+  }
+}
+
+// Vertical orientation
+// -------------------------
+
+.ui-slider-vertical {
+  width: $slider-height;
+
+  .ui-slider-handle {
+    margin-left: -3px;
+    margin-bottom: -11px;
+    top: auto;
+  }
+  .ui-slider-range {
+    width: 100%;
+    bottom: 0;
+    border-radius: 0 0 30px 30px;
+  }
+  .ui-slider-segment {
+    position: absolute;
+    right: 3px;
+  }
+}
+*/

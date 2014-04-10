@@ -8,7 +8,7 @@ module.exports = function ( grunt ) {
         files: {
             jsSrc: 'src/lib/**/*.js',
             testSrc: 'test/**/*.js',
-            playerSrc: 'jsmplayer/js/player.js'
+            playerSrc: 'jsmplayer/js/**.js'
         },
         dirs: {
             src: 'src',

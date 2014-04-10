@@ -3,8 +3,16 @@
 
 var AudioContext = webkitAudioContext || AudioContext;
 var context = new AudioContext();
+/*$( document )
+    .ready( function () {
+        $( "#slider1" )
+            .slider( {
+                step: 0.1,
+                min: 0.05,
+                max: 9.95
+            } );
+    } );
 
-/*
 $( "select[name='herolist']" )
     .selectpicker( {
         style: 'btn-primary',
@@ -49,8 +57,12 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
     function onLoad( status ) {
         console.log( "Looper Loaded :" + status );
 
-        // After the files have loaded generate param
-        generateParam();
+        $( document )
+            .ready( function () {
+                // After the files have loaded generate param
+                generateParam();
+            } );
+
     }
     // toggle sound
     $( "#playbtn" )
@@ -124,22 +136,20 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
     }
 
     function makeSlider( id, val, min, max, step ) {
+
         $( "#" + id )
-            .slider( {
-                range: "true",
-                value: val,
+            .tickslider( {
                 min: min,
                 max: max,
-                step: step,
                 slide: function ( event, ui ) {
                     $( "#" + id + "val" )
                         .val( ui.value );
                 }
             } );
-
         $( "#" + id + "val" )
             .val( $( "#" + id )
-                .slider( "value" ) );
+                .tickslider( "value" ) );
+
     }
 
 } );
