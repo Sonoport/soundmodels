@@ -1,4 +1,4 @@
 /*javascript-sound-models - v0.4.0 - 2014-04-10 */ 
-console.log("   ____                           __ ");console.log("  / _____  ___ ___  ___ ___  ____/ /_");console.log(" _\\ \\/ _ \\/ _ / _ \\/ _ / _ \\/ __/ __/");console.log("/___/\\___/_//_\\___/ .__\\___/_/  \\__/ ");console.log("                 /_/                 ");console.log("Thanks for using Sonoport Dynamic Sound Library!");
+console.log("   ____                           __ \n" + "  / _____  ___ ___  ___ ___  ____/ /_\n" + " _\\ \\/ _ \\/ _ / _ \\/ _ / _ \\/ __/ __/\n" + "/___/\\___/_//_\\___/ .__\\___/_/  \\__/ \n" + "                 /_/                 \n" + "Hello Developer!\n" + "Thanks for using Sonoport Dynamic Sound Library.");
 
 define("models/Scrubber",function(){});

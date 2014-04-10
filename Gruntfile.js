@@ -7,12 +7,7 @@ module.exports = function ( grunt ) {
         // Define a banner
         banner: '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
             '<%= grunt.template.today("yyyy-mm-dd") %> */ \n' +
-            'console.log("   ____                           __ ");' +
-            'console.log("  / _____  ___ ___  ___ ___  ____/ /_");' +
-            'console.log(" _\\\\ \\\\/ _ \\\\/ _ / _ \\\\/ _ / _ \\\\/ __/ __/");' +
-            'console.log("/___/\\\\___/_//_\\\\___/ .__\\\\___/_/  \\\\__/ ");' +
-            'console.log("                 /_/                 ");' +
-            'console.log("Thanks for using Sonoport Dynamic Sound Library!");\n',
+            'console.log("   ____                           __ \\n" + "  / _____  ___ ___  ___ ___  ____/ /_\\n" + " _\\\\ \\\\/ _ \\\\/ _ / _ \\\\/ _ / _ \\\\/ __/ __/\\n" + "/___/\\\\___/_//_\\\\___/ .__\\\\___/_/  \\\\__/ \\n" + "                 /_/                 \\n" + "Hello Developer!\\n" + "Thanks for using Sonoport Dynamic Sound Library.");\n',
         // Define files and locations
         files: {
             jsSrc: 'src/lib/**/*.js',
