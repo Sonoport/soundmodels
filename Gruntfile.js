@@ -16,7 +16,8 @@ module.exports = function ( grunt ) {
             dist: 'dist',
             release: 'dist/release',
             core: 'src/lib/core',
-            models: 'src/lib/models'
+            models: 'src/lib/models',
+            temp: 'src/lib/temp',
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
@@ -115,7 +116,7 @@ module.exports = function ( grunt ) {
                 logo: 'http://sonoport.com/img/Logo.png',
                 options: {
                     // SPAudioParam.js, BaseSound.js, Envelope.js
-                    paths: [ '<%= dirs.models %>'],
+                    paths: [ '<%= dirs.models %>', 'src/lib/temp'],
                     outdir: '<%= dirs.release %>/docs',
                     linkNatives: "true",
                     nocode: "true"
@@ -124,7 +125,7 @@ module.exports = function ( grunt ) {
             }
         },
         copy: {
-            main: {
+            dist: {
                 files: [ {
                     expand: true,
                     src: [ '<%= dirs.build %>/models/*.js' ],
@@ -132,21 +133,33 @@ module.exports = function ( grunt ) {
                     filter: 'isFile',
                     flatten: true
                 }, ]
+            },
+            temp: {
+                files: [ {
+                    expand: true,
+                    src: [ '<%= dirs.core %>/{SPAudioParam,BaseSound,Envelope}.js'],
+                    dest: '<%= dirs.temp %>',
+                    filter: 'isFile',
+                    flatten: true
+                }, ]
             }
         },
-        usebanner: {
-            main: {
-                options: {
-                    position: 'top',
-                    banner: '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
-                        '<%= grunt.template.today("yyyy-mm-dd") %> */\n',
-                    linebreak: true
-                },
-                files: {
-                    src: [ '<%= dirs.release %>/lib/*.js' ]
-                }
+        clean: {
+          temp: ['<%= dirs.temp %>'],
+      },
+      usebanner: {
+        main: {
+            options: {
+                position: 'top',
+                banner: '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
+                '<%= grunt.template.today("yyyy-mm-dd") %> */\n',
+                linebreak: true
+            },
+            files: {
+                src: [ '<%= dirs.release %>/lib/*.js' ]
             }
-        },
+        }
+    },
         // HTTP server for testing
         connect: {
             test: {
@@ -165,6 +178,7 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-copy' );
     grunt.loadNpmTasks( 'grunt-contrib-yuidoc' );
     grunt.loadNpmTasks( 'grunt-contrib-requirejs' );
+    grunt.loadNpmTasks('grunt-contrib-clean');
 
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
     grunt.loadNpmTasks( 'grunt-banner' );
@@ -172,7 +186,7 @@ module.exports = function ( grunt ) {
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc:dev' ] );
 
-    grunt.registerTask( 'release', [ 'jsbeautifier', 'jshint', 'requirejs', 'yuidoc:release', 'copy', 'usebanner' ] );
+    grunt.registerTask( 'release', [ 'jshint', 'requirejs', 'copy:temp', 'yuidoc:release', 'clean:temp', 'copy:dist', 'usebanner' ] );
 
     grunt.registerTask( 'test', [ 'jsbeautifier', 'jshint', 'requirejs', 'connect', 'watch' ] );
 };

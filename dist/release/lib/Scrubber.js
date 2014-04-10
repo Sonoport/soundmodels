@@ -1,3 +1,3 @@
-/*javascript-sound-models - v0.4.0 - 2014-04-09 */
+/*javascript-sound-models - v0.4.0 - 2014-04-10 */
 
 define("models/Scrubber",function(){});

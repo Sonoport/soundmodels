@@ -1,4 +1,5 @@
 /**
+/**
  * @module Core
  */
 define( [ 'core/AudioContextMonkeyPatch' ], function () {
