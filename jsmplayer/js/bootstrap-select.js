@@ -6,8 +6,7 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  * ======================================================================== */
 
-+ function ( $ ) {
-    'use strict';
+( function ( $ ) {
 
     // DROPDOWN CLASS DEFINITION
     // =========================
@@ -155,9 +154,9 @@
         .on( 'click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle )
         .on( 'keydown.bs.dropdown.data-api', toggle + ', [role="menu"], [role="listbox"]', Dropdown.prototype.keydown );
 
-}( jQuery );
+} )( jQuery );
 
-! function ( $ ) {
+( function ( $ ) {
     var Selectpicker = function ( element, options, e ) {
         if ( e ) {
             e.stopPropagation();
@@ -238,24 +237,26 @@
             this.checkTabIndex();
             this.clickListener();
             var menuPadding = parseInt( menu.css( 'padding-top' ) ) + parseInt( menu.css( 'padding-bottom' ) ) + parseInt( menu.css( 'border-top-width' ) ) + parseInt( menu.css( 'border-bottom-width' ) );
-            if ( this.options.size == 'auto' ) {
-                function getSize() {
-                    var selectOffset_top_scroll = selectOffset_top - $( window )
-                        .scrollTop();
-                    var windowHeight = $( window )
-                        .innerHeight();
-                    var menuExtras = menuPadding + parseInt( menu.css( 'margin-top' ) ) + parseInt( menu.css( 'margin-bottom' ) ) + 2;
-                    var selectOffset_bot = windowHeight - selectOffset_top_scroll - selectHeight - menuExtras;
-                    menuHeight = selectOffset_bot;
-                    if ( select.hasClass( 'dropup' ) ) {
-                        menuHeight = selectOffset_top_scroll - menuExtras;
-                    }
-                    menu.css( {
-                        'max-height': menuHeight + 'px',
-                        'overflow-y': 'auto',
-                        'min-height': liHeight * 3 + 'px'
-                    } );
+
+            function getSize() {
+                var selectOffset_top_scroll = selectOffset_top - $( window )
+                    .scrollTop();
+                var windowHeight = $( window )
+                    .innerHeight();
+                var menuExtras = menuPadding + parseInt( menu.css( 'margin-top' ) ) + parseInt( menu.css( 'margin-bottom' ) ) + 2;
+                var selectOffset_bot = windowHeight - selectOffset_top_scroll - selectHeight - menuExtras;
+                menuHeight = selectOffset_bot;
+                if ( select.hasClass( 'dropup' ) ) {
+                    menuHeight = selectOffset_top_scroll - menuExtras;
                 }
+                menu.css( {
+                    'max-height': menuHeight + 'px',
+                    'overflow-y': 'auto',
+                    'min-height': liHeight * 3 + 'px'
+                } );
+            }
+            if ( this.options.size == 'auto' ) {
+
                 getSize();
                 $( window )
                     .resize( getSize );
@@ -371,9 +372,9 @@
                     if ( $( this )
                         .parent()
                         .is( 'optgroup' ) && $( this )
-                        .data( 'divider' ) != true ) {
+                        .data( 'divider' ) !== true ) {
                         if ( $( this )
-                            .index() == 0 ) {
+                            .index() === 0 ) {
                             //Get the opt group label
                             var label = $( this )
                                 .parent()
@@ -385,7 +386,7 @@
                                 .data( 'subtext' ) + '</small>' : '';
                             label += labelSubtext;
 
-                            if ( $( this )[ 0 ].index != 0 ) {
+                            if ( $( this )[ 0 ].index !== 0 ) {
                                 _liA.push(
                                     '<div class="divider"></div>' +
                                     '<dt>' + label + '</dt>' +
@@ -400,10 +401,10 @@
                             _liA.push( _this.createA( text, "opt " + optionClass ) );
                         }
                     } else if ( $( this )
-                        .data( 'divider' ) == true ) {
+                        .data( 'divider' ) === true ) {
                         _liA.push( '<div class="divider"></div>' );
                     } else if ( $( this )
-                        .data( 'hidden' ) == true ) {
+                        .data( 'hidden' ) === true ) {
                         _liA.push( '' );
                     } else {
                         _liA.push( _this.createA( text, optionClass ) );
@@ -420,7 +421,7 @@
 
             //If we dont have a selected item, and we dont have a title, select the first element so something is set in the button
             if ( this.$element.find( 'option:selected' )
-                .length == 0 && !_this.options.title ) {
+                .length === 0 && !_this.options.title ) {
                 this.$element.find( 'option' )
                     .eq( 0 )
                     .prop( 'selected', true )
@@ -463,7 +464,7 @@
             var selectedItems = this.$element.find( 'option:selected' )
                 .map( function ( index, value ) {
                     if ( $( this )
-                        .attr( 'title' ) != undefined ) {
+                        .attr( 'title' ) !== undefined ) {
                         return $( this )
                             .attr( 'title' );
                     } else {
@@ -479,7 +480,7 @@
             //If this is multi select, and the selectText type is count, the show 1 of 2 selected etc..                    
             if ( _this.multiple && _this.options.selectedTextFormat.indexOf( 'count' ) > -1 ) {
                 var max = _this.options.selectedTextFormat.split( ">" );
-                if ( ( max.length > 1 && selectedItems.length > max[ 1 ] ) || ( max.length == 1 && selectedItems.length >= 2 ) ) {
+                if ( ( max.length > 1 && selectedItems.length > max[ 1 ] ) || ( max.length === 1 && selectedItems.length >= 2 ) ) {
                     title = selectedItems.length + ' of ' + this.$element.find( 'option' )
                         .length + ' selected';
                 }
@@ -487,7 +488,7 @@
 
             //If we dont have a title, then use the default, or if nothing is set at all, use the not selected text
             if ( !title ) {
-                title = _this.options.title != undefined ? _this.options.title : _this.options.noneSelectedText;
+                title = _this.options.title !== undefined ? _this.options.title : _this.options.noneSelectedText;
             }
 
             this.$element.next( '.select' )
@@ -681,6 +682,6 @@
         width: null,
         menuStyle: null,
         toggleSize: null
-    }
+    };
 
-}( window.jQuery );
+} )( jQuery );

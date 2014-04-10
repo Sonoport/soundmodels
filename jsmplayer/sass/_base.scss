@@ -38,3 +38,7 @@ footer {
 	@include container(show);
 	@include container(80%);
 }
+
+.param-box {
+	width: 500px;
+}

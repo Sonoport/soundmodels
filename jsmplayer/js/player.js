@@ -3,7 +3,6 @@
 
 var AudioContext = webkitAudioContext || AudioContext;
 var context = new AudioContext();
-
 $( document )
     .ready( function () {
         // select options dropdown menu for selecting sound models
@@ -172,22 +171,20 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
     }
 
     function makeSlider( id, val, min, max, step ) {
+
         $( "#" + id )
-            .slider( {
-                range: "true",
-                value: val,
+            .tickslider( {
                 min: min,
                 max: max,
-                step: step,
                 slide: function ( event, ui ) {
                     $( "#" + id + "val" )
                         .val( ui.value );
                 }
             } );
-
         $( "#" + id + "val" )
             .val( $( "#" + id )
-                .slider( "value" ) );
+                .tickslider( "value" ) );
+
     }
 
 } );
