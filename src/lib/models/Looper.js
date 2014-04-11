@@ -43,14 +43,16 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
                 self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
 
-                if ( typeof onLoadCallback === 'function' )
+                if ( typeof onLoadCallback === 'function' ) {
                     onLoadCallback( status );
+                }
             };
 
             var onSourceEnded = function ( event, trackIndex ) {
                 self.isPlaying = false;
-                if ( typeof onEndedCallback === 'function' )
+                if ( typeof onEndedCallback === 'function' ) {
                     onEndedCallback( self, trackIndex );
+                }
             };
 
             var insertBufferSource = function ( audioBuffer, trackIndex ) {
@@ -60,6 +62,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 source.buffer = audioBuffer;
                 source.loopEnd = audioBuffer.duration;
                 source.onended = function ( event ) {
+                    console.log( source.playbackPosition );
                     onSourceEnded( event, trackIndex );
                 };
 
@@ -206,8 +209,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @method start
              * @param {Number} when The delay in seconds before playing the sound
              * @param {Number} [offset] The starting position of the playhead
+             * @param {Number} [duration] Duration of the portion (in seconds) to be played
              */
-            this.start = function ( when, offset ) {
+            this.start = function ( when, offset, duration ) {
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource ) {
                         if ( typeof offset == 'undefined' ) {
@@ -215,11 +219,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                         }
                         //console.log( "Playing" );
                         thisSource.loop = ( self.maxLoops.value !== 1 );
-                        thisSource.start( when, offset );
+                        thisSource.start( when, offset, duration );
                     } );
                 }
 
-                BaseSound.prototype.start.call( this, when );
+                BaseSound.prototype.start.call( this, when, offset, duration );
             };
 
             /**

@@ -24,7 +24,7 @@ require(["models/Trigger"], function (Trigger) {
         trigButton.addEventListener('click', function(){
             trigger.play();
         });
-    }, context);
+    }, null, context);
 
 
 });

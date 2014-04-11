@@ -94,10 +94,10 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      * @param {Number} [input] Index describing which input of the destination AudioNode to connect to.
      */
     BaseSound.prototype.connect = function ( destination, output, input ) {
-        if ( output instanceof AudioNode ) {
-            this.releaseGainNode.connect( output );
-        } else if ( output.inputNode instanceof AudioNode ) {
-            this.releaseGainNode.connect( output.inputNode );
+        if ( destination instanceof AudioNode ) {
+            this.releaseGainNode.connect( destination, output, input );
+        } else if ( destination.inputNode instanceof AudioNode ) {
+            this.releaseGainNode.connect( destination.inputNode, output, input );
         } else {
             throw {
                 name: "No Input Connection Exception",

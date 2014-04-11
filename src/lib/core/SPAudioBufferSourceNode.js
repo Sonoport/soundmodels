@@ -181,6 +181,9 @@ define( [ 'core/SPPlaybackRateParam' ],
              *
              */
             this.start = function ( when, offset, duration ) {
+                if ( typeof duration == 'undefined' ) {
+                    duration = bufferSourceNode.buffer.duration;
+                }
                 bufferSourceNode.start( when, offset, duration );
                 counterNode.start( when, offset, duration );
             };
@@ -219,7 +222,7 @@ define( [ 'core/SPPlaybackRateParam' ],
 
             function savePosition( processEvent ) {
                 var inputBuffer = processEvent.inputBuffer.getChannelData( 0 );
-                lastPos = inputBuffer[ inputBuffer.length ];
+                lastPos = inputBuffer[ inputBuffer.length ] || 0;
             }
 
             init();

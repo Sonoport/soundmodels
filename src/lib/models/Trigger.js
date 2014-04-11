@@ -47,7 +47,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 onLoadCallback();
             };
 
-            function init(sounds) {
+            function init( sounds ) {
                 soundQueue_ = new SoundQueue( context );
                 multiFileLoader.call( self, sounds, context, onAllLoad );
             }
@@ -131,7 +131,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 currentEventID_++;
             };
 
-            init(sounds);
+            init( sounds );
         }
 
         Trigger.prototype = Object.create( BaseSound.prototype );
