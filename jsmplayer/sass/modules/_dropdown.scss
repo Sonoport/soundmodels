@@ -3,15 +3,39 @@
 // --------------------------------------------------
 
 .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;//$zindex-dropdown;
   background-color: $dropdown-background;
   border: none;
   display: block;
+  float: left;
+  min-width: 160px;
+  padding: 5px 0;
+  margin: 2px 0 0; // override default ul
+  list-style: none;
+  font-size: $font-size-base;
+  text-align: left; // Ensures proper alignment if parent has it changed (e.g., modal footer)
   margin-top: 8px;
   opacity: 0;
   padding: 0;
   visibility: hidden;
+  border-radius: $border-radius-base;
   @include box-shadow(none);
   @include transition(.25s);
+  background-clip: padding-box;
+    
+  // Links within the dropdown menu
+  > li > a {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: $line-height-base;
+    color: $dropdown-link-color;
+    white-space: nowrap; // prevent links from randomly breaking onto new lines
+  }
 
   // Opened state
   .open > & {
@@ -139,6 +163,15 @@
     margin-top: 11px;
     opacity: 1;
   }
+  // Show the menu
+  > .dropdown-menu {
+    display: block;
+  }
+
+  // Remove the outline when :focus is triggered
+  > a {
+    outline: 0;
+  }
 }
 
 // Arrows
@@ -220,4 +253,8 @@
       border-bottom-color: mix($brand-primary, white, 85%);
     }
   }
+}
+.dropdown-arrow-inverse{
+  border-bottom-color: $brand-primary;
+  border-top-color: $brand-primary;
 }

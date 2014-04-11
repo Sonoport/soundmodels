@@ -1,0 +1,115 @@
+// Mixins
+// --------------------------------------------------
+
+// Utilities
+// -------------------------
+
+// Clearfix
+// Source: http://nicolasgallagher.com/micro-clearfix-hack/
+//
+// For modern browsers
+// 1. The space content is one way to avoid an Opera bug when the
+// contenteditable attribute is included anywhere else in the document.
+// Otherwise it causes space to appear at the top and bottom of elements
+// that are clearfixed.
+// 2. The use of `table` rather than `block` is only necessary if using
+// `:before` to contain the top-margins of child elements.
+
+@mixin clearfix() {
+  &:before,
+  &:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+@mixin scale($scale-args...) {
+  -webkit-transform: scale($scale-args);
+      -ms-transform: scale($scale-args); // IE9 only
+          transform: scale($scale-args);
+}
+
+// Opacity
+@mixin opacity($opacity) {
+  opacity: $opacity;
+  // IE8 filter
+  $opacity-ie: ($opacity * 100);
+  filter: #{alpha(opacity=$opacity-ie)};
+}
+
+// Dropdown arrow
+// -------------------------
+@mixin dropdown-arrow($color: $brand-primary, $top: 5px, $left: 15px, $size: 9px) {
+  &:before {
+    content: "";
+    border-style: solid;
+    border-width: 0 $size $size $size;
+    border-color: transparent transparent $color transparent;
+    height: 0;
+    position: absolute;
+    left: $left;
+    top: $top;
+    width: 0;
+    // Make corners smooth
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+// Button variants
+// -------------------------
+// Easily pump out default styles, as well as :hover, :focus, :active,
+// and disabled options for all buttons
+@mixin button-variant($color, $background, $hover-background, $active-background, $disabled-background: $gray-light) {
+  color: $color;
+  background-color: $background;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    color: $color;
+    background-color: $hover-background;
+    border-color: $hover-background;
+  }
+  .open & { &.dropdown-toggle {
+    color: $color;
+    background-color: $hover-background;
+    border-color: $hover-background;
+  } }
+  &:active,
+  &.active {
+    background: $active-background;
+    border-color: $active-background;
+  }
+  .open & { &.dropdown-toggle {
+    background: $active-background;
+    border-color: $active-background;
+  } }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &,
+    &:hover,
+    &:focus,
+    &:active,
+    &.active {
+      background-color: $background;
+      border-color: $background;
+    }
+  }
+}
+
+// Button sizes
+// -------------------------
+@mixin button-size($padding-vertical, $padding-horizontal, $font-size, $line-height, $border-radius) {
+  padding: $padding-vertical $padding-horizontal;
+  font-size: $font-size;
+  line-height: $line-height;
+  border-radius: $border-radius;
+}
+
+
+
