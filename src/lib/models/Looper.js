@@ -41,7 +41,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     insertBufferSource( thisBuffer, trackIndex );
                 } );
 
-                self.playSpeed = new SPAudioParam( "playSpeed", -10.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
+                self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
 
                 if ( typeof onLoadCallback === 'function' )
                     onLoadCallback( status );
