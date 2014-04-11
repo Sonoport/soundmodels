@@ -136,6 +136,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
                 currentEventID_++;
+
+                  BaseSound.prototype.start.call( this, 0 );
             };
 
             init( sounds );
