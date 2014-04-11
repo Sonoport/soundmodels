@@ -47,7 +47,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 onLoadCallback();
             };
 
-            function init() {
+            function init(sounds) {
                 soundQueue_ = new SoundQueue( context );
                 multiFileLoader.call( self, sounds, context, onAllLoad );
             }
@@ -82,6 +82,17 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.eventRand = SPAudioParam.createPsuedoParam( "eventRand", true, false, false, this.audioContext );
 
             // Public Functions
+
+            /**
+             * Reinitializes a Looper and sets it's sources.
+             *
+             * @method setSources
+             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
+             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             */
+            this.setSources = function ( sounds, onLoadCallback ) {
+                init( sounds );
+            };
 
             /**
              * Triggers a single voice.
@@ -120,7 +131,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 currentEventID_++;
             };
 
-            init();
+            init(sounds);
         }
 
         Trigger.prototype = Object.create( BaseSound.prototype );
