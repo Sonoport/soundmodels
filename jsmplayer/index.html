@@ -19,31 +19,37 @@
         <![endif]-->
         
     <header>
-        <h1>JSM Player</h1>
+        <h4>JSM Player</h4>
     </header>
         <div class="container">
             <div class="player-main">
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Models<span class="caret"></span></button>
-                    <span class="dropdown-arrow dropdown-arrow-inverse"></span>
-                  <ul class="dropdown-menu dropdown-inverse">
-                    <li><a class="models" href="#Looper">Looper</a></li>
-                    <li><a class="models" href="#Trigger">Trigger</a></li>
-                  </ul>
+                <!-- Add new models into this list -->
+                <div class="soundmodels">
+                    <select name="jsm" class="select-block" style="display:none;">
+                        <option value="0">Looper</option>
+                        <option value="1">Trigger</option>
+                    </select>
                 </div>
 
-                <button id="playbtn">Play</button>
-                <button id="pausebtn">Pause</button>
-                <button id="stopbtn">Stop</button> <br />
-                <span>Select or drag and drop files</span> <br />
-            <p>
-                <input id="filebtn" type="file" placeholder="" multiple />
-                <output id="filelist"></output>
-            </p>
-                <br />
-                <span>Load audio from urls: (separate each url by a comma (,) )</span> <br />
-                <textarea id="fileUrls" placeholder="Enter source urls" rows="5" cols="50"></textarea>
-                <input id="updateSource" type="submit" width="100%" />
+                <div class="player-controls">
+                    <div class="player-row">
+                        <button id="playbtn">Play</button>
+                        <button id="pausebtn">Pause</button>
+                        <button id="stopbtn">Stop</button>
+                    </div>
+                    <div class="player-row">
+                        <span>Select or drag and drop files</span> <br />
+
+                        <input id="filebtn" type="file" placeholder="" multiple />
+                        <output id="filelist"></output>
+        
+                    </div>
+                    <div class="player-row">
+                        <span>Load audio from urls: (separate each url by a comma (,) )</span> <br />
+                        <textarea id="fileUrls" placeholder="Enter source urls" rows="5" cols="50"></textarea>
+                        <input id="updateSource" type="submit" width="100%" />
+                    </div>
+                </div>
 
                 <div class="player-params">
                     <div id="slider1"></div>

@@ -3,44 +3,16 @@
 
 var AudioContext = webkitAudioContext || AudioContext;
 var context = new AudioContext();
-/*$( document )
+
+$( document )
     .ready( function () {
-        $( "#slider1" )
-            .slider( {
-                step: 0.1,
-                min: 0.05,
-                max: 9.95
+        // select options dropdown menu for selecting sound models
+        $( "select[name='jsm']" )
+            .selectpicker( {
+                style: 'btn-lg btn-primary',
+                menuStyle: 'dropdown-inverse'
             } );
     } );
-
-$( "select[name='herolist']" )
-    .selectpicker( {
-        style: 'btn-primary',
-        menuStyle: 'dropdown-inverse'
-    } );
-
-// Toggle classes
-
-$( function () {
-    var select = $( "#minbeds" );
-    var slider = $( "<div id='slider' class='ui-slider'></div>" )
-        .insertAfter( select )
-        .slider( {
-            min: 1,
-            max: 6,
-            range: "min",
-            value: select[ 0 ].selectedIndex + 1,
-            slide: function ( event, ui ) {
-                select[ 0 ].selectedIndex = ui.value - 1;
-            }
-
-        } );
-    $( "#minbeds" )
-        .change( function () {
-            slider.slider( "value", this.selectedIndex + 1 );
-        } );
-} );
-*/
 // Test loading of Looper class
 require.config( {
     baseUrl: "./"
@@ -52,74 +24,90 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
     var alienURL = "https://dl.dropboxusercontent.com/u/2117088/spaceship_11.mp3";
 
     // Looper
-    var lp = new Looper( surfURL, onLoad, null, context );
+    var lp = new Looper( runURL, onLoad, null, context );
+
+    var isSndLoaded = false;
 
     function onLoad( status ) {
+        // After sound is loaded
+        isSndLoaded = status;
         console.log( "Looper Loaded :" + status );
+        generateParam( lp );
+    }
+    // Pass in the sound model object to tie interface to the model
+    generateInterface( lp );
 
+    function generateInterface( snd ) {
         $( document )
             .ready( function () {
-                // After the files have loaded generate param
-                generateParam();
+                // toggle sound
+                $( "#playbtn" )
+                    .click( function () {
+                        // toggle play button
+                        console.log( "play" );
+                        snd.play();
+                    } );
+                $( "#pausebtn" )
+                    .click( function () {
+                        console.log( "pause" );
+                        snd.pause();
+                    } );
+                $( "#stopbtn" )
+                    .click( function () {
+                        console.log( "stop" );
+                        snd.stop( 0 );
+                    } );
+
+                // Load local sources
+                var localSources = [];
+
+                function handleFileSelect( evt ) {
+                    // FileList object
+                    var files = evt.target.files;
+
+                    // files is a FileList of File objects.
+                    var output = [];
+                    for ( var i = 0; i < files.length; i++ ) {
+                        var f = files[ i ];
+                        localSources.push( f );
+                    }
+                    // Stop sound before setting source
+                    if ( snd.isPlaying ) {
+                        snd.stop();
+
+                    }
+                    snd.setSources( localSources, onLoad, null, context );
+
+                }
+
+                $( "#filebtn" )
+                    .on( 'change', handleFileSelect );
+
+                // Set Looper url sources
+                $( "#updateSource" )
+                    .on( "click", function () {
+                        // Get urls
+                        var sourceurls = $( "#fileUrls" )
+                            .val();
+                        console.log( sourceurls );
+                        var sources = sourceurls.split( "," );
+                        console.log( sources, snd.isPlaying );
+                        // Stop sound before setting source
+                        if ( snd.isPlaying ) {
+                            snd.stop();
+
+                        }
+                        console.log( "stop", lp.isPlaying );
+                        snd.setSources( sources, onLoad, null, context );
+                    } );
+
             } );
-
-    }
-    // toggle sound
-    $( "#playbtn" )
-        .click( function () {
-            // toggle play button
-            console.log( "play" );
-            lp.play();
-        } );
-    $( "#pausebtn" )
-        .click( function () {
-            console.log( "pause" );
-            lp.pause();
-        } );
-    $( "#stopbtn" )
-        .click( function () {
-            console.log( "stop" );
-            lp.stop( 0 );
-        } );
-
-    // Load local sources
-    var localSources = [];
-
-    function handleFileSelect( evt ) {
-        // FileList object
-        var files = evt.target.files;
-
-        // files is a FileList of File objects.
-        var output = [];
-        for ( var i = 0; i < files.length; i++ ) {
-            var f = files[ i ];
-            localSources.push( f );
-        }
-
-        lp.setSources( localSources, onLoad, null, context );
-
     }
 
-    $( "#filebtn" )
-        .on( 'change', handleFileSelect );
-
-    // Set Looper url sources
-    $( "#updateSource" )
-        .on( "click", function () {
-            // Get urls
-            var sourceurls = $( "#fileUrls" )
-                .val();
-            console.log( sourceurls );
-            var sources = sourceurls.split( "," );
-            console.log( sources );
-
-            lp.setSources( sources, onLoad, null, context );
-        } );
-
-    function generateParam() {
-        // Loop through all the properties in Looper
-        for ( var param in lp ) {
-            var prop = lp[ param ];
+    function generateParam( snd ) {
+        // Loop through all the properties in Sound Model
+        for ( var param in snd ) {
+            var prop = snd[ param ];
             var parameterType = Object.prototype.toString.call( prop );
             // Get properties that are of SPAudioParam
             if ( prop instanceof SPAudioParam ) {
@@ -129,27 +117,39 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                 var outputVal = "<input type='text' id='" + param + "val' class='amount' />";
                 $( ".player-params" )
                     .append( "<div class='param-box'>" + labelnode + slider + outputVal + "</div>" );
-                makeSlider( param, prop.value, prop.minValue, prop.maxValue, 0.1 );
+                makeSlider( snd, param, prop.value, prop.minValue, prop.maxValue, 0.1 );
             }
         }
 
     }
 
-    function makeSlider( id, val, min, max, step ) {
-
+    function makeSlider( snd, id, val, min, max, step ) {
+        // Make sliders
         $( "#" + id )
             .tickslider( {
                 min: min,
                 max: max,
+                value: snd[ id ].value,
                 slide: function ( event, ui ) {
+                    // Update input label box
                     $( "#" + id + "val" )
                         .val( ui.value );
+                },
+                change: function ( event, ui ) {
+                    snd[ id ].value = ui.value;
+                    console.log( ui.value, lp.playSpeed.value );
                 }
             } );
+        // Update text input when slider is sliding
         $( "#" + id + "val" )
             .val( $( "#" + id )
                 .tickslider( "value" ) );
-
+        // Update Slider thumb with text input
+        $( "#" + id + "val" )
+            .change( function () {
+                $( "#" + id )
+                    .tickslider( "value", this.value );
+            } );
     }
 
 } );

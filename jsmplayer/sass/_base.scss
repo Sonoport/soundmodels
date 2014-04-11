@@ -15,6 +15,9 @@ $susy: (
 body {
 	background: #fff;
 	font-size: 1em;
+	font-family: $font-family-base;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
 }
 
 header, footer {
@@ -35,10 +38,29 @@ footer {
 }
 
 .container {
-	@include container(show);
+	//@include container(show);
 	@include container(80%);
+}
+
+.player-row {
+	margin: 25px 0px;
 }
 
 .param-box {
 	width: 500px;
 }
+
+.soundmodels {
+	width: 200px;
+}
+
+.pull-left {
+	float: left !important;
+}
+
+h1, .h1 { font-size: $font-size-h1; } // ~62px
+h2, .h2 { font-size: $font-size-h2; } // ~52px
+h3, .h3 { font-size: $font-size-h3; } // ~40px
+h4, .h4 { font-size: $font-size-h4; } // ~29px
+h5, .h5 { font-size: $font-size-h5; } // ~28px
+h6, .h6 { font-size: $font-size-h6; } // ~24px

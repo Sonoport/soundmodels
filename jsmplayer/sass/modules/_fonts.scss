@@ -1,0 +1,40 @@
+//
+// Fonts
+// --------------------------------------------------
+
+@font-face {
+  font-family: 'Lato';
+  src: url('#{$local-font-path}#{$local-font-name-bold}.eot');
+  src: url('#{$local-font-path}#{$local-font-name-bold}.eot?#iefix') format('embedded-opentype'),
+       url('#{$local-font-path}#{$local-font-name-bold}.woff') format('woff'),
+       url('#{$local-font-path}#{$local-font-name-bold}.ttf') format('truetype'),
+       url('#{$local-font-path}#{$local-font-name-bold}.svg#{$local-font-svg-id-bold}') format('svg');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Lato';
+  src: url('#{$local-font-path}#{$local-font-name}.eot');
+  src: url('#{$local-font-path}#{$local-font-name}.eot?#iefix') format('embedded-opentype'),
+       url('#{$local-font-path}#{$local-font-name}.woff') format('woff'),
+       url('#{$local-font-path}#{$local-font-name}.ttf') format('truetype'),
+       url('#{$local-font-path}#{$local-font-name}.svg#{$local-font-svg-id}') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+//
+// Glyphicons for Flat UI Free
+// --------------------------------------------------
+
+@font-face {
+  font-family: "Flat-UI-Icons";
+  src: url(if($flat-ui-sass-asset-helper, flat-ui-font-path('#{$icon-font-path}#{$icon-font-name}.eot'), '#{$icon-font-path}#{$icon-font-name}.eot'));
+  src: url(if($flat-ui-sass-asset-helper, flat-ui-font-path('#{$icon-font-path}#{$icon-font-name}.eot?#iefix'), '#{$icon-font-path}#{$icon-font-name}.eot?#iefix')) format('embedded-opentype'),
+       url(if($flat-ui-sass-asset-helper, flat-ui-font-path('#{$icon-font-path}#{$icon-font-name}.woff'), '#{$icon-font-path}#{$icon-font-name}.woff')) format('woff'),
+       url(if($flat-ui-sass-asset-helper, flat-ui-font-path('#{$icon-font-path}#{$icon-font-name}.ttf'), '#{$icon-font-path}#{$icon-font-name}.ttf')) format('truetype'),
+       url(if($flat-ui-sass-asset-helper, flat-ui-font-path('#{$icon-font-path}#{$icon-font-name}.svg##{$icon-font-svg-id}'), '#{$icon-font-path}#{$icon-font-name}.svg##{$icon-font-svg-id}')) format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
