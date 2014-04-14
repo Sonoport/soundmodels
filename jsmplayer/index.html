@@ -8,7 +8,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
-        <link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
         <link rel="stylesheet" href="css/main.css">
         <script data-main="js/player" src="vendor/require.js"></script>
         <script type="text/javascript" src="Looper.js"></script>
@@ -33,26 +32,29 @@
 
                 <div class="player-controls">
                     <div class="player-row">
-                        <button id="playbtn">Play</button>
-                        <button id="pausebtn">Pause</button>
-                        <button id="stopbtn">Stop</button>
+                        <button id="playbtn" class="btn btn-inverse">Play</button>
+                        <button id="pausebtn" class="btn btn-inverse">Pause</button>
+                        <button id="stopbtn" class="btn btn-inverse">Stop</button>
                     </div>
                     <div class="player-row">
-                        <span>Select or drag and drop files</span> <br />
+                        <span>Select or drag and drop local files</span> <br />
 
                         <input id="filebtn" type="file" placeholder="" multiple />
                         <output id="filelist"></output>
         
                     </div>
                     <div class="player-row">
-                        <span>Load audio from urls: (separate each url by a comma (,) )</span> <br />
-                        <textarea id="fileUrls" placeholder="Enter source urls" rows="5" cols="50"></textarea>
-                        <input id="updateSource" type="submit" width="100%" />
+                        <span>Load audio from urls: (separate each url by a comma (,) )</span>
+                        <form role="file" class="form-inline">
+                            <div class="form-group">
+                                <textarea id="fileUrls" placeholder="Place source urls" class="form-control" rows="3"></textarea>
+                            </div>
+                        </form>
+                        <button id="updateSource" type="submit" class="btn btn-inverse">Set URL sources</button>
                     </div>
                 </div>
 
                 <div class="player-params">
-                    <div id="slider1"></div>
                 </div>
             </div>
          </div>

@@ -128,19 +128,44 @@ footer {
 
 /* line 34, ../sass/_base.scss */
 .player-main {
-  margin-left: 25%;
-  width: 50%;
-  float: left;
-  padding-left: 0.5em;
-  padding-right: 0.5em;
+  margin: 0 auto;
   padding: 1em 0;
 }
+@media (min-width: 480px) {
+  /* line 34, ../sass/_base.scss */
+  .player-main {
+    width: 83.33333%;
+  }
+}
+@media (min-width: 768px) {
+  /* line 34, ../sass/_base.scss */
+  .player-main {
+    width: 66.66667%;
+  }
+}
+@media (min-width: 992px) {
+  /* line 34, ../sass/_base.scss */
+  .player-main {
+    width: 66.66667%;
+  }
+}
+@media (min-width: 1200px) {
+  /* line 34, ../sass/_base.scss */
+  .player-main {
+    width: 50%;
+  }
+}
 
-/* line 40, ../sass/_base.scss */
+/* line 55, ../sass/_base.scss */
 .container {
-  max-width: 80%;
+  max-width: 60em;
   margin-left: auto;
   margin-right: auto;
+  background-image: linear-gradient(to right, rgba(102, 102, 255, 0.25), rgba(179, 179, 255, 0.25));
+  background-size: 8.33333%;
+  background-origin: content-box;
+  background-clip: content-box;
+  background-position: left top;
 }
 /* line 12, ../../../../../../.rvm/gems/ruby-2.1.1/gems/susy-2.1.1/sass/susy/output/support/_clearfix.scss */
 .container::after {
@@ -148,53 +173,128 @@ footer {
   display: block;
   clear: both;
 }
+@media (min-width: 992px) {
+  /* line 55, ../sass/_base.scss */
+  .container {
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  /* line 12, ../../../../../../.rvm/gems/ruby-2.1.1/gems/susy-2.1.1/sass/susy/output/support/_clearfix.scss */
+  .container::after {
+    content: " ";
+    display: block;
+    clear: both;
+  }
+}
+@media (min-width: 1200px) {
+  /* line 55, ../sass/_base.scss */
+  .container {
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  /* line 12, ../../../../../../.rvm/gems/ruby-2.1.1/gems/susy-2.1.1/sass/susy/output/support/_clearfix.scss */
+  .container::after {
+    content: " ";
+    display: block;
+    clear: both;
+  }
+}
 
-/* line 45, ../sass/_base.scss */
+/* line 67, ../sass/_base.scss */
 .player-row {
   margin: 25px 0px;
 }
 
-/* line 49, ../sass/_base.scss */
-.param-box {
-  width: 500px;
+/* line 19, ../sass/_mixins.scss */
+.param-box:before, .param-box:after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+/* line 24, ../sass/_mixins.scss */
+.param-box:after {
+  clear: both;
+}
+/* line 73, ../sass/_base.scss */
+.param-box > .pull-left {
+  margin-right: 10px;
+}
+/* line 76, ../sass/_base.scss */
+.param-box > .pull-right {
+  margin-right: 10px;
+}
+/* line 79, ../sass/_base.scss */
+.param-box > .amount {
+  display: inline-block;
+  width: 60px;
+}
+/* line 19, ../sass/_mixins.scss */
+.param-box > .amount:before, .param-box > .amount:after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+/* line 24, ../sass/_mixins.scss */
+.param-box > .amount:after {
+  clear: both;
 }
 
-/* line 53, ../sass/_base.scss */
+/* line 86, ../sass/_base.scss */
+.param-slider {
+  width: 400px;
+}
+
+/* line 90, ../sass/_base.scss */
+.param-name {
+  margin: 15px 0;
+}
+
+/* line 94, ../sass/_base.scss */
 .soundmodels {
+  margin: 100px 0 0 0;
   width: 200px;
 }
 
-/* line 57, ../sass/_base.scss */
+/* line 99, ../sass/_base.scss */
 .pull-left {
   float: left !important;
 }
 
-/* line 61, ../sass/_base.scss */
+/* line 102, ../sass/_base.scss */
+.pull-right {
+  float: right !important;
+}
+
+/* line 106, ../sass/_base.scss */
 h1, .h1 {
   font-size: 55px;
 }
 
-/* line 62, ../sass/_base.scss */
+/* line 107, ../sass/_base.scss */
 h2, .h2 {
   font-size: 47px;
 }
 
-/* line 63, ../sass/_base.scss */
+/* line 108, ../sass/_base.scss */
 h3, .h3 {
   font-size: 36px;
 }
 
-/* line 64, ../sass/_base.scss */
+/* line 109, ../sass/_base.scss */
 h4, .h4 {
   font-size: 26px;
 }
 
-/* line 65, ../sass/_base.scss */
+/* line 110, ../sass/_base.scss */
 h5, .h5 {
   font-size: 24px;
 }
 
-/* line 66, ../sass/_base.scss */
+/* line 111, ../sass/_base.scss */
 h6, .h6 {
   font-size: 22px;
 }
@@ -254,29 +354,29 @@ h6, .h6 {
   color: white;
   background-color: #ecf0f1;
 }
-/* line 69, ../sass/_mixins.scss */
+/* line 76, ../sass/_mixins.scss */
 .btn-default:hover, .btn-default:focus, .btn-default:active, .btn-default.active {
   color: white;
   background-color: #eff3f3;
   border-color: #eff3f3;
 }
-/* line 77, ../sass/_mixins.scss */
+/* line 84, ../sass/_mixins.scss */
 .open .btn-default.dropdown-toggle {
   color: white;
   background-color: #eff3f3;
   border-color: #eff3f3;
 }
-/* line 82, ../sass/_mixins.scss */
+/* line 89, ../sass/_mixins.scss */
 .btn-default:active, .btn-default.active {
   background: #c8cccc;
   border-color: #c8cccc;
 }
-/* line 87, ../sass/_mixins.scss */
+/* line 94, ../sass/_mixins.scss */
 .open .btn-default.dropdown-toggle {
   background: #c8cccc;
   border-color: #c8cccc;
 }
-/* line 94, ../sass/_mixins.scss */
+/* line 101, ../sass/_mixins.scss */
 .btn-default.disabled, .btn-default.disabled:hover, .btn-default.disabled:focus, .btn-default.disabled:active, .btn-default.disabled.active, .btn-default[disabled], .btn-default[disabled]:hover, .btn-default[disabled]:focus, .btn-default[disabled]:active, .btn-default[disabled].active, fieldset[disabled] .btn-default, fieldset[disabled] .btn-default:hover, fieldset[disabled] .btn-default:focus, fieldset[disabled] .btn-default:active, fieldset[disabled] .btn-default.active {
   background-color: #ecf0f1;
   border-color: #ecf0f1;
@@ -287,29 +387,29 @@ h6, .h6 {
   color: white;
   background-color: #1abc9c;
 }
-/* line 69, ../sass/_mixins.scss */
+/* line 76, ../sass/_mixins.scss */
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active {
   color: white;
   background-color: #47c9af;
   border-color: #47c9af;
 }
-/* line 77, ../sass/_mixins.scss */
+/* line 84, ../sass/_mixins.scss */
 .open .btn-primary.dropdown-toggle {
   color: white;
   background-color: #47c9af;
   border-color: #47c9af;
 }
-/* line 82, ../sass/_mixins.scss */
+/* line 89, ../sass/_mixins.scss */
 .btn-primary:active, .btn-primary.active {
   background: #169f84;
   border-color: #169f84;
 }
-/* line 87, ../sass/_mixins.scss */
+/* line 94, ../sass/_mixins.scss */
 .open .btn-primary.dropdown-toggle {
   background: #169f84;
   border-color: #169f84;
 }
-/* line 94, ../sass/_mixins.scss */
+/* line 101, ../sass/_mixins.scss */
 .btn-primary.disabled, .btn-primary.disabled:hover, .btn-primary.disabled:focus, .btn-primary.disabled:active, .btn-primary.disabled.active, .btn-primary[disabled], .btn-primary[disabled]:hover, .btn-primary[disabled]:focus, .btn-primary[disabled]:active, .btn-primary[disabled].active, fieldset[disabled] .btn-primary, fieldset[disabled] .btn-primary:hover, fieldset[disabled] .btn-primary:focus, fieldset[disabled] .btn-primary:active, fieldset[disabled] .btn-primary.active {
   background-color: #1abc9c;
   border-color: #1abc9c;
@@ -320,29 +420,29 @@ h6, .h6 {
   color: white;
   background-color: #3498db;
 }
-/* line 69, ../sass/_mixins.scss */
+/* line 76, ../sass/_mixins.scss */
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active {
   color: white;
   background-color: #5cace2;
   border-color: #5cace2;
 }
-/* line 77, ../sass/_mixins.scss */
+/* line 84, ../sass/_mixins.scss */
 .open .btn-info.dropdown-toggle {
   color: white;
   background-color: #5cace2;
   border-color: #5cace2;
 }
-/* line 82, ../sass/_mixins.scss */
+/* line 89, ../sass/_mixins.scss */
 .btn-info:active, .btn-info.active {
   background: #2c81ba;
   border-color: #2c81ba;
 }
-/* line 87, ../sass/_mixins.scss */
+/* line 94, ../sass/_mixins.scss */
 .open .btn-info.dropdown-toggle {
   background: #2c81ba;
   border-color: #2c81ba;
 }
-/* line 94, ../sass/_mixins.scss */
+/* line 101, ../sass/_mixins.scss */
 .btn-info.disabled, .btn-info.disabled:hover, .btn-info.disabled:focus, .btn-info.disabled:active, .btn-info.disabled.active, .btn-info[disabled], .btn-info[disabled]:hover, .btn-info[disabled]:focus, .btn-info[disabled]:active, .btn-info[disabled].active, fieldset[disabled] .btn-info, fieldset[disabled] .btn-info:hover, fieldset[disabled] .btn-info:focus, fieldset[disabled] .btn-info:active, fieldset[disabled] .btn-info.active {
   background-color: #3498db;
   border-color: #3498db;
@@ -353,29 +453,29 @@ h6, .h6 {
   color: white;
   background-color: #e74c3c;
 }
-/* line 69, ../sass/_mixins.scss */
+/* line 76, ../sass/_mixins.scss */
 .btn-danger:hover, .btn-danger:focus, .btn-danger:active, .btn-danger.active {
   color: white;
   background-color: #eb6f62;
   border-color: #eb6f62;
 }
-/* line 77, ../sass/_mixins.scss */
+/* line 84, ../sass/_mixins.scss */
 .open .btn-danger.dropdown-toggle {
   color: white;
   background-color: #eb6f62;
   border-color: #eb6f62;
 }
-/* line 82, ../sass/_mixins.scss */
+/* line 89, ../sass/_mixins.scss */
 .btn-danger:active, .btn-danger.active {
   background: #c44033;
   border-color: #c44033;
 }
-/* line 87, ../sass/_mixins.scss */
+/* line 94, ../sass/_mixins.scss */
 .open .btn-danger.dropdown-toggle {
   background: #c44033;
   border-color: #c44033;
 }
-/* line 94, ../sass/_mixins.scss */
+/* line 101, ../sass/_mixins.scss */
 .btn-danger.disabled, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger.disabled:active, .btn-danger.disabled.active, .btn-danger[disabled], .btn-danger[disabled]:hover, .btn-danger[disabled]:focus, .btn-danger[disabled]:active, .btn-danger[disabled].active, fieldset[disabled] .btn-danger, fieldset[disabled] .btn-danger:hover, fieldset[disabled] .btn-danger:focus, fieldset[disabled] .btn-danger:active, fieldset[disabled] .btn-danger.active {
   background-color: #e74c3c;
   border-color: #e74c3c;
@@ -386,29 +486,29 @@ h6, .h6 {
   color: white;
   background-color: #2ecc71;
 }
-/* line 69, ../sass/_mixins.scss */
+/* line 76, ../sass/_mixins.scss */
 .btn-success:hover, .btn-success:focus, .btn-success:active, .btn-success.active {
   color: white;
   background-color: #57d68d;
   border-color: #57d68d;
 }
-/* line 77, ../sass/_mixins.scss */
+/* line 84, ../sass/_mixins.scss */
 .open .btn-success.dropdown-toggle {
   color: white;
   background-color: #57d68d;
   border-color: #57d68d;
 }
-/* line 82, ../sass/_mixins.scss */
+/* line 89, ../sass/_mixins.scss */
 .btn-success:active, .btn-success.active {
   background: #27ad60;
   border-color: #27ad60;
 }
-/* line 87, ../sass/_mixins.scss */
+/* line 94, ../sass/_mixins.scss */
 .open .btn-success.dropdown-toggle {
   background: #27ad60;
   border-color: #27ad60;
 }
-/* line 94, ../sass/_mixins.scss */
+/* line 101, ../sass/_mixins.scss */
 .btn-success.disabled, .btn-success.disabled:hover, .btn-success.disabled:focus, .btn-success.disabled:active, .btn-success.disabled.active, .btn-success[disabled], .btn-success[disabled]:hover, .btn-success[disabled]:focus, .btn-success[disabled]:active, .btn-success[disabled].active, fieldset[disabled] .btn-success, fieldset[disabled] .btn-success:hover, fieldset[disabled] .btn-success:focus, fieldset[disabled] .btn-success:active, fieldset[disabled] .btn-success.active {
   background-color: #2ecc71;
   border-color: #2ecc71;
@@ -419,29 +519,29 @@ h6, .h6 {
   color: white;
   background-color: #f1c40f;
 }
-/* line 69, ../sass/_mixins.scss */
+/* line 76, ../sass/_mixins.scss */
 .btn-warning:hover, .btn-warning:focus, .btn-warning:active, .btn-warning.active {
   color: white;
   background-color: overlay(#f1c40f, #9f9f9f);
   border-color: overlay(#f1c40f, #9f9f9f);
 }
-/* line 77, ../sass/_mixins.scss */
+/* line 84, ../sass/_mixins.scss */
 .open .btn-warning.dropdown-toggle {
   color: white;
   background-color: overlay(#f1c40f, #9f9f9f);
   border-color: overlay(#f1c40f, #9f9f9f);
 }
-/* line 82, ../sass/_mixins.scss */
+/* line 89, ../sass/_mixins.scss */
 .btn-warning:active, .btn-warning.active {
   background: #cca60c;
   border-color: #cca60c;
 }
-/* line 87, ../sass/_mixins.scss */
+/* line 94, ../sass/_mixins.scss */
 .open .btn-warning.dropdown-toggle {
   background: #cca60c;
   border-color: #cca60c;
 }
-/* line 94, ../sass/_mixins.scss */
+/* line 101, ../sass/_mixins.scss */
 .btn-warning.disabled, .btn-warning.disabled:hover, .btn-warning.disabled:focus, .btn-warning.disabled:active, .btn-warning.disabled.active, .btn-warning[disabled], .btn-warning[disabled]:hover, .btn-warning[disabled]:focus, .btn-warning[disabled]:active, .btn-warning[disabled].active, fieldset[disabled] .btn-warning, fieldset[disabled] .btn-warning:hover, fieldset[disabled] .btn-warning:focus, fieldset[disabled] .btn-warning:active, fieldset[disabled] .btn-warning.active {
   background-color: #f1c40f;
   border-color: #f1c40f;
@@ -452,29 +552,29 @@ h6, .h6 {
   color: white;
   background-color: #34495e;
 }
-/* line 69, ../sass/_mixins.scss */
+/* line 76, ../sass/_mixins.scss */
 .btn-inverse:hover, .btn-inverse:focus, .btn-inverse:active, .btn-inverse.active {
   color: white;
   background-color: overlay(#34495e, #9f9f9f);
   border-color: overlay(#34495e, #9f9f9f);
 }
-/* line 77, ../sass/_mixins.scss */
+/* line 84, ../sass/_mixins.scss */
 .open .btn-inverse.dropdown-toggle {
   color: white;
   background-color: overlay(#34495e, #9f9f9f);
   border-color: overlay(#34495e, #9f9f9f);
 }
-/* line 82, ../sass/_mixins.scss */
+/* line 89, ../sass/_mixins.scss */
 .btn-inverse:active, .btn-inverse.active {
   background: #2c3e4f;
   border-color: #2c3e4f;
 }
-/* line 87, ../sass/_mixins.scss */
+/* line 94, ../sass/_mixins.scss */
 .open .btn-inverse.dropdown-toggle {
   background: #2c3e4f;
   border-color: #2c3e4f;
 }
-/* line 94, ../sass/_mixins.scss */
+/* line 101, ../sass/_mixins.scss */
 .btn-inverse.disabled, .btn-inverse.disabled:hover, .btn-inverse.disabled:focus, .btn-inverse.disabled:active, .btn-inverse.disabled.active, .btn-inverse[disabled], .btn-inverse[disabled]:hover, .btn-inverse[disabled]:focus, .btn-inverse[disabled]:active, .btn-inverse[disabled].active, fieldset[disabled] .btn-inverse, fieldset[disabled] .btn-inverse:hover, fieldset[disabled] .btn-inverse:focus, fieldset[disabled] .btn-inverse:active, fieldset[disabled] .btn-inverse.active {
   background-color: #34495e;
   border-color: #34495e;
@@ -711,6 +811,373 @@ h6, .h6 {
   border-top-width: 8px;
   border-right-width: 6px;
   border-left-width: 6px;
+}
+
+/* line 10, ../sass/modules/_forms.scss */
+legend {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 13.5px;
+  font-size: 22.4px;
+  line-height: inherit;
+  color: inherit;
+  border-bottom: none;
+}
+
+/* line 24, ../sass/modules/_forms.scss */
+textarea {
+  font-size: 18px;
+  line-height: 24px;
+  padding: 5px 11px;
+}
+
+/* line 31, ../sass/modules/_forms.scss */
+input[type="search"] {
+  -webkit-appearance: none !important;
+}
+
+/* line 37, ../sass/modules/_forms.scss */
+label {
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 2.4;
+}
+
+/* line 123, ../sass/_mixins.scss */
+.form-control:-moz-placeholder {
+  color: #b2bcc5;
+}
+/* line 124, ../sass/_mixins.scss */
+.form-control::-moz-placeholder {
+  color: #b2bcc5;
+  opacity: 1;
+}
+/* line 126, ../sass/_mixins.scss */
+.form-control:-ms-input-placeholder {
+  color: #b2bcc5;
+}
+/* line 127, ../sass/_mixins.scss */
+.form-control::-webkit-input-placeholder {
+  color: #b2bcc5;
+}
+/* line 128, ../sass/_mixins.scss */
+.form-control.placeholder {
+  color: #b2bcc5;
+}
+
+/* line 73, ../sass/modules/_forms.scss */
+.form-control {
+  display: block;
+  width: 100%;
+  border: 2px solid #ecf0f1;
+  color: #34495e;
+  font-family: "Lato", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.467;
+  padding: 8px 12px;
+  height: 42px;
+  -webkit-appearance: none;
+  border-radius: 6px;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  -moz-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
+  -o-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
+  -webkit-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
+  transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
+}
+/* line 192, ../sass/_mixins.scss */
+.form-group.focus .form-control, .form-control:focus {
+  border-color: #1abc9c;
+  outline: 0;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+/* line 95, ../sass/modules/_forms.scss */
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+  background-color: #f8f9f9;
+  border-color: #e4e7e8;
+  color: #e4e7e8;
+  cursor: default;
+  opacity: 0.7;
+  filter: alpha(opacity=70);
+}
+/* line 106, ../sass/modules/_forms.scss */
+.form-control.flat {
+  border-color: transparent;
+}
+/* line 109, ../sass/modules/_forms.scss */
+.form-control.flat:hover {
+  border-color: #ecf0f1;
+}
+/* line 112, ../sass/modules/_forms.scss */
+.form-control.flat:focus {
+  border-color: #1abc9c;
+}
+
+/* line 208, ../sass/_mixins.scss */
+.input-sm {
+  height: 35px;
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.462;
+  border-radius: 6px;
+}
+
+/* line 216, ../sass/_mixins.scss */
+select.input-sm {
+  height: 35px;
+  line-height: 35px;
+}
+
+/* line 221, ../sass/_mixins.scss */
+textarea.input-sm,
+select[multiple].input-sm {
+  height: auto;
+}
+
+/* line 208, ../sass/_mixins.scss */
+.input-lg {
+  height: 45px;
+  padding: 10px 15px;
+  font-size: 16px;
+  line-height: 1.235;
+  border-radius: 6px;
+}
+
+/* line 216, ../sass/_mixins.scss */
+select.input-lg {
+  height: 45px;
+  line-height: 45px;
+}
+
+/* line 221, ../sass/_mixins.scss */
+textarea.input-lg,
+select[multiple].input-lg {
+  height: auto;
+}
+
+/* line 208, ../sass/_mixins.scss */
+.input-hg {
+  height: 53px;
+  padding: 10px 16px;
+  font-size: 20px;
+  line-height: 1.318;
+  border-radius: 6px;
+}
+
+/* line 216, ../sass/_mixins.scss */
+select.input-hg {
+  height: 53px;
+  line-height: 53px;
+}
+
+/* line 221, ../sass/_mixins.scss */
+textarea.input-hg,
+select[multiple].input-hg {
+  height: auto;
+}
+
+/* line 150, ../sass/_mixins.scss */
+.has-warning .help-block,
+.has-warning .control-label,
+.has-warning .radio,
+.has-warning .checkbox,
+.has-warning .radio-inline,
+.has-warning .checkbox-inline {
+  color: #f1c40f;
+}
+/* line 159, ../sass/_mixins.scss */
+.has-warning .form-control {
+  color: #f1c40f;
+  border-color: #f1c40f;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+/* line 123, ../sass/_mixins.scss */
+.has-warning .form-control:-moz-placeholder {
+  color: #f1c40f;
+}
+/* line 124, ../sass/_mixins.scss */
+.has-warning .form-control::-moz-placeholder {
+  color: #f1c40f;
+  opacity: 1;
+}
+/* line 126, ../sass/_mixins.scss */
+.has-warning .form-control:-ms-input-placeholder {
+  color: #f1c40f;
+}
+/* line 127, ../sass/_mixins.scss */
+.has-warning .form-control::-webkit-input-placeholder {
+  color: #f1c40f;
+}
+/* line 128, ../sass/_mixins.scss */
+.has-warning .form-control.placeholder {
+  color: #f1c40f;
+}
+/* line 165, ../sass/_mixins.scss */
+.has-warning .form-control:focus {
+  border-color: #f1c40f;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+/* line 171, ../sass/_mixins.scss */
+.has-warning .input-group-addon {
+  color: #f1c40f;
+  border-color: #f1c40f;
+  background-color: white;
+}
+
+/* line 150, ../sass/_mixins.scss */
+.has-error .help-block,
+.has-error .control-label,
+.has-error .radio,
+.has-error .checkbox,
+.has-error .radio-inline,
+.has-error .checkbox-inline {
+  color: #e74c3c;
+}
+/* line 159, ../sass/_mixins.scss */
+.has-error .form-control {
+  color: #e74c3c;
+  border-color: #e74c3c;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+/* line 123, ../sass/_mixins.scss */
+.has-error .form-control:-moz-placeholder {
+  color: #e74c3c;
+}
+/* line 124, ../sass/_mixins.scss */
+.has-error .form-control::-moz-placeholder {
+  color: #e74c3c;
+  opacity: 1;
+}
+/* line 126, ../sass/_mixins.scss */
+.has-error .form-control:-ms-input-placeholder {
+  color: #e74c3c;
+}
+/* line 127, ../sass/_mixins.scss */
+.has-error .form-control::-webkit-input-placeholder {
+  color: #e74c3c;
+}
+/* line 128, ../sass/_mixins.scss */
+.has-error .form-control.placeholder {
+  color: #e74c3c;
+}
+/* line 165, ../sass/_mixins.scss */
+.has-error .form-control:focus {
+  border-color: #e74c3c;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+/* line 171, ../sass/_mixins.scss */
+.has-error .input-group-addon {
+  color: #e74c3c;
+  border-color: #e74c3c;
+  background-color: white;
+}
+
+/* line 150, ../sass/_mixins.scss */
+.has-success .help-block,
+.has-success .control-label,
+.has-success .radio,
+.has-success .checkbox,
+.has-success .radio-inline,
+.has-success .checkbox-inline {
+  color: #2ecc71;
+}
+/* line 159, ../sass/_mixins.scss */
+.has-success .form-control {
+  color: #2ecc71;
+  border-color: #2ecc71;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+/* line 123, ../sass/_mixins.scss */
+.has-success .form-control:-moz-placeholder {
+  color: #2ecc71;
+}
+/* line 124, ../sass/_mixins.scss */
+.has-success .form-control::-moz-placeholder {
+  color: #2ecc71;
+  opacity: 1;
+}
+/* line 126, ../sass/_mixins.scss */
+.has-success .form-control:-ms-input-placeholder {
+  color: #2ecc71;
+}
+/* line 127, ../sass/_mixins.scss */
+.has-success .form-control::-webkit-input-placeholder {
+  color: #2ecc71;
+}
+/* line 128, ../sass/_mixins.scss */
+.has-success .form-control.placeholder {
+  color: #2ecc71;
+}
+/* line 165, ../sass/_mixins.scss */
+.has-success .form-control:focus {
+  border-color: #2ecc71;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+/* line 171, ../sass/_mixins.scss */
+.has-success .input-group-addon {
+  color: #2ecc71;
+  border-color: #2ecc71;
+  background-color: white;
+}
+
+/* line 148, ../sass/modules/_forms.scss */
+.help-block {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: inherit;
+}
+
+/* line 159, ../sass/modules/_forms.scss */
+.form-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+/* line 172, ../sass/modules/_forms.scss */
+.form-horizontal .control-label,
+.form-horizontal .radio,
+.form-horizontal .checkbox,
+.form-horizontal .radio-inline,
+.form-horizontal .checkbox-inline {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 6px;
+}
+/* line 183, ../sass/modules/_forms.scss */
+.form-horizontal .form-group {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+/* line 19, ../sass/_mixins.scss */
+.form-horizontal .form-group:before, .form-horizontal .form-group:after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+/* line 24, ../sass/_mixins.scss */
+.form-horizontal .form-group:after {
+  clear: both;
+}
+/* line 187, ../sass/modules/_forms.scss */
+.form-horizontal .form-control-static {
+  padding-top: 6px;
 }
 
 /* line 7, ../sass/modules/_select.scss */
@@ -1124,48 +1591,132 @@ h6, .h6 {
   border-top-color: #34495e;
 }
 
+/* line 5, ../sass/modules/_labels.scss */
+.label {
+  display: inline;
+  padding: .2em .6em .3em;
+  font-size: 75%;
+  font-weight: bold;
+  line-height: 1;
+  color: white;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25em;
+}
+/* line 20, ../sass/modules/_labels.scss */
+.label:empty {
+  display: none;
+}
+/* line 25, ../sass/modules/_labels.scss */
+.btn .label {
+  position: relative;
+  top: -1px;
+}
+
+/* line 33, ../sass/modules/_labels.scss */
+a.label:hover, a.label:focus {
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* line 44, ../sass/modules/_labels.scss */
+.label-default {
+  background-color: #ecf0f1;
+}
+/* line 233, ../sass/_mixins.scss */
+.label-default[href]:hover, .label-default[href]:focus {
+  background-color: #cfd9db;
+}
+
+/* line 48, ../sass/modules/_labels.scss */
+.label-primary {
+  background-color: #34495e;
+}
+/* line 233, ../sass/_mixins.scss */
+.label-primary[href]:hover, .label-primary[href]:focus {
+  background-color: #222f3d;
+}
+
+/* line 52, ../sass/modules/_labels.scss */
+.label-success {
+  background-color: #2ecc71;
+}
+/* line 233, ../sass/_mixins.scss */
+.label-success[href]:hover, .label-success[href]:focus {
+  background-color: #25a25a;
+}
+
+/* line 56, ../sass/modules/_labels.scss */
+.label-info {
+  background-color: #3498db;
+}
+/* line 233, ../sass/_mixins.scss */
+.label-info[href]:hover, .label-info[href]:focus {
+  background-color: #217dbb;
+}
+
+/* line 60, ../sass/modules/_labels.scss */
+.label-warning {
+  background-color: #f1c40f;
+}
+/* line 233, ../sass/_mixins.scss */
+.label-warning[href]:hover, .label-warning[href]:focus {
+  background-color: #c29d0b;
+}
+
+/* line 64, ../sass/modules/_labels.scss */
+.label-danger {
+  background-color: #e74c3c;
+}
+/* line 233, ../sass/_mixins.scss */
+.label-danger[href]:hover, .label-danger[href]:focus {
+  background-color: #d62c1a;
+}
+
 /* line 8, ../sass/modules/_slider.scss */
 .ui-slider-wrapper {
   position: relative;
 }
 
-/* line 9, ../sass/modules/_slider.scss */
+/* line 12, ../sass/modules/_slider.scss */
 .ui-slider-wrapper .ui-slider-horizontal {
   width: 100%;
 }
 
-/* line 11, ../sass/modules/_slider.scss */
+/* line 17, ../sass/modules/_slider.scss */
 .ui-slider-labels {
   position: absolute;
   border: 1px solid transparent;
 }
 
-/* line 12, ../sass/modules/_slider.scss */
+/* line 18, ../sass/modules/_slider.scss */
 .ui-slider-label-ticks {
   border: 1px solid transparent;
   position: absolute;
   white-space: nowrap;
 }
 
-/* line 13, ../sass/modules/_slider.scss */
+/* line 19, ../sass/modules/_slider.scss */
 .ui-slider-label-ticks span {
   font-size: 0.9em;
   min-width: 1.2em;
 }
 
-/* line 15, ../sass/modules/_slider.scss */
+/* line 21, ../sass/modules/_slider.scss */
 .ui-slider-wrapper.horizontal {
   height: 3em;
 }
 
-/* line 16, ../sass/modules/_slider.scss */
+/* line 22, ../sass/modules/_slider.scss */
 .horizontal .ui-slider-labels {
   left: 0;
   right: 0;
   top: 0.7em;
 }
 
-/* line 17, ../sass/modules/_slider.scss */
+/* line 23, ../sass/modules/_slider.scss */
 .horizontal .ui-slider-label-ticks {
   width: 1.2em;
   height: .5em;
@@ -1173,7 +1724,7 @@ h6, .h6 {
   border-left: 1px solid #999;
 }
 
-/* line 18, ../sass/modules/_slider.scss */
+/* line 24, ../sass/modules/_slider.scss */
 .horizontal .ui-slider-label-ticks span {
   position: relative;
   display: inline-block;
@@ -1181,26 +1732,26 @@ h6, .h6 {
   top: .8em;
 }
 
-/* line 20, ../sass/modules/_slider.scss */
+/* line 26, ../sass/modules/_slider.scss */
 .ui-slider-wrapper.vertical {
   width: 4.5em;
 }
 
-/* line 21, ../sass/modules/_slider.scss */
+/* line 27, ../sass/modules/_slider.scss */
 .vertical .ui-slider-labels {
   top: 1px;
   bottom: 0;
   left: 0.7em;
 }
 
-/* line 22, ../sass/modules/_slider.scss */
+/* line 28, ../sass/modules/_slider.scss */
 .vertical .ui-slider-label-ticks {
   height: 1.2em;
   width: 0.8em;
   border-bottom: 1px solid #999;
 }
 
-/* line 23, ../sass/modules/_slider.scss */
+/* line 29, ../sass/modules/_slider.scss */
 .vertical .ui-slider-label-ticks span {
   position: relative;
   display: inline-block;
@@ -1208,116 +1759,113 @@ h6, .h6 {
   top: .6em;
 }
 
-/* line 25, ../sass/modules/_slider.scss */
-.ui-slider {
-  width: 400px;
-}
-
-/*
-.progress {
-  background: mix($brand-primary, white, 10%);
+/* line 31, ../sass/modules/_slider.scss */
+.progress, .ui-slider {
+  background: #eaecee;
   border-radius: 32px;
-  height: $progress-height;
-  @include box-shadow(none);
+  height: 12px;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
 
+/* line 38, ../sass/modules/_slider.scss */
 .ui-slider {
-  @extend .progress;
   margin-bottom: 20px;
   position: relative;
   cursor: pointer;
 }
 
+/* line 45, ../sass/modules/_slider.scss */
 .ui-slider-handle {
-  background-color: $slider-handle-bg;
+  background-color: #169f84;
   border-radius: 50%;
   cursor: pointer;
   height: 18px;
   position: absolute;
   width: 18px;
   z-index: 2;
-  @include transition(background .25s);
-  
-  &:hover,
-  &:focus {
-    background-color: $slider-handle-hover-bg;
-    outline: none;
-  }
-  &:active {
-    background-color: $slider-handle-active-bg;
-  }
+  -moz-transition: background 0.25s;
+  -o-transition: background 0.25s;
+  -webkit-transition: background 0.25s;
+  transition: background 0.25s;
+}
+/* line 55, ../sass/modules/_slider.scss */
+.ui-slider-handle:hover, .ui-slider-handle:focus {
+  background-color: #47c9af;
+  outline: none;
+}
+/* line 60, ../sass/modules/_slider.scss */
+.ui-slider-handle:active {
+  background-color: #169f84;
 }
 
+/* line 65, ../sass/modules/_slider.scss */
 .ui-slider-range {
-  background-color: $slider-range-bg;
+  background-color: #1abc9c;
   display: block;
   height: 100%;
   position: absolute;
   z-index: 1;
 }
 
-// Segments
-// -------------------------
+/* line 75, ../sass/modules/_slider.scss */
 .ui-slider-segment {
-  background-color: $slider-segment-bg;
+  background-color: #d8dadc;
   border-radius: 50%;
   height: 6px;
   width: 6px;
 }
 
-// Values
-// -------------------------
+/* line 84, ../sass/modules/_slider.scss */
 .ui-slider-value {
   float: right;
-  font-size: $slider-value-font-size;
-  margin-top: $slider-height;
-  
-  &.first {
-    clear: left;
-    float: left;
-  }
+  font-size: 12px;
+  margin-top: 12px;
+}
+/* line 89, ../sass/modules/_slider.scss */
+.ui-slider-value.first {
+  clear: left;
+  float: left;
 }
 
-// Horizontal orientation
-// -------------------------
-
-.ui-slider-horizontal {
-  .ui-slider-handle {
-    margin-left: -9px;
-    top: -3px;
-
-    &[style*="100"] {
-      margin-left: -15px;
-    }
-  }
-  .ui-slider-range {
-    border-radius: 30px 0 0 30px;
-  }
-  .ui-slider-segment {
-    float: left;
-    margin: 3px -6px 0 0;
-  }
+/* line 99, ../sass/modules/_slider.scss */
+.ui-slider-horizontal .ui-slider-handle {
+  margin-left: -9px;
+  top: -3px;
+}
+/* line 103, ../sass/modules/_slider.scss */
+.ui-slider-horizontal .ui-slider-handle[style*="100"] {
+  margin-left: -15px;
+}
+/* line 107, ../sass/modules/_slider.scss */
+.ui-slider-horizontal .ui-slider-range {
+  border-radius: 30px 0 0 30px;
+}
+/* line 110, ../sass/modules/_slider.scss */
+.ui-slider-horizontal .ui-slider-segment {
+  float: left;
+  margin: 3px -6px 0 0;
 }
 
-// Vertical orientation
-// -------------------------
-
+/* line 119, ../sass/modules/_slider.scss */
 .ui-slider-vertical {
-  width: $slider-height;
-
-  .ui-slider-handle {
-    margin-left: -3px;
-    margin-bottom: -11px;
-    top: auto;
-  }
-  .ui-slider-range {
-    width: 100%;
-    bottom: 0;
-    border-radius: 0 0 30px 30px;
-  }
-  .ui-slider-segment {
-    position: absolute;
-    right: 3px;
-  }
+  width: 12px;
 }
-*/
+/* line 122, ../sass/modules/_slider.scss */
+.ui-slider-vertical .ui-slider-handle {
+  margin-left: -3px;
+  margin-bottom: -11px;
+  top: auto;
+}
+/* line 127, ../sass/modules/_slider.scss */
+.ui-slider-vertical .ui-slider-range {
+  width: 100%;
+  bottom: 0;
+  border-radius: 0 0 30px 30px;
+}
+/* line 132, ../sass/modules/_slider.scss */
+.ui-slider-vertical .ui-slider-segment {
+  position: absolute;
+  right: 3px;
+}

@@ -1,5 +1,4 @@
 // main file
-//'use strict';
 
 var AudioContext = webkitAudioContext || AudioContext;
 var context = new AudioContext();
@@ -76,6 +75,7 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                         snd.stop();
 
                     }
+                    console.log( localSources, snd.isPlaying );
                     snd.setSources( localSources, onLoad, null, context );
 
                 }
