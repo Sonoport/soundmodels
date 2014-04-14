@@ -65,7 +65,6 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                     var localSources = [];
                     // FileList object
                     var files = evt.target.files;
-                    console.log( localSources );
                     // files is a FileList of File objects.
                     var output = [];
                     for ( var i = 0; i < files.length; i++ ) {
@@ -77,7 +76,6 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                         snd.stop();
 
                     }
-                    console.log( localSources, snd.isPlaying );
                     snd.setSources( localSources, onLoad, null, context );
 
                 }
@@ -91,15 +89,14 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                         // Get urls
                         var sourceurls = $( "#fileUrls" )
                             .val();
-                        console.log( sourceurls );
                         var sources = sourceurls.split( "," );
-                        console.log( sources, snd.isPlaying );
+                        //console.log( sources, snd.isPlaying );
                         // Stop sound before setting source
                         if ( snd.isPlaying ) {
                             snd.stop();
 
                         }
-                        console.log( "stop", lp.isPlaying );
+                        //console.log( "stop", lp.isPlaying );
                         snd.setSources( sources, onLoad, null, context );
                     } );
 
