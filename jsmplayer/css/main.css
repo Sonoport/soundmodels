@@ -156,23 +156,6 @@ footer {
   }
 }
 
-/* line 55, ../sass/_base.scss */
-.container {
-  max-width: 60em;
-  margin-left: auto;
-  margin-right: auto;
-  background-image: linear-gradient(to right, rgba(102, 102, 255, 0.25), rgba(179, 179, 255, 0.25));
-  background-size: 8.33333%;
-  background-origin: content-box;
-  background-clip: content-box;
-  background-position: left top;
-}
-/* line 12, ../../../../../../.rvm/gems/ruby-2.1.1/gems/susy-2.1.1/sass/susy/output/support/_clearfix.scss */
-.container::after {
-  content: " ";
-  display: block;
-  clear: both;
-}
 @media (min-width: 992px) {
   /* line 55, ../sass/_base.scss */
   .container {

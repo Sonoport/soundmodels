@@ -53,7 +53,7 @@ footer {
 }
 
 .container {
-	@include container(show);
+	//@include container(show);
 	
 	@include breakpoint($screen-md-min) {
 		@include container(90%);
