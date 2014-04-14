@@ -1,12 +1,19 @@
 /**
- * @class SoundQueue
- * @description A sound model which loads a sound file and allows it to be looped continuously at variable speed.
- * @module Looper
+ * @module Core
  */
 define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
     function ( Config, Looper, FileLoader, SPEvent ) {
         "use strict";
 
+        /**
+         * A primitive which allows events on other Sound Models to be queued based on time of execution and executed at the appropriate time. Enables polyphony.
+         *
+         * @class SoundQueue
+         * @constructor
+         * @param {AudioContext} context AudioContext to be used in running the queue.
+         * @param {Number} [numberOfVoices] Number of polyphonic voices the Queue can have.
+         *
+         */
         function SoundQueue( context, numberOfVoices ) {
             if ( !( this instanceof SoundQueue ) ) {
                 throw new TypeError( "SoundQueue constructor cannot be called as a function." );
@@ -63,7 +70,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             var createNewVoice = function ( eventID ) {
                 if ( freeVoices_.length < 1 ) {
                     // TODO Steal??
-                    console.log( "Need to steal voices" );
+                    console.warn( "Need to steal voices" );
                 }
                 var newVoice = freeVoices_.pop();
                 newVoice.eventID = eventID;
@@ -74,7 +81,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             var processSingleEvent = function ( thisEvent ) {
                 var selectedVoice = findVoiceWithID( thisEvent.eventID );
 
-                console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice );
+                //console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice );
 
                 if ( thisEvent.type == "QESTART" ) {
                     if ( selectedVoice === null ) {
@@ -134,40 +141,102 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                 }
             };
 
-            // Public Properties
-
             // Public Functions
 
-            //"QENONE", "QESTOP", "QESTART", "QESETPARAM", "QESETSRC", "QERELEASE"
-
+            /**
+             * Enqueue a Start event.
+             *
+             * @method queueStart
+             * @param {Number} time Time (in seconds) at which the voice will start.
+             * @param {Number} eventID Arbitary ID which is common for all related events.
+             */
             this.queueStart = function ( time, eventID ) {
                 //console.log( eventID + ": Enqueing QESTART at " + time );
                 eventQueue_.push( new SPEvent( "QESTART", time, eventID ) );
             };
+
+            /**
+             * Enqueue a Release event.
+             *
+             * @method queueRelease
+             * @param {Number} time Time (in seconds) at which the voice will release.
+             * @param {Number} eventID Arbitary ID which is common for all related events.
+             */
             this.queueRelease = function ( time, eventID ) {
                 //console.log( eventID + ": Enqueing QERELEASE at " + time );
                 eventQueue_.push( new SPEvent( "QERELEASE", time, eventID ) );
             };
+
+            /**
+             * Enqueue a Stop event.
+             *
+             * @method queueStop
+             * @param {Number} time Time (in seconds) at which the voice will stop.
+             * @param {Number} eventID Arbitary ID which is common for all related events.
+             */
             this.queueStop = function ( time, eventID ) {
                 //console.log( eventID + ": Enqueing QESTOP at " + time );
                 eventQueue_.push( new SPEvent( "QESTOP", time, eventID ) );
             };
+
+            /**
+             * Enqueue a Set Parameter event.
+             *
+             * @method queueSetParameter
+             * @param {Number} time Time (in seconds) at which the voice parameter will be set.
+             * @param {Number} eventID Arbitary ID which is common for all related events.
+             * @param {Boolean/Number} paramValue Value for the Parameter to be set.
+             * @param {String} paramName Name of the parameter to be set.
+             */
             this.queueSetParameter = function ( time, eventID, paramValue, paramName ) {
                 //console.log( eventID + ": Enqueing QESETPARAM at " + time );
                 eventQueue_.push( new SPEvent( "QESETPARAM", time, eventID, paramValue, paramName ) );
             };
+
+            /**
+             * Enqueue a Set Source event.
+             *
+             * @method queueSetSource
+             * @param {Number} time Time (in seconds) at which the voice source will be set.
+             * @param {Number} eventID Arbitary ID which is common for all related events.
+             * @param {AudioBuffer} sourceBuffer AudioBuffer to be set as source for a voice.
+             */
             this.queueSetSource = function ( time, eventID, sourceBuffer ) {
                 //console.log( eventID + ": Enqueing QESETSRC at " + time );
                 eventQueue_.push( new SPEvent( "QESETSRC", time, eventID, null, null, sourceBuffer ) );
             };
 
-            this.connect = function ( audioNode ) {
+            /**
+             * Connect the SoundQueue to an output. Connects all the internal voices to the output.
+             *
+             * @method connect
+             * @param {AudioNode} destination AudioNode to connect to.
+             * @param {Number} [output] Index describing which output of the AudioNode from which to connect.
+             * @param {Number} [input] Index describing which input of the destination AudioNode to connect to.
+             */
+            this.connect = function ( destination, output, input ) {
                 freeVoices_.forEach( function ( thisVoice ) {
-                    thisVoice.connect( audioNode );
+                    thisVoice.connect( destination, output, input );
                 } );
 
                 busyVoices_.forEach( function ( thisVoice ) {
-                    thisVoice.connect( audioNode );
+                    thisVoice.connect( destination, output, input );
+                } );
+            };
+
+            /**
+             * Disconnects the Sound from the AudioNode Chain.
+             *
+             * @method disconnect
+             * @param {Number} [outputIndex] Index describing which output of the AudioNode to disconnect.
+             */
+            this.disconnect = function ( outputIndex ) {
+                freeVoices_.forEach( function ( thisVoice ) {
+                    thisVoice.disconnect( outputIndex );
+                } );
+
+                busyVoices_.forEach( function ( thisVoice ) {
+                    thisVoice.disconnect( outputIndex );
                 } );
             };
 

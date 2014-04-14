@@ -1,13 +1,23 @@
 /**
- * @class Trigger
- * @description A sound model which triggers a specific sound file with multiple voices
- * @module Looper
+ * @module Models
  */
 define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiFileLoader', 'core/Converter' ],
     function ( Config, BaseSound, SoundQueue, SPAudioParam, multiFileLoader, Converter ) {
         "use strict";
 
-        function Trigger( sounds, onLoadCallback, context ) {
+        /**
+         * A sound model which triggers a single or multiple sound files with multiple voices (polyphony).
+         *
+         *
+         * @class Trigger
+         * @constructor
+         * @extends BaseSound
+         * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
+         * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onEndedCallback] Callback when the Trigger has finished playing.
+         * @param {AudioContext} context AudioContext to be used.
+         */
+        function Trigger( sounds, onLoadCallback, onEndedCallback, context ) {
             if ( !( this instanceof Trigger ) ) {
                 throw new TypeError( "Trigger constructor cannot be called as a function." );
             }
@@ -17,6 +27,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
+            this.numberOfInputs = 1;
+            this.numberOfOutputs = 1;
 
             // Private vars
             var self = this;
@@ -35,28 +47,72 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 onLoadCallback();
             };
 
-            function init() {
+            function init( sounds ) {
                 soundQueue_ = new SoundQueue( context );
                 multiFileLoader.call( self, sounds, context, onAllLoad );
             }
 
             // Public Properties
+
+            /**
+             * Pitch shift of the triggered voices in semitones.
+             *
+             * @property pitchShift
+             * @type SPAudioParam
+             * @default 0
+             */
             this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
 
+            /**
+             * Maximum value for random pitch shift of the triggered voices in semitones.
+             *
+             * @property pitchRand
+             * @type SPAudioParam
+             * @default 0
+             */
             this.pitchRand = SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 24.0, 0, this.audioContext );
 
+            /**
+             * Enable randomness in the order of sources which are triggered.
+             *
+             * @property eventRand
+             * @type SPAudioParam
+             * @default false
+             */
             this.eventRand = SPAudioParam.createPsuedoParam( "eventRand", true, false, false, this.audioContext );
 
             // Public Functions
 
-            this.play = function () {
+            /**
+             * Reinitializes a Looper and sets it's sources.
+             *
+             * @method setSources
+             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
+             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             */
+            this.setSources = function ( sounds, onLoadCallback ) {
+                init( sounds );
+            };
+
+            /**
+             * Triggers a single voice.
+             *
+             * @method play
+             * @param {Number} [when] At what time (in seconds) the sound be triggered
+             *
+             */
+            this.play = function ( when ) {
+
+                if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+                    when = this.audioContext.currentTime;
+                }
 
                 var length = 1;
                 if ( Object.prototype.toString.call( sounds ) === '[object Array]' ) {
                     length = sounds.length;
                 }
 
-                if ( this.eventRand ) {
+                if ( this.eventRand.value ) {
                     if ( length > 2 ) {
                         currentSourceID_ = ( currentSourceID_ + 1 + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
                     } else {
@@ -66,9 +122,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     currentSourceID_ = ( currentSourceID_ + 1 ) % length;
                 }
 
-                console.log( "Using source # " + currentSourceID_ );
-
-                var timeStamp = context.currentTime;
+                var timeStamp = when;
                 var playSpeed = Converter.semitonesToRatio( this.pitchShift.value + Math.random() * this.pitchRand.value );
 
                 soundQueue_.queueSetSource( timeStamp, currentEventID_, sourceBuffers_[ currentSourceID_ ] );
@@ -77,8 +131,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 currentEventID_++;
             };
 
-            init();
-
+            init( sounds );
         }
 
         Trigger.prototype = Object.create( BaseSound.prototype );

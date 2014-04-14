@@ -1,3 +1,9 @@
+/**
+ * MonkeyPatch for AudioContext. Normalizes AudioContext across browsers and implementations.
+ *
+ * @module Core
+ * @class AudioContextMonkeyPatch
+ */
 define(
     function () {
         'use strict';
