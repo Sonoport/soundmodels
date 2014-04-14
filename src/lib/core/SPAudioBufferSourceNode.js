@@ -222,7 +222,7 @@ define( [ 'core/SPPlaybackRateParam' ],
 
             function savePosition( processEvent ) {
                 var inputBuffer = processEvent.inputBuffer.getChannelData( 0 );
-                lastPos = inputBuffer[ inputBuffer.length ] || 0;
+                lastPos = inputBuffer[ inputBuffer.length - 1 ] || 0;
             }
 
             init();
