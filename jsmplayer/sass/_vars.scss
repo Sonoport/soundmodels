@@ -46,6 +46,41 @@ $brand-info: $peter-river !default;
 $link-color: $green-sea !default;
 $link-hover-color: $turquoise !default;
 
+//== Media queries breakpoints
+//
+//## Define the breakpoints at which your layout will change, adapting to different screen sizes.
+
+// Extra small screen / phone
+$screen-xs-min:               480px !default;
+
+// Small screen / tablet
+$screen-sm-min:               768px !default;
+
+// Medium screen / desktop
+$screen-md-min:               992px !default;
+
+// Large screen / wide desktop
+$screen-lg-min:               1200px !default;
+
+// So media queries don't overlap when required, provide a maximum
+$screen-xs-max:               ($screen-sm-min - 1) !default;
+$screen-sm-max:               ($screen-md-min - 1) !default;
+$screen-md-max:               ($screen-lg-min - 1) !default;
+
+//== Grid system
+//
+//## Define your custom responsive grid.
+
+//** Number of columns in the grid.
+$grid-columns:                12 !default;
+//** Padding between columns. Gets divided in half for the left and right.
+$grid-gutter-width:           30px !default;
+// Navbar collapse
+//** Point at which the navbar becomes uncollapsed.
+$grid-float-breakpoint:       $screen-sm-min !default;
+//** Point at which the navbar begins collapsing.
+$grid-float-breakpoint-max:   ($grid-float-breakpoint - 1) !default;
+
 //== Typography
 //
 //## Font, line-height for body text, headings, and more.
@@ -67,6 +102,7 @@ $font-size-h5: floor($font-size-base * 1.556) !default; // ~28px
 $font-size-h6: ceil($font-size-base * 1.333) !default; // ~24px
 
 $line-height-base: 1.72222 !default; // 31/18
+$line-height-computed:      floor($font-size-base * $line-height-base) !default; // ~31px
 
 //** Icon sizes for use in components
 $icon-normal: 16px !default;
@@ -206,3 +242,54 @@ $btn-inverse-hover-bg: overlay($brand-primary, darken(white, 37.5%)) !default;
 $btn-inverse-active-bg: mix($brand-primary, black, 85%) !default;
 
 $btn-link-disabled-color: $gray-light !default;
+
+
+//== Forms
+//
+//##
+
+$input-font-size-base:      $component-font-size-base !default;
+$input-font-size-small:     floor($component-font-size-base * 0.867) !default; // ~13px
+$input-font-size-large:     ceil($component-font-size-base * 1.133) !default; // ~17px
+$input-font-size-huge:      floor($component-font-size-base * 1.467) !default; // ~22px
+
+$input-line-height-base:    1.467 !default; // ~22px
+$input-line-height-small:   1.462 !default; // ~19px
+$input-line-height-large:   1.235 !default; // ~21px
+$input-line-height-huge:    1.318 !default; // ~29px
+
+$input-icon-font-size:      ceil($component-font-size-base * 1.333) !default;  // ~20px       
+
+$input-bg:                  $inverse !default;
+$input-bg-disabled:         mix($gray, white, 10%) !default;
+
+$input-height-small:        35px !default;
+$input-height-base:         41px !default;
+$input-height-large:        45px !default;
+$input-height-huge:         53px !default;
+
+$input-border-radius:       $border-radius-large !default;
+
+$legend-color:              inherit !default;
+
+//== Labels
+//
+//##
+
+//** Default label background color
+$label-default-bg:            $gray-light !default;
+//** Primary label background color
+$label-primary-bg:            $brand-primary !default;
+//** Success label background color
+$label-success-bg:            $brand-success !default;
+//** Info label background color
+$label-info-bg:               $brand-info !default;
+//** Warning label background color
+$label-warning-bg:            $brand-warning !default;
+//** Danger label background color
+$label-danger-bg:             $brand-danger !default;
+
+//** Default label text color
+$label-color:                 #fff !default;
+//** Default text color of a linked label
+$label-link-hover-color:      #fff !default;

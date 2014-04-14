@@ -1,5 +1,4 @@
 // main file
-//'use strict';
 
 var AudioContext = webkitAudioContext || AudioContext;
 var context = new AudioContext();
@@ -26,13 +25,16 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
     // Looper
     var lp = new Looper( runURL, onLoad, null, context );
 
-    var isSndLoaded = false;
+    var generatedOnce = 0;
 
     function onLoad( status ) {
         // After sound is loaded
-        isSndLoaded = status;
         console.log( "Looper Loaded :" + status );
-        generateParam( lp );
+        generatedOnce++;
+        // Generate the sliders on the first load
+        if ( generatedOnce === 1 ) {
+            generateParam( lp );
+        }
     }
     // Pass in the sound model object to tie interface to the model
     generateInterface( lp );
@@ -58,13 +60,12 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                         snd.stop( 0 );
                     } );
 
-                // Load local sources
-                var localSources = [];
-
                 function handleFileSelect( evt ) {
+                    // Load local sources
+                    var localSources = [];
                     // FileList object
                     var files = evt.target.files;
-
+                    console.log( localSources );
                     // files is a FileList of File objects.
                     var output = [];
                     for ( var i = 0; i < files.length; i++ ) {
@@ -76,6 +77,7 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                         snd.stop();
 
                     }
+                    console.log( localSources, snd.isPlaying );
                     snd.setSources( localSources, onLoad, null, context );
 
                 }
@@ -112,9 +114,9 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
             // Get properties that are of SPAudioParam
             if ( prop instanceof SPAudioParam ) {
                 //console.log( "props existed", param );
-                var labelnode = "<label class='param-name'>" + param + "</label>";
-                var slider = "<div id='" + param + "' class='ui-slider'></div>";
-                var outputVal = "<input type='text' id='" + param + "val' class='amount' />";
+                var labelnode = "<div class='param-name'><label class='label label-info param-name'>" + param + "</label></div>";
+                var slider = "<div class='pull-left param-slider'><div id='" + param + "' class='ui-slider'></div></div>";
+                var outputVal = "<div class='amount'><input type='text' id='" + param + "val' class='form-control input-sm' /></div>";
                 $( ".player-params" )
                     .append( "<div class='param-box'>" + labelnode + slider + outputVal + "</div>" );
                 makeSlider( snd, param, prop.value, prop.minValue, prop.maxValue, 0.1 );

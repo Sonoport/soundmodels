@@ -5,8 +5,14 @@
 // -------------------------
 
 
-.ui-slider-wrapper { position: relative; }
-.ui-slider-wrapper .ui-slider-horizontal { width: 100%; }
+.ui-slider-wrapper { 
+  position: relative;
+}
+.ui-slider-wrapper { 
+  .ui-slider-horizontal  {
+     width: 100%; 
+  }
+}
 
 .ui-slider-labels { position: absolute; border: 1px solid transparent; }
 .ui-slider-label-ticks { border: 1px solid transparent; position: absolute; white-space: nowrap; }
@@ -22,10 +28,6 @@
 .vertical .ui-slider-label-ticks { height: 1.2em; width: 0.8em; border-bottom: 1px solid #999; }
 .vertical .ui-slider-label-ticks span { position: relative; display: inline-block; margin-left: 1em; top: .6em; }
 
-.ui-slider {
-  width: 400px;
-}
-/*
 .progress {
   background: mix($brand-primary, white, 10%);
   border-radius: 32px;
@@ -132,4 +134,3 @@
     right: 3px;
   }
 }
-*/
