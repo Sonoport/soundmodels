@@ -24,16 +24,14 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
     // Looper
     var lp = new Looper( runURL, onLoad, null, context );
 
-    var generatedOnce = 0;
+    var $playerParams = $( '.player-params' );
 
     function onLoad( status ) {
         // After sound is loaded
         console.log( "Looper Loaded :" + status );
-        generatedOnce++;
-        // Generate the sliders on the first load
-        if ( generatedOnce === 1 ) {
-            generateParam( lp );
-        }
+        // Generate sliders again everytime a new file is loaded.
+        generateParam( lp );
+
     }
     // Pass in the sound model object to tie interface to the model
     generateInterface( lp );
@@ -75,6 +73,8 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                         snd.stop();
 
                     }
+                    // Remove sliders
+                    $playerParams.empty();
                     snd.setSources( localSources, onLoad, null, context );
 
                 }
@@ -95,7 +95,8 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                             snd.stop();
 
                         }
-                        //console.log( "stop", lp.isPlaying );
+                        // Remove sliders
+                        $playerParams.empty();
                         snd.setSources( sources, onLoad, null, context );
                     } );
 
@@ -104,6 +105,7 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
 
     function generateParam( snd ) {
         // Loop through all the properties in Sound Model
+        var parambox = "";
         for ( var param in snd ) {
             var prop = snd[ param ];
             var parameterType = Object.prototype.toString.call( prop );
@@ -113,14 +115,14 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                 var labelnode = "<div class='param-name'><label class='label label-info param-name'>" + param + "</label></div>";
                 var slider = "<div class='pull-left param-slider'><div id='" + param + "' class='ui-slider'></div></div>";
                 var outputVal = "<div class='amount'><input type='text' id='" + param + "val' class='form-control input-sm' /></div>";
-                $( ".player-params" )
+                $playerParams
                     .append( "<div class='param-box'>" + labelnode + slider + outputVal + "</div>" );
-                makeSlider( snd, param, prop.value, prop.minValue, prop.maxValue, 0.1 );
+                makeSlider( snd, param, prop.value, prop.minValue, prop.maxValue );
             }
         }
     }
 
-    function makeSlider( snd, id, val, min, max, step ) {
+    function makeSlider( snd, id, val, min, max ) {
         // Make sliders
         $( "#" + id )
             .tickslider( {
@@ -131,6 +133,7 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                     // Update input label box
                     $( "#" + id + "val" )
                         .val( ui.value );
+                    snd[ id ].value = ui.value;
                 },
                 change: function ( event, ui ) {
                     snd[ id ].value = ui.value;
