@@ -90,7 +90,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                     selectedVoice.start( thisEvent.time );
                 } else if ( thisEvent.type == "QERELEASE" ) {
                     if ( selectedVoice !== null ) {
-                        selectedVoice.release( thisEvent.time );
+                        selectedVoice.release( thisEvent.paramValue, thisEvent.time );
                     }
                 } else if ( thisEvent.type == "QESTOP" ) {
                     var resetVoice = function ( selectedVoice ) {
@@ -161,10 +161,11 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @method queueRelease
              * @param {Number} time Time (in seconds) at which the voice will release.
              * @param {Number} eventID Arbitary ID which is common for all related events.
+             * @param {Number} releaseDuration Time (in seconds) on the length of the release
              */
-            this.queueRelease = function ( time, eventID ) {
+            this.queueRelease = function ( time, eventID, releaseDuration ) {
                 //console.log( eventID + ": Enqueing QERELEASE at " + time );
-                eventQueue_.push( new SPEvent( "QERELEASE", time, eventID ) );
+                eventQueue_.push( new SPEvent( "QERELEASE", time, eventID, releaseDuration ) );
             };
 
             /**

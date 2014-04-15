@@ -1,8 +1,8 @@
 /**
  * @module Models
  */
- define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'models/Trigger', 'core/Converter' ],
-    function ( Config, BaseSound, SPAudioParam, Trigger, Converter ) {
+define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiFileLoader', 'core/Converter' ],
+    function ( Config, BaseSound, SoundQueue, SPAudioParam, multiFileLoader, Converter ) {
         "use strict";
 
         /**
@@ -17,38 +17,114 @@
          * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
          * @param {AudioContext} context AudioContext to be used.
          */
-         function MultiTrigger( sounds, onLoadCallback, context ) {
+        function MultiTrigger( sounds, onLoadCallback, context ) {
             if ( !( this instanceof Trigger ) ) {
                 throw new TypeError( "MultiTrigger constructor cannot be called as a function." );
             }
 
-            var trigger;
-            var lastEventTime = 0;
+            var self = this;
 
-            function init() {
+            /*Support upto 8 seperate voices*/
+            this.maxSources = Config.MAX_VOICES;
+            this.numberOfInputs = 1;
+            this.numberOfOutputs = 1;
 
-                trigger = new Trigger( sounds, onAllLoad, null, context );
+            var lastEventTime_ = 0;
+            var timeToNextEvent_ = 0;
 
+            // Private Variables
+            var sourceBuffers_ = [];
+            var soundQueue_;
+            var currentEventID_ = 0;
+            var currentSourceID_ = 0;
+
+            // Private Functions
+
+            var onAllLoad = function ( status, audioBufferArray ) {
+                sourceBuffers_ = audioBufferArray;
+                soundQueue_.connect( self.releaseGainNode );
+                onLoadCallback();
+            };
+
+            function init( sounds ) {
+                soundQueue_ = new SoundQueue( context );
+                multiFileLoader.call( self, sounds, context, onAllLoad );
             }
 
-            function onAllLoad() {
+            function triggerOnce( eventTime ) {
+
+                // Release Older Sounds
+
+                if ( currentEventID_ >= self.maxSources - 2 ) {
+                    var releaseID = currentEventID_ - ( self.maxSources - 2 );
+                    var releaseDur = eventTime - lastEventTime_;
+
+                    soundQueue_.queueRelease( eventTime, releaseID, releaseDur );
+                }
+
+                var length = sourceBuffers_.length;
+
+                if ( self.eventRand.value ) {
+                    if ( length > 2 ) {
+                        currentSourceID_ = ( currentSourceID_ + 1 + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
+                    } else {
+                        currentSourceID_ = Math.floor( Math.random() * ( length - 1 ) );
+                    }
+                } else {
+                    currentSourceID_ = ( currentSourceID_ + 1 ) % length;
+                }
+
+                var timeStamp = eventTime;
+                var playSpeed = Converter.semitonesToRatio( self.pitchShift.value + Math.random() * self.pitchRand.value );
+
+                soundQueue_.queueSetSource( timeStamp, currentEventID_, sourceBuffers_[ currentSourceID_ ] );
+                soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
+                soundQueue_.queueStart( timeStamp, currentEventID_ );
+                currentEventID_++;
+
             }
 
             function multiTiggerCallback() {
 
                 var currentTime = context.currentTime;
-                var endTime = cTime + 1 / Config.NOMINAL_REFRESH_RATE;
+                var endTime = currentTime + 1 / Config.NOMINAL_REFRESH_RATE;
 
-                while (lastEventTime + timeToNextEvent < endTime){
-                    var eventTime = Math.max(currentTime, lastEventTime + timeToNextEvent);
-                    trigger.play(eventTime);
-                    lastEventTime = eventTime;
+                while ( lastEventTime_ + timeToNextEvent_ < endTime ) {
+                    var eventTime = Math.max( currentTime, lastEventTime_ + timeToNextEvent_ );
+                    triggerOnce( eventTime );
+                    lastEventTime_ = eventTime;
+                    timeToNextEvent_ = updateTimeToNextEvent( self.eventRate.value );
                 }
 
                 // Keep making callback request if sound is still playing.
-                if ( this.isPlaying  ) {
+                if ( self.isPlaying ) {
                     window.requestAnimationFrame( multiTiggerCallback );
                 }
+            }
+
+            function updateTimeToNextEvent( eventRate ) {
+                var period = 1.0 / eventRate;
+                var randomness = Math.random() - 0.5;
+                var jitterRand = ( 1.0 + 2.0 * self.eventJitter.value * randomness );
+                return ( period * jitterRand );
+            }
+
+            function eventRateSetter_( aParam, value ) {
+                if ( value === 0 ) {
+                    if ( self.isPlaying ) {
+                        self.pause();
+                    }
+                } else {
+                    if ( !self.isPlaying ) {
+                        self.play();
+                    }
+                    timeToNextEvent_ = updateTimeToNextEvent( value );
+
+                    //Update releaseDur of sounds being released
+                    //var period = 1.0 / value;
+                    //releaseDur = Math.max( 0.99 * period * ( 1 - self.eventJitter.value ), 0.01 );
+                }
+
             }
 
             // Public Properties
@@ -60,7 +136,7 @@
              * @type SPAudioParam
              * @default 0
              */
-             this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
+            this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
 
             /**
              * Maximum value for random pitch shift of the triggered voices in semitones.
@@ -69,7 +145,7 @@
              * @type SPAudioParam
              * @default 0
              */
-             this.pitchRand = SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 24.0, 0, this.audioContext );
+            this.pitchRand = SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 24.0, 0, this.audioContext );
 
             /**
              * Enable randomness in the order of sources which are triggered.
@@ -78,7 +154,7 @@
              * @type SPAudioParam
              * @default false
              */
-             this.eventRand = SPAudioParam.createPsuedoParam( "eventRand", true, false, false, this.audioContext );
+            this.eventRand = SPAudioParam.createPsuedoParam( "eventRand", true, false, false, this.audioContext );
 
             /**
              * Trigger rate for playing the source in Hz.
@@ -87,8 +163,7 @@
              * @type SPAudioParam
              * @default false
              */
-             this.eventRate = SPAudioParam.createPsuedoParam( "eventRand", 0, 60.0, 1.0, this.audioContext );
-
+            this.eventRate = new SPAudioParam( "eventRand", 0, 60.0, 1.0, null, null, eventRateSetter_, this.audioContext );
             /**
              * Maximum deviance from the regular trigger interval for a random jitter factor in percentage.
              *
@@ -96,7 +171,7 @@
              * @type SPAudioParam
              * @default false
              */
-             this.eventJitter = SPAudioParam.createPsuedoParam( "eventRand", 0, 0.99, 1, this.audioContext );
+            this.eventJitter = SPAudioParam.createPsuedoParam( "eventRand", 0, 0.99, 1, this.audioContext );
 
             // Public Functions
 
@@ -107,27 +182,16 @@
              * @param {Number} [when] At what time (in seconds) the sound be triggered
              *
              */
-             this.play = function ( when ) {
+            this.play = function ( when ) {
                 BaseSound.prototype.start.call( this, 0 );
                 multiTiggerCallback();
-            }
+            };
 
-            /**
-             * Stop repeated triggering.
-             *
-             * @method play
-             * @param {Number} [when] At what time (in seconds) the sound be triggered
-             *
-             */
-             this.pause = function ( when ) {
+            init( sounds );
+        }
 
-             }
+        Trigger.prototype = Object.create( BaseSound.prototype );
 
-             init();
-         }
+        return Trigger;
 
-         Trigger.prototype = Object.create( BaseSound.prototype );
-
-         return Trigger;
-
-     } );
+    } );

@@ -151,10 +151,10 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      * Linearly ramp down the gain of the audio in time (seconds) to 0.
      *
      * @method release
-     * @param {Number} [fadeTime] Amount of time (seconds) it takes for linear ramp down to happen.
      * @param {Number} [when] Time (in seconds) at which the Envelope will release.
+     * @param {Number} [fadeTime] Amount of time (seconds) it takes for linear ramp down to happen.
      */
-    BaseSound.prototype.release = function ( fadeTime, when ) {
+    BaseSound.prototype.release = function ( when, fadeTime ) {
 
         var FADE_TIME = 0.5;
         var FADE_TIME_PAD = 1;
