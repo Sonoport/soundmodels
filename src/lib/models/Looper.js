@@ -43,6 +43,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
                 self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
 
+                this.isInitialized = true;
                 if ( typeof onLoadCallback === 'function' ) {
                     onLoadCallback( status );
                 }
@@ -190,6 +191,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
              */
             this.setSources = function ( sounds, onLoadCallback ) {
+                this.isInitialized = false;
                 init( sounds );
             };
 

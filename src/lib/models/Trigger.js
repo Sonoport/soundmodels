@@ -45,7 +45,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var onAllLoad = function ( status, audioBufferArray ) {
                 sourceBuffers_ = audioBufferArray;
                 soundQueue_.connect( self.releaseGainNode );
-                onLoadCallback();
+                this.isInitialized = true;
+                if ( typeof onLoadCallback === 'function' ) {
+                    onLoadCallback();
+                }
             };
 
             function init( sounds ) {
@@ -98,6 +101,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
              */
             this.setSources = function ( sounds, onLoadCallback ) {
+                this.isInitialized = false;
                 init( sounds );
             };
 

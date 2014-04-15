@@ -74,6 +74,15 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.isPlaying = false;
 
         /**
+         *  If Sound is currently initialized.
+         *
+         * @property isInitialized
+         * @type Boolean
+         * @default false
+         */
+        this.isInitialized = false;
+
+        /**
          * The input node that the output node will be connected to. <br />
          * Set this value to null if no connection can be made on the input node
          *
@@ -188,7 +197,9 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      *
      * @method pause
      */
-    BaseSound.prototype.pause = function () {};
+    BaseSound.prototype.pause = function () {
+        this.isPlaying = false;
+    };
 
     // Return constructor function
     return BaseSound;
