@@ -91,7 +91,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             // Public Functions
 
             /**
-             * Reinitializes a Looper and sets it's sources.
+             * Reinitializes a Trigger and sets it's sources.
              *
              * @method setSources
              * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
@@ -137,7 +137,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
                 currentEventID_++;
 
-                  BaseSound.prototype.start.call( this, 0 );
+                BaseSound.prototype.start.call( this, 0 );
             };
 
             init( sounds );
