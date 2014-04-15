@@ -43,7 +43,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
                 self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
 
-                this.isInitialized = true;
+                self.isInitialized = true;
                 if ( typeof onLoadCallback === 'function' ) {
                     onLoadCallback( status );
                 }
@@ -78,26 +78,27 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             var playSpeedSetter_ = function ( aParam, value, audioContext ) {
-                /* 0.001 - 60dB Drop
-                  e(-n) = 0.001; - Decay Rate of setTargetAtTime.
-                  n = 6.90776;
-                  */
-                var t60multiplier = 6.90776;
+                if ( self.isInitialized ) {
+                    /* 0.001 - 60dB Drop
+                                  e(-n) = 0.001; - Decay Rate of setTargetAtTime.
+                                  n = 6.90776;
+                                  */
+                    var t60multiplier = 6.90776;
 
-                var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
+                    var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
 
-                if ( value > currentSpeed ) {
-                    sources_.forEach( function ( thisSource ) {
-                        thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                        thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.riseTime.value * t60multiplier );
-                    } );
-                } else if ( value < currentSpeed ) {
-                    sources_.forEach( function ( thisSource ) {
-                        thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                        thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.decayTime.value * t60multiplier );
-                    } );
+                    if ( value > currentSpeed ) {
+                        sources_.forEach( function ( thisSource ) {
+                            thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                            thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.riseTime.value / t60multiplier );
+                        } );
+                    } else if ( value < currentSpeed ) {
+                        sources_.forEach( function ( thisSource ) {
+                            thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                            thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.decayTime.value / t60multiplier );
+                        } );
+                    }
                 }
-
             };
 
             var startPointSetter_ = function ( aParam, value ) {
