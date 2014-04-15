@@ -44,7 +44,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var onAllLoad = function ( status, audioBufferArray ) {
                 sourceBuffer_ = audioBufferArray[ 0 ];
                 soundQueue_.connect( self.releaseGainNode );
-                onLoadCallback();
+                onLoadCallback( status );
             };
 
             function init( sounds ) {

@@ -50,7 +50,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
                 this.isInitialized = true;
                 if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback();
+                    onLoadCallback( status );
                 }
             };
 
