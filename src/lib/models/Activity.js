@@ -21,6 +21,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 throw new TypeError( "Activity constructor cannot be called as a function." );
             }
 
+            // Call superclass constructor
             BaseSound.call( this, context );
 
             /*Support upto 8 seperate voices*/
