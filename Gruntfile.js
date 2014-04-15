@@ -109,73 +109,73 @@ module.exports = function ( grunt ) {
                 options: {
                     livereload: true
                 },
-                files: [ '<%= dirs.player %>/**/*' ] 
+                files: [ '<%= dirs.player %>/**/*' ]
             }
         },
-            // YUI Documentation
-                yuidoc: {
-                    dev: {
-                        name: '<%= pkg.name %>',
-                        description: '<%= pkg.description %>',
-                        version: '<%= pkg.version %>',
-                        url: '<%= pkg.homepage %>',
-                        options: {
-                            paths: '<%= dirs.src %>',
-                            outdir: '<%= dirs.docs %>',
-                            linkNatives: "true"
-                        }
-                    },
-                    release: {
-                        name: '<%= pkg.description %>',
-                        description: '<%= pkg.description %>',
-                        version: '<%= pkg.version %>',
-                        url: '<%= pkg.homepage %>',
-                        logo: 'http://sonoport.com/img/Logo.png',
-                        options: {
-                            // SPAudioParam.js, BaseSound.js, Envelope.js
-                            paths: [ '<%= dirs.models %>', 'src/lib/temp' ],
-                            outdir: '<%= dirs.release %>/docs',
-                            linkNatives: "true",
-                            nocode: "true"
+        // YUI Documentation
+        yuidoc: {
+            dev: {
+                name: '<%= pkg.name %>',
+                description: '<%= pkg.description %>',
+                version: '<%= pkg.version %>',
+                url: '<%= pkg.homepage %>',
+                options: {
+                    paths: '<%= dirs.src %>',
+                    outdir: '<%= dirs.docs %>',
+                    linkNatives: "true"
+                }
+            },
+            release: {
+                name: '<%= pkg.description %>',
+                description: '<%= pkg.description %>',
+                version: '<%= pkg.version %>',
+                url: '<%= pkg.homepage %>',
+                logo: 'http://sonoport.com/img/Logo.png',
+                options: {
+                    // SPAudioParam.js, BaseSound.js, Envelope.js
+                    paths: [ '<%= dirs.models %>', 'src/lib/temp' ],
+                    outdir: '<%= dirs.release %>/docs',
+                    linkNatives: "true",
+                    nocode: "true"
 
-                        }
-                    }
+                }
+            }
+        },
+        copy: {
+            dist: {
+                files: [ {
+                    expand: true,
+                    src: [ '<%= dirs.build %>/models/*.js' ],
+                    dest: '<%= dirs.release %>/lib',
+                    filter: 'isFile',
+                    flatten: true
+                }, ]
+            },
+            temp: {
+                files: [ {
+                    expand: true,
+                    src: [ '<%= dirs.core %>/{SPAudioParam,BaseSound,Envelope}.js' ],
+                    dest: '<%= dirs.temp %>',
+                    filter: 'isFile',
+                    flatten: true
+                }, ]
+            }
+        },
+        clean: {
+            temp: [ '<%= dirs.temp %>' ],
+        },
+        usebanner: {
+            main: {
+                options: {
+                    position: 'top',
+                    banner: '<%= banner %>',
+                    linebreak: true
                 },
-                copy: {
-                    dist: {
-                        files: [ {
-                            expand: true,
-                            src: [ '<%= dirs.build %>/models/*.js' ],
-                            dest: '<%= dirs.release %>/lib',
-                            filter: 'isFile',
-                            flatten: true
-                        }, ]
-                    },
-                    temp: {
-                        files: [ {
-                            expand: true,
-                            src: [ '<%= dirs.core %>/{SPAudioParam,BaseSound,Envelope}.js' ],
-                            dest: '<%= dirs.temp %>',
-                            filter: 'isFile',
-                            flatten: true
-                        }, ]
-                    }
-                },
-                clean: {
-                    temp: [ '<%= dirs.temp %>' ],
-                },
-                usebanner: {
-                    main: {
-                        options: {
-                            position: 'top',
-                            banner: '<%= banner %>',
-                            linebreak: true
-                        },
-                        files: {
-                            src: [ '<%= dirs.release %>/lib/*.js' ]
-                        }
-                    }
-                },
+                files: {
+                    src: [ '<%= dirs.release %>/lib/*.js' ]
+                }
+            }
+        },
         // Player related 
         // To run this will require Sass (3.3.4), Compass (1.0.0-alpha), breakpoint (2.4.2) and Susy (2.1.1) pre-installed.
         // compile sass files to css using Compass: http://compass-style.org/
@@ -203,12 +203,12 @@ module.exports = function ( grunt ) {
                     port: 8000,
                     base: [ '<%= dirs.release %>/lib', 'test/models' ],
                     open: true
-                    }
-            }, 
+                }
+            },
             player: {
                 options: {
                     port: 8080,
-                    base: [ '<%= dirs.dist %>', '<%= dirs.player %>' ],
+                    base: [ '<%= dirs.release %>/lib', '<%= dirs.player %>' ],
                     livereload: true
                 }
             }

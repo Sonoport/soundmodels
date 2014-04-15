@@ -134,7 +134,7 @@ require( [ "models/Looper", "core/SPAudioParam" ], function ( Looper, SPAudioPar
                 },
                 change: function ( event, ui ) {
                     snd[ id ].value = ui.value;
-                    console.log( ui.value, lp.playSpeed.value );
+                    console.log( ui.value, snd[ id ].value );
                 }
             } );
         // Update text input when slider is sliding
