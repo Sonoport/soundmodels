@@ -26,6 +26,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             BaseSound.call( this, context );
 
             var self = this;
+            this.maxSources = Config.MAX_VOICES;
+            this.numberOfInputs = 1;
+            this.numberOfOutputs = 1;
 
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
@@ -42,6 +45,16 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var currentSourceID_ = 0;
 
             // Private Functions
+            };
+
+            function init( sounds ) {
+                soundQueue_ = new SoundQueue( context );
+                multiFileLoader.call( self, sounds, context, onAllLoad );
+            }
+
+            function triggerOnce( eventTime ) {
+
+                // Release Older Sounds
 
             var onAllLoad = function ( status, audioBufferArray ) {
                 sourceBuffers_ = audioBufferArray;
@@ -71,6 +84,25 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 }
 
                 var length = sourceBuffers_.length;
+
+                if ( self.eventRand.value ) {
+                    if ( length > 2 ) {
+                        currentSourceID_ = ( currentSourceID_ + 1 + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
+                    } else {
+                        currentSourceID_ = Math.floor( Math.random() * ( length - 1 ) );
+                    }
+                } else {
+                    currentSourceID_ = ( currentSourceID_ + 1 ) % length;
+                }
+
+                var timeStamp = eventTime;
+                var playSpeed = Converter.semitonesToRatio( self.pitchShift.value + Math.random() * self.pitchRand.value );
+
+                soundQueue_.queueSetSource( timeStamp, currentEventID_, sourceBuffers_[ currentSourceID_ ] );
+                soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
+                soundQueue_.queueStart( timeStamp, currentEventID_ );
+                currentEventID_++;
+
 
                 if ( self.eventRand.value ) {
                     if ( length > 2 ) {
