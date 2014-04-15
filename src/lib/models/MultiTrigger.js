@@ -18,9 +18,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @param {AudioContext} context AudioContext to be used.
          */
         function MultiTrigger( sounds, onLoadCallback, context ) {
-            if ( !( this instanceof Trigger ) ) {
+            if ( !( this instanceof MultiTrigger ) ) {
                 throw new TypeError( "MultiTrigger constructor cannot be called as a function." );
             }
+
+            // Call superclass constructor
+            BaseSound.call( this, context );
 
             var self = this;
 
@@ -42,8 +45,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             var onAllLoad = function ( status, audioBufferArray ) {
                 sourceBuffers_ = audioBufferArray;
+                timeToNextEvent_ = updateTimeToNextEvent( self.eventRate.value );
                 soundQueue_.connect( self.releaseGainNode );
-                onLoadCallback();
+
+                this.isInitialized = true;
+                if ( typeof onLoadCallback === 'function' ) {
+                    onLoadCallback();
+                }
             };
 
             function init( sounds ) {
@@ -115,11 +123,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                         self.pause();
                     }
                 } else {
-                    if ( !self.isPlaying ) {
+                    if ( !self.isPlaying && self.isInitialized ) {
                         self.play();
                     }
-                    timeToNextEvent_ = updateTimeToNextEvent( value );
 
+                    if ( self.isInitialized ) {
+                        timeToNextEvent_ = updateTimeToNextEvent( value );
+                    }
                     //Update releaseDur of sounds being released
                     //var period = 1.0 / value;
                     //releaseDur = Math.max( 0.99 * period * ( 1 - self.eventJitter.value ), 0.01 );
@@ -163,7 +173,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @type SPAudioParam
              * @default false
              */
-            this.eventRate = new SPAudioParam( "eventRand", 0, 60.0, 1.0, null, null, eventRateSetter_, this.audioContext );
+            this.eventRate = new SPAudioParam( "eventRate", 0, 60.0, 10.0, null, null, eventRateSetter_, this.audioContext );
             /**
              * Maximum deviance from the regular trigger interval for a random jitter factor in percentage.
              *
@@ -171,7 +181,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @type SPAudioParam
              * @default false
              */
-            this.eventJitter = SPAudioParam.createPsuedoParam( "eventRand", 0, 0.99, 1, this.audioContext );
+            this.eventJitter = SPAudioParam.createPsuedoParam( "eventJitter", 0, 0.99, 0, this.audioContext );
 
             // Public Functions
 
@@ -190,8 +200,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             init( sounds );
         }
 
-        Trigger.prototype = Object.create( BaseSound.prototype );
+        MultiTrigger.prototype = Object.create( BaseSound.prototype );
 
-        return Trigger;
+        return MultiTrigger;
 
     } );
