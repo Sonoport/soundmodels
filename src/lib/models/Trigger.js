@@ -47,7 +47,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.connect( self.releaseGainNode );
                 this.isInitialized = true;
                 if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback();
+                    onLoadCallback( status );
                 }
             };
 
