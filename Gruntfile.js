@@ -51,7 +51,7 @@ module.exports = function ( grunt ) {
                     }, {
                         name: 'models/MultiTrigger'
                     }, {
-                        name: 'models/Action'
+                        name: 'models/Activity'
                     }, ],
                     uglify2: {
                         compress: {
