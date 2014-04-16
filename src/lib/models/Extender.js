@@ -13,10 +13,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @constructor
          * @extends BaseSound
          * @param {String/AudioBuffer/File} sounds Single URL or AudioBuffer or File of sounds.
-         * @param {Function} [onLoadCallback] Callback when the sound has finished loading.
          * @param {AudioContext} context AudioContext to be used.
+         * @param {Function} [onLoadCallback] Callback when the sound has finished loading.
          */
-        function Extender( sound, onLoadCallback, context ) {
+        function Extender( sound, context, onLoadCallback ) {
             if ( !( this instanceof Extender ) ) {
                 throw new TypeError( "Extender constructor cannot be called as a function." );
             }

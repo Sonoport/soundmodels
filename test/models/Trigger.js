@@ -14,7 +14,7 @@ require(["models/Trigger"], function (Trigger) {
 
 
     // Single test
-    trigger = new Trigger([tap1, tap2, tap3, tap4], function() {
+    trigger = new Trigger([tap1, tap2, tap3, tap4], context, function() {
         var trigButton = document.getElementById('trigger');
         trigButton.disabled = false;
 
@@ -24,7 +24,7 @@ require(["models/Trigger"], function (Trigger) {
         trigButton.addEventListener('click', function(){
             trigger.play();
         });
-    }, context);
+    });
 
 
 });

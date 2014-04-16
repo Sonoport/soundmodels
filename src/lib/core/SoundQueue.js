@@ -41,7 +41,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
             var init = function () {
                 for ( var i = 0; i < numberOfVoices; i++ ) {
-                    freeVoices_[ i ] = new Looper( null, null, onVoiceEnded, context );
+                    freeVoices_[ i ] = new Looper( null, context, null, onVoiceEnded );
                     freeVoices_[ i ].maxLoops.value = 1;
                 }
 

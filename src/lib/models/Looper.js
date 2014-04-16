@@ -12,11 +12,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
          * @constructor
          * @extends BaseSound
          * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
+         * @param {AudioContext} context AudioContext to be used.
          * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
          * @param {Function} [onEndedCallback] Callback when the Looper has finished playing.
-         * @param {AudioContext} context AudioContext to be used.
          */
-        function Looper( sounds, onLoadCallback, onEndedCallback, context ) {
+        function Looper( sounds, context, onLoadCallback, onEndedCallback ) {
             if ( !( this instanceof Looper ) ) {
                 throw new TypeError( "Looper constructor cannot be called as a function." );
             }
