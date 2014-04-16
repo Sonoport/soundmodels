@@ -1,0 +1,453 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+body {
+  font-family: Helvetica, arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  padding-top: 10px;
+  padding-bottom: 15px;
+  background-color: white;
+  padding: 30px; }
+
+body > *:first-child {
+  margin-top: 0 !important; }
+body > *:last-child {
+  margin-bottom: 0 !important; }
+
+a {
+  color: #4183C4; }
+a.absent {
+  color: #cc0000; }
+a.anchor {
+  display: block;
+  padding-left: 30px;
+  margin-left: -30px;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  cursor: text;
+  position: relative; }
+
+h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA09pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoMTMuMCAyMDEyMDMwNS5tLjQxNSAyMDEyLzAzLzA1OjIxOjAwOjAwKSAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OUM2NjlDQjI4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OUM2NjlDQjM4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5QzY2OUNCMDg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5QzY2OUNCMTg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsQhXeAAAABfSURBVHjaYvz//z8DJYCRUgMYQAbAMBQIAvEqkBQWXI6sHqwHiwG70TTBxGaiWwjCTGgOUgJiF1J8wMRAIUA34B4Q76HUBelAfJYSA0CuMIEaRP8wGIkGMA54bgQIMACAmkXJi0hKJQAAAABJRU5ErkJggg==) no-repeat 10px center;
+  text-decoration: none; }
+
+h1 tt, h1 code {
+  font-size: inherit; }
+
+h2 tt, h2 code {
+  font-size: inherit; }
+
+h3 tt, h3 code {
+  font-size: inherit; }
+
+h4 tt, h4 code {
+  font-size: inherit; }
+
+h5 tt, h5 code {
+  font-size: inherit; }
+
+h6 tt, h6 code {
+  font-size: inherit; }
+
+h1 {
+  font-size: 28px;
+  color: black; }
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #cccccc;
+  color: black; }
+
+h3 {
+  font-size: 18px; }
+
+h4 {
+  font-size: 16px; }
+
+h5 {
+  font-size: 14px; }
+
+h6 {
+  color: #777777;
+  font-size: 14px; }
+
+p, blockquote, ul, ol, dl, li, table, pre {
+  margin: 15px 0; }
+
+hr {
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC) repeat-x 0 0;
+  border: 0 none;
+  color: #cccccc;
+  height: 4px;
+  padding: 0;
+}
+
+body > h2:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+body > h1:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+  body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0; }
+body > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0; }
+
+h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+  margin-top: 0; }
+
+li p.first {
+  display: inline-block; }
+li {
+  margin: 0; }
+ul, ol {
+  padding-left: 30px; }
+
+ul :first-child, ol :first-child {
+  margin-top: 0; }
+
+dl {
+  padding: 0; }
+  dl dt {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin: 15px 0 5px; }
+    dl dt:first-child {
+      padding: 0; }
+    dl dt > :first-child {
+      margin-top: 0; }
+    dl dt > :last-child {
+      margin-bottom: 0; }
+  dl dd {
+    margin: 0 0 15px;
+    padding: 0 15px; }
+    dl dd > :first-child {
+      margin-top: 0; }
+    dl dd > :last-child {
+      margin-bottom: 0; }
+
+blockquote {
+  border-left: 4px solid #dddddd;
+  padding: 0 15px;
+  color: #777777; }
+  blockquote > :first-child {
+    margin-top: 0; }
+  blockquote > :last-child {
+    margin-bottom: 0; }
+
+table {
+  padding: 0;border-collapse: collapse; }
+  table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0; }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8; }
+    table tr th {
+      font-weight: bold;
+      border: 1px solid #cccccc;
+      text-align: left;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr td {
+      border: 1px solid #cccccc;
+      text-align: left;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr th :first-child, table tr td :first-child {
+      margin-top: 0; }
+    table tr th :last-child, table tr td :last-child {
+      margin-bottom: 0; }
+
+img {
+  max-width: 100%; }
+
+span.frame {
+  display: block;
+  overflow: hidden; }
+  span.frame > span {
+    border: 1px solid #dddddd;
+    display: block;
+    float: left;
+    overflow: hidden;
+    margin: 13px 0 0;
+    padding: 7px;
+    width: auto; }
+  span.frame span img {
+    display: block;
+    float: left; }
+  span.frame span span {
+    clear: both;
+    color: #333333;
+    display: block;
+    padding: 5px 0 0; }
+span.align-center {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-center > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: center; }
+  span.align-center span img {
+    margin: 0 auto;
+    text-align: center; }
+span.align-right {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px 0 0;
+    text-align: right; }
+  span.align-right span img {
+    margin: 0;
+    text-align: right; }
+span.float-left {
+  display: block;
+  margin-right: 13px;
+  overflow: hidden;
+  float: left; }
+  span.float-left span {
+    margin: 13px 0 0; }
+span.float-right {
+  display: block;
+  margin-left: 13px;
+  overflow: hidden;
+  float: right; }
+  span.float-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: right; }
+
+code, tt {
+  margin: 0 2px;
+  padding: 0 5px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px; }
+
+pre code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent; }
+
+.highlight pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+  pre code, pre tt {
+    background-color: transparent;
+    border: none; }
+
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:0 auto;
+    }
+}
+@media print {
+	table, pre {
+		page-break-inside: avoid;
+	}
+}
+</style>
+<title>Developer Guide</title>
+<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax:{inlineMath:[['$$$','$$$']]}});</script><script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<h1>Developer Guide</h1>
+
+<p>A developer guide to Sonoport JavaScript Sound Models</p>
+
+<h2>Introduction</h2>
+
+<p>The Sonoport JavaScript Sound Models allow developer to leverage the new WebAudioAPI to create interactive experiences with dynamic sound in the browser. This plugin free technology is purely based on JavaScript, and only requires a browser which has WebAudio API enabled. Chrome, Firefox, Safari and Opera have the API currently enabled.</p>
+
+<h2>Release 0.3.0</h2>
+
+<p>The current beta release is 0.3.0. It currently only contains two basic models, <code>Trigger</code> and <code>Looper</code>.</p>
+
+<p>All current models require some sort of source material, <em>mp3</em> or <em>wav</em> audio files, which can be used by the models as source.</p>
+
+<p>Purely algorithmic models and more Sound Models will be a part of a later release.</p>
+
+<h2>Installation</h2>
+
+<p>There is no installation step for the Sonoport JavaScript Sound Models.</p>
+
+<p>To use the Sonoport JavaScript Sound Models, you need the following things.</p>
+
+<ol>
+<li>Individual JavaScript file for the Model you plan to use.</li>
+<li>Audio file in <em>wav</em> or <em>mp3</em> format as source material.</li>
+<li>A <a href="http://caniuse.com/#feat=audio-api">browser which supports the W3C WebAudioAPI</a>. <em>(Chrome was extensively used in testing this release, hence it is highly recommended as a browser of choice.)</em></li>
+</ol>
+
+
+<h2>Usage</h2>
+
+<p>The Models are JavaScript libraries and use the <a href="http://requirejs.org/">requirejs</a> style of AMD. Following steps will let you use the  Sonoport JavaScript Sound Models in your code.</p>
+
+<ul>
+<li>Ensure the requirejs is loaded in your context. This can be done using a script tag in the HTML file.</li>
+</ul>
+
+
+<p><code>&lt;script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"&gt;&lt;/script&gt;</code></p>
+
+<ul>
+<li>Ensure that the Sonoport JavaScript Sound Models JavaScript file (Trigger.js or Looper.js) is also loaded into your context. You might have to ensure that it is loaded AFTER requirejs.</li>
+</ul>
+
+
+<p><code>&lt;script type="text/javascript" src="js/Looper.js"&gt;&lt;/script&gt;</code></p>
+
+<ul>
+<li>You can then use the loaded Sound Model using <em>requirejs</em>. (For now you have to use <code>models/Looper</code> or <code>models/Trigger</code> as the names of the requirements)</li>
+</ul>
+
+
+<pre><code>require(["models/Looper"], function (Looper) {
+    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",function(){
+        console.log("Loaded!");
+        loop.play();
+    });
+    console.log("Loading Audio File...");
+});
+</code></pre>
+
+<ul>
+<li><p>The Sound Models are initialized using the constructor, and accept a single URL or an array of URLs as the first argument, and a async callback as the second argument triggered when the audio files are loaded. Detailed information about the API can be found in the API docs</p></li>
+<li><p>The Sonoport JavaScript Sound Models emulate the <a href="http://webaudio.github.io/web-audio-api/#idl-def-AudioNode">WebAudioAPI AudioNode</a>. Many methods and parameters APIs exposed by the Sound Models are similar to the WebAudioAPI AudioNodes and <a href="http://webaudio.github.io/web-audio-api/#the-audioparam-interface">AudioParams</a>;</p></li>
+<li><p>Once the audio files are loaded, each Sound Model exposes an array of Parameter which can be tweaked in real time, as well as actions which can be performed on the Sound Mode.</p></li>
+</ul>
+
+
+<pre><code>require(["models/Looper"], function (Looper) {
+    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",function(){
+        console.log("Loaded!");
+        loop.play();
+        window.setTimeout(function(){
+           console.log("Pausing!");
+           loop.pause();
+        }, 1000);
+        window.setTimeout(function(){
+           console.log("Playing Again!");
+           loop.play();
+        }, 3000);
+        window.setTimeout(function(){
+           console.log("Stopping!");
+           loop.stop();
+       }, 5000);
+    });
+});
+</code></pre>
+
+<ul>
+<li>Each Sound Model exposes a set of Parameters. These can be changed while the sound is being played, using <code>value</code> property of the Parameter.</li>
+</ul>
+
+
+<pre><code>require(["models/Looper"], function (Looper) {
+    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",function(){
+        console.log("Play Faster");
+        loop.playSpeed.value = 2;
+        loop.play();
+        window.setTimeout(function(){
+           console.log("Play Slower!");
+           loop.playSpeed.value = 0.5;
+        }, 3000);
+    });
+});
+</code></pre>
+
+<ul>
+<li>Here are the Parameters currently exposed by Trigger and Looper. More information is also avilable in the API Documentation</li>
+</ul>
+
+
+<h3>Looper</h3>
+
+<pre><code>playSpeed  - Speed of playback. Affects both speed and pitch. 
+riseTime   - Rise time to attain speed - RT60.
+decayTime  - Decay time to attain speed - RT60.
+startPoint - Percentage of the source to start looping from.
+</code></pre>
+
+<h3>Trigger</h3>
+
+<pre><code>pitchShift   - Pitch shift in semitones.  
+pitchRand    - Maximum value for random pitch shift in semitones.
+eventRand    - Randomness in order of source triggering in case of multiple sources.
+</code></pre>
+
+<h2>Advanced</h2>
+
+<p>Since Sonoport JavaScript Sound Models are based on the WebAudioAPI, they internally use the WebAudio <code>AudioContext</code> to synchronize with time. The <code>AudioContext</code> exposes a running clock through its property <code>currentTime</code>. This clock can be used to schedule actions and parameter changes at an exact time instance in the future.</p>
+
+<p>All the actions and some of the parameters exposed by the Sonoport JavaScript Sound Models support scheduling. The actions (<code>play</code>, <code>pause</code>, <code>start</code>, <code>stop</code>, <code>release</code>), accept an argument which is the time in the domain of the AudioContext currentTime. This is the exact time at which the action will be executed.</p>
+
+<p>Similary, the Parameters of each Sound Model also expose the Parameter Automation API as defined by the WebAudioAPI. This API allows parameters to be changed automatically syncronously with the AudioContext clock. This functionality on Sonoport JavaScript Sound Models is experimental and may break.</p>
+
+<p>To allow synchronization between various Sound Models, each Sound Model accepts an <code>AudioContext</code> object in its constructor. This was multiple Sound Models can share the same AudioContext and hence be scheduled synchronously.</p>
+
+<h2>Examples</h2>
+
+<h3>Basic Slider + Button</h3>
+
+<p>Attached is an example of hooking up a Slider and a Button to the Looper Sound Model.</p>
+
+<p><a href="example.html">example.html</a></p>
+
+<h2>Resources</h2>
+
+<ul>
+<li><a href="http://webaudio.github.io/web-audio-api/">WebAudioAPI Specs</a></li>
+<li><a href="http://www.html5rocks.com/en/tutorials/webaudio/intro/">WebAudioAPI Intro</a></li>
+<li><a href="http://chimera.labs.oreilly.com/books/1234000001552">WebAudio Book</a></li>
+</ul>
+
+</body>
+</html>
