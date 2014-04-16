@@ -5,7 +5,7 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
     'use strict';
 
     /**
-     * Envelope class that extends BaseSound which implements an ASDR Envelope.
+     * Implements an ASDR Envelope.
      *
      * @class Envelope
      * @constructor
