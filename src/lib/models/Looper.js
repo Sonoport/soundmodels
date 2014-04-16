@@ -217,15 +217,20 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource ) {
-                        if ( typeof offset == 'undefined' ) {
+                        if ( typeof offset == 'undefined' || offset === null ) {
                             offset = self.startPoint.value * thisSource.buffer.duration;
                         }
+                        if ( typeof duration == 'undefined' || duration === null ) {
+                            duration = thisSource.buffer.duration;
+                        }
                         thisSource.loop = ( self.maxLoops.value !== 1 );
+
                         if ( typeof attackDuration !== 'undefined' ) {
-                            var now = this.audioContext.currentTime;
-                            this.releaseGainNode.cancelScheduledValues();
-                            this.releaseGainNode.gain.setValueAtTime( 0, now );
-                            this.releaseGainNode.gain.linearRampToValueAtTime( 1, now + attackDuration );
+                            //console.log( "Ramping from " + offset + "  in " + attackDuration );
+                            var now = self.audioContext.currentTime;
+                            self.releaseGainNode.gain.cancelScheduledValues( now );
+                            self.releaseGainNode.gain.setValueAtTime( 0, now );
+                            self.releaseGainNode.gain.linearRampToValueAtTime( 1, now + attackDuration );
                         }
                         thisSource.start( when, offset, duration );
                     } );
