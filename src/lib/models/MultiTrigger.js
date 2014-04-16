@@ -14,10 +14,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @constructor
          * @extends BaseSound
          * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
-         * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
          * @param {AudioContext} context AudioContext to be used.
+         * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
          */
-        function MultiTrigger( sounds, onLoadCallback, context ) {
+        function MultiTrigger( sounds, context, onLoadCallback ) {
             if ( !( this instanceof MultiTrigger ) ) {
                 throw new TypeError( "MultiTrigger constructor cannot be called as a function." );
             }
