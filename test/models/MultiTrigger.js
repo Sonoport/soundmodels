@@ -14,7 +14,7 @@ require(["models/MultiTrigger"], function (MultiTrigger) {
 
 
     // Single test
-    trigger = new MultiTrigger([tap1, tap2, tap3, tap4], function() {
+    trigger = new MultiTrigger([tap1, tap2, tap3, tap4], context, function() {
         var trigButton = document.getElementById('multitrigger');
         trigButton.disabled = false;
 
@@ -31,7 +31,7 @@ require(["models/MultiTrigger"], function (MultiTrigger) {
                 trigger.pause();
             }
         });
-    }, context);
+    });
 
 
 });

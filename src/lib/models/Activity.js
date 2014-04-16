@@ -13,10 +13,10 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
          * @constructor
          * @extends BaseSound
          * @param {String/AudioBuffer/File} sound  Either URL or AudioBuffer or File of sound.
-         * @param {Function} [onLoadCallback] Callback when the sound has finished loading.
          * @param {AudioContext} context AudioContext to be used.
+         * @param {Function} [onLoadCallback] Callback when the sound has finished loading.
          */
-        function Activity( sound, onLoadCallback, context ) {
+        function Activity( sound, context, onLoadCallback ) {
             if ( !( this instanceof Activity ) ) {
                 throw new TypeError( "Activity constructor cannot be called as a function." );
             }
@@ -60,7 +60,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             }
 
             function init( sound ) {
-                internalLooper_ = new Looper( sound, internalOnLoadCallback, null, context );
+                internalLooper_ = new Looper( sound, context, internalOnLoadCallback, null );
             }
 
             function actionSetter_( aParam, value, audioContext ) {
