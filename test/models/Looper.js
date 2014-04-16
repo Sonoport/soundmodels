@@ -67,7 +67,7 @@ require(["core/Envelope", "models/Looper"], function (Envelope, Looper) {
     looper = new Looper([validURL1, validURL2, validURL3], context, function(){
         looper.maxLoops.value = 1;
         looper.start(0);
-        e.start(0);
+        e.start(0, null, null, 0.5);
         looper.multiTrackGain[0].linearRampToValueAtTime(0.5, context.currentTime + 2 );
         looper.playSpeed.linearRampToValueAtTime(5, context.currentTime + 1 );
     });
