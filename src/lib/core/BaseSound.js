@@ -166,7 +166,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     BaseSound.prototype.release = function ( when, fadeTime ) {
 
         var FADE_TIME = 0.5;
-        var FADE_TIME_PAD = 1;
+        var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
 
         if ( typeof when === "undefined" ) {
             when = this.audioContext.currentTime;

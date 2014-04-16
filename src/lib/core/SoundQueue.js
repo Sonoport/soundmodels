@@ -87,10 +87,10 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                     if ( selectedVoice === null ) {
                         selectedVoice = createNewVoice( thisEvent.eventID );
                     }
-                    selectedVoice.start( thisEvent.time );
+                    selectedVoice.start( thisEvent.time, null, null, thisEvent.paramValue );
                 } else if ( thisEvent.type == "QERELEASE" ) {
                     if ( selectedVoice !== null ) {
-                        selectedVoice.release( thisEvent.paramValue, thisEvent.time );
+                        selectedVoice.release( thisEvent.time, thisEvent.paramValue );
                     }
                 } else if ( thisEvent.type == "QESTOP" ) {
                     var resetVoice = function ( selectedVoice ) {
@@ -149,10 +149,11 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @method queueStart
              * @param {Number} time Time (in seconds) at which the voice will start.
              * @param {Number} eventID Arbitary ID which is common for all related events.
+             * @param {Number} [attackDuration] Attack Duration (in seconds) for attack envelope during start.
              */
-            this.queueStart = function ( time, eventID ) {
+            this.queueStart = function ( time, eventID, attackDuration ) {
                 //console.log( eventID + ": Enqueing QESTART at " + time );
-                eventQueue_.push( new SPEvent( "QESTART", time, eventID ) );
+                eventQueue_.push( new SPEvent( "QESTART", time, eventID, "attackDur", attackDuration ) );
             };
 
             /**
@@ -165,7 +166,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              */
             this.queueRelease = function ( time, eventID, releaseDuration ) {
                 //console.log( eventID + ": Enqueing QERELEASE at " + time );
-                eventQueue_.push( new SPEvent( "QERELEASE", time, eventID, releaseDuration ) );
+                eventQueue_.push( new SPEvent( "QERELEASE", time, eventID, "releaseDur", releaseDuration ) );
             };
 
             /**
@@ -189,9 +190,9 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @param {Boolean/Number} paramValue Value for the Parameter to be set.
              * @param {String} paramName Name of the parameter to be set.
              */
-            this.queueSetParameter = function ( time, eventID, paramValue, paramName ) {
+            this.queueSetParameter = function ( time, eventID, paramName, paramValue ) {
                 //console.log( eventID + ": Enqueing QESETPARAM at " + time );
-                eventQueue_.push( new SPEvent( "QESETPARAM", time, eventID, paramValue, paramName ) );
+                eventQueue_.push( new SPEvent( "QESETPARAM", time, eventID, paramName, paramValue ) );
             };
 
             /**
