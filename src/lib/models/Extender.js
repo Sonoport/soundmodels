@@ -30,20 +30,19 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
 
-            // Private vars
-            var self = this;
-
             // Private Variables
-            var sourceBuffer_ = [];
+            var self = this;
+            var sourceBuffer_;
             var soundQueue_;
+
+            var lastEventID_ = 0;
             var currentEventID_ = 1;
 
             var lastEventTime_ = 0;
             var lastEventReleaseTime_ = 0;
             var releaseDur_ = 0;
 
-            var lastEventID_ = 0;
-
+            // Constants
             var MAX_USE = 0.9;
 
             // Private Functions
@@ -59,7 +58,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             function init( sound ) {
-                soundQueue_ = new SoundQueue( context );
                 var parameterType = Object.prototype.toString.call( sound );
                 if ( parameterType === '[object Array]' && sound.length > 1 ) {
                     throw {
@@ -70,6 +68,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                         }
                     };
                 }
+                soundQueue_ = new SoundQueue( context );
                 multiFileLoader.call( self, sound, context, onAllLoad );
             }
 
