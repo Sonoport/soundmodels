@@ -11,7 +11,8 @@ module.exports = function ( grunt ) {
         // Define files and locations
         files: {
             jsSrc: 'src/lib/**/*.js',
-            testSrc: 'test/**/*.js'
+            testSrc: 'test/**/*.js',
+            playerSrc: 'jsmplayer/js/**.js'
         },
         dirs: {
             src: 'src',
@@ -22,17 +23,18 @@ module.exports = function ( grunt ) {
             core: 'src/lib/core',
             models: 'src/lib/models',
             temp: 'src/lib/temp',
+            player: 'jsmplayer'
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
-            files: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>' ],
+            files: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>' ],
             options: {
                 config: ".jsbeautifyrc"
             }
         },
         // JSHint
         jshint: {
-            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>' ]
+            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>' ]
         },
         requirejs: {
             compile: {
@@ -85,7 +87,7 @@ module.exports = function ( grunt ) {
         // Watcher for updating
         watch: {
             scripts: {
-                files: [ '<%= files.jsSrc %>', '<%= files.testSrc %>', 'Gruntfile.js', ],
+                files: [ '<%= files.jsSrc %>', '<%= files.testSrc %>', 'Gruntfile.js', '<%= files.playerSrc %>' ],
                 tasks: [ 'dev-build' ],
                 options: {
                     spawn: false
@@ -97,6 +99,17 @@ module.exports = function ( grunt ) {
                 options: {
                     spawn: false
                 }
+            },
+            // Mainly for watching changes in the html and css files
+            playerui: {
+                files: [ '<%= dirs.player %>/**/*.scss' ],
+                tasks: [ 'compass:devdist' ]
+            },
+            livereload: {
+                options: {
+                    livereload: true
+                },
+                files: [ '<%= dirs.player %>/**/*' ]
             }
         },
         // YUI Documentation
@@ -163,6 +176,19 @@ module.exports = function ( grunt ) {
                 }
             }
         },
+        // Player related 
+        // To run this will require Sass (3.3.4), Compass (1.0.0-alpha), breakpoint (2.4.2) and Susy (2.1.1) pre-installed.
+        // compile sass files to css using Compass: http://compass-style.org/
+        // Also depends on Susy http://susy.oddbird.net/ to generate css for grids
+        compass: {
+            devdist: {
+                options: {
+                    sassDir: '<%= dirs.player %>/sass',
+                    cssDir: '<%= dirs.player %>/css',
+                    require: [ 'susy', 'breakpoint' ],
+                }
+            }
+        },
         // HTTP server for testing
         connect: {
             build: {
@@ -178,6 +204,27 @@ module.exports = function ( grunt ) {
                     base: [ '<%= dirs.release %>/lib', 'test/models' ],
                     open: true
                 }
+            },
+            player: {
+                options: {
+                    port: 8080,
+                    base: [ '<%= dirs.release %>/lib', '<%= dirs.player %>' ],
+                    livereload: true
+                }
+            }
+        },
+        bowercopy: {
+            options: {
+                srcPrefix: 'bower_components'
+            },
+            scripts: {
+                options: {
+                    destPrefix: '<%= dirs.player %>/js/vendor',
+                },
+                files: {
+                    'jquery.js': 'jquery/dist/jquery.js',
+                    'jquery-ui.min.js': 'jquery-ui/ui/minified/jquery-ui.min.js'
+                }
             }
         }
     } );
@@ -189,9 +236,12 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-yuidoc' );
     grunt.loadNpmTasks( 'grunt-contrib-requirejs' );
     grunt.loadNpmTasks( 'grunt-contrib-clean' );
-
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
     grunt.loadNpmTasks( 'grunt-banner' );
+
+    // Player related
+    grunt.loadNpmTasks( 'grunt-contrib-compass' );
+    grunt.loadNpmTasks( 'grunt-bowercopy' );
 
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc:dev' ] );
@@ -200,4 +250,11 @@ module.exports = function ( grunt ) {
 
     grunt.registerTask( 'test', [ 'dev-build', 'connect:build', 'watch' ] );
     grunt.registerTask( 'test-release', [ 'release', 'connect:release', 'watch' ] );
+
+    // Player css related, probably not necessary to run this unless there is a change in design or you might need to install
+    // sass, compass, susy and breakpoint using gem install in ruby environment
+    grunt.registerTask( 'player-build', [ 'compass', 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
+
+    // Run this for player testing 
+    grunt.registerTask( 'player-js', [ 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
 };

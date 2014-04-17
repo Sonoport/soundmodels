@@ -119,36 +119,50 @@ define( [ 'core/DetectLoopMarkers' ],
             };
 
             function init() {
+                var parameterType = Object.prototype.toString.call( URL );
                 var fileExtension = /[^.]+$/.exec( URL );
-                var request = new XMLHttpRequest();
-                request.open( 'GET', URL, true );
-                request.responseType = 'arraybuffer';
-                request.onload = function () {
-                    context.decodeAudioData( request.response, function ( buffer ) {
-                        isSoundLoaded_ = true;
-                        rawBuffer_ = buffer;
-                        // Do trimming if it is not a wave file
-                        loopStart_ = 0;
-                        loopEnd_ = rawBuffer_.length;
-                        if ( fileExtension[ 0 ] !== "wav" ) {
-                            // Trim Buffer based on Markers
-                            var markers = detectLoopMarkers( rawBuffer_ );
-                            if ( markers ) {
-                                loopStart_ = markers.start;
-                                loopEnd_ = markers.end;
-                            }
+                if ( parameterType === '[object String]' ) {
+                    var request = new XMLHttpRequest();
+                    request.open( 'GET', URL, true );
+                    request.responseType = 'arraybuffer';
+                    request.onload = function () {
+                        decodeAudio( request.response, fileExtension );
+                    };
+                    request.send();
+                } else if ( parameterType === '[object File]' ) {
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        decodeAudio( reader.result, fileExtension );
+                    };
+                    reader.readAsArrayBuffer( URL );
+                }
+
+            }
+
+            function decodeAudio( result, fileExt ) {
+                context.decodeAudioData( result, function ( buffer ) {
+                    isSoundLoaded_ = true;
+                    rawBuffer_ = buffer;
+                    // Do trimming if it is not a wave file
+                    loopStart_ = 0;
+                    loopEnd_ = rawBuffer_.length;
+                    if ( fileExt[ 0 ] !== "wav" ) {
+                        // Trim Buffer based on Markers
+                        var markers = detectLoopMarkers( rawBuffer_ );
+                        if ( markers ) {
+                            loopStart_ = markers.start;
+                            loopEnd_ = markers.end;
                         }
-                        if ( onloadCallback && typeof onloadCallback === "function" ) {
-                            onloadCallback( true );
-                        }
-                    }, function () {
-                        console.log( "Error Decoding " + URL );
-                        if ( onloadCallback && typeof onloadCallback === "function" ) {
-                            onloadCallback( false );
-                        }
-                    } );
-                };
-                request.send();
+                    }
+                    if ( onloadCallback && typeof onloadCallback === "function" ) {
+                        onloadCallback( true );
+                    }
+                }, function () {
+                    console.log( "Error Decoding " + URL );
+                    if ( onloadCallback && typeof onloadCallback === "function" ) {
+                        onloadCallback( false );
+                    }
+                } );
             }
 
             // Public functions

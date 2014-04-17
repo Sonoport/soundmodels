@@ -1,0 +1,302 @@
+/****
+Variables
+***/
+$flat-ui-sass-asset-helper: (flat-ui-font-path("") != unquote('flat-ui-font-path("")')) !default;
+// Colours
+
+$wet-asphalt: #34495e !default;
+$midnight-blue: #2c3e50 !default;
+
+$turquoise:  #1abc9c;
+$green-sea:  #16a085;
+
+$peter-river: #3498db !default;
+$belize-hole: #2980b9 !default;
+
+$emerald:    #2ecc71;
+$nephritis:  #27ae60;
+$sun-flower: #f1c40f !default;
+$orange: #f39c12 !default;
+
+$carrot: #e67e22 !default;
+$pumpkin: #d35400 !default;
+
+$alizarin: #e74c3c !default;
+$pomegranate: #c0392b !default;
+$clouds:     #ecf0f1;
+$silver:     #bdc3c7;
+
+$concrete:   #95a5a6;
+$asbestos:   #7f8c8d;
+
+// Grays
+$gray:       $silver;
+$gray-light: $clouds;
+$inverse: 	 white;
+
+// Brand colors
+$brand-primary: $wet-asphalt !default;
+$brand-secondary: $turquoise !default;
+$brand-success: $emerald !default;
+$brand-warning: $sun-flower !default;
+$brand-danger: $alizarin !default;
+$brand-info: $peter-river !default;
+
+//** Global textual link color.
+$link-color: $green-sea !default;
+$link-hover-color: $turquoise !default;
+
+//== Media queries breakpoints
+//
+//## Define the breakpoints at which your layout will change, adapting to different screen sizes.
+
+// Extra small screen / phone
+$screen-xs-min:               480px !default;
+
+// Small screen / tablet
+$screen-sm-min:               768px !default;
+
+// Medium screen / desktop
+$screen-md-min:               992px !default;
+
+// Large screen / wide desktop
+$screen-lg-min:               1200px !default;
+
+// So media queries don't overlap when required, provide a maximum
+$screen-xs-max:               ($screen-sm-min - 1) !default;
+$screen-sm-max:               ($screen-md-min - 1) !default;
+$screen-md-max:               ($screen-lg-min - 1) !default;
+
+//== Grid system
+//
+//## Define your custom responsive grid.
+
+//** Number of columns in the grid.
+$grid-columns:                12 !default;
+//** Padding between columns. Gets divided in half for the left and right.
+$grid-gutter-width:           30px !default;
+// Navbar collapse
+//** Point at which the navbar becomes uncollapsed.
+$grid-float-breakpoint:       $screen-sm-min !default;
+//** Point at which the navbar begins collapsing.
+$grid-float-breakpoint-max:   ($grid-float-breakpoint - 1) !default;
+
+//== Typography
+//
+//## Font, line-height for body text, headings, and more.
+
+$font-family-base: "Lato", Helvetica, Arial, sans-serif !default;
+$font-size-base: 16px !default;
+
+$local-font-path: unquote("../fonts/lato/") !default;
+$local-font-name: "lato-regular" !default;
+$local-font-svg-id: "latoregular" !default;
+$local-font-name-bold: "lato-bold" !default;
+$local-font-svg-id-bold: "latobold" !default;
+
+$font-size-h1: floor($font-size-base * 3.444) !default; // ~62px
+$font-size-h2: ceil($font-size-base * 2.889) !default; // ~52px
+$font-size-h3: ceil($font-size-base * 2.222) !default; // ~40px
+$font-size-h4: ceil($font-size-base * 1.611) !default; // ~29px
+$font-size-h5: floor($font-size-base * 1.556) !default; // ~28px
+$font-size-h6: ceil($font-size-base * 1.333) !default; // ~24px
+
+$line-height-base: 1.72222 !default; // 31/18
+$line-height-computed:      floor($font-size-base * $line-height-base) !default; // ~31px
+
+//** Icon sizes for use in components
+$icon-normal: 16px !default;
+$icon-medium: 18px !default;
+$icon-large: 32px !default;
+
+
+//== Iconography
+//
+//## Specify custom locations of the include Glyphicons icon font.
+
+$icon-font-path: "flat-ui/" !default;
+$icon-font-name: "flat-ui-icons-regular" !default;
+$icon-font-svg-id: "flat-ui-icons-regular" !default;
+
+//== Dropdowns
+//
+//## Dropdown menu container and contents.
+
+//** Background for the dropdown menu.
+$dropdown-background: mix($inverse, $brand-primary, 94%) !default;
+
+//** Dropdown menu `border-color`.
+$dropdown-border:                rgba(0,0,0,.15) !default;
+
+//** Dropdown menu `border-color` **for IE8**.
+$dropdown-fallback-border:       #ccc !default;
+//** Divider color for between dropdown items.
+$dropdown-divider-bg:            #e5e5e5 !default;
+
+//** Dropdown link text color.
+$dropdown-link-color:            $gray !default;
+//** Hover color for dropdown links.
+$dropdown-link-hover-color:      darken($gray, 5%) !default;
+//** Hover background for dropdown links.
+$dropdown-link-hover-bg:         #f5f5f5 !default;
+
+//** Active dropdown menu item text color.
+$dropdown-link-active-color:     $brand-secondary !default;
+//** Active dropdown menu item background color.
+$dropdown-link-active-bg:        $brand-primary !default;
+
+//** Disabled dropdown menu item background color.
+$dropdown-link-disabled-color:   $gray-light !default;
+
+//** Default font-size in components
+$component-font-size-base: ceil($font-size-base * 0.833) !default; // ~15px
+
+//** Width of the `border` for generating carets that indicator dropdowns.
+$caret-width-base:          4px !default;
+//** Carets increase slightly in size for larger components.
+$caret-width-large:         5px !default;
+
+// Border-radius
+$border-radius-base: 4px !default;
+$border-radius-large: 6px !default;
+$border-radius-small: 3px !default;
+
+// Extra small screen / phone
+$screen-xs-min: 480px !default;
+
+// Small screen / tablet
+$screen-sm-min: 768px !default;
+
+// Medium screen / desktop
+$screen-md-min: 992px !default;
+
+// Large screen / wide desktop
+$screen-lg-min: 1200px !default;
+
+// So media queries don't overlap when required, provide a maximum
+$screen-xs-max: ($screen-sm-min - 1) !default;
+$screen-sm-max: ($screen-md-min - 1) !default;
+$screen-md-max: ($screen-lg-min - 1) !default;
+
+$progress-height: 12px !default;
+
+
+
+//== Slider
+//
+//##
+
+$slider-height: 12px !default;
+$slider-value-font-size: floor($component-font-size-base * 0.867); // ~13px !default;
+
+$slider-handle-bg: mix($brand-secondary, black, 85%) !default;
+$slider-handle-hover-bg: mix($brand-secondary, white, 80%) !default;
+$slider-handle-active-bg: mix($brand-secondary, black, 85%) !default;
+
+$slider-range-bg: $brand-secondary !default;
+
+$slider-segment-bg: mix(desaturate($brand-primary, 15%), white, 20%) !default;
+
+//== Buttons
+//
+//## For each of Flat UI's buttons, define text, background, font size and height.
+
+$btn-font-size-base: $component-font-size-base !default;
+$btn-font-size-xs: ceil($component-font-size-base * 0.80) !default; // ~12px
+$btn-font-size-sm: floor($component-font-size-base * 0.867) !default; // ~13px
+$btn-font-size-lg: ceil($component-font-size-base * 1.133) !default; // ~17px
+$btn-font-size-hg: floor($component-font-size-base * 1.467) !default; // ~22px
+
+$btn-line-height-base: 1.4 !default; // ~21px
+$btn-line-height-hg: 1.227 !default; // ~27px
+$btn-line-height-lg: 1.471 !default; // ~25px
+$btn-line-height-sm: 1.385 !default; // ~16px
+$btn-line-height-xs: 1.083 !default; // ~13px
+
+$btn-social-font-size-base: floor($component-font-size-base * 0.867) !default; // ~13px
+$btn-social-line-height-base: 1.077 !default; // ~14px
+
+$btn-font-weight: normal !default;
+
+$btn-default-color: $inverse !default;
+$btn-default-bg: $gray-light !default;
+$btn-hover-bg: mix($gray-light, white, 80%) !default;
+$btn-active-bg: mix($gray-light, black, 85%) !default;
+
+$btn-primary-hover-bg: mix($brand-secondary, white, 80%) !default;
+$btn-primary-active-bg: mix($brand-secondary, black, 85%) !default;
+
+$btn-info-hover-bg: mix($brand-info, white, 80%) !default;
+$btn-info-active-bg: mix($brand-info, black, 85%) !default;
+
+$btn-success-hover-bg: mix($brand-success, white, 80%) !default;
+$btn-success-active-bg: mix($brand-success, black, 85%) !default;
+
+$btn-danger-hover-bg: mix($brand-danger, white, 80%) !default;
+$btn-danger-active-bg: mix($brand-danger, black, 85%) !default;
+
+$btn-warning-hover-bg: overlay($brand-warning, darken(white, 37.5%)) !default;
+$btn-warning-active-bg: mix($brand-warning, black, 85%) !default;
+
+$btn-inverse-hover-bg: overlay($brand-primary, darken(white, 37.5%)) !default;
+$btn-inverse-active-bg: mix($brand-primary, black, 85%) !default;
+
+$btn-link-disabled-color: $gray-light !default;
+
+
+//== Forms
+//
+//##
+
+$input-font-size-base:      $component-font-size-base !default;
+$input-font-size-small:     floor($component-font-size-base * 0.867) !default; // ~13px
+$input-font-size-large:     ceil($component-font-size-base * 1.133) !default; // ~17px
+$input-font-size-huge:      floor($component-font-size-base * 1.467) !default; // ~22px
+
+$input-line-height-base:    1.467 !default; // ~22px
+$input-line-height-small:   1.462 !default; // ~19px
+$input-line-height-large:   1.235 !default; // ~21px
+$input-line-height-huge:    1.318 !default; // ~29px
+
+$input-icon-font-size:      ceil($component-font-size-base * 1.333) !default;  // ~20px       
+
+$input-bg:                  $inverse !default;
+$input-bg-disabled:         mix($gray, white, 10%) !default;
+
+$input-height-small:        35px !default;
+$input-height-base:         41px !default;
+$input-height-large:        45px !default;
+$input-height-huge:         53px !default;
+
+$input-border-radius:       $border-radius-large !default;
+
+$legend-color:              inherit !default;
+
+//== Labels
+//
+//##
+
+//** Default label background color
+$label-default-bg:            $gray-light !default;
+//** Primary label background color
+$label-primary-bg:            $brand-primary !default;
+//** Success label background color
+$label-success-bg:            $brand-success !default;
+//** Info label background color
+$label-info-bg:               $brand-info !default;
+//** Warning label background color
+$label-warning-bg:            $brand-warning !default;
+//** Danger label background color
+$label-danger-bg:             $brand-danger !default;
+
+//** Default label text color
+$label-color:                 #fff !default;
+//** Default text color of a linked label
+$label-link-hover-color:      #fff !default;
+
+//== Switch
+//
+//##
+
+$switch-border-radius:       30px !default;
+$switch-width:               80px !default;

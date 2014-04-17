@@ -26,7 +26,9 @@
         "grunt-jsbeautifier": "~0.2.6",
         "grunt-contrib-copy": "~0.5.0",
         "grunt-banner": "~0.2.2",
-        "grunt-contrib-clean": "~0.5.0"
+        "grunt-contrib-clean": "~0.5.0",
+        "grunt-contrib-compass": "~0.7.2",
+        "grunt-bowercopy": "~1.0.0"
     },
     "keywords": [
         "sonoport",

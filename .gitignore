@@ -3,6 +3,7 @@
 
 # Tool Directories
 node_modules/
+bower_components/
 
 # Docs
 docs/
@@ -12,6 +13,9 @@ wiki/
 
 #Build folder
 build/
+
+#sass-cache
+.sass-cache
 
 # Resource files
 
