@@ -1,5 +1,5 @@
 // main file
-( function () {
+( function ( $ ) {
     "use strict";
     var AudioContext = webkitAudioContext || AudioContext;
     var context = new AudioContext();
@@ -22,9 +22,20 @@
                 window.location.reload();
                 console.log( "reload " );
             }
+
+            if ( typeof location !== 'undefined' ) {
+                // Save models
+                modelClass = location;
+                modelURL = "models/" + modelClass;
+            } else {
+                modelClass = $( ".dropdown-menu li:first-child" )
+                    .text();
+                modelURL = "models/" + modelClass;
+            }
+
             // Make the top dropdown title to be the last selected sound model
             $jsmDropdownTitle
-                .html( location + '<span class="caret"></span>' );
+                .html( modelClass + '<span class="caret"></span>' );
             // Make the selected value to be at the top
             $( ".dropdown-menu li a" )
                 .click( function () {
@@ -36,11 +47,8 @@
                             .text() );
                 } );
 
-            // Swap models
-            modelClass = location;
-            modelURL = "models/" + modelClass;
             //console.log( "mc", typeof modelClass, modelURL );
-
+            // Swap models
             if ( typeof modelClass !== 'undefined' ) {
                 swapModels( modelClass, modelURL );
             }
@@ -263,4 +271,4 @@
 
     }
 
-} )();
+} )( jQuery );
