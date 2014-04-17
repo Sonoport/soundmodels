@@ -41,10 +41,13 @@ Generates, with time stamps release libraries and external documentation in the 
 1. Install dependencies used by the Player
 
 ``` bower install```
+
 2. Copy dependencies into the jsmplayer folder
+
 ``` grunt bowercopy```
 
 3. Run player with localhost
+
 ``` grunt player-js ```
 
 ### Player design debugging
@@ -53,12 +56,17 @@ Player's css stylesheet is using Sass to compile into a single style.css file. I
 These libraries require Ruby and they would be install as a gem. 
 
 To install:
+
 ``` gem install sass --pre```
+
 ``` gem install compass --pre```
+
 ``` gem install susy --pre```
+
 ``` gem install breakpoint```
 
 Then run this command to compile the css and localhost
+
 ``` grunt player-build ```
 
 ## Wiki
