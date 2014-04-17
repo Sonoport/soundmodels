@@ -225,7 +225,7 @@
             function makeSwitch( snd, id, val, min, max ) {
 
                 // Make switch
-                $( ".switch" )
+                $( "." + id )
                     .bootstrapSwitch();
 
                 $( "#" + id + "val" )
@@ -234,19 +234,19 @@
 
                 $( "#" + id + "val" )
                     .change( function ( event, ui ) {
-                        console.log( "cahge", event.target.value );
+                        console.log( "change", event.target.value );
                         if ( event.target.value === "false" ) {
-                            $( ".switch" )
+                            $( "." + id )
                                 .bootstrapSwitch( "setState", false, true );
                             snd[ id ].value = false;
                         } else if ( event.target.value === "true" ) {
-                            $( ".switch" )
+                            $( "." + id )
                                 .bootstrapSwitch( "setState", true, true );
                             snd[ id ].value = true;
                         }
 
                     } );
-                $( ".switch" )
+                $( "." + id )
                     .on( "switch-change", function ( event, data ) {
                         $( "#" + id + "val" )
                             .val( data.value );
