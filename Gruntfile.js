@@ -146,7 +146,7 @@ module.exports = function ( grunt ) {
                 files: [ {
                     expand: true,
                     src: [ '<%= dirs.build %>/models/*.js' ],
-                    dest: '<%= dirs.release %>/lib',
+                    dest: '<%= dirs.release %>/lib/models',
                     filter: 'isFile',
                     flatten: true
                 }, ]
@@ -176,7 +176,7 @@ module.exports = function ( grunt ) {
                 }
             }
         },
-        // Player related 
+        // Player related
         // To run this will require Sass (3.3.4), Compass (1.0.0-alpha), breakpoint (2.4.2) and Susy (2.1.1) pre-installed.
         // compile sass files to css using Compass: http://compass-style.org/
         // Also depends on Susy http://susy.oddbird.net/ to generate css for grids
@@ -249,12 +249,11 @@ module.exports = function ( grunt ) {
     grunt.registerTask( 'release', [ 'jshint', 'requirejs', 'copy:temp', 'yuidoc:release', 'clean:temp', 'copy:dist', 'usebanner' ] );
 
     grunt.registerTask( 'test', [ 'dev-build', 'connect:build', 'watch' ] );
-    grunt.registerTask( 'test-release', [ 'release', 'connect:release', 'watch' ] );
 
     // Player css related, probably not necessary to run this unless there is a change in design or you might need to install
     // sass, compass, susy and breakpoint using gem install in ruby environment
     grunt.registerTask( 'player-build', [ 'compass', 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
 
-    // Run this for player testing 
+    // Run this for player testing
     grunt.registerTask( 'player-js', [ 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
 };

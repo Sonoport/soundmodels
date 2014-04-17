@@ -136,17 +136,21 @@ define(
                 this.value = aParam.defaultValue;
                 this.name = aParam.name;
             }
-            if ( defaultValue || defaultValue === 0 ) {
-                this.defaultValue = defaultValue;
-                this.value = defaultValue;
-            }
+
             if ( name ) {
                 this.name = name;
             }
-            if ( minValue || minValue === 0 ) {
+
+            if ( typeof defaultValue !== 'undefined' ) {
+                this.defaultValue = defaultValue;
+                this.value = defaultValue;
+            }
+
+            if ( typeof minValue !== 'undefined' ) {
                 this.minValue = minValue;
             }
-            if ( maxValue || maxValue === 0 ) {
+
+            if ( typeof maxValue !== 'undefined' ) {
                 this.maxValue = maxValue;
             }
 
