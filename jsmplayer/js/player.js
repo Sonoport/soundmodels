@@ -224,7 +224,6 @@
 
             function makeSwitch( snd, id, val, min, max ) {
 
-                var switchVal = "";
                 // Make switch
                 $( ".switch" )
                     .bootstrapSwitch();
@@ -249,10 +248,8 @@
                     } );
                 $( ".switch" )
                     .on( "switch-change", function ( event, data ) {
-                        switchVal = data.value;
-
                         $( "#" + id + "val" )
-                            .val( switchVal );
+                            .val( data.value );
                         snd[ id ].value = data.value;
                         //console.log( "data ", data.value, snd[ id ].value );
                     } );
