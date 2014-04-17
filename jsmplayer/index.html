@@ -11,6 +11,10 @@
         <link rel="stylesheet" href="css/main.css">
         <script data-main="js/player" src="vendor/require.js"></script>
         <script type="text/javascript" src="Looper.js"></script>
+        <script type="text/javascript" src="Trigger.js"></script>
+        <script type="text/javascript" src="MultiTrigger.js"></script>
+        <script type="text/javascript" src="Scrubber.js"></script>
+        <script type="text/javascript" src="Action.js"></script>
     </head>
     <body>
         <!--[if lt IE 8]>
@@ -24,10 +28,17 @@
             <div class="player-main">
                 <!-- Add new models into this list -->
                 <div class="soundmodels">
-                    <select name="jsm" class="select-block" style="display:none;">
-                        <option value="0">Looper</option>
-                        <option value="1">Trigger</option>
-                    </select>
+                    <div class="btn-group select">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Sound Model<span class="caret"></span></button>
+                        <span class="dropdown-arrow"></span>
+                          <ul class="dropdown-menu dropdown-inverse">
+                            <li><a href="#Looper">Looper</a></li>
+                            <li><a href="#Trigger">Trigger</a></li>
+                            <li><a href="#MultiTrigger">MultiTrigger</a></li>
+                          </ul>
+                    </div>
+                    </div>
                 </div>
 
                 <div class="player-controls">
@@ -52,9 +63,12 @@
                         </form>
                         <button id="updateSource" type="submit" class="btn btn-inverse">Set URL sources</button>
                     </div>
+
                 </div>
 
                 <div class="player-params">
+                   <!-- <div class="switch"><input type='checkbox' class="pchecked" checked data-toggle='switch' /></div> -->
+                    
                 </div>
             </div>
          </div>
@@ -63,6 +77,8 @@
         <script src="vendor/jquery.js"></script>
         <script src="vendor/jquery-ui.min.js"></script>
         <script src="js/jquery.ui.tickslider.js"></script>
-       <script src="js/bootstrap-select.js"></script>
+        <script src="js/bootstrap-select.js"></script>
+       <script src="js/dropdown.js"></script>
+       <script src="js/bootstrap-switch.js"></script>
     </body>
 </html>

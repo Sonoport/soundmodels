@@ -432,7 +432,7 @@
         },
 
         createA: function ( test, classes ) {
-            return '<a tabindex="-1" href="#" class="' + classes + '">' +
+            return '<a tabindex="-1" href="#' + test + '" class="' + classes + '">' +
                 '<span class="pull-left">' + test + '</span>' +
                 '</a>';
 

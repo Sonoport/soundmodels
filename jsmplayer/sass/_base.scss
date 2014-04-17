@@ -79,6 +79,8 @@ footer {
 	> .amount {
 		@include clearfix;
 		display: inline-block;
+		margin: 0 0 0 10px;
+		vertical-align: top;
 		width: 60px;
 	}
 }

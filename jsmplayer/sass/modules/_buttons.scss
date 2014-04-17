@@ -5,6 +5,8 @@
 // Base styles
 // --------------------------------------------------
 .btn {
+  display: inline-block;
+  margin-bottom: 0; // For input.btn
   border: none;
   font-size: $btn-font-size-base;
   font-weight: $btn-font-weight;

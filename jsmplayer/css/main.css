@@ -212,6 +212,8 @@ footer {
 /* line 79, ../sass/_base.scss */
 .param-box > .amount {
   display: inline-block;
+  margin: 0 0 0 10px;
+  vertical-align: top;
   width: 60px;
 }
 /* line 19, ../sass/_mixins.scss */
@@ -226,64 +228,66 @@ footer {
   clear: both;
 }
 
-/* line 86, ../sass/_base.scss */
+/* line 88, ../sass/_base.scss */
 .param-slider {
   width: 400px;
 }
 
-/* line 90, ../sass/_base.scss */
+/* line 92, ../sass/_base.scss */
 .param-name {
   margin: 15px 0;
 }
 
-/* line 94, ../sass/_base.scss */
+/* line 96, ../sass/_base.scss */
 .soundmodels {
   margin: 100px 0 0 0;
   width: 200px;
 }
 
-/* line 99, ../sass/_base.scss */
+/* line 101, ../sass/_base.scss */
 .pull-left {
   float: left !important;
 }
 
-/* line 102, ../sass/_base.scss */
+/* line 104, ../sass/_base.scss */
 .pull-right {
   float: right !important;
 }
 
-/* line 106, ../sass/_base.scss */
+/* line 108, ../sass/_base.scss */
 h1, .h1 {
   font-size: 55px;
 }
 
-/* line 107, ../sass/_base.scss */
+/* line 109, ../sass/_base.scss */
 h2, .h2 {
   font-size: 47px;
 }
 
-/* line 108, ../sass/_base.scss */
+/* line 110, ../sass/_base.scss */
 h3, .h3 {
   font-size: 36px;
 }
 
-/* line 109, ../sass/_base.scss */
+/* line 111, ../sass/_base.scss */
 h4, .h4 {
   font-size: 26px;
 }
 
-/* line 110, ../sass/_base.scss */
+/* line 112, ../sass/_base.scss */
 h5, .h5 {
   font-size: 24px;
 }
 
-/* line 111, ../sass/_base.scss */
+/* line 113, ../sass/_base.scss */
 h6, .h6 {
   font-size: 22px;
 }
 
 /* line 7, ../sass/modules/_buttons.scss */
 .btn {
+  display: inline-block;
+  margin-bottom: 0;
   border: none;
   font-size: 14px;
   font-weight: normal;
@@ -296,43 +300,43 @@ h6, .h6 {
   -webkit-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
   transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
 }
-/* line 18, ../sass/modules/_buttons.scss */
+/* line 20, ../sass/modules/_buttons.scss */
 .btn:hover, .btn:focus {
   outline: none;
   color: white;
 }
-/* line 24, ../sass/modules/_buttons.scss */
+/* line 26, ../sass/modules/_buttons.scss */
 .btn:active, .btn.active {
   outline: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-/* line 30, ../sass/modules/_buttons.scss */
+/* line 32, ../sass/modules/_buttons.scss */
 .btn.disabled, .btn[disabled], fieldset[disabled] .btn {
   background-color: #ecf0f1;
   color: fade(white, 75%);
   opacity: 0.7;
   filter: alpha(opacity=70);
 }
-/* line 40, ../sass/modules/_buttons.scss */
+/* line 42, ../sass/modules/_buttons.scss */
 .btn > [class^="fui-"] {
   margin: 0 1px;
   position: relative;
   line-height: 1;
   top: 1px;
 }
-/* line 50, ../sass/modules/_buttons.scss */
+/* line 52, ../sass/modules/_buttons.scss */
 .btn .btn-hg > [class^="fui-"], .btn .btn-group-gh > .btn > [class^="fui-"] {
   top: 2px;
 }
-/* line 54, ../sass/modules/_buttons.scss */
+/* line 56, ../sass/modules/_buttons.scss */
 .btn .btn-xs > [class^="fui-"], .btn .btn-group-xs > .btn > [class^="fui-"] {
   font-size: 11px;
   top: 0;
 }
 
-/* line 62, ../sass/modules/_buttons.scss */
+/* line 64, ../sass/modules/_buttons.scss */
 .btn-default {
   color: white;
   background-color: #ecf0f1;
@@ -365,7 +369,7 @@ h6, .h6 {
   border-color: #ecf0f1;
 }
 
-/* line 65, ../sass/modules/_buttons.scss */
+/* line 67, ../sass/modules/_buttons.scss */
 .btn-primary {
   color: white;
   background-color: #1abc9c;
@@ -398,7 +402,7 @@ h6, .h6 {
   border-color: #1abc9c;
 }
 
-/* line 68, ../sass/modules/_buttons.scss */
+/* line 70, ../sass/modules/_buttons.scss */
 .btn-info {
   color: white;
   background-color: #3498db;
@@ -431,7 +435,7 @@ h6, .h6 {
   border-color: #3498db;
 }
 
-/* line 71, ../sass/modules/_buttons.scss */
+/* line 73, ../sass/modules/_buttons.scss */
 .btn-danger {
   color: white;
   background-color: #e74c3c;
@@ -464,7 +468,7 @@ h6, .h6 {
   border-color: #e74c3c;
 }
 
-/* line 74, ../sass/modules/_buttons.scss */
+/* line 76, ../sass/modules/_buttons.scss */
 .btn-success {
   color: white;
   background-color: #2ecc71;
@@ -497,7 +501,7 @@ h6, .h6 {
   border-color: #2ecc71;
 }
 
-/* line 77, ../sass/modules/_buttons.scss */
+/* line 79, ../sass/modules/_buttons.scss */
 .btn-warning {
   color: white;
   background-color: #f1c40f;
@@ -530,7 +534,7 @@ h6, .h6 {
   border-color: #f1c40f;
 }
 
-/* line 80, ../sass/modules/_buttons.scss */
+/* line 82, ../sass/modules/_buttons.scss */
 .btn-inverse {
   color: white;
   background-color: #34495e;
@@ -563,43 +567,43 @@ h6, .h6 {
   border-color: #34495e;
 }
 
-/* line 83, ../sass/modules/_buttons.scss */
+/* line 85, ../sass/modules/_buttons.scss */
 .btn-embossed {
   -moz-box-shadow: inset 0 -2px 0 fade(black, 15%);
   -webkit-box-shadow: inset 0 -2px 0 fade(black, 15%);
   box-shadow: inset 0 -2px 0 fade(black, 15%);
 }
-/* line 86, ../sass/modules/_buttons.scss */
+/* line 88, ../sass/modules/_buttons.scss */
 .btn-embossed.active, .btn-embossed:active {
   -moz-box-shadow: inset 0 2px 0 fade(black, 15%);
   -webkit-box-shadow: inset 0 2px 0 fade(black, 15%);
   box-shadow: inset 0 2px 0 fade(black, 15%);
 }
 
-/* line 91, ../sass/modules/_buttons.scss */
+/* line 93, ../sass/modules/_buttons.scss */
 .btn-wide {
   min-width: 140px;
   padding-left: 30px;
   padding-right: 30px;
 }
 
-/* line 102, ../sass/modules/_buttons.scss */
+/* line 104, ../sass/modules/_buttons.scss */
 .btn-link {
   color: #16a085;
 }
-/* line 105, ../sass/modules/_buttons.scss */
+/* line 107, ../sass/modules/_buttons.scss */
 .btn-link:hover, .btn-link:focus {
   color: #1abc9c;
   text-decoration: underline;
   background-color: transparent;
 }
-/* line 113, ../sass/modules/_buttons.scss */
+/* line 115, ../sass/modules/_buttons.scss */
 .btn-link[disabled]:hover, .btn-link[disabled]:focus, fieldset[disabled] .btn-link:hover, fieldset[disabled] .btn-link:focus {
   color: #ecf0f1;
   text-decoration: none;
 }
 
-/* line 125, ../sass/modules/_buttons.scss */
+/* line 127, ../sass/modules/_buttons.scss */
 .btn-hg, .btn-group-gh > .btn {
   padding: 13px 20px;
   font-size: 20px;
@@ -607,7 +611,7 @@ h6, .h6 {
   border-radius: 6px;
 }
 
-/* line 128, ../sass/modules/_buttons.scss */
+/* line 130, ../sass/modules/_buttons.scss */
 .btn-lg, .btn-group-lg > .btn {
   padding: 10px 19px;
   font-size: 16px;
@@ -615,7 +619,7 @@ h6, .h6 {
   border-radius: 6px;
 }
 
-/* line 131, ../sass/modules/_buttons.scss */
+/* line 133, ../sass/modules/_buttons.scss */
 .btn-sm, .btn-group-sm > .btn {
   padding: 9px 13px;
   font-size: 12px;
@@ -623,7 +627,7 @@ h6, .h6 {
   border-radius: 4px;
 }
 
-/* line 134, ../sass/modules/_buttons.scss */
+/* line 136, ../sass/modules/_buttons.scss */
 .btn-xs, .btn-group-xs > .btn {
   padding: 6px 9px;
   font-size: 12px;
@@ -631,14 +635,14 @@ h6, .h6 {
   border-radius: 3px;
 }
 
-/* line 140, ../sass/modules/_buttons.scss */
+/* line 142, ../sass/modules/_buttons.scss */
 .btn-tip {
   font-weight: 300;
   padding-left: 10px;
   font-size: 92%;
 }
 
-/* line 149, ../sass/modules/_buttons.scss */
+/* line 151, ../sass/modules/_buttons.scss */
 .btn-block {
   white-space: normal;
 }
@@ -1851,4 +1855,166 @@ a.label:hover, a.label:focus {
 .ui-slider-vertical .ui-slider-segment {
   position: absolute;
   right: 3px;
+}
+
+/* ============================================================
+ * bootstrapSwitch v1.3 by Larentis Mattia @spiritualGuru
+ * http://www.larentis.eu/switch/
+ * ============================================================
+ * Licensed under the Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * ============================================================ */
+/* line 9, ../sass/modules/_switch.scss */
+.has-switch {
+  border-radius: 30px;
+  display: inline-block;
+  cursor: pointer;
+  line-height: 1.72222;
+  overflow: hidden;
+  position: relative;
+  text-align: left;
+  width: 80px;
+  -webkit-mask: url("../images/mask.png") 0 0 no-repeat;
+  mask: url("../images/mask.png") 0 0 no-repeat;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+/* line 21, ../sass/modules/_switch.scss */
+.has-switch.deactivate {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  cursor: default !important;
+}
+/* line 25, ../sass/modules/_switch.scss */
+.has-switch.deactivate label,
+.has-switch.deactivate span {
+  cursor: default !important;
+}
+/* line 31, ../sass/modules/_switch.scss */
+.has-switch > div {
+  width: 130px;
+  position: relative;
+  top: 0;
+}
+/* line 36, ../sass/modules/_switch.scss */
+.has-switch > div.switch-animate {
+  -moz-transition: left 0.25s ease-out;
+  -o-transition: left 0.25s ease-out;
+  -webkit-transition: left 0.25s ease-out;
+  transition: left 0.25s ease-out;
+}
+/* line 40, ../sass/modules/_switch.scss */
+.has-switch > div.switch-off {
+  left: -50px;
+}
+/* line 43, ../sass/modules/_switch.scss */
+.has-switch > div.switch-off label {
+  background-color: #7f8c99;
+  border-color: #bdc3c7;
+  -moz-box-shadow: -1px 0 0 fade(white, 50%);
+  -webkit-box-shadow: -1px 0 0 fade(white, 50%);
+  box-shadow: -1px 0 0 fade(white, 50%);
+}
+/* line 50, ../sass/modules/_switch.scss */
+.has-switch > div.switch-on {
+  left: 0;
+}
+/* line 53, ../sass/modules/_switch.scss */
+.has-switch > div.switch-on label {
+  background-color: #1abc9c;
+}
+/* line 59, ../sass/modules/_switch.scss */
+.has-switch input[type=checkbox] {
+  display: none;
+}
+/* line 63, ../sass/modules/_switch.scss */
+.has-switch span {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  float: left;
+  height: 29px;
+  line-height: 19px;
+  margin: 0;
+  padding-bottom: 6px;
+  padding-top: 5px;
+  position: relative;
+  text-align: center;
+  width: 50%;
+  z-index: 1;
+  -moz-transition: 0.25s ease-out;
+  -o-transition: 0.25s ease-out;
+  -webkit-transition: 0.25s ease-out;
+  transition: 0.25s ease-out;
+}
+/* line 79, ../sass/modules/_switch.scss */
+.has-switch span.switch-left {
+  border-radius: 30px 0 0 30px;
+  background-color: #34495e;
+  color: #1abc9c;
+  border-left: 1px solid transparent;
+}
+/* line 86, ../sass/modules/_switch.scss */
+.has-switch span.switch-right {
+  border-radius: 0 30px 30px 0;
+  background-color: #bdc3c7;
+  color: white;
+  text-indent: 7px;
+}
+/* line 92, ../sass/modules/_switch.scss */
+.has-switch span.switch-right [class*="fui-"] {
+  text-indent: 0;
+}
+/* line 98, ../sass/modules/_switch.scss */
+.has-switch label {
+  border: 4px solid #34495e;
+  border-radius: 50%;
+  float: left;
+  height: 29px;
+  margin: 0 -15px;
+  padding: 0;
+  position: relative;
+  vertical-align: middle;
+  width: 29px;
+  z-index: 100;
+  -moz-transition: 0.25s ease-out;
+  -o-transition: 0.25s ease-out;
+  -webkit-transition: 0.25s ease-out;
+  transition: 0.25s ease-out;
+}
+
+/* line 115, ../sass/modules/_switch.scss */
+.switch-square {
+  border-radius: 6px;
+  -webkit-mask: url("flat-ui/switch/mask.png") 0 0 no-repeat;
+  mask: url("flat-ui/switch/mask.png") 0 0 no-repeat;
+}
+/* line 121, ../sass/modules/_switch.scss */
+.switch-square > div.switch-off label {
+  border-color: #7f8c99;
+  border-radius: 6px 0 0 6px;
+}
+/* line 129, ../sass/modules/_switch.scss */
+.switch-square span.switch-left {
+  border-radius: 6px 0 0 6px;
+}
+/* line 132, ../sass/modules/_switch.scss */
+.switch-square span.switch-left [class*="fui-"] {
+  text-indent: -10px;
+}
+/* line 137, ../sass/modules/_switch.scss */
+.switch-square span.switch-right {
+  border-radius: 0 6px 6px 0;
+}
+/* line 140, ../sass/modules/_switch.scss */
+.switch-square span.switch-right [class*="fui-"] {
+  text-indent: 5px;
+}
+/* line 146, ../sass/modules/_switch.scss */
+.switch-square label {
+  border-radius: 0 6px 6px 0;
+  border-color: #1abc9c;
 }
