@@ -243,13 +243,6 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-compass' );
     grunt.loadNpmTasks( 'grunt-bowercopy' );
 
-    // Player css related, probably not necessary to run this unless there is a change in design or you might need to install
-    // sass, compass, susy and breakpoint using gem install in ruby environment
-    grunt.registerTask( 'player-build', [ 'compass', 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
-
-    // Run this for player testing 
-    grunt.registerTask( 'player-js', [ 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
-
     grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc:dev' ] );
 
@@ -257,4 +250,11 @@ module.exports = function ( grunt ) {
 
     grunt.registerTask( 'test', [ 'dev-build', 'connect:build', 'watch' ] );
     grunt.registerTask( 'test-release', [ 'release', 'connect:release', 'watch' ] );
+
+    // Player css related, probably not necessary to run this unless there is a change in design or you might need to install
+    // sass, compass, susy and breakpoint using gem install in ruby environment
+    grunt.registerTask( 'player-build', [ 'compass', 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
+
+    // Run this for player testing 
+    grunt.registerTask( 'player-js', [ 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
 };
