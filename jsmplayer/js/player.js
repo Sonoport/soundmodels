@@ -103,12 +103,11 @@
             function onLoad( status ) {
                 // After sound is loaded
                 console.log( "Audio file Loaded: " + status );
+                // Pass in the sound model object to tie interface to the model
+                generateInterface( sndModel );
                 // Generate sliders again everytime a new file is loaded.
                 generateParam( sndModel );
-
             }
-            // Pass in the sound model object to tie interface to the model
-            generateInterface( sndModel );
 
             function generateInterface( snd ) {
                 $( document )
