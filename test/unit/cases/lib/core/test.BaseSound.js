@@ -1,19 +1,22 @@
+var w = 101;
+
 describe('BaseSound.js', function() {
-
-  describe('new BaseSound', function() {
-
-    var test = null;
-
-    beforeEach(function(done) {
-      if (test === null) {
-        require(['src/lib/core/BaseSound'], function (BaseSound) {
-          test = new BaseSound();
-          done();
-        });
-      } else {
+  
+  var test = null;
+  
+  beforeEach(function(done) {
+      
+    if (test === null) {
+      require(['src/lib/core/BaseSound'], function (BaseSound) {
+        test = new BaseSound();
         done();
-      }
-    });
+      });
+    } else {
+      done();
+    }
+  });
+
+  describe('new BaseSound( context )', function() {
     
     it("should have audioContext available", function() {
       var b = Object.prototype.toString.call(test.audioContext);
@@ -40,45 +43,19 @@ describe('BaseSound.js', function() {
     it("should have input node default to null", function() {
       expect(test.inputNode).toEqual(null);
     });
-
+    
   });
   
   describe('#numberOfInputs', function() {
 
-    var test = null;
+      it("should default to 0 when given a negative value", function() {
+        expect(test.numberOfInputs = -0.10).toBe(0);
+        expect(test.numberOfInputs = -100).toBe(0);
+      });
 
-    beforeEach(function(done) {
-      if (test === null) {
-        require(['src/lib/core/BaseSound'], function (BaseSound) {
-          test = new BaseSound();
-          done();
-        });
-      } else {
-        done();
-      }
     });
-
-    it("should default to 0 when given a negative value", function() {
-      expect(test.numberOfInputs = -0.10).toBe(0);
-      expect(test.numberOfInputs = -100).toBe(0);
-    });
-
-  });
   
   describe('#maxSources', function() {
-
-    var test = null;
-
-    beforeEach(function(done) {
-      if (test === null) {
-        require(['src/lib/core/BaseSound'], function (BaseSound) {
-          test = new BaseSound();
-          done();
-        });
-      } else {
-        done();
-      }
-    });
 
     it("should default to 0 when given a negative value", function() {
       expect(test.maxSources = -0.10).toBe(0);
@@ -88,19 +65,6 @@ describe('BaseSound.js', function() {
   });
   
   describe('#connect( destination, output, input )', function() {
-
-    var test = null;
-
-    beforeEach(function(done) {
-      if (test === null) {
-        require(['src/lib/core/BaseSound'], function (BaseSound) {
-          test = new BaseSound();
-          done();
-        });
-      } else {
-        done();
-      }
-    });
 
     it("should throw an error if destination is null", function() {
       expect(function() {
@@ -129,6 +93,25 @@ describe('BaseSound.js', function() {
       
     });
 
+  });
+  
+  describe('#start( when, offset, duration )', function() {
+
+    it("should be playing when called", function() {
+      test.start(0, 0, 0);
+      expect(test.isPlaying).toEqual(true);
+    });
+    
+  });
+  
+  describe('#stop( when )', function() {
+
+    it("should stop playing when called", function() {
+      test.start(0, 0, 0);
+      test.stop();
+      expect(test.isPlaying).toEqual(false);
+    });
+    
   });
 
 });
