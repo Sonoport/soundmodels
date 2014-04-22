@@ -1,6 +1,6 @@
 describe('Config.js', function() {
 
-  describe('Class', function() {
+  describe('Class{}', function() {
 
     var test = null;
 
