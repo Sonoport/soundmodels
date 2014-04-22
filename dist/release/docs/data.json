@@ -1,0 +1,1164 @@
+{
+    "project": {
+        "name": "Sonoport Javascript Sound Models",
+        "description": "Sonoport Javascript Sound Models",
+        "version": "0.4.0",
+        "url": "",
+        "logo": "http://sonoport.com/img/Logo.png"
+    },
+    "files": {
+        "src/lib/models/Action.js": {
+            "name": "src/lib/models/Action.js",
+            "modules": {
+                "Models": 1
+            },
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/models/Extender.js": {
+            "name": "src/lib/models/Extender.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/models/Looper.js": {
+            "name": "src/lib/models/Looper.js",
+            "modules": {},
+            "classes": {
+                "Looper": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/models/MultiTrigger.js": {
+            "name": "src/lib/models/MultiTrigger.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/models/Scrubber.js": {
+            "name": "src/lib/models/Scrubber.js",
+            "modules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/models/Trigger.js": {
+            "name": "src/lib/models/Trigger.js",
+            "modules": {},
+            "classes": {
+                "Trigger": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/temp/BaseSound.js": {
+            "name": "src/lib/temp/BaseSound.js",
+            "modules": {},
+            "classes": {
+                "BaseSound": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/temp/Envelope.js": {
+            "name": "src/lib/temp/Envelope.js",
+            "modules": {
+                "Core": 1
+            },
+            "classes": {
+                "Envelope": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/lib/temp/SPAudioParam.js": {
+            "name": "src/lib/temp/SPAudioParam.js",
+            "modules": {},
+            "classes": {
+                "SPAudioParam": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        }
+    },
+    "modules": {
+        "Models": {
+            "name": "Models",
+            "submodules": {},
+            "classes": {
+                "Looper": 1,
+                "Trigger": 1,
+                "BaseSound": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 8
+        },
+        "Core": {
+            "name": "Core",
+            "submodules": {},
+            "classes": {
+                "Envelope": 1,
+                "SPAudioParam": 1
+            },
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 8
+        }
+    },
+    "classes": {
+        "Looper": {
+            "name": "Looper",
+            "shortname": "Looper",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Models",
+            "namespace": "",
+            "file": "src/lib/models/Looper.js",
+            "line": 8,
+            "description": "A sound model which loads a sound file and allows it to be looped continuously at variable speed.",
+            "is_constructor": 1,
+            "extends": "BaseSound",
+            "params": [
+                {
+                    "name": "sounds",
+                    "description": "Single or Array of either URLs or AudioBuffers or File of sounds.",
+                    "type": "Array/String/AudioBuffer/File"
+                },
+                {
+                    "name": "context",
+                    "description": "AudioContext to be used.",
+                    "type": "AudioContext"
+                },
+                {
+                    "name": "onLoadCallback",
+                    "description": "Callback when all sounds have finished loading.",
+                    "type": "Function",
+                    "optional": true
+                },
+                {
+                    "name": "onEndedCallback",
+                    "description": "Callback when the Looper has finished playing.",
+                    "type": "Function",
+                    "optional": true
+                }
+            ]
+        },
+        "Trigger": {
+            "name": "Trigger",
+            "shortname": "Trigger",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Models",
+            "namespace": "",
+            "file": "src/lib/models/Trigger.js",
+            "line": 8,
+            "description": "A sound model which triggers a single or multiple sound files with multiple voices (polyphony).",
+            "is_constructor": 1,
+            "extends": "BaseSound",
+            "params": [
+                {
+                    "name": "sounds",
+                    "description": "Single or Array of either URLs or AudioBuffers or File of sounds.",
+                    "type": "Array/String/AudioBuffer/File"
+                },
+                {
+                    "name": "context",
+                    "description": "AudioContext to be used.",
+                    "type": "AudioContext"
+                },
+                {
+                    "name": "onLoadCallback",
+                    "description": "Callback when all sounds have finished loading.",
+                    "type": "Function",
+                    "optional": true
+                },
+                {
+                    "name": "onEndedCallback",
+                    "description": "Callback when the Trigger has finished playing.",
+                    "type": "Function",
+                    "optional": true
+                }
+            ]
+        },
+        "BaseSound": {
+            "name": "BaseSound",
+            "shortname": "BaseSound",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Models",
+            "namespace": "",
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 8,
+            "description": "Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. To be extended by all other Sound Models",
+            "is_constructor": 1,
+            "requires": [
+                "AudioContextMonkeyPatch"
+            ],
+            "params": [
+                {
+                    "name": "context",
+                    "description": "AudioContext in which this Sound is defined.",
+                    "type": "AudioContext",
+                    "optional": true
+                }
+            ]
+        },
+        "Envelope": {
+            "name": "Envelope",
+            "shortname": "Envelope",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Core",
+            "namespace": "",
+            "file": "src/lib/temp/Envelope.js",
+            "line": 7,
+            "description": "Implements an ASDR Envelope.",
+            "is_constructor": 1,
+            "extends": "BaseSound",
+            "params": [
+                {
+                    "name": "context",
+                    "description": "AudioContext in which this Sound is defined.",
+                    "type": "AudioContext"
+                }
+            ]
+        },
+        "SPAudioParam": {
+            "name": "SPAudioParam",
+            "shortname": "SPAudioParam",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Core",
+            "namespace": "",
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 8,
+            "description": "Mock AudioParam used to create Parameters for Sonoport Sound Models. The SPAudioParam supports either a AudioParam backed parameter, or a completely Javascript mocked up Parameter, which supports a rough version of parameter automation.",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "name",
+                    "description": "The name of the parameter.",
+                    "type": "String",
+                    "optional": true
+                },
+                {
+                    "name": "minValue",
+                    "description": "The minimum value of the parameter.",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "maxValue",
+                    "description": "The maximum value of the parameter.",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "defaultValue",
+                    "description": "The default and starting value of the parameter.",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "aParams",
+                    "description": "A WebAudio parameter which will be set/get when this parameter is changed.",
+                    "type": "AudioParam/Array",
+                    "optional": true
+                },
+                {
+                    "name": "mappingFunction",
+                    "description": "A mapping function to map values between the mapped SPAudioParam and the underlying WebAudio AudioParam.",
+                    "type": "Function",
+                    "optional": true
+                },
+                {
+                    "name": "setter",
+                    "description": "A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.",
+                    "type": "Function",
+                    "optional": true
+                },
+                {
+                    "name": "audioContext",
+                    "description": "A WebAudio AudioContext for timing.",
+                    "type": "AudioContext",
+                    "optional": true
+                }
+            ]
+        }
+    },
+    "classitems": [
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 131,
+            "itemtype": "property",
+            "name": "riseTime",
+            "type": "SPAudioParam",
+            "default": "0.05",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 138,
+            "itemtype": "property",
+            "name": "decayTime",
+            "type": "SPAudioParam",
+            "default": "0.05",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 145,
+            "itemtype": "property",
+            "name": "startPoint",
+            "type": "SPAudioParam",
+            "default": "0",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 152,
+            "itemtype": "property",
+            "name": "playSpeed",
+            "type": "SPAudioParam",
+            "default": "1.0",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 159,
+            "itemtype": "property",
+            "name": "multiTrackGain",
+            "type": "Array of SPAudioParams",
+            "default": "1.0",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 166,
+            "itemtype": "property",
+            "name": "maxLoops",
+            "type": "SPAudioParam",
+            "default": "-1 (Infinite)",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 173,
+            "description": "Reinitializes a Looper and sets it's sources.",
+            "itemtype": "method",
+            "name": "setSources",
+            "params": [
+                {
+                    "name": "sounds",
+                    "description": "Single or Array of either URLs or AudioBuffers of sounds.",
+                    "type": "Array/AudioBuffer/String/File"
+                },
+                {
+                    "name": "onLoadCallback",
+                    "description": "Callback when all sounds have finished loading.",
+                    "type": "Function",
+                    "optional": true
+                }
+            ],
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 184,
+            "description": "Plays the sound immediately. If the sound is paused, the sound will be played back from the same position as it was paused at.",
+            "itemtype": "method",
+            "name": "play",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 204,
+            "description": "Start playing after specific time and from a specific offset. If offset is not defined,\nthe value of startPoint property is used.",
+            "itemtype": "method",
+            "name": "start",
+            "params": [
+                {
+                    "name": "when",
+                    "description": "The delay in seconds before playing the sound",
+                    "type": "Number"
+                },
+                {
+                    "name": "offset",
+                    "description": "The starting position of the playhead",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "duration",
+                    "description": "Duration of the portion (in seconds) to be played",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 228,
+            "description": "Stops the sound and resets play head to 0.",
+            "itemtype": "method",
+            "name": "stop",
+            "params": [
+                {
+                    "name": "when",
+                    "description": "Time offset to stop",
+                    "type": "Number"
+                }
+            ],
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 257,
+            "description": "Pause the currently playing sound at the current position.",
+            "itemtype": "method",
+            "name": "pause",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Trigger.js",
+            "line": 58,
+            "description": "Pitch shift of the triggered voices in semitones.",
+            "itemtype": "property",
+            "name": "pitchShift",
+            "type": "SPAudioParam",
+            "default": "0",
+            "class": "Trigger",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Trigger.js",
+            "line": 67,
+            "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
+            "itemtype": "property",
+            "name": "pitchRand",
+            "type": "SPAudioParam",
+            "default": "0",
+            "class": "Trigger",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Trigger.js",
+            "line": 76,
+            "description": "Enable randomness in the order of sources which are triggered.",
+            "itemtype": "property",
+            "name": "eventRand",
+            "type": "SPAudioParam",
+            "default": "false",
+            "class": "Trigger",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Trigger.js",
+            "line": 87,
+            "description": "Reinitializes a Looper and sets it's sources.",
+            "itemtype": "method",
+            "name": "setSources",
+            "params": [
+                {
+                    "name": "sounds",
+                    "description": "Single or Array of either URLs or AudioBuffers of sounds.",
+                    "type": "Array/AudioBuffer/String/File"
+                },
+                {
+                    "name": "onLoadCallback",
+                    "description": "Callback when all sounds have finished loading.",
+                    "type": "Function",
+                    "optional": true
+                }
+            ],
+            "class": "Trigger",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Trigger.js",
+            "line": 98,
+            "description": "Triggers a single voice.",
+            "itemtype": "method",
+            "name": "play",
+            "params": [
+                {
+                    "name": "when",
+                    "description": "At what time (in seconds) the sound be triggered",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Trigger",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 1,
+            "description": "/**\n * @module Core",
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 17,
+            "description": "Web Audio API's AudioContext. If the context passed to the constructor is an AudioContext, a new one is created here.",
+            "itemtype": "property",
+            "name": "audioContext",
+            "type": "AudioContext",
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 30,
+            "description": "Number of inputs",
+            "itemtype": "property",
+            "name": "numberOfInputs",
+            "type": "Number",
+            "default": "1",
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 39,
+            "description": "Number of outputs",
+            "itemtype": "property",
+            "name": "numberOfOutputs",
+            "type": "Number",
+            "default": "1",
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 48,
+            "description": "Number of sources that can be given to this Sound",
+            "itemtype": "property",
+            "name": "numberOfInputs",
+            "type": "Number",
+            "default": "0",
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 57,
+            "description": "Release Gain Node",
+            "itemtype": "property",
+            "name": "releaseGainNode",
+            "type": "GainNode",
+            "default": "Internal GainNode",
+            "final": 1,
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 67,
+            "description": "If Sound is currently playing.",
+            "itemtype": "property",
+            "name": "isPlaying",
+            "type": "Boolean",
+            "default": "false",
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 76,
+            "description": "The input node that the output node will be connected to. <br />\nSet this value to null if no connection can be made on the input node",
+            "itemtype": "property",
+            "name": "inputNode",
+            "type": "Object",
+            "default": "null",
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 87,
+            "description": "If the parameter `output` is an AudioNode, it connects to the releaseGainNode.\nIf the output is a BaseSound, it will connect BaseSound's releaseGainNode to the output's inputNode.",
+            "itemtype": "method",
+            "name": "connect",
+            "params": [
+                {
+                    "name": "destination",
+                    "description": "AudioNode to connect to.",
+                    "type": "AudioNode"
+                },
+                {
+                    "name": "output",
+                    "description": "Index describing which output of the AudioNode from which to connect.",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "input",
+                    "description": "Index describing which input of the destination AudioNode to connect to.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 112,
+            "description": "Disconnects the Sound from the AudioNode Chain.",
+            "itemtype": "method",
+            "name": "disconnect",
+            "params": [
+                {
+                    "name": "outputIndex",
+                    "description": "Index describing which output of the AudioNode to disconnect.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 122,
+            "description": "Start the AudioNode. Abstract method. Override this method when a Node is defined.",
+            "itemtype": "method",
+            "name": "start",
+            "params": [
+                {
+                    "name": "when",
+                    "description": "At what time (in seconds) the sound should start playing.",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "offset",
+                    "description": "Offset time in the buffer (in seconds) where playback will begin.",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "duration",
+                    "description": "Duration of the portion (in seconds) to be played.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 134,
+            "description": "Stop the AudioNode. Abstract method. Override this method when a Node is defined.",
+            "itemtype": "method",
+            "name": "stop",
+            "params": [
+                {
+                    "name": "when",
+                    "description": "Time (in seconds) the sound should stop playing",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 150,
+            "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
+            "itemtype": "method",
+            "name": "release",
+            "params": [
+                {
+                    "name": "fadeTime",
+                    "description": "Amount of time (seconds) it takes for linear ramp down to happen.",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "when",
+                    "description": "Time (in seconds) at which the Envelope will release.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 177,
+            "description": "Play sound. Abstract method. Override this method when a Node is defined.",
+            "itemtype": "method",
+            "name": "play",
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 186,
+            "description": "Pause sound. Abstract method. Override this method when a Node is defined.",
+            "itemtype": "method",
+            "name": "pause",
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/Envelope.js",
+            "line": 33,
+            "description": "The input node that the output node will be connected to.",
+            "itemtype": "property",
+            "name": "inputNode",
+            "type": "Object",
+            "default": "Internal Release-GainNode",
+            "class": "Envelope",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/Envelope.js",
+            "line": 57,
+            "description": "Start the Envelope.",
+            "itemtype": "method",
+            "name": "start",
+            "params": [
+                {
+                    "name": "when",
+                    "description": "Time (in seconds) at which the Envelope will start.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Envelope",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/Envelope.js",
+            "line": 89,
+            "description": "Stop the Envelope.",
+            "itemtype": "method",
+            "name": "stop",
+            "params": [
+                {
+                    "name": "when",
+                    "description": "Time (in seconds) at which the Envelope will stop.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Envelope",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/Envelope.js",
+            "line": 104,
+            "description": "Connect to release Gain Node.",
+            "itemtype": "method",
+            "name": "connect",
+            "params": [
+                {
+                    "name": "destination",
+                    "description": "AudioNode to connect to.",
+                    "type": "AudioNode"
+                },
+                {
+                    "name": "output",
+                    "description": "Index describing which output of the AudioNode from which to connect.",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "input",
+                    "description": "Index describing which input of the destination AudioNode to connect to.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Envelope",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/Envelope.js",
+            "line": 116,
+            "description": "Disconnect from release Gain Node.",
+            "itemtype": "method",
+            "name": "disconnect",
+            "params": [
+                {
+                    "name": "outputIndex",
+                    "description": "Index describing which output of the AudioNode to disconnect.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Envelope",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/Envelope.js",
+            "line": 126,
+            "description": "Linearly ramps down the gain of releaseGainNode from current value to 0 in fadeTime (s). It is better to call this method on a user initiated event or after some time (in seconds) has passed.",
+            "itemtype": "method",
+            "name": "release",
+            "params": [
+                {
+                    "name": "fadeTime",
+                    "description": "Amount of time (seconds) taken to release or fade out the sound.",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "when",
+                    "description": "Time (in seconds) at which the Envelope will release.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Envelope",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/Envelope.js",
+            "line": 145,
+            "description": "Initialize as a classic four-segment ADSR (Attack, Decay, Sustain, Release) envelope.",
+            "itemtype": "method",
+            "name": "initADSR",
+            "params": [
+                {
+                    "name": "options",
+                    "description": "Values that can be passed in to change the shape of the ADSR Envelope.",
+                    "type": "Object",
+                    "optional": true,
+                    "props": [
+                        {
+                            "name": "useSustain",
+                            "description": "If true, hold the sustain end val indefinitely until stop() is called.",
+                            "type": "Boolean",
+                            "optional": true,
+                            "optdefault": "false"
+                        },
+                        {
+                            "name": "attackDur",
+                            "description": "Attack Duration (s)",
+                            "type": "Number",
+                            "optional": true,
+                            "optdefault": "0.01"
+                        },
+                        {
+                            "name": "decayDur",
+                            "description": "Decay Duration (s)",
+                            "type": "Number",
+                            "optional": true,
+                            "optdefault": "0.01"
+                        },
+                        {
+                            "name": "releaseDur",
+                            "description": "Release Duration (s)",
+                            "type": "Number",
+                            "optional": true,
+                            "optdefault": "0.01"
+                        },
+                        {
+                            "name": "sustainVal",
+                            "description": "Sustain Level (s)",
+                            "type": "Number",
+                            "optional": true,
+                            "optdefault": "0.5"
+                        }
+                    ]
+                }
+            ],
+            "class": "Envelope",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/Envelope.js",
+            "line": 176,
+            "description": "Resets all flags and counters to begin a new envelope traversal.",
+            "itemtype": "method",
+            "name": "reinit",
+            "params": [
+                {
+                    "name": "hard",
+                    "description": "If true, do 'hard' reinit, otherwise attempt to smoothly continue current envelope value.",
+                    "type": "Boolean",
+                    "optional": true
+                },
+                {
+                    "name": "when",
+                    "description": "Time (in seconds) at which the Envelope will reinit.",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Envelope",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 32,
+            "itemtype": "property",
+            "name": "defaultValue",
+            "type": "Number/Boolean",
+            "default": "0",
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 39,
+            "itemtype": "property",
+            "name": "maxValue",
+            "type": "Number/Boolean",
+            "default": "0",
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 46,
+            "itemtype": "property",
+            "name": "minValue",
+            "type": "Number/Boolean",
+            "default": "0",
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 53,
+            "itemtype": "property",
+            "name": "name",
+            "type": "String",
+            "default": "\"\"",
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 61,
+            "itemtype": "property",
+            "name": "value",
+            "type": "Number/Boolean",
+            "default": "0",
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 157,
+            "description": "Schedules a parameter value change at the given time.",
+            "itemtype": "method",
+            "name": "setValueAtTime",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The value parameter is the value the parameter will change to at the given time.",
+                    "type": "Number"
+                },
+                {
+                    "name": "startTime",
+                    "description": "The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.",
+                    "type": "Number"
+                }
+            ],
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 189,
+            "description": "Start exponentially approaching the target value at the given time with a rate having the given time constant.\n\nDuring the time interval: T0 <= t < T1, where T0 is the startTime parameter and T1 represents the time of the event following this event (or infinity if there are no following events):\n    v(t) = V1 + (V0 - V1) * exp(-(t - T0) / timeConstant)",
+            "itemtype": "method",
+            "name": "setTargetAtTime",
+            "params": [
+                {
+                    "name": "target",
+                    "description": "The target parameter is the value the parameter will start changing to at the given time.",
+                    "type": "Number"
+                },
+                {
+                    "name": "startTime",
+                    "description": "The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.",
+                    "type": "Number"
+                },
+                {
+                    "name": "timeConstant",
+                    "description": "The timeConstant parameter is the time-constant value of first-order filter (exponential) approach to the target value. The larger this value is, the slower the transition will be.",
+                    "type": "Number"
+                }
+            ],
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 228,
+            "description": "Sets an array of arbitrary parameter values starting at the given time for the given duration. The number of values will be scaled to fit into the desired duration.\n\nDuring the time interval: startTime <= t < startTime + duration, values will be calculated:\n\n  v(t) = values[N * (t - startTime) / duration], where N is the length of the values array.",
+            "itemtype": "method",
+            "name": "setValueCurveAtTime",
+            "params": [
+                {
+                    "name": "values",
+                    "description": "The values parameter is a Float32Array representing a parameter value curve. These values will apply starting at the given time and lasting for the given duration.",
+                    "type": "Float32Array"
+                },
+                {
+                    "name": "startTime",
+                    "description": "The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.",
+                    "type": "Number"
+                },
+                {
+                    "name": "duration",
+                    "description": "The duration parameter is the amount of time in seconds (after the startTime parameter) where values will be calculated according to the values parameter.",
+                    "type": "Number"
+                }
+            ],
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 270,
+            "description": "Schedules an exponential continuous change in parameter value from the previous scheduled parameter value to the given value.\n\nv(t) = V0 * (V1 / V0) ^ ((t - T0) / (T1 - T0))",
+            "itemtype": "method",
+            "name": "exponentialRampToValueAtTime",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The value parameter is the value the parameter will exponentially ramp to at the given time.",
+                    "type": "Number"
+                },
+                {
+                    "name": "endTime",
+                    "description": "The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.",
+                    "type": "Number"
+                }
+            ],
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 308,
+            "description": "Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.",
+            "itemtype": "method",
+            "name": "linearRampToValueAtTime",
+            "params": [
+                {
+                    "name": "value",
+                    "description": "The value parameter is the value the parameter will exponentially ramp to at the given time.",
+                    "type": "Float32Array"
+                },
+                {
+                    "name": "endTime",
+                    "description": "The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.",
+                    "type": "Number"
+                }
+            ],
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 341,
+            "description": "Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.",
+            "itemtype": "method",
+            "name": "cancelScheduledValues",
+            "params": [
+                {
+                    "name": "startTime",
+                    "description": "The startTime parameter is the starting time at and after which any previously scheduled parameter changes will be cancelled.",
+                    "type": "Number"
+                }
+            ],
+            "class": "SPAudioParam",
+            "module": "Core"
+        },
+        {
+            "file": "src/lib/temp/SPAudioParam.js",
+            "line": 362,
+            "description": "Static helper method to create Psuedo parameters which are not connected to\n       any WebAudio AudioParams.",
+            "itemtype": "method",
+            "name": "createPsuedoParam",
+            "static": 1,
+            "return": {
+                "description": "SPAudioParam"
+            },
+            "params": [
+                {
+                    "name": "name",
+                    "description": "The name of the parameter..",
+                    "type": "String"
+                },
+                {
+                    "name": "minValue",
+                    "description": "The minimum value of the parameter.",
+                    "type": "Number"
+                },
+                {
+                    "name": "maxValue",
+                    "description": "The maximum value of the parameter.",
+                    "type": "Number"
+                },
+                {
+                    "name": "defaultValue",
+                    "description": "The default and starting value of the parameter.",
+                    "type": "Number"
+                },
+                {
+                    "name": "audioContext",
+                    "description": "An audiocontext in which this model exists.",
+                    "type": "AudioContext"
+                }
+            ],
+            "class": "SPAudioParam",
+            "module": "Core"
+        }
+    ],
+    "warnings": [
+        {
+            "message": "Missing item type\n/**\n * @module Core",
+            "line": " src/lib/temp/BaseSound.js:1"
+        }
+    ]
+}
