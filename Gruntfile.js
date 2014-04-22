@@ -28,7 +28,7 @@ module.exports = function ( grunt ) {
             temp: 'src/lib/temp',
             player: 'src/jsmplayer',
             math: 'src/lib/core/math',
-
+            unittest: 'test/unit'
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
@@ -166,10 +166,16 @@ module.exports = function ( grunt ) {
                     filter: 'isFile',
                     flatten: true
                 }, ]
-            }
+            },
+            unittest: {
+                expand: true,
+                src: '<%= files.jsSrc %>',
+                dest: '<%= dirs.unittest %>'
+            },
         },
         clean: {
             temp: [ '<%= dirs.temp %>' ],
+            unittest: [ '<%= dirs.unittest %>/src' ]
         },
         browserify: {
             dist: {
@@ -238,6 +244,12 @@ module.exports = function ( grunt ) {
                     open: true,
                     keepalive: true
                 }
+            },
+            unittest: {
+                options: {
+                    port: 8000,
+                    base: [ '<%= dirs.build %>', 'test/unit' ]
+                }
             }
         },
         bowercopy: {
@@ -254,6 +266,7 @@ module.exports = function ( grunt ) {
                 }
             }
         }
+
     } );
     // Load Plugins
     grunt.loadNpmTasks( 'grunt-contrib-jshint' );
@@ -284,4 +297,7 @@ module.exports = function ( grunt ) {
 
     // Run this for player testing
     grunt.registerTask( 'player-js', [ 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
+
+    // Launch test
+    grunt.registerTask( 'unittest', [ 'clean:unittest', 'copy:unittest', 'connect:unittest', 'watch' ] );
 };
