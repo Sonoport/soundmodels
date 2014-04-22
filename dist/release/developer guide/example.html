@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>
+	<script  type="text/javascript" src="../lib/Looper.js"></script>
+	<script>
+		window.addEventListener('load', function (){
+			"use strict";
+			var loop;
+			var button = document.getElementsByTagName('button')[0];
+			var slider = document.getElementsByTagName('input')[0];
+
+			button.addEventListener('click', function(){
+				if (loop){
+					if (loop.isPlaying){
+						button.innerHTML = "Play";
+						loop.pause();
+					}else{
+						button.innerHTML = "Pause";
+						loop.play();
+					}
+				}
+			});
+
+			button.disabled = true;
+
+			slider.addEventListener('input', function(){
+				loop.playSpeed.value = parseFloat(slider.value);
+			});
+
+			require(["models/Looper"], function (Looper){
+				loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav", null,function(){
+					button.disabled = false;
+					loop.start();
+				});
+			});
+		});
+	</script>
+	<head>
+	<body>
+		<div>
+			<button>Pause</button>
+		</div>
+		<div>
+			<input type="range" min="0.5" max="2" value="1" step="0.1"/>
+		</div>
+	</body>
+</html>
