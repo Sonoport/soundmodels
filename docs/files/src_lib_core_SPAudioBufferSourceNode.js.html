@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/lib/core/SPAudioBufferSourceNode.js - javascript-sound-models</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title="javascript-sound-models"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.4.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/AudioContextMonkeyPatch.html">AudioContextMonkeyPatch</a></li>
+            
+                <li><a href="../classes/BaseSound.html">BaseSound</a></li>
+            
+                <li><a href="../classes/Config.html">Config</a></li>
+            
+                <li><a href="../classes/Converter.html">Converter</a></li>
+            
+                <li><a href="../classes/DetectLoopMarkers.html">DetectLoopMarkers</a></li>
+            
+                <li><a href="../classes/Envelope.html">Envelope</a></li>
+            
+                <li><a href="../classes/FileLoader.html">FileLoader</a></li>
+            
+                <li><a href="../classes/Looper.html">Looper</a></li>
+            
+                <li><a href="../classes/MuliFileLoader.html">MuliFileLoader</a></li>
+            
+                <li><a href="../classes/SoundQueue.html">SoundQueue</a></li>
+            
+                <li><a href="../classes/SPAudioBufferSourceNode.html">SPAudioBufferSourceNode</a></li>
+            
+                <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
+            
+                <li><a href="../classes/SPEvent.html">SPEvent</a></li>
+            
+                <li><a href="../classes/SPPlaybackRateParam.html">SPPlaybackRateParam</a></li>
+            
+                <li><a href="../classes/Trigger.html">Trigger</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/Core.html">Core</a></li>
+            
+                <li><a href="../modules/Models.html">Models</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/lib/core/SPAudioBufferSourceNode.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * @module Core
+ */
+define( [ &#x27;core/SPPlaybackRateParam&#x27; ],
+    function ( SPPlaybackRateParam ) {
+        &quot;use strict&quot;;
+
+        /**
+         * A wrapper around the AudioBufferSourceNode to be able to track the current playPosition of a AudioBufferSourceNode.
+         *
+         * @class SPAudioBufferSourceNode
+         * @constructor
+         * @param {AudioContext} AudioContext to be used in timing the parameter automation events
+         */
+        function SPAudioBufferSourceNode( audioContext ) {
+            var bufferSourceNode = audioContext.createBufferSource();
+            var counterNode = audioContext.createBufferSource();
+
+            var scopeNode = audioContext.createScriptProcessor();
+            var lastPos = 0;
+
+            this.channelCount = bufferSourceNode.channelCount;
+            this.channelCountMode = bufferSourceNode.channelCountMode;
+            this.channelInterpretation = bufferSourceNode.channelInterpretation;
+            this.numberOfInputs = bufferSourceNode.numberOfInputs;
+            this.numberOfOutputs = bufferSourceNode.numberOfOutputs;
+            this.playbackState = bufferSourceNode.playbackState;
+
+            /**
+             * The speed at which to render the audio stream. Its default value is 1. This parameter is a-rate.
+             *
+             * @property playbackRate
+             * @type AudioParam
+             * @default 1
+             *
+             */
+            this.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
+
+            /**
+             * An optional value in seconds where looping should end if the loop attribute is true.
+             *
+             * @property loopEnd
+             * @type Number
+             * @default 0
+             *
+             */
+            Object.defineProperty( this, &#x27;loopEnd&#x27;, {
+                enumerable: true,
+                set: function ( loopEnd ) {
+                    bufferSourceNode.loopEnd = loopEnd;
+                    counterNode.loopEnd = loopEnd;
+                },
+                get: function () {
+                    return bufferSourceNode.loopEnd;
+                }
+            } );
+
+            /**
+             * An optional value in seconds where looping should begin if the loop attribute is true.
+             *
+             * @property loopStart
+             * @type Number
+             * @default 0
+             *
+             */
+            Object.defineProperty( this, &#x27;loopStart&#x27;, {
+                enumerable: true,
+                set: function ( loopStart ) {
+                    bufferSourceNode.loopStart = loopStart;
+                    counterNode.loopStart = loopStart;
+                },
+                get: function () {
+                    return bufferSourceNode.loopStart;
+                }
+            } );
+
+            /**
+             * A property used to set the EventHandler for the ended event that is dispatched to AudioBufferSourceNode node types
+             *
+             * @property onended
+             * @type Function
+             * @default null
+             *
+             */
+            Object.defineProperty( this, &#x27;onended&#x27;, {
+                enumerable: true,
+                set: function ( onended ) {
+                    bufferSourceNode.onended = onended;
+                },
+                get: function () {
+                    return bufferSourceNode.onended;
+                }
+            } );
+
+            /**
+             * Indicates if the audio data should play in a loop.
+             *
+             * @property loop
+             * @type Boolean
+             * @default false
+             *
+             */
+            Object.defineProperty( this, &#x27;loop&#x27;, {
+                enumerable: true,
+                set: function ( loop ) {
+                    bufferSourceNode.loop = loop;
+                    counterNode.loop = loop;
+                },
+                get: function () {
+                    return bufferSourceNode.loop;
+                }
+            } );
+
+            /**
+             * Position (in seconds) of the last frame played back by the AudioContext
+             *
+             * @property playbackPosition
+             * @type Number
+             * @default 0
+             *
+             */
+            Object.defineProperty( this, &#x27;playbackPosition&#x27;, {
+                enumerable: true,
+                get: function () {
+                    return lastPos;
+                }
+            } );
+
+            /**
+             * Represents the audio asset to be played.
+             *
+             * @property buffer
+             * @type AudioBuffer
+             * @default null
+             *
+             */
+            Object.defineProperty( this, &#x27;buffer&#x27;, {
+                enumerable: true,
+                set: function ( buffer ) {
+                    bufferSourceNode.buffer = buffer;
+                    counterNode.buffer = createCounterBuffer( buffer );
+                },
+                get: function () {
+                    return bufferSourceNode.buffer;
+                }
+            } );
+
+            /**
+             * Connects the AudioNode to the input of another AudioNode.
+             *
+             * @method connect
+             * @param {AudioNode} destination AudioNode to connect to.
+             * @param {Number} [output] Index describing which output of the AudioNode from which to connect.
+             * @param {Number} [input] Index describing which input of the destination AudioNode to connect to.
+             *
+             */
+            this.connect = function ( destination, output, input ) {
+                bufferSourceNode.connect( destination, output, input );
+                scopeNode.connect( destination, output, input );
+            };
+
+            /**
+             * Disconnects the AudioNode from the input of another AudioNode.
+             *
+             * @method disconnect
+             * @param {Number} [output] Index describing which output of the AudioNode to disconnect.
+             *
+             */
+            this.disconnect = function ( output ) {
+                bufferSourceNode.disconnect( output );
+                scopeNode.disconnect( output );
+            };
+
+            /**
+             * Schedules a sound to playback at an exact time.
+             *
+             * @method start
+             * @param {Number} when Time (in seconds) when the sound should start playing.
+             * @param {Number} [offset] Offset time in the buffer (in seconds) where playback will begin
+             * @param {Number} [duration] Duration of the portion (in seconds) to be played
+             *
+             */
+            this.start = function ( when, offset, duration ) {
+                if ( typeof duration == &#x27;undefined&#x27; ) {
+                    duration = bufferSourceNode.buffer.duration;
+                }
+                bufferSourceNode.start( when, offset, duration );
+                counterNode.start( when, offset, duration );
+            };
+
+            /**
+             * Schedules a sound to stop playback at an exact time.
+             *
+             * @method stop
+             * @param {Number} when Time (in seconds) when the sound should stop playing.
+             *
+             */
+            this.stop = function ( when ) {
+                bufferSourceNode.stop( when );
+                counterNode.stop( when );
+            };
+
+            // Private Methods
+
+            function createCounterBuffer( buffer ) {
+                var array = new Float32Array( buffer.length );
+                var audioBuf = audioContext.createBuffer( 1, buffer.length, 44100 );
+
+                for ( var index = 0; index &lt; buffer.length; index++ ) {
+                    array[ index ] = index;
+                }
+
+                audioBuf.getChannelData( 0 )
+                    .set( array );
+                return audioBuf;
+            }
+
+            function init() {
+                counterNode.connect( scopeNode );
+                scopeNode.onaudioprocess = savePosition;
+            }
+
+            function savePosition( processEvent ) {
+                var inputBuffer = processEvent.inputBuffer.getChannelData( 0 );
+                lastPos = inputBuffer[ inputBuffer.length - 1 ] || 0;
+            }
+
+            init();
+
+        }
+        return SPAudioBufferSourceNode;
+    } );
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>

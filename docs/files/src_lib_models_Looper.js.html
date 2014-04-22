@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>src/lib/models/Looper.js - javascript-sound-models</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="../assets/css/logo.png" title="javascript-sound-models"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 0.4.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/AudioContextMonkeyPatch.html">AudioContextMonkeyPatch</a></li>
+            
+                <li><a href="../classes/BaseSound.html">BaseSound</a></li>
+            
+                <li><a href="../classes/Config.html">Config</a></li>
+            
+                <li><a href="../classes/Converter.html">Converter</a></li>
+            
+                <li><a href="../classes/DetectLoopMarkers.html">DetectLoopMarkers</a></li>
+            
+                <li><a href="../classes/Envelope.html">Envelope</a></li>
+            
+                <li><a href="../classes/FileLoader.html">FileLoader</a></li>
+            
+                <li><a href="../classes/Looper.html">Looper</a></li>
+            
+                <li><a href="../classes/MuliFileLoader.html">MuliFileLoader</a></li>
+            
+                <li><a href="../classes/SoundQueue.html">SoundQueue</a></li>
+            
+                <li><a href="../classes/SPAudioBufferSourceNode.html">SPAudioBufferSourceNode</a></li>
+            
+                <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
+            
+                <li><a href="../classes/SPEvent.html">SPEvent</a></li>
+            
+                <li><a href="../classes/SPPlaybackRateParam.html">SPPlaybackRateParam</a></li>
+            
+                <li><a href="../classes/Trigger.html">Trigger</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/Core.html">Core</a></li>
+            
+                <li><a href="../modules/Models.html">Models</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1 class="file-heading">File: src/lib/models/Looper.js</h1>
+
+<div class="file">
+    <pre class="code prettyprint linenums">
+/**
+ * @module Models
+ */
+define( [ &#x27;core/Config&#x27;, &#x27;core/BaseSound&#x27;, &#x27;core/SPAudioParam&#x27;, &quot;core/SPAudioBufferSourceNode&quot;, &#x27;core/MultiFileLoader&#x27; ],
+    function ( Config, BaseSound, SPAudioParam, SPAudioBufferSourceNode, multiFileLoader ) {
+        &quot;use strict&quot;;
+
+        /**
+         *
+         * A sound model which loads a sound file and allows it to be looped continuously at variable speed.
+         * @class Looper
+         * @constructor
+         * @extends BaseSound
+         * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
+         * @param {AudioContext} context AudioContext to be used.
+         * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onEndedCallback] Callback when the Looper has finished playing.
+         */
+        function Looper( sounds, context, onLoadCallback, onEndedCallback ) {
+            if ( !( this instanceof Looper ) ) {
+                throw new TypeError( &quot;Looper constructor cannot be called as a function.&quot; );
+            }
+            // Call superclass constructor
+            BaseSound.call( this, context );
+
+            this.maxSources = Config.MAX_VOICES;
+            this.numberOfInputs = 1;
+            this.numberOfOutputs = 1;
+
+            // Private vars
+            var self = this;
+
+            var sources_ = [];
+            var multiTrackGainNodes_ = [];
+            var lastStopPosition_ = [];
+            var rateArray = [];
+
+            var onAllLoad = function ( status, arrayOfBuffers ) {
+                arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
+                    lastStopPosition_.push( 0 );
+                    insertBufferSource( thisBuffer, trackIndex );
+                } );
+
+                self.playSpeed = new SPAudioParam( &quot;playSpeed&quot;, 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
+
+                if ( typeof onLoadCallback === &#x27;function&#x27; ) {
+                    onLoadCallback( status );
+                }
+            };
+
+            var onSourceEnded = function ( event, trackIndex ) {
+                self.isPlaying = false;
+                if ( typeof onEndedCallback === &#x27;function&#x27; ) {
+                    onEndedCallback( self, trackIndex );
+                }
+            };
+
+            var insertBufferSource = function ( audioBuffer, trackIndex ) {
+                var source = new SPAudioBufferSourceNode( self.audioContext );
+                var gainNode = self.audioContext.createGain();
+
+                source.buffer = audioBuffer;
+                source.loopEnd = audioBuffer.duration;
+                source.onended = function ( event ) {
+                    onSourceEnded( event, trackIndex );
+                };
+
+                source.connect( gainNode );
+                gainNode.connect( self.releaseGainNode );
+
+                var multiChannelGainParam = new SPAudioParam( &quot;gainNode&quot;, 0.0, 1, 1, gainNode.gain, null, null, self.audioContext );
+
+                sources_.push( source );
+                multiTrackGainNodes_.push( gainNode );
+                self.multiTrackGain.push( multiChannelGainParam );
+                rateArray.push( source.playbackRate );
+            };
+
+            var playSpeedSetter_ = function ( aParam, value, audioContext ) {
+                /* 0.001 - 60dB Drop
+                  e(-n) = 0.001; - Decay Rate of setTargetAtTime.
+                  n = 6.90776;
+                  */
+                var t60multiplier = 6.90776;
+
+                var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
+
+                if ( value &gt; currentSpeed ) {
+                    sources_.forEach( function ( thisSource ) {
+                        thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                        thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.riseTime.value * t60multiplier );
+                    } );
+                } else if ( value &lt; currentSpeed ) {
+                    sources_.forEach( function ( thisSource ) {
+                        thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                        thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.decayTime.value * t60multiplier );
+                    } );
+                }
+
+            };
+
+            var startPointSetter_ = function ( aParam, value ) {
+                sources_.forEach( function ( thisSource ) {
+                    thisSource.loopStart = value * thisSource.buffer.duration;
+                } );
+            };
+
+            function init( sounds ) {
+                var parameterType = Object.prototype.toString.call( sounds );
+                if ( parameterType === &quot;[object Array]&quot; &amp;&amp; sounds.length &gt; self.maxSources ) {
+                    throw {
+                        name: &quot;Unsupported number of sources&quot;,
+                        message: &quot;This sound only supports a maximum of &quot; + self.maxSources + &quot; sources.&quot;,
+                        toString: function () {
+                            return this.name + &quot;: &quot; + this.message;
+                        }
+                    };
+                } else {
+                    rateArray = [];
+                    sources_ = [];
+                    multiTrackGainNodes_ = [];
+                    self.multiTrackGain = [];
+                    multiFileLoader.call( self, sounds, context, onAllLoad );
+                }
+
+                self.releaseGainNode.connect( self.audioContext.destination );
+            }
+
+            // Public Properties
+
+            /**
+             * @property riseTime
+             * @type SPAudioParam
+             * @default 0.05
+             */
+            this.riseTime = SPAudioParam.createPsuedoParam( &quot;riseTime&quot;, 0.05, 10.0, 1, this.audioContext );
+
+            /**
+             * @property decayTime
+             * @type SPAudioParam
+             * @default 0.05
+             */
+            this.decayTime = SPAudioParam.createPsuedoParam( &quot;decayTime&quot;, 0.05, 10.0, 1, this.audioContext );
+
+            /**
+             * @property startPoint
+             * @type SPAudioParam
+             * @default 0
+             */
+            this.startPoint = new SPAudioParam( &quot;startPoint&quot;, 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
+
+            /**
+             * @property playSpeed
+             * @type SPAudioParam
+             * @default 1.0
+             */
+            this.playSpeed = null;
+
+            /**
+             * @property multiTrackGain
+             * @type Array of SPAudioParams
+             * @default 1.0
+             */
+            this.multiTrackGain = [];
+
+            /**
+             * @property maxLoops
+             * @type SPAudioParam
+             * @default -1 (Infinite)
+             */
+            this.maxLoops = SPAudioParam.createPsuedoParam( &quot;maxLoops&quot;, -1, 1, -1, this.audioContext );
+
+            /**
+             * Reinitializes a Looper and sets it&#x27;s sources.
+             *
+             * @method setSources
+             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
+             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             */
+            this.setSources = function ( sounds, onLoadCallback ) {
+                init( sounds );
+            };
+
+            /**
+             * Plays the sound immediately. If the sound is paused, the sound will be played back from the same position as it was paused at.
+             *
+             * @method play
+             *
+             */
+            this.play = function () {
+
+                if ( !this.isPlaying ) {
+                    sources_.forEach( function ( thisSource, index ) {
+                        var offset = ( lastStopPosition_ &amp;&amp; lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : self.startPoint.value * thisSource.buffer.duration;
+                        thisSource.loop = ( self.maxLoops.value !== 1 );
+                        thisSource.start( 0, offset );
+                    } );
+                }
+
+                BaseSound.prototype.start.call( this, 0 );
+
+            };
+
+            /**
+             * Start playing after specific time and from a specific offset. If offset is not defined,
+             * the value of startPoint property is used.
+             *
+             * @method start
+             * @param {Number} when The delay in seconds before playing the sound
+             * @param {Number} [offset] The starting position of the playhead
+             * @param {Number} [duration] Duration of the portion (in seconds) to be played
+             */
+            this.start = function ( when, offset, duration ) {
+                if ( !this.isPlaying ) {
+                    sources_.forEach( function ( thisSource ) {
+                        if ( typeof offset == &#x27;undefined&#x27; ) {
+                            offset = self.startPoint.value * thisSource.buffer.duration;
+                        }
+                        //console.log( &quot;Playing&quot; );
+                        thisSource.loop = ( self.maxLoops.value !== 1 );
+                        thisSource.start( when, offset, duration );
+                    } );
+                }
+
+                BaseSound.prototype.start.call( this, when, offset, duration );
+            };
+
+            /**
+             * Stops the sound and resets play head to 0.
+             * @method stop
+             * @param {Number} when Time offset to stop
+             */
+            this.stop = function ( when ) {
+
+                if ( this.isPlaying ) {
+                    sources_ = sources_.map( function ( thisSource, index ) {
+                        thisSource.stop( when );
+                        lastStopPosition_[ index ] = 0;
+
+                        // Create a new source since SourceNodes can&#x27;t play again.
+                        var newSource = new SPAudioBufferSourceNode( self.audioContext );
+                        newSource.buffer = thisSource.buffer;
+                        newSource.loopStart = newSource.buffer.duration * self.startPoint.value;
+                        newSource.loopEnd = newSource.buffer.duration;
+                        newSource.connect( multiTrackGainNodes_[ index ] );
+                        newSource.onended = function ( event ) {
+                            onSourceEnded( event, index );
+                        };
+
+                        return newSource;
+                    } );
+                }
+
+                BaseSound.prototype.stop.call( this, when );
+            };
+
+            /**
+             * Pause the currently playing sound at the current position.
+             *
+             * @method pause
+             */
+            this.pause = function () {
+                if ( this.isPlaying ) {
+                    sources_ = sources_.map( function ( thisSource, index ) {
+                        thisSource.stop( 0 );
+                        lastStopPosition_[ index ] = thisSource.playbackPosition / thisSource.buffer.sampleRate;
+                        //console.log( index + &quot; stopped at &quot; + lastStopPosition_[ index ] );
+
+                        thisSource.disconnect();
+
+                        // Create a new source since SourceNodes can&#x27;t play again.
+                        var newSource = new SPAudioBufferSourceNode( self.audioContext );
+                        newSource.buffer = thisSource.buffer;
+                        newSource.loopStart = newSource.buffer.duration * self.startPoint.value;
+                        newSource.loopEnd = newSource.buffer.duration;
+                        newSource.connect( multiTrackGainNodes_[ index ] );
+                        newSource.onended = function ( event ) {
+                            onSourceEnded( event, index );
+                        };
+
+                        return newSource;
+                    } );
+                }
+
+                BaseSound.prototype.stop.call( this, 0 );
+            };
+
+            // Initialize the sounds.
+            init( sounds );
+        }
+
+        Looper.prototype = Object.create( BaseSound.prototype );
+
+        return Looper;
+    } );
+
+    </pre>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
