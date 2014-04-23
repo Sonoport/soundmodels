@@ -131,14 +131,18 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             /**
              * @property riseTime
              * @type SPAudioParam
-             * @default 0.05
+             * @default 1
+             * @minvalue 0.05
+             * @maxvalue 10
              */
             this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 1, this.audioContext );
 
             /**
              * @property decayTime
              * @type SPAudioParam
-             * @default 0.05
+             * @default 1
+             * @minvalue 0.05
+             * @maxvalue 10
              */
             this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 1, this.audioContext );
 
@@ -146,20 +150,26 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @property startPoint
              * @type SPAudioParam
              * @default 0
+             * @minvalue 0
+             * @maxvalue 0.99
              */
             this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
 
             /**
              * @property playSpeed
              * @type SPAudioParam
-             * @default 1.0
+             * @default 1
+             * @minvalue 0
+             * @maxvalue 10
              */
             this.playSpeed = null;
 
             /**
              * @property multiTrackGain
              * @type Array of SPAudioParams
-             * @default 1.0
+             * @default 1
+             * @minvalue 0
+             * @maxvalue 1
              */
             this.multiTrackGain = [];
 
@@ -167,6 +177,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @property maxLoops
              * @type SPAudioParam
              * @default -1 (Infinite)
+             * @minvalue -1
+             * @maxvalue 1
              */
             this.maxLoops = SPAudioParam.createPsuedoParam( "maxLoops", -1, 1, -1, this.audioContext );
 

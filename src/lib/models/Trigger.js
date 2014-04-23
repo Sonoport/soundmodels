@@ -61,6 +61,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @property pitchShift
              * @type SPAudioParam
              * @default 0
+             * @minvalue -60
+             * @maxvalue 60
              */
             this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
 
@@ -70,6 +72,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @property pitchRand
              * @type SPAudioParam
              * @default 0
+             * @minvalue 0
+             * @maxvalue 24
              */
             this.pitchRand = SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 24.0, 0, this.audioContext );
 
@@ -79,6 +83,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @property eventRand
              * @type SPAudioParam
              * @default false
+             * @minvalue true
+             * @maxvalue false
              */
             this.eventRand = SPAudioParam.createPsuedoParam( "eventRand", true, false, false, this.audioContext );
 
