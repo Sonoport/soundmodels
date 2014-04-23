@@ -1,14 +1,16 @@
-var w = 101;
-
 describe('BaseSound.js', function() {
   
   var test = null;
+  var BaseSound_ = null;
   
   beforeEach(function(done) {
       
     if (test === null) {
       require(['src/lib/core/BaseSound'], function (BaseSound) {
-        test = new BaseSound();
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        var context = new AudioContext();
+        test = new BaseSound(context);
+        BaseSound_ = BaseSound;
         done();
       });
     } else {
@@ -16,7 +18,7 @@ describe('BaseSound.js', function() {
     }
   });
 
-  describe('new BaseSound( context )', function() {
+  describe('#new BaseSound( context )', function() {
     
     it("should have audioContext available", function() {
       var b = Object.prototype.toString.call(test.audioContext);
@@ -44,22 +46,40 @@ describe('BaseSound.js', function() {
       expect(test.inputNode).toEqual(null);
     });
     
+    it("should not throw an error if context is undefined", function() {
+      expect(function() {
+        var a = new BaseSound_();
+      }).not.toThrowError();
+    });
+    
   });
   
   describe('#numberOfInputs', function() {
 
       it("should default to 0 when given a negative value", function() {
-        expect(test.numberOfInputs = -0.10).toBe(0);
+        expect(test.numberOfInputs = -1).toBe(0);
         expect(test.numberOfInputs = -100).toBe(0);
       });
+      
+      it("should accept only integers and round off to nearest integer if float number placed", function() {
+      expect(test.numberOfInputs = 0.01).toBe(0);
+      expect(test.numberOfInputs = 1.20).toBe(1);
+      expect(test.numberOfInputs = 1.80).toBe(2);
+    });
 
     });
   
   describe('#maxSources', function() {
 
     it("should default to 0 when given a negative value", function() {
-      expect(test.maxSources = -0.10).toBe(0);
+      expect(test.maxSources = -1).toBe(0);
       expect(test.maxSources = -100).toBe(0);
+    });
+    
+    it("should accept only integers and round off to nearest integer if float number placed", function() {
+      expect(test.maxSources = 0.01).toBe(0);
+      expect(test.maxSources = 1.20).toBe(1);
+      expect(test.maxSources = 1.80).toBe(2);
     });
 
   });
