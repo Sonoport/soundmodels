@@ -30,10 +30,13 @@ build/
 *.csv
 *.dat
 
+#Test Files
+!test/unit/audio/*
+test/unit/src/*
+
 # NetBeans specific
 /nbproject/*
 
 # Burn specific
 /index.html
 /app.js
-!test/unit/audio/*
