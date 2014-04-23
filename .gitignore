@@ -36,3 +36,4 @@ build/
 # Burn specific
 /index.html
 /app.js
+!test/unit/audio/*
