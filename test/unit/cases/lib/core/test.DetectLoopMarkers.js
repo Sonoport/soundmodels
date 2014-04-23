@@ -1,8 +1,8 @@
 describe('DetectLoopMarkers.js', function() {
   
-  var test1 = null; // With marker
-  var test2 = null; // Without marker
-  var test3 = null; // Mono channel
+  var test1 = null; // WAV File with marker
+  var test2 = null; // WAV File without marker
+  var test3 = null; // WAV File with mono channel
   
   var DetectLoopMarkers_ = null;
   
@@ -94,6 +94,33 @@ describe('DetectLoopMarkers.js', function() {
         var audio = context.createBuffer(2, 1024, 44100);
         var b = DetectLoopMarkers_(audio);
       }).not.toThrowError();
+      
+    });
+    
+    it("should not have problem loading MP3 files", function(done) {
+      
+      var context = new AudioContext();
+      var request = new XMLHttpRequest();
+      var audio = null;
+      var test = null;
+
+      request.open('GET', 'audio/bullet.mp3', true);
+      request.responseType = 'arraybuffer';
+
+      request.onload = function() {
+        context.decodeAudioData(request.response, function(buffer) {
+          audio = buffer;
+          
+          expect(function() {
+            test = new DetectLoopMarkers_(audio);
+          }).not.toThrowError();
+          expect(test.start).toEqual(2465);
+          expect(test.end).toEqual(24538);
+          done();
+        }, function(){});
+      };
+      
+      request.send();
       
     });
 
