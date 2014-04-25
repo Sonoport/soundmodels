@@ -12,18 +12,19 @@ module.exports = function ( grunt ) {
         files: {
             jsSrc: 'src/lib/**/*.js',
             testSrc: 'test/**/*.js',
-            playerSrc: 'jsmplayer/js/**.js'
+            playerSrc: 'src/jsmplayer/js/**.js'
         },
         dirs: {
             src: 'src',
-            docs: 'docs',
+            docs: 'docs/yuidocs',
             build: 'build',
             dist: 'dist',
             release: 'dist/release',
             core: 'src/lib/core',
             models: 'src/lib/models',
+            themedir: 'docs/yuitheme',
             temp: 'src/lib/temp',
-            player: 'jsmplayer'
+            player: 'src/jsmplayer'
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
@@ -121,6 +122,7 @@ module.exports = function ( grunt ) {
                 url: '<%= pkg.homepage %>',
                 options: {
                     paths: '<%= dirs.src %>',
+                    themedir: '<%= dirs.themedir %>',
                     outdir: '<%= dirs.docs %>',
                     linkNatives: "true"
                 }
@@ -134,6 +136,7 @@ module.exports = function ( grunt ) {
                 options: {
                     // SPAudioParam.js, BaseSound.js, Envelope.js
                     paths: [ '<%= dirs.models %>', 'src/lib/temp' ],
+                    themedir: '<%= dirs.themedir %>',
                     outdir: '<%= dirs.release %>/docs',
                     linkNatives: "true",
                     nocode: "true"
