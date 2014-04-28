@@ -56,12 +56,12 @@ describe('BaseSound.js', function() {
   
   describe('#numberOfInputs', function() {
 
-      xit("should default to 0 when given a negative value", function() {
+      it("should default to 0 when given a negative value", function() {
         expect(test.numberOfInputs = -1).toBe(0);
         expect(test.numberOfInputs = -100).toBe(0);
       });
       
-      xit("should accept only integers and round off to nearest integer if float number placed", function() {
+      it("should accept only integers and round off to nearest integer if float number placed", function() {
         expect(test.numberOfInputs = 0.01).toBe(0);
         expect(test.numberOfInputs = 1.20).toBe(1);
         expect(test.numberOfInputs = 1.80).toBe(2);
@@ -71,12 +71,12 @@ describe('BaseSound.js', function() {
   
   describe('#maxSources', function() {
 
-    xit("should default to 0 when given a negative value", function() {
+    it("should default to 0 when given a negative value", function() {
       expect(test.maxSources = -1).toBe(0);
       expect(test.maxSources = -100).toBe(0);
     });
     
-    xit("should accept only integers and round off to nearest integer if float number placed", function() {
+    it("should accept only integers and round off to nearest integer if float number placed", function() {
       expect(test.maxSources = 0.01).toBe(0);
       expect(test.maxSources = 1.20).toBe(1);
       expect(test.maxSources = 1.80).toBe(2);

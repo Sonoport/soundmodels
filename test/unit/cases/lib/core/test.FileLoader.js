@@ -5,6 +5,7 @@ describe('FileLoader.js', function() {
   var FileLoader_ = null;
   var context = null;
   
+  
   beforeEach(function(done) {
       
     if (test1 === null) {
@@ -106,6 +107,12 @@ describe('FileLoader.js', function() {
       expect(a.length).not.toBeGreaterThan(b.length);
     });
     
+    it("should throw an error if no buffer is available", function() {
+      expect(function() {
+        test2.getRawBuffer();
+      }).toThrowError();
+    });
+    
   });
   
   describe('#isLoaded', function() {
@@ -113,8 +120,9 @@ describe('FileLoader.js', function() {
     it("should return true if buffer is loaded", function(done) {
       
       var test = new FileLoader_('audio/bullet.mp3', context, function(response){
-        console.log(response);
+        expect(response).toEqual(true);
         expect(test.isLoaded).toEqual(true);
+        test.init("burn");
         done();
       });
       
