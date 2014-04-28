@@ -14,7 +14,7 @@ require(["models/Trigger"], function (Trigger) {
 
 
     // Single test
-    trigger = new Trigger([tap1, tap2, tap3, tap4],context, function() {
+    trigger = new Trigger([tap1, tap2, tap3, tap4],null, function() {
         var trigButton = document.getElementById('trigger');
         trigButton.disabled = false;
 

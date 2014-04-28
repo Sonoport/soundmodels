@@ -49,8 +49,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             function init( sounds ) {
-                soundQueue_ = new SoundQueue( context );
-                multiFileLoader.call( self, sounds, context, onAllLoad );
+                soundQueue_ = new SoundQueue( self.audioContext );
+                multiFileLoader.call( self, sounds, self.audioContext, onAllLoad );
             }
 
             // Public Properties
