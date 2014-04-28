@@ -317,63 +317,75 @@
             "itemtype": "property",
             "name": "riseTime",
             "type": "SPAudioParam",
-            "default": "0.05",
+            "default": "1",
+            "minvalue": "0.05",
+            "maxvalue": "10",
             "class": "Looper",
             "module": "Models"
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 138,
+            "line": 140,
             "itemtype": "property",
             "name": "decayTime",
             "type": "SPAudioParam",
-            "default": "0.05",
+            "default": "1",
+            "minvalue": "0.05",
+            "maxvalue": "10",
             "class": "Looper",
             "module": "Models"
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 145,
+            "line": 149,
             "itemtype": "property",
             "name": "startPoint",
             "type": "SPAudioParam",
             "default": "0",
+            "minvalue": "0",
+            "maxvalue": "0.99",
             "class": "Looper",
             "module": "Models"
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 152,
+            "line": 158,
             "itemtype": "property",
             "name": "playSpeed",
             "type": "SPAudioParam",
-            "default": "1.0",
+            "default": "1",
+            "minvalue": "0",
+            "maxvalue": "10",
             "class": "Looper",
             "module": "Models"
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 159,
+            "line": 167,
             "itemtype": "property",
             "name": "multiTrackGain",
             "type": "Array of SPAudioParams",
-            "default": "1.0",
+            "default": "1",
+            "minvalue": "0",
+            "maxvalue": "1",
             "class": "Looper",
             "module": "Models"
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 166,
+            "line": 176,
             "itemtype": "property",
             "name": "maxLoops",
             "type": "SPAudioParam",
             "default": "-1 (Infinite)",
+            "minvalue": "-1",
+            "maxvalue": "1",
             "class": "Looper",
             "module": "Models"
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 173,
+            "line": 185,
             "description": "Reinitializes a Looper and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -395,7 +407,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 184,
+            "line": 196,
             "description": "Plays the sound immediately. If the sound is paused, the sound will be played back from the same position as it was paused at.",
             "itemtype": "method",
             "name": "play",
@@ -404,7 +416,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 204,
+            "line": 216,
             "description": "Start playing after specific time and from a specific offset. If offset is not defined,\nthe value of startPoint property is used.",
             "itemtype": "method",
             "name": "start",
@@ -432,7 +444,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 228,
+            "line": 240,
             "description": "Stops the sound and resets play head to 0.",
             "itemtype": "method",
             "name": "stop",
@@ -448,7 +460,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 257,
+            "line": 269,
             "description": "Pause the currently playing sound at the current position.",
             "itemtype": "method",
             "name": "pause",
@@ -463,34 +475,40 @@
             "name": "pitchShift",
             "type": "SPAudioParam",
             "default": "0",
+            "minvalue": "-60",
+            "maxvalue": "60",
             "class": "Trigger",
             "module": "Models"
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 67,
+            "line": 69,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
             "type": "SPAudioParam",
             "default": "0",
+            "minvalue": "0",
+            "maxvalue": "24",
             "class": "Trigger",
             "module": "Models"
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 76,
+            "line": 80,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
             "type": "SPAudioParam",
             "default": "false",
+            "minvalue": "true",
+            "maxvalue": "false",
             "class": "Trigger",
             "module": "Models"
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 87,
+            "line": 93,
             "description": "Reinitializes a Looper and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -512,7 +530,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 98,
+            "line": 104,
             "description": "Triggers a single voice.",
             "itemtype": "method",
             "name": "play",
@@ -1156,6 +1174,78 @@
         }
     ],
     "warnings": [
+        {
+            "message": "unknown tag: minvalue",
+            "line": " src/lib/models/Looper.js:131"
+        },
+        {
+            "message": "unknown tag: maxvalue",
+            "line": " src/lib/models/Looper.js:131"
+        },
+        {
+            "message": "unknown tag: minvalue",
+            "line": " src/lib/models/Looper.js:140"
+        },
+        {
+            "message": "unknown tag: maxvalue",
+            "line": " src/lib/models/Looper.js:140"
+        },
+        {
+            "message": "unknown tag: minvalue",
+            "line": " src/lib/models/Looper.js:149"
+        },
+        {
+            "message": "unknown tag: maxvalue",
+            "line": " src/lib/models/Looper.js:149"
+        },
+        {
+            "message": "unknown tag: minvalue",
+            "line": " src/lib/models/Looper.js:158"
+        },
+        {
+            "message": "unknown tag: maxvalue",
+            "line": " src/lib/models/Looper.js:158"
+        },
+        {
+            "message": "unknown tag: minvalue",
+            "line": " src/lib/models/Looper.js:167"
+        },
+        {
+            "message": "unknown tag: maxvalue",
+            "line": " src/lib/models/Looper.js:167"
+        },
+        {
+            "message": "unknown tag: minvalue",
+            "line": " src/lib/models/Looper.js:176"
+        },
+        {
+            "message": "unknown tag: maxvalue",
+            "line": " src/lib/models/Looper.js:176"
+        },
+        {
+            "message": "unknown tag: minvalue",
+            "line": " src/lib/models/Trigger.js:58"
+        },
+        {
+            "message": "unknown tag: maxvalue",
+            "line": " src/lib/models/Trigger.js:58"
+        },
+        {
+            "message": "unknown tag: minvalue",
+            "line": " src/lib/models/Trigger.js:69"
+        },
+        {
+            "message": "unknown tag: maxvalue",
+            "line": " src/lib/models/Trigger.js:69"
+        },
+        {
+            "message": "unknown tag: minvalue",
+            "line": " src/lib/models/Trigger.js:80"
+        },
+        {
+            "message": "unknown tag: maxvalue",
+            "line": " src/lib/models/Trigger.js:80"
+        },
         {
             "message": "Missing item type\n/**\n * @module Core",
             "line": " src/lib/temp/BaseSound.js:1"
