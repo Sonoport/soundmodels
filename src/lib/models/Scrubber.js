@@ -157,11 +157,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                             speed = 0.0;
                         } else {
                             // Otherwise, ease towards it
-                            var newSmoothPos = ALPHA * smoothPos_ + ( 1 - ALPHA ) * targetPos;
+                            var newSmoothPos = ALPHA * smoothPos_ + ( 1.0 - ALPHA ) * targetPos;
                             speed = ( newSmoothPos - smoothPos_ ) * numSamples_ / synthStep_;
                             smoothPos_ = newSmoothPos;
                         }
-                        console.log( speed );
                         lastTargetPos_ = targetPos;
 
                         // Shift the oldest samples out of the synthesis buffer
@@ -255,12 +254,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                             }
                         }
 
-                        //console.log( srcBuf_[ 0 ][ 1 ] + " * " + win_[ 1 ] + " * " + scale_ + " = " + synthBuf_[ 0 ][ 1 ] );
-
                         numReady_ = synthStep_;
                     }
                 }
-                //console.log( "done" + processingEvent.outputBuffer.getChannelData( 0 )[ 0 ] );
             }
 
             function newBuffer( length, channels ) {
