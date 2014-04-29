@@ -12,7 +12,8 @@ module.exports = function ( grunt ) {
         files: {
             jsSrc: 'src/lib/**/*.js',
             testSrc: 'test/**/*.js',
-            playerSrc: 'jsmplayer/js/**.js'
+            playerSrc: 'jsmplayer/js/**.js',
+            mathSrc: 'src/lib/core/math/*.js'
         },
         dirs: {
             src: 'src',
@@ -23,7 +24,9 @@ module.exports = function ( grunt ) {
             core: 'src/lib/core',
             models: 'src/lib/models',
             temp: 'src/lib/temp',
-            player: 'jsmplayer'
+            player: 'jsmplayer',
+            math: 'src/lib/core/math',
+            shims: 'src/shims'
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
@@ -34,12 +37,12 @@ module.exports = function ( grunt ) {
         },
         // JSHint
         jshint: {
-            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>' ]
+            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>', '!<%= files.mathSrc %>' ],
         },
         requirejs: {
             compile: {
                 options: {
-                    optimize: "uglify2",
+                    optimize: "none",
                     baseUrl: "src/lib/",
                     dir: "<%= dirs.build %>",
                     modules: [ {
@@ -164,6 +167,18 @@ module.exports = function ( grunt ) {
         clean: {
             temp: [ '<%= dirs.temp %>' ],
         },
+        browserify: {
+            dist: {
+                files: {
+                    '<%= dirs.math %>/ndarray.js': [ '<%= dirs.shims %>/math/ndarray.js' ]
+                },
+                options: {
+                    bundleOptions: {
+                        standalone: 'ndarray'
+                    }
+                }
+            }
+        },
         usebanner: {
             main: {
                 options: {
@@ -238,6 +253,7 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-clean' );
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
     grunt.loadNpmTasks( 'grunt-banner' );
+    grunt.loadNpmTasks( 'grunt-browserify' );
 
     // Player related
     grunt.loadNpmTasks( 'grunt-contrib-compass' );
