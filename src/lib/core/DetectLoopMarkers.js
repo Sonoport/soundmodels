@@ -69,7 +69,7 @@ define( function () {
          * @return {Function} A function which can check if the specific sample is beyond the silence threshold
          */
         var isChannelEmptyAfter = function ( channel, position ) {
-            console.log( "checking at " + position );
+            //console.log( "checking at " + position );
             var sum = 0;
             for ( var sIndex = position + IGNORE_LENGTH; sIndex < position + IGNORE_LENGTH + EMPTY_CHECK_LENGTH; ++sIndex ) {
                 sum += Math.abs( channel[ sIndex ] );
@@ -111,7 +111,7 @@ define( function () {
             var endSpikePos = null;
 
             nLoopStart_ = 0;
-            nLoopEnd_ = numSamples_ - 1;
+            nLoopEnd_ = numSamples_;
 
             // Find marker near start of file
             var pos = 0;
@@ -129,7 +129,7 @@ define( function () {
             }
 
             // Find marker near end of file
-            pos = numSamples_ - 1;
+            pos = numSamples_;
 
             while ( endSpikePos === null && pos > 0 && numSamples_ - pos < MAX_MP3_SILENCE ) {
                 if ( channels.reduce( thresholdCheckGenerator_( pos ), true ) ) {
@@ -191,7 +191,7 @@ define( function () {
                 }
             }
 
-            nLoopEnd_ = numSamples_ - 1;
+            nLoopEnd_ = numSamples_;
             while ( numSamples_ - nLoopEnd_ < MAX_MP3_SILENCE &&
                 nLoopEnd_ > 0 ) {
 
@@ -206,7 +206,7 @@ define( function () {
 
             if ( nLoopEnd_ < nLoopStart_ ) {
                 nLoopStart_ = 0;
-                nLoopLength_ = numSamples_ -1;
+                nLoopLength_ = numSamples_;
             }
         };
 
