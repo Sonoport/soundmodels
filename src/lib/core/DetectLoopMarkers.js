@@ -41,49 +41,98 @@ define( function () {
         var SILENCE_THRESH = 0.01;
 
         /**
-         * A helper method to help find the markers in an AudioBuffer.
+         * Length for which the channel has to be empty
+         */
+        var EMPTY_CHECK_LENGTH = 1024;
+
+        /**
+         * Length samples to ignore after the spike
+         */
+        var IGNORE_LENGTH = 16;
+
+        /**
+         * Array of all Channel Data
+         */
+        var channels_ = [];
+
+        /**
+         * Number of samples in the buffer
+         */
+        var numSamples_ = 0;
+
+        /**
+         * A helper method to help find the silence in across multiple channels
+         *
+         * @private
+         * @method silenceCheckGenerator_
+         * @param {Number} testIndex The index of the sample which is being checked.
+         * @return {Function} A function which can check if the specific sample is beyond the silence threshold
+         */
+        var isChannelEmptyAfter = function ( channel, position ) {
+            console.log( "checking at " + position );
+            var sum = 0;
+            for ( var sIndex = position + IGNORE_LENGTH; sIndex < position + IGNORE_LENGTH + EMPTY_CHECK_LENGTH; ++sIndex ) {
+                sum += Math.abs( channel[ sIndex ] );
+            }
+
+            return ( sum / EMPTY_CHECK_LENGTH ) < SILENCE_THRESH;
+        };
+
+        /**
+         * A helper method to help find the spikes in across multiple channels
+         *
+         * @private
+         * @method silenceCheckGenerator_
+         * @param {Number} testIndex The index of the sample which is being checked.
+         * @return {Function} A function which can check if the specific sample is beyond the spike threshold
+         */
+        var thresholdCheckGenerator_ = function ( testIndex ) {
+            return function ( prev, thisChannel, index ) {
+                var isSpike;
+                if ( index % 2 === 0 ) {
+                    isSpike = thisChannel[ testIndex ] > SPIKE_THRESH;
+                } else {
+                    isSpike = thisChannel[ testIndex ] < -SPIKE_THRESH;
+                }
+                return prev && isSpike;
+            };
+        };
+
+        /**
+         * A helper method to help find the markers in an Array of Float32Arrays made from an AudioBuffer.
          *
          * @private
          * @method findSilence_
-         * @param {AudioBuffer} buffer A buffer within which markers needs to be detected.
+         * @param {Array} channels An array of buffer data in Float32Arrays within which markers needs to be detected.
          * @return {Boolean} If Loop Markers were found.
          */
-        var findMarkers_ = function ( buffer ) {
-            var startSpikePos = -1;
-            var endSpikePos = -1;
+        var findMarkers_ = function ( channels ) {
+            var startSpikePos = null;
+            var endSpikePos = null;
 
-            var aLeftChannel_;
-            var aRightChannel_;
+            nLoopStart_ = 0;
+            nLoopEnd_ = numSamples_ - 1;
 
-            nLoopEnd_ = buffer.length - 1;
-            aRightChannel_ = new Float32Array( buffer.getChannelData( 0 ) );
-            if ( buffer.numberOfChannels === 2 ) {
-                aLeftChannel_ = new Float32Array( buffer.getChannelData( 1 ) );
-            }
             // Find marker near start of file
             var pos = 0;
 
-            while ( startSpikePos < 0 && pos < buffer.length &&
-                pos < MAX_MP3_SILENCE ) {
-
-                if ( aRightChannel_[ pos ] > SPIKE_THRESH &&
-                    ( buffer.numberOfChannels === 1 ||
-                        aLeftChannel_[ pos ] < -SPIKE_THRESH ) ) {
-                    startSpikePos = pos;
-                    break;
+            while ( startSpikePos === null && pos < numSamples_ && pos < MAX_MP3_SILENCE ) {
+                if ( channels.reduce( thresholdCheckGenerator_( pos ), true ) ) {
+                    // Only check for emptiness at the start to ensure that it's indeed marked
+                    if ( channels.length !== 1 || isChannelEmptyAfter( channels[ 0 ], pos ) ) {
+                        startSpikePos = pos;
+                        break;
+                    }
                 } else {
                     pos++;
                 }
             }
 
             // Find marker near end of file
-            pos = buffer.length - 1;
+            pos = numSamples_ - 1;
 
-            while ( endSpikePos < 0 && pos > 0 &&
-                buffer.length - pos < MAX_MP3_SILENCE ) {
-                if ( aRightChannel_[ pos ] > SPIKE_THRESH &&
-                    ( buffer.numberOfChannels === 1 ||
-                        aLeftChannel_[ pos ] < -SPIKE_THRESH ) ) {
+            while ( endSpikePos === null && pos > 0 && numSamples_ - pos < MAX_MP3_SILENCE ) {
+                if ( channels.reduce( thresholdCheckGenerator_( pos ), true ) ) {
                     endSpikePos = pos;
                     break;
                 } else {
@@ -91,20 +140,17 @@ define( function () {
                 }
             }
             // If both markers found
-            if ( startSpikePos > 0 && endSpikePos > 0 &&
-                endSpikePos > startSpikePos ) {
+            if ( startSpikePos !== null && endSpikePos !== null && endSpikePos > startSpikePos ) {
                 // Compute loop start and length
                 nLoopStart_ = startSpikePos + PREPOSTFIX_LEN / 2;
                 nLoopEnd_ = endSpikePos - PREPOSTFIX_LEN / 2;
-
+                console.log( "Found loop between " + nLoopStart_ + " - " + nLoopEnd_ );
                 return true;
+            } else {
+                // Spikes not found!
+                console.log( "No loop found" );
+                return false;
             }
-
-            // Spikes not found!
-            nLoopStart_ = 0;
-            nLoopEnd_ = buffer.length;
-
-            return false;
         };
 
         /**
@@ -127,20 +173,14 @@ define( function () {
          *
          * @private
          * @method findSilence_
-         * @param {AudioBuffer} buffer A buffer within which silence needs to be detected.
+         * @param {Array} channels channel An array of buffer data in Float32Arrays within which silence needs to be detected.
          */
-        var findSilence_ = function ( buffer ) {
+        var findSilence_ = function ( channels ) {
 
-            var channels = [];
             var allChannelsSilent = true;
 
-            for ( var index = 0; index < buffer.numberOfChannels; index++ ) {
-                channels.push( new Float32Array( buffer.getChannelData( index ) ) );
-            }
-
             nLoopStart_ = 0;
-            while ( nLoopStart_ < MAX_MP3_SILENCE &&
-                nLoopStart_ < buffer.length ) {
+            while ( nLoopStart_ < MAX_MP3_SILENCE && nLoopStart_ < numSamples_ ) {
 
                 allChannelsSilent = channels.reduce( silenceCheckGenerator_( nLoopStart_ ), true );
 
@@ -151,8 +191,8 @@ define( function () {
                 }
             }
 
-            nLoopEnd_ = buffer.length - 1;
-            while ( buffer.length - nLoopEnd_ < MAX_MP3_SILENCE &&
+            nLoopEnd_ = numSamples_ - 1;
+            while ( numSamples_ - nLoopEnd_ < MAX_MP3_SILENCE &&
                 nLoopEnd_ > 0 ) {
 
                 allChannelsSilent = channels.reduce( silenceCheckGenerator_( nLoopEnd_ ), true );
@@ -166,13 +206,17 @@ define( function () {
 
             if ( nLoopEnd_ < nLoopStart_ ) {
                 nLoopStart_ = 0;
-                nLoopLength_ = buffer.length;
+                nLoopLength_ = numSamples_;
             }
         };
 
-        // Only try to find markers if mono or stereo
-        if ( ( buffer.numberOfChannels !== 2 || !findMarkers_( buffer ) ) ) {
-            findSilence_( buffer );
+        numSamples_ = buffer.length;
+        for ( var index = 0; index < buffer.numberOfChannels; index++ ) {
+            channels_.push( new Float32Array( buffer.getChannelData( index ) ) );
+        }
+
+        if ( ( !findMarkers_( channels_ ) ) ) {
+            findSilence_( channels_ );
         }
 
         // return the markers which were found
