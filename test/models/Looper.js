@@ -9,18 +9,18 @@ require(["core/Envelope", "models/Looper"], function (Envelope, Looper) {
 
     //console.log(Looper);
 
-    //var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Marked.mp3";
+    var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Marked.mp3";
     // var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Original.wav";
     // var url = "https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.wav";
 
-    var drums = "https://dl.dropboxusercontent.com/u/77191118/sounds/drum.mp3";
-    var guitar = "https://dl.dropboxusercontent.com/u/77191118/sounds/guitar.mp3";
-    var piano = "https://dl.dropboxusercontent.com/u/77191118/sounds/piano.mp3";
+    // var drums = "https://dl.dropboxusercontent.com/u/77191118/sounds/drum.mp3";
+    // var guitar = "https://dl.dropboxusercontent.com/u/77191118/sounds/guitar.mp3";
+    // var piano = "https://dl.dropboxusercontent.com/u/77191118/sounds/piano.mp3";
 
-    var validURL = drums;
-    var validURL1 =  guitar;
-    var validURL2 =  drums;
-    var validURL3 =  piano;
+    // var validURL = drums;
+    // var validURL1 =  guitar;
+    // var validURL2 =  drums;
+    // var validURL3 =  piano;
 
     // populate a valid URL of mp3 file
 
@@ -64,17 +64,17 @@ require(["core/Envelope", "models/Looper"], function (Envelope, Looper) {
     // }, context);
 
 
-    looper = new Looper([validURL1, validURL2, validURL3], context, function(){
-        looper.maxLoops.value = 1;
+    looper = new Looper('https://dl.dropboxusercontent.com/u/77191118/sine_marked.mp3', context, function(){
+        //looper.maxLoops.value = 1;
         looper.start(0);
-        e.start(0, null, null, 0.5);
-        looper.multiTrackGain[0].linearRampToValueAtTime(0.5, context.currentTime + 2 );
-        looper.playSpeed.linearRampToValueAtTime(5, context.currentTime + 1 );
+        // e.start(0, null, null, 0.5);
+        // looper.multiTrackGain[0].linearRampToValueAtTime(0.5, context.currentTime + 2 );
+        // looper.playSpeed.linearRampToValueAtTime(5, context.currentTime + 1 );
     });
 
-    looper.disconnect();
-    looper.connect(e);
-    e.connect(context.destination);
+    // looper.disconnect();
+    // looper.connect(e);
+    // e.connect(context.destination);
 
      /*
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
