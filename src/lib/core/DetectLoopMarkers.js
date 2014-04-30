@@ -144,11 +144,11 @@ define( function () {
                 // Compute loop start and length
                 nLoopStart_ = startSpikePos + PREPOSTFIX_LEN / 2;
                 nLoopEnd_ = endSpikePos - PREPOSTFIX_LEN / 2;
-                console.log( "Found loop between " + nLoopStart_ + " - " + nLoopEnd_ );
+                //console.log( "Found loop between " + nLoopStart_ + " - " + nLoopEnd_ );
                 return true;
             } else {
                 // Spikes not found!
-                console.log( "No loop found" );
+                //console.log( "No loop found" );
                 return false;
             }
         };

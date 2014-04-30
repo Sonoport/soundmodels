@@ -10,7 +10,7 @@ module.exports = function ( grunt ) {
             'console.log("   ____                           __ \\n" + "  / _____  ___ ___  ___ ___  ____/ /_\\n" + " _\\\\ \\\\/ _ \\\\/ _ / _ \\\\/ _ / _ \\\\/ __/ __/\\n" + "/___/\\\\___/_//_\\\\___/ .__\\\\___/_/  \\\\__/ \\n" + "                 /_/                 \\n" + "Hello Developer!\\n" + "Thanks for using Sonoport Dynamic Sound Library.");\n',
         // Define files and locations
         files: {
-            jsSrc: 'src/lib/**/*.js',
+            jsSrc: 'src/**/**/*.js',
             testSrc: 'test/**/*.js',
             playerSrc: 'jsmplayer/js/**.js',
             mathSrc: 'src/lib/core/math/*.js'
@@ -225,6 +225,14 @@ module.exports = function ( grunt ) {
                     port: 8080,
                     base: [ '<%= dirs.release %>/lib', '<%= dirs.player %>' ],
                     livereload: true
+                }
+            },
+            sloop: {
+                options: {
+                    port: 8080,
+                    base: [ '<%= dirs.build %>', 'test/sloop' ],
+                    open: true,
+                    keepalive:true
                 }
             }
         },
