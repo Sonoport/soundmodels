@@ -44,14 +44,14 @@ define( [ 'core/DetectLoopMarkers' ],
              * @private
              * @method sliceBuffer
              * @param {Number} start The start of the buffer to load.
-             * @param {Number} end The end of the buffer to load.
+             * @param {Number} end The end (inclusive) of the buffer to load.
              * @returns {AudioBuffer} The requested sliced buffer.
              */
             var sliceBuffer_ = function ( start, end ) {
 
                 // Set end if it is missing
                 if ( typeof end == "undefined" ) {
-                    end = rawBuffer_.length;
+                    end = rawBuffer_.length - 1;
                 }
                 // Verify parameters
                 if ( !isInt_( start ) ) {
@@ -103,7 +103,7 @@ define( [ 'core/DetectLoopMarkers' ],
                     };
                 }
 
-                var length = end - start;
+                var length = end - start+1;
 
                 // Create the new buffer
                 var newBuffer = context.createBuffer( rawBuffer_.numberOfChannels, length, rawBuffer_.sampleRate );
@@ -145,7 +145,7 @@ define( [ 'core/DetectLoopMarkers' ],
                     rawBuffer_ = buffer;
                     // Do trimming if it is not a wave file
                     loopStart_ = 0;
-                    loopEnd_ = rawBuffer_.length;
+                    loopEnd_ = rawBuffer_.length -1;
                     if ( fileExt[ 0 ] !== "wav" ) {
                         // Trim Buffer based on Markers
                         var markers = detectLoopMarkers( rawBuffer_ );
@@ -170,7 +170,7 @@ define( [ 'core/DetectLoopMarkers' ],
              * Get the current buffer.
              * @method getBuffer
              * @param {Number} start The start index
-             * @param {Number} end the end index
+             * @param {Number} end The end index (inclusive).
              * @returns {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
              */
             this.getBuffer = function ( start, end ) {

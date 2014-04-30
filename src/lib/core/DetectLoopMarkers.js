@@ -206,7 +206,7 @@ define( function () {
 
             if ( nLoopEnd_ < nLoopStart_ ) {
                 nLoopStart_ = 0;
-                nLoopLength_ = numSamples_;
+                nLoopLength_ = numSamples_ -1;
             }
         };
 
