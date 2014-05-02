@@ -12,7 +12,7 @@ module.exports = function ( grunt ) {
         files: {
             jsSrc: 'src/**/**/*.js',
             testSrc: 'test/**/*.js',
-            playerSrc: 'src/jsmplayer/js/**.js'
+            playerSrc: 'src/jsmplayer/js/**.js',
             mathSrc: 'src/lib/core/math/*.js',
             vendor: 'src/jsmplayer/vendor/*.js',
         },
@@ -26,7 +26,7 @@ module.exports = function ( grunt ) {
             models: 'src/lib/models',
             themedir: 'docs/yuitheme',
             temp: 'src/lib/temp',
-            player: 'src/jsmplayer'
+            player: 'src/jsmplayer',
             math: 'src/lib/core/math',
 
         },
@@ -44,7 +44,7 @@ module.exports = function ( grunt ) {
         requirejs: {
             compile: {
                 options: {
-                    optimize: "uglify2",
+                    optimize: "none",
                     baseUrl: "src/lib/",
                     dir: "<%= dirs.build %>",
                     modules: [ {

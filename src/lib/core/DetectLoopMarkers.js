@@ -117,12 +117,11 @@ define( function () {
             var pos = 0;
 
             while ( startSpikePos === null && pos < numSamples_ && pos < MAX_MP3_SILENCE ) {
-                if ( channels.reduce( thresholdCheckGenerator_( pos ), true ) ) {
+                if ( channels.reduce( thresholdCheckGenerator_( pos ), true ) &&
+                    ( channels.length !== 1 || isChannelEmptyAfter( channels[ 0 ], pos ) ) ) {
                     // Only check for emptiness at the start to ensure that it's indeed marked
-                    if ( channels.length !== 1 || isChannelEmptyAfter( channels[ 0 ], pos ) ) {
-                        startSpikePos = pos;
-                        break;
-                    }
+                    startSpikePos = pos;
+                    break;
                 } else {
                     pos++;
                 }
