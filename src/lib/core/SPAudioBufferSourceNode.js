@@ -16,7 +16,7 @@ define( [ 'core/SPPlaybackRateParam' ],
             var bufferSourceNode = audioContext.createBufferSource();
             var counterNode = audioContext.createBufferSource();
 
-            var scopeNode = audioContext.createScriptProcessor();
+            var scopeNode = audioContext.createScriptProcessor( 256, 1, 0 );
             var lastPos = 0;
 
             this.channelCount = bufferSourceNode.channelCount;
