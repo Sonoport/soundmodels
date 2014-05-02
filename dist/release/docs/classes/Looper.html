@@ -41,11 +41,19 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/Activity.html">Activity</a></li>
+            
                 <li><a href="../classes/BaseSound.html">BaseSound</a></li>
             
                 <li><a href="../classes/Envelope.html">Envelope</a></li>
             
+                <li><a href="../classes/Extender.html">Extender</a></li>
+            
                 <li><a href="../classes/Looper.html">Looper</a></li>
+            
+                <li><a href="../classes/MultiTrigger.html">MultiTrigger</a></li>
+            
+                <li><a href="../classes/Scrubber.html">Scrubber</a></li>
             
                 <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
             
@@ -385,6 +393,13 @@
                         
                             <li class="index-item property inherited">
                                 <a href="#property_inputNode">inputNode</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_isInitialized">isInitialized</a>
 
                                 
                                 
@@ -794,13 +809,13 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code class="optional">[fadeTime]</code>
+                        <code class="optional">[when]</code>
                     
                 </li>
             
                 <li class="arg">
                     
-                        <code class="optional">[when]</code>
+                        <code class="optional">[fadeTime]</code>
                     
                 </li>
             
@@ -851,23 +866,6 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name optional">[fadeTime]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Amount of time (seconds) it takes for linear ramp down to happen.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
                         <code class="param-name optional">[when]</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
@@ -877,6 +875,23 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
                     <div class="param-description">
                         <p>Time (in seconds) at which the Envelope will release.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[fadeTime]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Amount of time (seconds) it takes for linear ramp down to happen.</p>
 
                     </div>
 
@@ -1026,6 +1041,12 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
                 </li>
             
+                <li class="arg">
+                    
+                        <code class="optional">[attackDuration]</code>
+                    
+                </li>
+            
             </ul><span class="paren">)</span>
         </div>
     
@@ -1117,6 +1138,23 @@ the value of startPoint property is used.</p>
 
                     <div class="param-description">
                         <p>Duration of the portion (in seconds) to be played</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[attackDuration]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Duration (in seconds) of attack ramp of the envelope.</p>
 
                     </div>
 
@@ -1355,6 +1393,52 @@ Set this value to null if no connection can be made on the input node</p>
 
     
         <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_isInitialized" class="property item inherited">
+    <h3 class="name"><code>isInitialized</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_isInitialized">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>If Sound is currently initialized.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> false</p>
     
 
     

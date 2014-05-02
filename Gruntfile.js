@@ -44,7 +44,7 @@ module.exports = function ( grunt ) {
         requirejs: {
             compile: {
                 options: {
-                    optimize: "none",
+                    optimize: "uglify2",
                     baseUrl: "src/lib/",
                     dir: "<%= dirs.build %>",
                     modules: [ {

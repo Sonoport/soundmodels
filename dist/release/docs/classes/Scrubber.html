@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Trigger - Sonoport Javascript Sound Models</title>
+    <title>Scrubber - Sonoport Javascript Sound Models</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -102,7 +102,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Trigger Class</h1>
+                        <h1>Scrubber Class</h1>
 <div class="box meta">
     
 
@@ -126,15 +126,15 @@
 
 
 <div class="box intro">
-    <p>A sound model which triggers a single or multiple sound files with multiple voices (polyphony).</p>
+    <p>A sound model which loads a sound file and allows it to be scrubbed using a position parameter</p>
 
 </div>
 
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_Trigger" class="method item">
-    <h3 class="name"><code>Trigger</code></h3>
+        <div id="method_Scrubber" class="method item">
+    <h3 class="name"><code>Scrubber</code></h3>
 
     
         <div class="args">
@@ -155,12 +155,6 @@
                 <li class="arg">
                     
                         <code class="optional">[onLoadCallback]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[onEndedCallback]</code>
                     
                 </li>
             
@@ -258,23 +252,6 @@
                     
                 </li>
             
-                <li class="param">
-                    
-                        <code class="param-name optional">[onEndedCallback]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Callback when the Trigger has finished playing.</p>
-
-                    </div>
-
-                    
-                </li>
-            
             </ul>
         </div>
     
@@ -346,13 +323,6 @@
                                 
                             </li>
                         
-                            <li class="index-item method">
-                                <a href="#method_setSources">setSources</a>
-
-                                
-                                
-                            </li>
-                        
                             <li class="index-item method inherited">
                                 <a href="#method_start">start</a>
 
@@ -384,13 +354,6 @@
                                 
                             </li>
                         
-                            <li class="index-item property">
-                                <a href="#property_eventRand">eventRand</a>
-
-                                
-                                
-                            </li>
-                        
                             <li class="index-item property inherited">
                                 <a href="#property_inputNode">inputNode</a>
 
@@ -412,6 +375,20 @@
                                 
                             </li>
                         
+                            <li class="index-item property">
+                                <a href="#property_muteOnReverse">muteOnReverse</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_noMotionFade">noMotionFade</a>
+
+                                
+                                
+                            </li>
+                        
                             <li class="index-item property inherited inherited">
                                 <a href="#property_numberOfInputs">numberOfInputs</a>
 
@@ -427,14 +404,7 @@
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_pitchRand">pitchRand</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_pitchShift">pitchShift</a>
+                                <a href="#property_playPosition">playPosition</a>
 
                                 
                                 
@@ -727,21 +697,11 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_play" class="method item">
+                    <div id="method_play" class="method item inherited">
     <h3 class="name"><code>play</code></h3>
 
     
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code class="optional">[when]</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
+        <span class="paren">()</span>
     
 
     
@@ -760,10 +720,9 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            <p>Inherited from
-            <a href="../classes/BaseSound.html#method_play">
-                BaseSound
-            </a>
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_play">BaseSound</a>:
             
         
         
@@ -776,35 +735,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Triggers a single voice.</p>
+        <p>Play sound. Abstract method. Override this method when a Node is defined.</p>
 
     </div>
 
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[when]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>At what time (in seconds) the sound be triggered</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
     
 
     
@@ -905,114 +839,6 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
                     <div class="param-description">
                         <p>Amount of time (seconds) it takes for linear ramp down to happen.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="method_setSources" class="method item">
-    <h3 class="name"><code>setSources</code></h3>
-
-    
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code>sounds</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[onLoadCallback]</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Reinitializes a Trigger and sets it&#39;s sources.</p>
-
-    </div>
-
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name">sounds</code>
-                        <span class="type">Array/AudioBuffer/String/File</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers of sounds.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[onLoadCallback]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Callback when all sounds have finished loading.</p>
 
                     </div>
 
@@ -1297,57 +1123,6 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="property_eventRand" class="property item">
-    <h3 class="name"><code>eventRand</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Enable randomness in the order of sources which are triggered.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> true</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> false</p>
-    
-
-    
-
-    
-</div>
-
-                
                     <div id="property_inputNode" class="property item inherited">
     <h3 class="name"><code>inputNode</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
@@ -1487,6 +1262,100 @@ Set this value to null if no connection can be made on the input node</p>
 </div>
 
                 
+                    <div id="property_muteOnReverse" class="property item">
+    <h3 class="name"><code>muteOnReverse</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Sets if moving playPosition to backwards should make any sound.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> false</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_noMotionFade" class="property item">
+    <h3 class="name"><code>noMotionFade</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Sets if the audio should fade out when playPosition has not changed for a while.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> false</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="property_numberOfInputs" class="property item inherited">
     <h3 class="name"><code>numberOfInputs</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
@@ -1580,8 +1449,8 @@ Set this value to null if no connection can be made on the input node</p>
 </div>
 
                 
-                    <div id="property_pitchRand" class="property item">
-    <h3 class="name"><code>pitchRand</code></h3>
+                    <div id="property_playPosition" class="property item">
+    <h3 class="name"><code>playPosition</code></h3>
     <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
@@ -1609,7 +1478,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     <div class="description">
-        <p>Maximum value for random pitch shift of the triggered voices in semitones.</p>
+        <p>Position of the audio to be played.</p>
 
     </div>
 
@@ -1618,62 +1487,7 @@ Set this value to null if no connection can be made on the input node</p>
     
 
     
-           <p><strong>Minimum Value:</strong> 0</p>
-    
 
-    
-           <p><strong>Maximum Value:</strong> 24</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_pitchShift" class="property item">
-    <h3 class="name"><code>pitchShift</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Pitch shift of the triggered voices in semitones.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> -60</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 60</p>
     
 
     
