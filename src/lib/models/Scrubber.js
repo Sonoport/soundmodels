@@ -6,7 +6,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
         "use strict";
         /**
          *
-         * A sound model which loads a sound file and allows it to be losoped continuously at variable speed.
+         * A sound model which loads a sound file and allows it to be scrubbed using a position parameter
          * @class Scrubber
          * @constructor
          * @extends BaseSound
@@ -40,6 +40,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
 
             var numSamples_;
             var numChannels_;
+            var sampleRate_;
 
             var lastTargetPos_ = 0;
             var smoothPos_ = 0;
@@ -125,7 +126,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                     // The challenge: because of the K-rate update, numSamples will *not* be a multiple of the
                     // step size.  So... we need some way to generate in steps, but if necessary output only
                     // partial steps, the remainders of which need to be saved for the next call.  Ouch!
-
                     // Send whatever previously generated left-over samples we might have
 
                     if ( numReady_ > 0 && numToGo_ > 0 ) {

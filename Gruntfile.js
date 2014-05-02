@@ -13,7 +13,8 @@ module.exports = function ( grunt ) {
             jsSrc: 'src/**/**/*.js',
             testSrc: 'test/**/*.js',
             playerSrc: 'src/jsmplayer/js/**.js'
-            mathSrc: 'src/lib/core/math/*.js'
+            mathSrc: 'src/lib/core/math/*.js',
+            vendor: 'src/jsmplayer/vendor/*.js',
         },
         dirs: {
             src: 'src',
@@ -27,7 +28,7 @@ module.exports = function ( grunt ) {
             temp: 'src/lib/temp',
             player: 'src/jsmplayer'
             math: 'src/lib/core/math',
-            shims: 'src/shims'
+
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
@@ -38,12 +39,12 @@ module.exports = function ( grunt ) {
         },
         // JSHint
         jshint: {
-            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>', '!<%= files.mathSrc %>' ],
+            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>', '!<%= files.vendor %>' ]
         },
         requirejs: {
             compile: {
                 options: {
-                    optimize: "none",
+                    optimize: "uglify2",
                     baseUrl: "src/lib/",
                     dir: "<%= dirs.build %>",
                     modules: [ {
@@ -235,7 +236,7 @@ module.exports = function ( grunt ) {
                     port: 8080,
                     base: [ '<%= dirs.build %>', 'test/sloop' ],
                     open: true,
-                    keepalive:true
+                    keepalive: true
                 }
             }
         },
