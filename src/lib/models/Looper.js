@@ -43,6 +43,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
                 self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
 
+                self.isInitialized = true;
                 if ( typeof onLoadCallback === 'function' ) {
                     onLoadCallback( status );
                 }
@@ -77,26 +78,27 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             var playSpeedSetter_ = function ( aParam, value, audioContext ) {
-                /* 0.001 - 60dB Drop
-                  e(-n) = 0.001; - Decay Rate of setTargetAtTime.
-                  n = 6.90776;
-                  */
-                var t60multiplier = 6.90776;
+                if ( self.isInitialized ) {
+                    /* 0.001 - 60dB Drop
+                                  e(-n) = 0.001; - Decay Rate of setTargetAtTime.
+                                  n = 6.90776;
+                                  */
+                    var t60multiplier = 6.90776;
 
-                var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
+                    var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
 
-                if ( value > currentSpeed ) {
-                    sources_.forEach( function ( thisSource ) {
-                        thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                        thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.riseTime.value * t60multiplier );
-                    } );
-                } else if ( value < currentSpeed ) {
-                    sources_.forEach( function ( thisSource ) {
-                        thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                        thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.decayTime.value * t60multiplier );
-                    } );
+                    if ( value > currentSpeed ) {
+                        sources_.forEach( function ( thisSource ) {
+                            thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                            thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.riseTime.value / t60multiplier );
+                        } );
+                    } else if ( value < currentSpeed ) {
+                        sources_.forEach( function ( thisSource ) {
+                            thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                            thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.decayTime.value / t60multiplier );
+                        } );
+                    }
                 }
-
             };
 
             var startPointSetter_ = function ( aParam, value ) {
@@ -190,6 +192,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
              */
             this.setSources = function ( sounds, onLoadCallback ) {
+                this.isInitialized = false;
                 init( sounds );
             };
 
@@ -221,15 +224,26 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @param {Number} when The delay in seconds before playing the sound
              * @param {Number} [offset] The starting position of the playhead
              * @param {Number} [duration] Duration of the portion (in seconds) to be played
+             * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
              */
-            this.start = function ( when, offset, duration ) {
+            this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource ) {
-                        if ( typeof offset == 'undefined' ) {
+                        if ( typeof offset == 'undefined' || offset === null ) {
                             offset = self.startPoint.value * thisSource.buffer.duration;
                         }
-                        //console.log( "Playing" );
+                        if ( typeof duration == 'undefined' || duration === null ) {
+                            duration = thisSource.buffer.duration;
+                        }
                         thisSource.loop = ( self.maxLoops.value !== 1 );
+
+                        if ( typeof attackDuration !== 'undefined' ) {
+                            //console.log( "Ramping from " + offset + "  in " + attackDuration );
+                            var now = self.audioContext.currentTime;
+                            self.releaseGainNode.gain.cancelScheduledValues( now );
+                            self.releaseGainNode.gain.setValueAtTime( 0, now );
+                            self.releaseGainNode.gain.linearRampToValueAtTime( 1, now + attackDuration );
+                        }
                         thisSource.start( when, offset, duration );
                     } );
                 }

@@ -45,7 +45,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var onAllLoad = function ( status, audioBufferArray ) {
                 sourceBuffers_ = audioBufferArray;
                 soundQueue_.connect( self.releaseGainNode );
-                onLoadCallback();
+                this.isInitialized = true;
+                if ( typeof onLoadCallback === 'function' ) {
+                    onLoadCallback( status );
+                }
             };
 
             function init( sounds ) {
@@ -91,13 +94,14 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             // Public Functions
 
             /**
-             * Reinitializes a Looper and sets it's sources.
+             * Reinitializes a Trigger and sets it's sources.
              *
              * @method setSources
              * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
              * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
              */
             this.setSources = function ( sounds, onLoadCallback ) {
+                this.isInitialized = false;
                 init( sounds );
             };
 
@@ -136,6 +140,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
                 currentEventID_++;
+
+                BaseSound.prototype.start.call( this, 0 );
             };
 
             init( sounds );

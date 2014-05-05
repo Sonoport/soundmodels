@@ -170,7 +170,7 @@ define( [ 'core/DetectLoopMarkers' ],
              * Get the current buffer.
              * @method getBuffer
              * @param {Number} start The start index
-             * @param {Number} end the end index
+             * @param {Number} end The end index
              * @returns {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
              */
             this.getBuffer = function ( start, end ) {
