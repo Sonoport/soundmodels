@@ -27,6 +27,7 @@ module.exports = function ( grunt ) {
             themedir: 'docs/yuitheme',
             temp: 'src/lib/temp',
             player: 'src/jsmplayer',
+            unittest: 'test/unit'
             math: 'src/lib/core/math',
             unittest: 'test/unit'
         },
@@ -237,6 +238,12 @@ module.exports = function ( grunt ) {
                     livereload: true
                 }
             },
+            unittest: {
+                options: {
+                    port: 8000,
+                    base: [ '<%= dirs.build %>', 'test/unit' ]
+                }
+            },      
             sloop: {
                 options: {
                     port: 8080,
