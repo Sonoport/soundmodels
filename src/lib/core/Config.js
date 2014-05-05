@@ -32,5 +32,16 @@ define( [],
          */
         Config.NOMINAL_REFRESH_RATE = 60;
 
+        /**
+         * Default window length for window and add functionality
+         *
+         * @final
+         * @static
+         * @property NOMINAL_REFRESH_RATE
+         * @default 512
+         *
+         */
+        Config.WINDOW_LENGTH = 512;
+
         return Config;
     } );

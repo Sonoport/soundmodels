@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Trigger - Sonoport Javascript Sound Models</title>
+    <title>Extender - Sonoport Javascript Sound Models</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -102,7 +102,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Trigger Class</h1>
+                        <h1>Extender Class</h1>
 <div class="box meta">
     
 
@@ -126,15 +126,15 @@
 
 
 <div class="box intro">
-    <p>A sound model which triggers a single or multiple sound files with multiple voices (polyphony).</p>
+    <p>A sound model which extends the playing of a single sound infinitely with windowed overlapping.</p>
 
 </div>
 
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_Trigger" class="method item">
-    <h3 class="name"><code>Trigger</code></h3>
+        <div id="method_Extender" class="method item">
+    <h3 class="name"><code>Extender</code></h3>
 
     
         <div class="args">
@@ -142,7 +142,7 @@
             
                 <li class="arg">
                     
-                        <code>sounds</code>
+                        <code>sound</code>
                     
                 </li>
             
@@ -155,12 +155,6 @@
                 <li class="arg">
                     
                         <code class="optional">[onLoadCallback]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[onEndedCallback]</code>
                     
                 </li>
             
@@ -211,14 +205,14 @@
             
                 <li class="param">
                     
-                        <code class="param-name">sounds</code>
-                        <span class="type">Array/String/AudioBuffer/File</span>
+                        <code class="param-name">sound</code>
+                        <span class="type">String/AudioBuffer/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers or File of sounds.</p>
+                        <p>Single URL or AudioBuffer or File of sound.</p>
 
                     </div>
 
@@ -251,24 +245,7 @@
                     
 
                     <div class="param-description">
-                        <p>Callback when all sounds have finished loading.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[onEndedCallback]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Callback when the Trigger has finished playing.</p>
+                        <p>Callback when the sound has finished loading.</p>
 
                     </div>
 
@@ -776,7 +753,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Triggers a single voice.</p>
+        <p>Starts playing the sound.</p>
 
     </div>
 
@@ -930,7 +907,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code>sounds</code>
+                        <code>sound</code>
                     
                 </li>
             
@@ -976,7 +953,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Reinitializes a Trigger and sets it&#39;s sources.</p>
+        <p>Reinitializes a Extender and sets it&#39;s sources.</p>
 
     </div>
 
@@ -988,14 +965,14 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name">sounds</code>
+                        <code class="param-name">sound</code>
                         <span class="type">Array/AudioBuffer/String/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers of sounds.</p>
+                        <p>Single or Array of either URLs or AudioBuffers of sound.</p>
 
                     </div>
 
@@ -1012,7 +989,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>Callback when all sounds have finished loading.</p>
+                        <p>Callback when all sound have finished loading.</p>
 
                     </div>
 
@@ -1335,11 +1312,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     
 
     
-           <p><strong>Minimum Value:</strong> true</p>
-    
 
-    
-           <p><strong>Maximum Value:</strong> false</p>
     
 
     
@@ -1618,11 +1591,7 @@ Set this value to null if no connection can be made on the input node</p>
     
 
     
-           <p><strong>Minimum Value:</strong> 0</p>
-    
 
-    
-           <p><strong>Maximum Value:</strong> 24</p>
     
 
     
@@ -1669,11 +1638,7 @@ Set this value to null if no connection can be made on the input node</p>
     
 
     
-           <p><strong>Minimum Value:</strong> -60</p>
-    
 
-    
-           <p><strong>Maximum Value:</strong> 60</p>
     
 
     

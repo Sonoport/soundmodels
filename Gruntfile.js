@@ -10,9 +10,11 @@ module.exports = function ( grunt ) {
             'console.log("   ____                           __ \\n" + "  / _____  ___ ___  ___ ___  ____/ /_\\n" + " _\\\\ \\\\/ _ \\\\/ _ / _ \\\\/ _ / _ \\\\/ __/ __/\\n" + "/___/\\\\___/_//_\\\\___/ .__\\\\___/_/  \\\\__/ \\n" + "                 /_/                 \\n" + "Hello Developer!\\n" + "Thanks for using Sonoport Dynamic Sound Library.");\n',
         // Define files and locations
         files: {
-            jsSrc: 'src/lib/**/*.js',
+            jsSrc: 'src/**/**/*.js',
             testSrc: 'test/**/*.js',
-            playerSrc: 'src/jsmplayer/js/**.js'
+            playerSrc: 'src/jsmplayer/js/**.js',
+            mathSrc: 'src/lib/core/math/*.js',
+            vendor: 'src/jsmplayer/vendor/*.js',
         },
         dirs: {
             src: 'src',
@@ -26,6 +28,7 @@ module.exports = function ( grunt ) {
             temp: 'src/lib/temp',
             player: 'src/jsmplayer',
             unittest: 'test/unit'
+            math: 'src/lib/core/math',
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
@@ -36,7 +39,7 @@ module.exports = function ( grunt ) {
         },
         // JSHint
         jshint: {
-            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>' ]
+            all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>', '!<%= files.vendor %>' ]
         },
         requirejs: {
             compile: {
@@ -55,7 +58,7 @@ module.exports = function ( grunt ) {
                     }, {
                         name: 'models/MultiTrigger'
                     }, {
-                        name: 'models/Action'
+                        name: 'models/Activity'
                     }, ],
                     uglify2: {
                         compress: {
@@ -174,6 +177,18 @@ module.exports = function ( grunt ) {
             temp: [ '<%= dirs.temp %>' ],
             unittest: [ '<%= dirs.unittest %>/src' ]
         },
+        browserify: {
+            dist: {
+                files: {
+                    '<%= dirs.math %>/ndarray.js': [ '<%= dirs.shims %>/math/ndarray.js' ]
+                },
+                options: {
+                    bundleOptions: {
+                        standalone: 'ndarray'
+                    }
+                }
+            }
+        },
         usebanner: {
             main: {
                 options: {
@@ -227,6 +242,14 @@ module.exports = function ( grunt ) {
                     port: 8000,
                     base: [ '<%= dirs.build %>', 'test/unit' ]
                 }
+            },      
+            sloop: {
+                options: {
+                    port: 8080,
+                    base: [ '<%= dirs.build %>', 'test/sloop' ],
+                    open: true,
+                    keepalive: true
+                }
             }
         },
         bowercopy: {
@@ -255,6 +278,7 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-clean' );
     grunt.loadNpmTasks( 'grunt-jsbeautifier' );
     grunt.loadNpmTasks( 'grunt-banner' );
+    grunt.loadNpmTasks( 'grunt-browserify' );
 
     // Player related
     grunt.loadNpmTasks( 'grunt-contrib-compass' );

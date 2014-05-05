@@ -81,10 +81,10 @@ define(
                     // bounds first.
                     if ( typeof value === "number" ) {
                         if ( value > maxValue ) {
-                            console.log( 'Clamping to max' );
+                            console.log( this.name + ' clamping to max' );
                             value = maxValue;
                         } else if ( value < minValue ) {
-                            console.log( 'Clamping to min' );
+                            console.log( this.name + ' clamping to min' );
                             value = minValue;
                         }
                     }

@@ -41,11 +41,19 @@
         <div id="api-tabview-panel">
             <ul id="api-classes" class="apis classes">
             
+                <li><a href="../classes/Activity.html">Activity</a></li>
+            
                 <li><a href="../classes/BaseSound.html">BaseSound</a></li>
             
                 <li><a href="../classes/Envelope.html">Envelope</a></li>
             
+                <li><a href="../classes/Extender.html">Extender</a></li>
+            
                 <li><a href="../classes/Looper.html">Looper</a></li>
+            
+                <li><a href="../classes/MultiTrigger.html">MultiTrigger</a></li>
+            
+                <li><a href="../classes/Scrubber.html">Scrubber</a></li>
             
                 <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
             
@@ -300,6 +308,13 @@
                         
                             <li class="index-item property">
                                 <a href="#property_inputNode">inputNode</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_isInitialized">isInitialized</a>
 
                                 
                                 
@@ -683,13 +698,13 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code class="optional">[fadeTime]</code>
+                        <code class="optional">[when]</code>
                     
                 </li>
             
                 <li class="arg">
                     
-                        <code class="optional">[when]</code>
+                        <code class="optional">[fadeTime]</code>
                     
                 </li>
             
@@ -741,23 +756,6 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name optional">[fadeTime]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Amount of time (seconds) it takes for linear ramp down to happen.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
                         <code class="param-name optional">[when]</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
@@ -767,6 +765,23 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
                     <div class="param-description">
                         <p>Time (in seconds) at which the Envelope will release.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[fadeTime]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Amount of time (seconds) it takes for linear ramp down to happen.</p>
 
                     </div>
 
@@ -1047,6 +1062,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     
 
     
+
+    
+
+    
 </div>
 
                 
@@ -1085,7 +1104,58 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default:</strong> null</p>
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_isInitialized" class="property item">
+    <h3 class="name"><code>isInitialized</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>If Sound is currently initialized.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> false</p>
+    
+
+    
+
     
 
     
@@ -1128,7 +1198,11 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default:</strong> false</p>
+        <p><strong>Default Value:</strong> false</p>
+    
+
+    
+
     
 
     
@@ -1171,7 +1245,11 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default:</strong> 1</p>
+        <p><strong>Default Value:</strong> 1</p>
+    
+
+    
+
     
 
     
@@ -1214,7 +1292,11 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default:</strong> 0</p>
+        <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
     
 
     
@@ -1257,7 +1339,11 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default:</strong> 1</p>
+        <p><strong>Default Value:</strong> 1</p>
+    
+
+    
+
     
 
     
@@ -1302,7 +1388,11 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default:</strong> Internal GainNode</p>
+        <p><strong>Default Value:</strong> Internal GainNode</p>
+    
+
+    
+
     
 
     

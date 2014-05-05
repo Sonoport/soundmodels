@@ -1,10 +1,14 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
+        "Activity",
         "BaseSound",
         "Envelope",
+        "Extender",
         "Looper",
+        "MultiTrigger",
         "SPAudioParam",
+        "Scrubber",
         "Trigger"
     ],
     "modules": [
