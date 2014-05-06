@@ -92,13 +92,18 @@
                 files = runURL;
                 break;
             case "Trigger":
+            case "MultiTrigger":
                 files = [ bongoURL1, bongoURL2, bongoURL3, bongoURL4 ];
                 break;
+
             }
 
             // Load model class
             var sndModel = new Model( files, context, onLoad, null );
             var $playerParams = $( '.player-params' );
+
+            $( "#filebtn" )
+                .on( 'change', handleFileSelect );
 
             function onLoad( status ) {
                 // After sound is loaded
@@ -107,6 +112,27 @@
                 generateInterface( sndModel );
                 // Generate sliders again everytime a new file is loaded.
                 generateParam( sndModel );
+            }
+
+            function handleFileSelect( evt ) {
+                // Load local sources
+                var localSources = [];
+                // FileList object
+                var files = evt.target.files;
+                // files is a FileList of File objects.
+                var output = [];
+                for ( var i = 0; i < files.length; i++ ) {
+                    var f = files[ i ];
+                    localSources.push( f );
+                }
+                // Stop sound before setting source
+                if ( sndModel.isPlaying ) {
+                    sndModel.stop();
+
+                }
+                // Remove sliders
+                $playerParams.empty();
+                sndModel.setSources( localSources, onLoad );
             }
 
             function generateInterface( snd ) {
@@ -129,31 +155,6 @@
                                 console.log( "stop" );
                                 snd.stop( 0 );
                             } );
-
-                        function handleFileSelect( evt ) {
-                            // Load local sources
-                            var localSources = [];
-                            // FileList object
-                            var files = evt.target.files;
-                            // files is a FileList of File objects.
-                            var output = [];
-                            for ( var i = 0; i < files.length; i++ ) {
-                                var f = files[ i ];
-                                localSources.push( f );
-                            }
-                            // Stop sound before setting source
-                            if ( snd.isPlaying ) {
-                                snd.stop();
-
-                            }
-                            // Remove sliders
-                            $playerParams.empty();
-                            snd.setSources( localSources, onLoad );
-
-                        }
-
-                        $( "#filebtn" )
-                            .on( 'change', handleFileSelect );
 
                         // Set Looper url sources
                         $( "#updateSource" )

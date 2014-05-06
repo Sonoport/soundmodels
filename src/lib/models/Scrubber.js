@@ -271,6 +271,18 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                 return buf;
             }
 
+            /**
+             * Reinitializes a Scrubber and sets it's sources.
+             *
+             * @method setSources
+             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
+             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             */
+            this.setSources = function ( sounds, onLoadCallback ) {
+                this.isInitialized = false;
+                init( sounds );
+            };
+
             // Public Parameters
 
             /**

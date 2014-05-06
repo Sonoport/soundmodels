@@ -989,8 +989,52 @@
             "module": "Models"
         },
         {
+            "file": "src/lib/models/MultiTrigger.js",
+            "line": 202,
+            "description": "Reinitializes a MultiTrigger and sets it's sources.",
+            "itemtype": "method",
+            "name": "setSources",
+            "params": [
+                {
+                    "name": "sounds",
+                    "description": "Single or Array of either URLs or AudioBuffers of sounds.",
+                    "type": "Array/AudioBuffer/String/File"
+                },
+                {
+                    "name": "onLoadCallback",
+                    "description": "Callback when all sounds have finished loading.",
+                    "type": "Function",
+                    "optional": true
+                }
+            ],
+            "class": "MultiTrigger",
+            "module": "Models"
+        },
+        {
             "file": "src/lib/models/Scrubber.js",
-            "line": 276,
+            "line": 274,
+            "description": "Reinitializes a Scrubber and sets it's sources.",
+            "itemtype": "method",
+            "name": "setSources",
+            "params": [
+                {
+                    "name": "sounds",
+                    "description": "Single or Array of either URLs or AudioBuffers of sounds.",
+                    "type": "Array/AudioBuffer/String/File"
+                },
+                {
+                    "name": "onLoadCallback",
+                    "description": "Callback when all sounds have finished loading.",
+                    "type": "Function",
+                    "optional": true
+                }
+            ],
+            "class": "Scrubber",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Scrubber.js",
+            "line": 288,
             "description": "Position of the audio to be played.",
             "itemtype": "property",
             "name": "playPosition",
@@ -1001,7 +1045,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 285,
+            "line": 297,
             "description": "Sets if the audio should fade out when playPosition has not changed for a while.",
             "itemtype": "property",
             "name": "noMotionFade",
@@ -1012,7 +1056,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 294,
+            "line": 306,
             "description": "Sets if moving playPosition to backwards should make any sound.",
             "itemtype": "property",
             "name": "muteOnReverse",

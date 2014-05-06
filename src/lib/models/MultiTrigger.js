@@ -55,7 +55,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 timeToNextEvent_ = updateTimeToNextEvent( self.eventRate.value );
                 soundQueue_.connect( self.releaseGainNode );
 
-                this.isInitialized = true;
+                self.isInitialized = true;
                 if ( typeof onLoadCallback === 'function' ) {
                     onLoadCallback( status );
                 }
@@ -197,6 +197,18 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.play = function ( when ) {
                 BaseSound.prototype.start.call( this, 0 );
                 multiTiggerCallback();
+            };
+
+            /**
+             * Reinitializes a MultiTrigger and sets it's sources.
+             *
+             * @method setSources
+             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
+             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             */
+            this.setSources = function ( sounds, onLoadCallback ) {
+                this.isInitialized = false;
+                init( sounds );
             };
 
             init( sounds );

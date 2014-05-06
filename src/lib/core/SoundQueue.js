@@ -68,13 +68,16 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             };
 
             var createNewVoice = function ( eventID ) {
+                var newVoice;
                 if ( freeVoices_.length < 1 ) {
                     // TODO Steal??
                     console.warn( "Need to steal voices" );
+                } else {
+                    newVoice = freeVoices_.pop();
+                    newVoice.eventID = eventID;
+                    busyVoices_.push( newVoice );
                 }
-                var newVoice = freeVoices_.pop();
-                newVoice.eventID = eventID;
-                busyVoices_.push( newVoice );
+
                 return newVoice;
             };
 
@@ -108,7 +111,9 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                         selectedVoice = createNewVoice( thisEvent.eventID );
                     }
                     //console.log( "Setting " + thisEvent.paramName + " to " + thisEvent.paramValue );
-                    selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
+                    if ( selectedVoice[ thisEvent.paramName ] ) {
+                        selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
+                    }
                 } else if ( thisEvent.type == "QESETSRC" ) {
                     var setSource = function ( selectedVoice, thisEvent ) {
                         selectedVoice.setSources( thisEvent.audioBuffer );
