@@ -918,7 +918,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 144,
+            "line": 148,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchShift",
@@ -929,7 +929,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 153,
+            "line": 157,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -940,7 +940,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 162,
+            "line": 166,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
@@ -951,7 +951,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 171,
+            "line": 175,
             "description": "Trigger rate for playing the source in Hz.",
             "itemtype": "property",
             "name": "eventRate",
@@ -962,7 +962,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 179,
+            "line": 183,
             "description": "Maximum deviance from the regular trigger interval for a random jitter factor in percentage.",
             "itemtype": "property",
             "name": "eventJitter",
@@ -973,7 +973,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 190,
+            "line": 194,
             "description": "Start repeated triggering.",
             "itemtype": "method",
             "name": "play",
@@ -990,7 +990,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 202,
+            "line": 206,
             "description": "Reinitializes a MultiTrigger and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",

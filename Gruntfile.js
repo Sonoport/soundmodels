@@ -227,7 +227,7 @@ module.exports = function ( grunt ) {
             player: {
                 options: {
                     port: 8080,
-                    base: [ '<%= dirs.release %>/lib', '<%= dirs.player %>' ],
+                    base: [ '<%= dirs.build %>', '<%= dirs.player %>' ],
                     livereload: true
                 }
             },

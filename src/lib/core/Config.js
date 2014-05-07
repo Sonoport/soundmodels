@@ -19,7 +19,7 @@ define( [],
          * @default 8
          *
          */
-        Config.MAX_VOICES = 8;
+        Config.MAX_VOICES = 16;
 
         /**
          * Default nominal refresh rate (Hz) for SoundQueue.

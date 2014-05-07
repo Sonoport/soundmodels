@@ -68,7 +68,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 if ( currentEventID_ >= self.maxSources - 2 ) {
                     var releaseID = currentEventID_ - ( self.maxSources - 2 );
                     var releaseDur = eventTime - lastEventTime_;
-
                     soundQueue_.queueRelease( eventTime, releaseID, releaseDur );
                 }
 
@@ -116,7 +115,19 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 var period = 1.0 / eventRate;
                 var randomness = Math.random() - 0.5;
                 var jitterRand = ( 1.0 + 2.0 * self.eventJitter.value * randomness );
-                return ( period * jitterRand );
+
+                var updateTime = period * jitterRand;
+
+                if ( isFinite( updateTime ) ) {
+                    //Update releaseDur of sounds being released
+                    var releaseDur = Math.max( 0.99 * period * ( 1 - self.eventJitter.value ), 0.01 );
+                    soundQueue_.queueUpdate( "QERELEASE", null, "releaseDur", releaseDur );
+                } else {
+                    // 1  year in seconds.
+                    updateTime = 365 * 24 * 3600;
+                }
+
+                return updateTime;
             }
 
             function eventRateSetter_( aParam, value ) {
@@ -132,9 +143,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     if ( self.isInitialized ) {
                         timeToNextEvent_ = updateTimeToNextEvent( value );
                     }
-                    //Update releaseDur of sounds being released
-                    //var period = 1.0 / value;
-                    //releaseDur = Math.max( 0.99 * period * ( 1 - self.eventJitter.value ), 0.01 );
                 }
 
             }

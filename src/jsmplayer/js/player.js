@@ -66,7 +66,7 @@
         require( [ url ], function ( Model ) {
 
             var surfURL = "https://dl.dropboxusercontent.com/u/2117088/ocean_edge.mp3";
-            var runURL = "https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3";
+            var runURL = "https://dl.dropboxusercontent.com/u/77191118/marked.mp3";
             var alienURL = "https://dl.dropboxusercontent.com/u/2117088/spaceship_11.mp3";
 
             var bongoURL1 = "https://dl.dropboxusercontent.com/u/2117088/bongo1.wav";

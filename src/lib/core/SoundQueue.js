@@ -53,7 +53,6 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             };
 
             var onVoiceEnded = function ( endedVoice, trackIndex ) {
-                //console.log( trackIndex + " of " + self );
                 freeVoices_.push( endedVoice );
                 busyVoices_.splice( busyVoices_.indexOf( endedVoice ), 1 );
             };
@@ -71,7 +70,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                 var newVoice;
                 if ( freeVoices_.length < 1 ) {
                     // TODO Steal??
-                    console.warn( "Need to steal voices" );
+                    console.warn( "No free voices left" );
                 } else {
                     newVoice = freeVoices_.pop();
                     newVoice.eventID = eventID;
@@ -84,15 +83,32 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             var processSingleEvent = function ( thisEvent ) {
                 var selectedVoice = findVoiceWithID( thisEvent.eventID );
 
+                if ( ( thisEvent.type == "QESTART" || thisEvent.type == "QESETPARAM" || thisEvent.type == "QESETSRC" ) && selectedVoice === null ) {
+                    selectedVoice = createNewVoice( thisEvent.eventID );
+                }
+
+                // If voice is still null/defined, then skip the event
+                if ( !selectedVoice ) {
+                    return;
+                }
+
                 //console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice );
 
                 if ( thisEvent.type == "QESTART" ) {
-                    if ( selectedVoice === null ) {
-                        selectedVoice = createNewVoice( thisEvent.eventID );
-                    }
                     selectedVoice.start( thisEvent.time, null, null, thisEvent.paramValue );
+                    console.log( context.currentTime + " Starting " + selectedVoice.eventID );
+                } else if ( thisEvent.type == "QESETPARAM" ) {
+                    //console.log( "Setting " + thisEvent.paramName + " to " + thisEvent.paramValue );
+                    if ( selectedVoice && selectedVoice[ thisEvent.paramName ] ) {
+                        selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
+                    }
+                } else if ( thisEvent.type == "QESETSRC" ) {
+                    var setSource = function ( selectedVoice, thisEvent ) {
+                        selectedVoice.setSources( thisEvent.audioBuffer );
+                    };
+                    window.setTimeout( setSource( selectedVoice, thisEvent ), thisEvent.time - context.currentTime );
                 } else if ( thisEvent.type == "QERELEASE" ) {
-                    if ( selectedVoice !== null ) {
+                    if ( selectedVoice ) {
                         selectedVoice.release( thisEvent.time, thisEvent.paramValue );
                     }
                 } else if ( thisEvent.type == "QESTOP" ) {
@@ -101,41 +117,16 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                         busyVoices_.splice( busyVoices_.indexOf( selectedVoice ), 1 );
                     };
 
-                    if ( selectedVoice !== null ) {
+                    if ( selectedVoice ) {
                         selectedVoice.pause( thisEvent.time );
                         window.setTimeout( resetVoice( selectedVoice ), thisEvent.time - context.currentTime );
                     }
-
-                } else if ( thisEvent.type == "QESETPARAM" ) {
-                    if ( selectedVoice === null ) {
-                        selectedVoice = createNewVoice( thisEvent.eventID );
-                    }
-                    //console.log( "Setting " + thisEvent.paramName + " to " + thisEvent.paramValue );
-                    if ( selectedVoice[ thisEvent.paramName ] ) {
-                        selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
-                    }
-                } else if ( thisEvent.type == "QESETSRC" ) {
-                    var setSource = function ( selectedVoice, thisEvent ) {
-                        selectedVoice.setSources( thisEvent.audioBuffer );
-                    };
-
-                    if ( selectedVoice === null ) {
-                        selectedVoice = createNewVoice( thisEvent.eventID );
-                    }
-                    window.setTimeout( setSource( selectedVoice, thisEvent ), thisEvent.time - context.currentTime );
                 } else {
-                    throw {
-                        name: "Incorrect Parameter type Exception",
-                        message: "SoundQueue doesn't recognize this type of event",
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    console.warn( "Unknown Event Type : " + thisEvent );
                 }
             };
 
             var processEventsTill = function ( maxTime ) {
-                //console.log( "Processing till " + maxTime);
                 for ( var eventIndex = 0; eventIndex < eventQueue_.length; eventIndex++ ) {
                     var thisEvent = eventQueue_[ eventIndex ];
                     if ( thisEvent.time <= maxTime ) {
@@ -157,7 +148,6 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @param {Number} [attackDuration] Attack Duration (in seconds) for attack envelope during start.
              */
             this.queueStart = function ( time, eventID, attackDuration ) {
-                //console.log( eventID + ": Enqueing QESTART at " + time );
                 eventQueue_.push( new SPEvent( "QESTART", time, eventID, "attackDur", attackDuration ) );
             };
 
@@ -170,7 +160,6 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @param {Number} releaseDuration Time (in seconds) on the length of the release
              */
             this.queueRelease = function ( time, eventID, releaseDuration ) {
-                //console.log( eventID + ": Enqueing QERELEASE at " + time );
                 eventQueue_.push( new SPEvent( "QERELEASE", time, eventID, "releaseDur", releaseDuration ) );
             };
 
@@ -182,7 +171,6 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @param {Number} eventID Arbitary ID which is common for all related events.
              */
             this.queueStop = function ( time, eventID ) {
-                //console.log( eventID + ": Enqueing QESTOP at " + time );
                 eventQueue_.push( new SPEvent( "QESTOP", time, eventID ) );
             };
 
@@ -192,11 +180,11 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @method queueSetParameter
              * @param {Number} time Time (in seconds) at which the voice parameter will be set.
              * @param {Number} eventID Arbitary ID which is common for all related events.
-             * @param {Boolean/Number} paramValue Value for the Parameter to be set.
              * @param {String} paramName Name of the parameter to be set.
+             * @param {Boolean/Number} paramValue Value for the Parameter to be set.
+
              */
             this.queueSetParameter = function ( time, eventID, paramName, paramValue ) {
-                //console.log( eventID + ": Enqueing QESETPARAM at " + time );
                 eventQueue_.push( new SPEvent( "QESETPARAM", time, eventID, paramName, paramValue ) );
             };
 
@@ -209,8 +197,27 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @param {AudioBuffer} sourceBuffer AudioBuffer to be set as source for a voice.
              */
             this.queueSetSource = function ( time, eventID, sourceBuffer ) {
-                //console.log( eventID + ": Enqueing QESETSRC at " + time );
                 eventQueue_.push( new SPEvent( "QESETSRC", time, eventID, null, null, sourceBuffer ) );
+            };
+
+            /**
+             * Updates the Queued Event(s).
+             *
+             * @method queueUpdate
+             * @param {String} Type of the event to be updated.
+             * @param {Number} eventID ID of the event to be updated. Null for all events of this type.
+             * @param {String} paramName Name of the parameter to be updated.
+             * @param {Boolean/Number} paramValue Value for the Parameter to be updated
+             */
+            this.queueUpdate = function ( eventType, eventID, paramName, paramValue ) {
+                for ( var eventIndex = 0; eventIndex < eventQueue_.length; eventIndex++ ) {
+                    var thisEvent = eventQueue_[ eventIndex ];
+                    if ( thisEvent.type === eventType && ( !eventID || thisEvent.eventID == eventID ) ) {
+                        if ( thisEvent.paramName === paramName ) {
+                            thisEvent.paramValue = paramValue;
+                        }
+                    }
+                }
             };
 
             /**
