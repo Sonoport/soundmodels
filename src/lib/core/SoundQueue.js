@@ -39,7 +39,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                 window.requestAnimationFrame( soundQueueCallback );
             }
 
-            var init = function () {
+            function init() {
                 for ( var i = 0; i < numberOfVoices; i++ ) {
                     freeVoices_[ i ] = new Looper( null, context, null, onVoiceEnded );
                     freeVoices_[ i ].maxLoops.value = 1;
@@ -50,41 +50,55 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
                 window.requestAnimationFrame( soundQueueCallback );
 
-            };
+            }
 
-            var onVoiceEnded = function ( endedVoice, trackIndex ) {
+            function onVoiceEnded( endedVoice, trackIndex ) {
                 freeVoices_.push( endedVoice );
                 busyVoices_.splice( busyVoices_.indexOf( endedVoice ), 1 );
-            };
+            }
 
-            var findVoiceWithID = function ( eventID ) {
+            function findVoiceWithID( eventID ) {
                 for ( vIndex = 0; vIndex < busyVoices_.length; vIndex++ ) {
                     if ( busyVoices_[ vIndex ].eventID == eventID ) {
                         return busyVoices_[ vIndex ];
                     }
                 }
                 return null;
-            };
+            }
 
-            var createNewVoice = function ( eventID ) {
+            function dequeueEventsHavingID( eventID ) {
+                for ( var eventIndex = 0; eventIndex < eventQueue_.length; eventIndex++ ) {
+                    var thisEvent = eventQueue_[ eventIndex ];
+                    if ( thisEvent.eventID === eventID ) {
+                        eventQueue_.splice( eventIndex, 1 );
+                        eventIndex--;
+                    }
+                }
+            }
+
+            function createNewVoice( eventID, eventTime ) {
                 var newVoice;
                 if ( freeVoices_.length < 1 ) {
-                    // TODO Steal??
-                    console.warn( "No free voices left" );
+                    console.warn( "No free voices left. Stealing the oldest" );
+                    newVoice = busyVoices_.shift();
+                    dequeueEventsHavingID( newVoice.eventID );
+                    newVoice.eventID = eventID;
+                    newVoice.release( context.currentTime, eventTime - context.currentTime );
+                    busyVoices_.push( newVoice );
                 } else {
-                    newVoice = freeVoices_.pop();
+                    newVoice = freeVoices_.shift();
                     newVoice.eventID = eventID;
                     busyVoices_.push( newVoice );
                 }
 
                 return newVoice;
-            };
+            }
 
-            var processSingleEvent = function ( thisEvent ) {
+            function processSingleEvent( thisEvent ) {
                 var selectedVoice = findVoiceWithID( thisEvent.eventID );
 
                 if ( ( thisEvent.type == "QESTART" || thisEvent.type == "QESETPARAM" || thisEvent.type == "QESETSRC" ) && selectedVoice === null ) {
-                    selectedVoice = createNewVoice( thisEvent.eventID );
+                    selectedVoice = createNewVoice( thisEvent.eventID, thisEvent.time );
                 }
 
                 // If voice is still null/defined, then skip the event
@@ -96,10 +110,8 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
                 if ( thisEvent.type == "QESTART" ) {
                     selectedVoice.start( thisEvent.time, null, null, thisEvent.paramValue );
-                    console.log( context.currentTime + " Starting " + selectedVoice.eventID );
                 } else if ( thisEvent.type == "QESETPARAM" ) {
-                    //console.log( "Setting " + thisEvent.paramName + " to " + thisEvent.paramValue );
-                    if ( selectedVoice && selectedVoice[ thisEvent.paramName ] ) {
+                    if ( selectedVoice[ thisEvent.paramName ] ) {
                         selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
                     }
                 } else if ( thisEvent.type == "QESETSRC" ) {
@@ -108,25 +120,21 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                     };
                     window.setTimeout( setSource( selectedVoice, thisEvent ), thisEvent.time - context.currentTime );
                 } else if ( thisEvent.type == "QERELEASE" ) {
-                    if ( selectedVoice ) {
-                        selectedVoice.release( thisEvent.time, thisEvent.paramValue );
-                    }
+                    selectedVoice.release( thisEvent.time, thisEvent.paramValue );
                 } else if ( thisEvent.type == "QESTOP" ) {
                     var resetVoice = function ( selectedVoice ) {
                         freeVoices_.push( selectedVoice );
                         busyVoices_.splice( busyVoices_.indexOf( selectedVoice ), 1 );
                     };
 
-                    if ( selectedVoice ) {
-                        selectedVoice.pause( thisEvent.time );
-                        window.setTimeout( resetVoice( selectedVoice ), thisEvent.time - context.currentTime );
-                    }
+                    selectedVoice.pause( thisEvent.time );
+                    window.setTimeout( resetVoice( selectedVoice ), thisEvent.time - context.currentTime );
                 } else {
                     console.warn( "Unknown Event Type : " + thisEvent );
                 }
-            };
+            }
 
-            var processEventsTill = function ( maxTime ) {
+            function processEventsTill( maxTime ) {
                 for ( var eventIndex = 0; eventIndex < eventQueue_.length; eventIndex++ ) {
                     var thisEvent = eventQueue_[ eventIndex ];
                     if ( thisEvent.time <= maxTime ) {
@@ -135,7 +143,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                         eventIndex--;
                     }
                 }
-            };
+            }
 
             // Public Functions
 

@@ -165,22 +165,24 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      */
     BaseSound.prototype.release = function ( when, fadeTime ) {
 
-        var FADE_TIME = 0.5;
-        var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
+        if ( this.isPlaying ) {
+            var FADE_TIME = 0.5;
+            var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
 
-        if ( typeof when === "undefined" ) {
-            when = this.audioContext.currentTime;
+            if ( typeof when === "undefined" ) {
+                when = this.audioContext.currentTime;
+            }
+
+            fadeTime = fadeTime || FADE_TIME;
+            // Clamp the current gain value at this point of time to prevent sudden jumps.
+            this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, when );
+
+            // Now there won't be any glitch and there is a smooth ramp down.
+            this.releaseGainNode.gain.linearRampToValueAtTime( 0, when + fadeTime );
+
+            // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
+            this.stop( when + fadeTime + FADE_TIME_PAD );
         }
-
-        fadeTime = fadeTime || FADE_TIME;
-        // Clamp the current gain value at this point of time to prevent sudden jumps.
-        this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, when );
-
-        // Now there won't be any glitch and there is a smooth ramp down.
-        this.releaseGainNode.gain.linearRampToValueAtTime( 0, when + fadeTime );
-
-        // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
-        this.stop( when + fadeTime + FADE_TIME_PAD );
     };
 
     /**

@@ -163,9 +163,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              * @type SPAudioParam
              * @default 0
              */
-            this.action = new SPAudioParam( "action", 0, 60.0, 10.0, null, null, actionSetter_, this.audioContext );
-
-            //SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
+            this.action = new SPAudioParam( "action", 0, 1.0, 0.0, null, null, actionSetter_, this.audioContext );
 
             /**
              * Maximum value for random pitch shift of the triggered voices in semitones.
