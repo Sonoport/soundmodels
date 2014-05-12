@@ -52,7 +52,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             // Constants
             var MAX_JUMP_SECS = 1.0;
             var ALPHA = 0.95;
-            var SPEED_THRESH = 0.1;
+            var SPEED_THRESH = 0.05;
             var SPEED_ALPHA = 0.8;
 
             var onAllLoad = function ( status, audioBufferArray ) {
@@ -67,9 +67,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                     sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
                 }
 
-                console.log( "audio is " + numSamples_ + " by " + numChannels_ );
-
-                scriptNode_ = self.audioContext.createScriptProcessor( 0, 0, numChannels_ );
+                scriptNode_ = self.audioContext.createScriptProcessor( 256, 0, numChannels_ );
                 scriptNode_.onaudioprocess = scriptNodeCallback;
                 scriptNode_.connect( self.releaseGainNode );
 
@@ -86,7 +84,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             };
 
             function init( sound ) {
-                console.log( "Initalizing..." );
                 var parameterType = Object.prototype.toString.call( sound );
                 if ( parameterType === '[object Array]' && sound.length > 1 ) {
                     throw {
@@ -130,7 +127,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
 
                     if ( numReady_ > 0 && numToGo_ > 0 ) {
                         var numToCopy = Math.min( numToGo_, numReady_ );
-                        //console.log( numToCopy );
 
                         for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
                             var source = synthBuf_[ cIndex ].subarray( synthStep_ - numReady_, synthStep_ - numReady_ + numToCopy );
@@ -270,6 +266,18 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
 
                 return buf;
             }
+
+            /**
+             * Reinitializes a Scrubber and sets it's sources.
+             *
+             * @method setSources
+             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
+             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             */
+            this.setSources = function ( sounds, onLoadCallback ) {
+                this.isInitialized = false;
+                init( sounds );
+            };
 
             // Public Parameters
 

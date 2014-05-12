@@ -243,6 +243,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                             self.releaseGainNode.gain.cancelScheduledValues( now );
                             self.releaseGainNode.gain.setValueAtTime( 0, now );
                             self.releaseGainNode.gain.linearRampToValueAtTime( 1, now + attackDuration );
+                        } else {
+                            self.releaseGainNode.gain.setValueAtTime( 1, self.audioContext.currentTime );
                         }
                         thisSource.start( when, offset, duration );
                     } );

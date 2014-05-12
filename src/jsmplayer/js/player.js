@@ -68,6 +68,7 @@
             var surfURL = "https://dl.dropboxusercontent.com/u/2117088/ocean_edge.mp3";
             var runURL = "https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3";
             var alienURL = "https://dl.dropboxusercontent.com/u/2117088/spaceship_11.mp3";
+            var voiceURL = "https://dl.dropboxusercontent.com/u/77191118/sounds/gettysburg_address.mp3";
 
             var bongoURL1 = "https://dl.dropboxusercontent.com/u/2117088/bongo1.wav";
             var bongoURL2 = "https://dl.dropboxusercontent.com/u/2117088/bongo2.wav";
@@ -89,16 +90,27 @@
             // Switch files loading for different sound models
             switch ( mc ) {
             case "Looper":
+            case "Activity":
                 files = runURL;
                 break;
             case "Trigger":
-                files = [ bongoURL1, bongoURL2, bongoURL3, bongoURL4 ];
+            case "MultiTrigger":
+                files = [ drumURL1, drumURL2, drumURL3, drumURL4 ];
+                break;
+            case "Extender":
+                files = surfURL;
+                break;
+            case "Scrubber":
+                files = voiceURL;
                 break;
             }
 
             // Load model class
             var sndModel = new Model( files, context, onLoad, null );
             var $playerParams = $( '.player-params' );
+
+            $( "#filebtn" )
+                .on( 'change', handleFileSelect );
 
             function onLoad( status ) {
                 // After sound is loaded
@@ -109,51 +121,58 @@
                 generateParam( sndModel );
             }
 
+            function handleFileSelect( evt ) {
+                // Load local sources
+                var localSources = [];
+                // FileList object
+                var files = evt.target.files;
+                // files is a FileList of File objects.
+                var output = [];
+                for ( var i = 0; i < files.length; i++ ) {
+                    var f = files[ i ];
+                    localSources.push( f );
+                }
+                // Stop sound before setting source
+                if ( sndModel.isPlaying ) {
+                    sndModel.stop();
+
+                }
+                // Remove sliders
+                $playerParams.empty();
+                sndModel.setSources( localSources, onLoad );
+            }
+
             function generateInterface( snd ) {
                 $( document )
                     .ready( function () {
+                        $( "#playbtn" )
+                            .attr( "disabled", false );
+                        $( "#pausebtn" )
+                            .attr( "disabled", true );
+                        $( "#stopbtn" )
+                            .attr( "disabled", true );
+
                         // toggle sound
                         $( "#playbtn" )
                             .click( function () {
                                 // toggle play button
-                                console.log( "play" );
+                                //console.log( "play" );
                                 snd.play();
+                                $( "#pausebtn" )
+                                    .attr( "disabled", false );
+                                $( "#stopbtn" )
+                                    .attr( "disabled", false );
                             } );
                         $( "#pausebtn" )
                             .click( function () {
-                                console.log( "pause" );
+                                //console.log( "pause" );
                                 snd.pause();
                             } );
                         $( "#stopbtn" )
                             .click( function () {
-                                console.log( "stop" );
+                                //console.log( "stop" );
                                 snd.stop( 0 );
                             } );
-
-                        function handleFileSelect( evt ) {
-                            // Load local sources
-                            var localSources = [];
-                            // FileList object
-                            var files = evt.target.files;
-                            // files is a FileList of File objects.
-                            var output = [];
-                            for ( var i = 0; i < files.length; i++ ) {
-                                var f = files[ i ];
-                                localSources.push( f );
-                            }
-                            // Stop sound before setting source
-                            if ( snd.isPlaying ) {
-                                snd.stop();
-
-                            }
-                            // Remove sliders
-                            $playerParams.empty();
-                            snd.setSources( localSources, onLoad );
-
-                        }
-
-                        $( "#filebtn" )
-                            .on( 'change', handleFileSelect );
 
                         // Set Looper url sources
                         $( "#updateSource" )
@@ -206,6 +225,7 @@
                 // Make sliders
                 $( "#" + id )
                     .tickslider( {
+                        step: 0.001,
                         min: min,
                         max: max,
                         value: snd[ id ].value,
@@ -238,13 +258,16 @@
                 $( "." + id )
                     .bootstrapSwitch();
 
+                $( "." + id )
+                    .bootstrapSwitch( "setState", val, true );
+
                 $( "#" + id + "val" )
                     .val( $( "." + id )
                         .bootstrapSwitch( "status" ) );
 
                 $( "#" + id + "val" )
                     .change( function ( event, ui ) {
-                        console.log( "change", event.target.value );
+                        //console.log( "change", event.target.value );
                         if ( event.target.value === "false" ) {
                             $( "." + id )
                                 .bootstrapSwitch( "setState", false, true );

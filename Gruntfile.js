@@ -227,7 +227,7 @@ module.exports = function ( grunt ) {
             player: {
                 options: {
                     port: 8080,
-                    base: [ '<%= dirs.release %>/lib', '<%= dirs.player %>' ],
+                    base: [ '<%= dirs.build %>', '<%= dirs.player %>' ],
                     livereload: true
                 }
             },
@@ -283,5 +283,5 @@ module.exports = function ( grunt ) {
     grunt.registerTask( 'player-build', [ 'compass', 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
 
     // Run this for player testing
-    grunt.registerTask( 'player-js', [ 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
+    grunt.registerTask( 'player', [ 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
 };
