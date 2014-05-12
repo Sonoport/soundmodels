@@ -15,8 +15,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @param {String/AudioBuffer/File} sound Single URL or AudioBuffer or File of sound.
          * @param {AudioContext} context AudioContext to be used.
          * @param {Function} [onLoadCallback] Callback when the sound has finished loading.
+         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          */
-        function Extender( sound, context, onLoadCallback ) {
+        function Extender( sound, context, onLoadCallback, onProgressCallback ) {
             if ( !( this instanceof Extender ) ) {
                 throw new TypeError( "Extender constructor cannot be called as a function." );
             }
@@ -69,7 +70,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     };
                 }
                 soundQueue_ = new SoundQueue( context );
-                multiFileLoader.call( self, sound, context, onAllLoad );
+                multiFileLoader.call( self, sound, context, onAllLoad, onProgressCallback );
             }
 
             function extenderCallback() {

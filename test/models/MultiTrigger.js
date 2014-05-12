@@ -27,10 +27,12 @@ require(["models/MultiTrigger"], function (MultiTrigger) {
                 trigger.play();
             }
             else{
-                 trigButton.innerHTML = "Play";
+                trigButton.innerHTML = "Play";
                 trigger.pause();
             }
         });
+    },function (progressEvent, sound){
+        console.log(sound, (progressEvent.loaded/progressEvent.total));
     });
 
 

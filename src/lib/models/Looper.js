@@ -14,9 +14,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
          * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
          * @param {AudioContext} context AudioContext to be used.
          * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          * @param {Function} [onEndedCallback] Callback when the Looper has finished playing.
          */
-        function Looper( sounds, context, onLoadCallback, onEndedCallback ) {
+        function Looper( sounds, context, onLoadCallback, onProgressCallback, onEndedCallback ) {
             if ( !( this instanceof Looper ) ) {
                 throw new TypeError( "Looper constructor cannot be called as a function." );
             }
@@ -122,7 +123,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     sources_ = [];
                     multiTrackGainNodes_ = [];
                     self.multiTrackGain = [];
-                    multiFileLoader.call( self, sounds, context, onAllLoad );
+                    multiFileLoader.call( self, sounds, context, onAllLoad, onProgressCallback );
                 }
 
                 self.releaseGainNode.connect( self.audioContext.destination );

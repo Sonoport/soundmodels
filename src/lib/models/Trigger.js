@@ -15,10 +15,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
          * @param {AudioContext} context AudioContext to be used.
          * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          * @param {Function} [onEndedCallback] Callback when the Trigger has finished playing.
-
          */
-        function Trigger( sounds, context, onLoadCallback, onEndedCallback ) {
+        function Trigger( sounds, context, onLoadCallback, onProgressCallback, onEndedCallback ) {
             if ( !( this instanceof Trigger ) ) {
                 throw new TypeError( "Trigger constructor cannot be called as a function." );
             }
@@ -53,7 +53,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             function init( sounds ) {
                 soundQueue_ = new SoundQueue( self.audioContext );
-                multiFileLoader.call( self, sounds, self.audioContext, onAllLoad );
+                multiFileLoader.call( self, sounds, self.audioContext, onAllLoad, onProgressCallback );
             }
 
             // Public Properties
