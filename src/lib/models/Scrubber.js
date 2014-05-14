@@ -25,6 +25,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             this.maxSources = 1;
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
+            this.modelName = "Scrubber";
 
             // Private Variables
             var self = this;

@@ -28,6 +28,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             this.maxSources = Config.MAX_VOICES;
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
+            this.modelName = "Activity";
 
             // Private vars
             var self = this;

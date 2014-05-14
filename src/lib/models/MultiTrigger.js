@@ -30,11 +30,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.maxSources = Config.MAX_VOICES;
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
-
-            /*Support upto 8 seperate voices*/
-            this.maxSources = Config.MAX_VOICES;
-            this.numberOfInputs = 1;
-            this.numberOfOutputs = 1;
+            this.modelName = "MultiTrigger";
 
             var lastEventTime_ = 0;
             var timeToNextEvent_ = 0;

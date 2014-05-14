@@ -91,6 +91,15 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
          * @default null
          **/
         this.inputNode = null;
+
+        /**
+         * String name of the model.
+         *
+         * @property modelName
+         * @type String
+         * @default "Model"
+         **/
+        this.modelName = "Model";
     }
 
     /**
@@ -201,6 +210,25 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      */
     BaseSound.prototype.pause = function () {
         this.isPlaying = false;
+    };
+
+    /**
+     * List all SPAudioParams this Sound exposes
+     *
+     * @method listParams
+     * @param {Array} [paramArray] Array of all the SPAudioParams this Sound exposes.
+     */
+    BaseSound.prototype.listParams = function () {
+        var paramList = [];
+
+        for ( var paramName in this ) {
+            var param = this[ paramName ];
+            // Get properties that are of SPAudioParam
+            if ( param && param.hasOwnProperty( "value" ) && param.hasOwnProperty( "minValue" ) && param.hasOwnProperty( "maxValue" ) ) {
+                paramList.push( param );
+            }
+        }
+        return paramList;
     };
 
     // Return constructor function

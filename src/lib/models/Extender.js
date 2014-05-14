@@ -27,9 +27,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             /*Support a single input only*/
             this.maxSources = 1;
-
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
+            this.modelName = "Extender";
 
             // Private Variables
             var self = this;
