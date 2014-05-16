@@ -319,7 +319,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             // Initialize the sounds.
-            if (sounds)
+            if ( sounds )
                 init( sounds );
         }
 

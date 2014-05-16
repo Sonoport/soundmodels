@@ -192,7 +192,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 extenderCallback();
             };
 
-            if(sound)
+            if ( sound )
                 init( sound );
         }
 

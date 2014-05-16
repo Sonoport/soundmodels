@@ -41,6 +41,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var currentEventID_ = 0;
             var currentSourceID_ = 0;
             var onAllLoadCallback = onLoadCallback;
+            var allSounds;
 
             // Private Functions
 
@@ -56,6 +57,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             function init( sounds ) {
                 soundQueue_ = new SoundQueue( self.audioContext );
                 multiFileLoader.call( self, sounds, self.audioContext, onAllLoad, onProgressCallback );
+                allSounds = sounds;
             }
 
             // Public Properties
@@ -104,7 +106,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 this.isInitialized = false;
-                onAllLoadCallback =onLoadCallback;
+                onAllLoadCallback = onLoadCallback;
                 init( sounds );
             };
 
@@ -122,8 +124,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 }
 
                 var length = 1;
-                if ( Object.prototype.toString.call( sounds ) === '[object Array]' ) {
-                    length = sounds.length;
+                if ( Object.prototype.toString.call( allSounds ) === '[object Array]' ) {
+                    length = allSounds.length;
                 }
 
                 if ( this.eventRand.value ) {
@@ -147,7 +149,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 BaseSound.prototype.start.call( this, 0 );
             };
 
-            if (sounds)
+            if ( sounds )
                 init( sounds );
         }
 

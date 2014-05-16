@@ -42,9 +42,55 @@ module.exports = function ( grunt ) {
             all: [ 'package.json', 'Gruntfile.js', '<%= files.jsSrc %>', '<%= files.playerSrc %>', '!<%= files.vendor %>' ]
         },
         requirejs: {
-            compile: {
+            release: {
                 options: {
                     optimize: "uglify2",
+                    baseUrl: "src/lib/",
+                    dir: "<%= dirs.build %>",
+                    modules: [ {
+                        name: 'models/Looper'
+                    }, {
+                        name: 'models/Extender'
+                    }, {
+                        name: 'models/Scrubber'
+                    }, {
+                        name: 'models/Trigger'
+                    }, {
+                        name: 'models/MultiTrigger'
+                    }, {
+                        name: 'models/Activity'
+                    }, ],
+                    uglify2: {
+                        compress: {
+                            sequences: true,
+                            properties: true, // optimize property access: a["foo"] → a.foo
+                            dead_code: true, // discard unreachable code
+                            drop_debugger: true, // discard “debugger” statements
+                            unsafe: false, // some unsafe optimizations (see below)
+                            conditionals: true, // optimize if-s and conditional expressions
+                            comparisons: true, // optimize comparisons
+                            evaluate: true, // evaluate constant expressions
+                            booleans: true, // optimize boolean expressions
+                            loops: true, // optimize loops
+                            unused: true, // drop unused variables/functions
+                            hoist_funs: true, // hoist function declarations
+                            hoist_vars: false, // hoist variable declarations
+                            if_return: true, // optimize if-s followed by return/continue
+                            join_vars: true, // join var declarations
+                            cascade: true, // try to cascade `right` into `left` in sequences
+                            side_effects: true, // drop side-effect-free statements
+                            warnings: true, // warn about potentially dangerous optimizations/code
+                            global_defs: {} // global definitions
+                        },
+                        mangle: {
+                            toplevel: true
+                        }
+                    }
+                }
+            },
+            debug: {
+                options: {
+                    optimize: "none",
                     baseUrl: "src/lib/",
                     dir: "<%= dirs.build %>",
                     modules: [ {
@@ -271,10 +317,10 @@ module.exports = function ( grunt ) {
     grunt.loadNpmTasks( 'grunt-contrib-compass' );
     grunt.loadNpmTasks( 'grunt-bowercopy' );
 
-    grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs' ] );
+    grunt.registerTask( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs:debug' ] );
     grunt.registerTask( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc:dev' ] );
 
-    grunt.registerTask( 'release', [ 'jshint', 'requirejs', 'copy:temp', 'yuidoc:release', 'clean:temp', 'copy:dist', 'usebanner' ] );
+    grunt.registerTask( 'release', [ 'jshint', 'requirejs:release', 'copy:temp', 'yuidoc:release', 'clean:temp', 'copy:dist', 'usebanner' ] );
 
     grunt.registerTask( 'test', [ 'dev-build', 'connect:build', 'watch' ] );
 

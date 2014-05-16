@@ -50,7 +50,6 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             var MAX_TIME_OUT = 0.1;
             var MIN_DIFF = 0.001;
 
-
             // Private Functions
 
             function internalOnLoadCallback( status ) {
@@ -293,7 +292,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 internalLooper_.connect( destination, output, input );
             };
 
-            if (sound)
+            if ( sound )
                 init( sound );
         }
         return Activity;
