@@ -43,6 +43,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var lastEventReleaseTime_ = 0;
             var releaseDur_ = 0;
 
+            var onAllLoadCallback = onLoadCallback;
+
             // Constants
             var MAX_USE = 0.9;
 
@@ -52,9 +54,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 sourceBuffer_ = audioBufferArray[ 0 ];
                 soundQueue_.connect( self.releaseGainNode );
 
-                this.isInitialized = true;
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                self.isInitialized = true;
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
             };
 
@@ -173,6 +175,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @param {Function} [onLoadCallback] Callback when all sound have finished loading.
              */
             this.setSources = function ( sound, onLoadCallback ) {
+                this.isInitialized = false;
+                onAllLoadCallback = onLoadCallback;
                 init( sound );
             };
 
@@ -188,7 +192,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 extenderCallback();
             };
 
-            init( sound );
+            if(sound)
+                init( sound );
         }
 
         Extender.prototype = Object.create( BaseSound.prototype );

@@ -40,15 +40,16 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var soundQueue_;
             var currentEventID_ = 0;
             var currentSourceID_ = 0;
+            var onAllLoadCallback = onLoadCallback;
 
             // Private Functions
 
             var onAllLoad = function ( status, audioBufferArray ) {
                 sourceBuffers_ = audioBufferArray;
                 soundQueue_.connect( self.releaseGainNode );
-                this.isInitialized = true;
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                self.isInitialized = true;
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
             };
 
@@ -103,6 +104,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 this.isInitialized = false;
+                onAllLoadCallback =onLoadCallback;
                 init( sounds );
             };
 
@@ -145,7 +147,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 BaseSound.prototype.start.call( this, 0 );
             };
 
-            init( sounds );
+            if (sounds)
+                init( sounds );
         }
 
         Trigger.prototype = Object.create( BaseSound.prototype );

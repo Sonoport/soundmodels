@@ -37,6 +37,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             var lastStopPosition_ = [];
             var rateArray = [];
 
+            var onAllLoadCallback = onLoadCallback;
+
             var onAllLoad = function ( status, arrayOfBuffers ) {
                 arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
                     lastStopPosition_.push( 0 );
@@ -46,8 +48,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
 
                 self.isInitialized = true;
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
             };
 
@@ -195,6 +197,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 this.isInitialized = false;
+                onAllLoadCallback = onLoadCallback;
                 init( sounds );
             };
 
@@ -316,7 +319,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             // Initialize the sounds.
-            init( sounds );
+            if (sounds)
+                init( sounds );
         }
 
         Looper.prototype = Object.create( BaseSound.prototype );

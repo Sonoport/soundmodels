@@ -51,6 +51,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
 
             var scriptNode_;
 
+            var onAllLoadCallback = onLoadCallback;
+
             // Constants
             var MAX_JUMP_SECS = 1.0;
             var ALPHA = 0.95;
@@ -79,8 +81,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
 
                 self.isInitialized = true;
 
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
 
             };
@@ -278,6 +280,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 this.isInitialized = false;
+                onAllLoadCallback = onLoadCallback;
                 init( sounds );
             };
 

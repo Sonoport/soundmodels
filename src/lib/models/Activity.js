@@ -40,11 +40,16 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             var smoothDeltaTime_;
             var timeoutID;
 
+            var onAllLoadCallback = onLoadCallback;
+
+            // Constants
+
             var MIN_SENSITIVITY = 0.1;
             var MAX_SENSITIVITY = 100.0;
             var MAX_OVERSHOOT = 1.2;
             var MAX_TIME_OUT = 0.1;
             var MIN_DIFF = 0.001;
+
 
             // Private Functions
 
@@ -56,8 +61,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 lastUpdateTime_ = 0;
                 smoothDeltaTime_ = 0;
 
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
             }
 
@@ -208,7 +213,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.setSources = function ( sound, onLoadCallback ) {
                 this.isInitialized = false;
-                internalLooper_.setSources( sound, onLoadCallback );
+                onAllLoadCallback = onLoadCallback;
+                internalLooper_.setSources( sound, internalOnLoadCallback );
             };
 
             /**
@@ -287,7 +293,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 internalLooper_.connect( destination, output, input );
             };
 
-            init( sound );
+            if (sound)
+                init( sound );
         }
         return Activity;
 

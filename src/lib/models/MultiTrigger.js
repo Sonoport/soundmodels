@@ -41,6 +41,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var currentEventID_ = 0;
             var currentSourceID_ = 0;
 
+            var onAllLoadCallback = onLoadCallback;
+
             // Private Functions
             function init( sounds ) {
                 soundQueue_ = new SoundQueue( context );
@@ -53,8 +55,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.connect( self.releaseGainNode );
 
                 self.isInitialized = true;
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
             };
 
@@ -213,10 +215,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 this.isInitialized = false;
+                onAllLoadCallback = onLoadCallback;
                 init( sounds );
             };
 
-            init( sounds );
+            if (sounds)
+                init( sounds );
         }
 
         MultiTrigger.prototype = Object.create( BaseSound.prototype );
