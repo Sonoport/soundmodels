@@ -497,7 +497,7 @@
     "classitems": [
         {
             "file": "src/lib/models/Activity.js",
-            "line": 157,
+            "line": 156,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "action",
@@ -508,7 +508,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 166,
+            "line": 165,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "action",
@@ -519,7 +519,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 175,
+            "line": 174,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -530,7 +530,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 184,
+            "line": 183,
             "itemtype": "property",
             "name": "riseTime",
             "type": "SPAudioParam",
@@ -540,7 +540,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 191,
+            "line": 190,
             "itemtype": "property",
             "name": "decayTime",
             "type": "SPAudioParam",
@@ -550,7 +550,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 198,
+            "line": 197,
             "itemtype": "property",
             "name": "startPoint",
             "type": "SPAudioParam",
@@ -560,7 +560,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 207,
+            "line": 206,
             "description": "Reinitializes a Activity and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -582,7 +582,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 220,
+            "line": 219,
             "description": "Enable playback.",
             "itemtype": "method",
             "name": "play",
@@ -599,7 +599,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 231,
+            "line": 230,
             "description": "Start playing after specific time and from a specific offset. If offset is not defined,\nthe value of startPoint property is used.",
             "itemtype": "method",
             "name": "start",
@@ -627,7 +627,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 244,
+            "line": 243,
             "description": "Stops the sound and resets play head to 0.",
             "itemtype": "method",
             "name": "stop",
@@ -643,7 +643,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 253,
+            "line": 252,
             "description": "Pause the currently playing sound at the current position.",
             "itemtype": "method",
             "name": "pause",
@@ -652,7 +652,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 262,
+            "line": 261,
             "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
             "itemtype": "method",
             "name": "release",
@@ -675,7 +675,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 273,
+            "line": 272,
             "description": "Disconnects the Sound from the AudioNode Chain.",
             "itemtype": "method",
             "name": "disconnect",
@@ -692,7 +692,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 283,
+            "line": 282,
             "description": "If the parameter `output` is an AudioNode, it connects to the releaseGainNode.\nIf the output is a BaseSound, it will connect BaseSound's releaseGainNode to the output's inputNode.",
             "itemtype": "method",
             "name": "connect",
@@ -1103,7 +1103,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 63,
+            "line": 65,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchShift",
@@ -1116,7 +1116,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 74,
+            "line": 76,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -1129,7 +1129,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 85,
+            "line": 87,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
@@ -1142,7 +1142,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 98,
+            "line": 100,
             "description": "Reinitializes a Trigger and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1164,7 +1164,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 111,
+            "line": 113,
             "description": "Triggers a single voice.",
             "itemtype": "method",
             "name": "play",
@@ -1897,27 +1897,27 @@
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:63"
+            "line": " src/lib/models/Trigger.js:65"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:63"
+            "line": " src/lib/models/Trigger.js:65"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:74"
+            "line": " src/lib/models/Trigger.js:76"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:74"
+            "line": " src/lib/models/Trigger.js:76"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:85"
+            "line": " src/lib/models/Trigger.js:87"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:85"
+            "line": " src/lib/models/Trigger.js:87"
         },
         {
             "message": "Missing item type\n/**\n * @module Core",
