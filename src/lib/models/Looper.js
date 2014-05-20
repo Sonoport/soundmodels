@@ -128,8 +128,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     self.multiTrackGain = [];
                     multiFileLoader.call( self, sounds, context, onAllLoad, onProgressCallback );
                 }
-
-                self.releaseGainNode.connect( self.audioContext.destination );
             }
 
             // Public Properties

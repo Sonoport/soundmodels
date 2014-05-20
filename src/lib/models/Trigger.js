@@ -25,6 +25,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             // Call superclass constructor
             BaseSound.call( this, context );
+            this.releaseGainNode.disconnect();
 
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
@@ -55,7 +56,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             function init( sounds ) {
-                soundQueue_ = new SoundQueue( self.audioContext );
                 multiFileLoader.call( self, sounds, self.audioContext, onAllLoad, onProgressCallback );
                 allSounds = sounds;
             }
@@ -148,6 +148,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
                 BaseSound.prototype.start.call( this, 0 );
             };
+
+            // SoundQueue Based Model.
+            soundQueue_ = new SoundQueue( context );
 
             if ( sounds )
                 init( sounds );

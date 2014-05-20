@@ -108,8 +108,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                 for ( var sIndex = 0; sIndex < winLen_; sIndex++ ) {
                     win_[ sIndex ] = 0.25 * ( 1.0 - Math.cos( 2 * Math.PI * ( sIndex + 0.5 ) / winLen_ ) );
                 }
-
-                self.releaseGainNode.connect( self.audioContext.destination );
             }
 
             function scriptNodeCallback( processingEvent ) {

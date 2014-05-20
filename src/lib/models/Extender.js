@@ -71,7 +71,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                         }
                     };
                 }
-                soundQueue_ = new SoundQueue( context );
                 multiFileLoader.call( self, sound, context, onAllLoad, onProgressCallback );
             }
 
@@ -191,6 +190,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 BaseSound.prototype.start.call( this, 0 );
                 extenderCallback();
             };
+
+            soundQueue_ = new SoundQueue( context );
 
             if ( sound )
                 init( sound );

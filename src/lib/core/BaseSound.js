@@ -100,6 +100,8 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
          * @default "Model"
          **/
         this.modelName = "Model";
+
+        this.releaseGainNode.connect( this.audioContext.destination );
     }
 
     /**
