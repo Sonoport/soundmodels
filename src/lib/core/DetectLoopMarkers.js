@@ -139,7 +139,7 @@ define( function () {
                 }
             }
             // If both markers found
-            if ( startSpikePos !== null && endSpikePos !== null && endSpikePos > startSpikePos ) {
+            if ( startSpikePos !== null && endSpikePos !== null && endSpikePos > startSpikePos + PREPOSTFIX_LEN ) {
                 // Compute loop start and length
                 nLoopStart_ = startSpikePos + PREPOSTFIX_LEN / 2;
                 nLoopEnd_ = endSpikePos - PREPOSTFIX_LEN / 2;

@@ -14,9 +14,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
          * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
          * @param {AudioContext} context AudioContext to be used.
          * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          * @param {Function} [onEndedCallback] Callback when the Looper has finished playing.
          */
-        function Looper( sounds, context, onLoadCallback, onEndedCallback ) {
+        function Looper( sounds, context, onLoadCallback, onProgressCallback, onEndedCallback ) {
             if ( !( this instanceof Looper ) ) {
                 throw new TypeError( "Looper constructor cannot be called as a function." );
             }
@@ -26,6 +27,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             this.maxSources = Config.MAX_VOICES;
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
+            this.modelName = "Looper";
 
             // Private vars
             var self = this;
@@ -34,6 +36,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             var multiTrackGainNodes_ = [];
             var lastStopPosition_ = [];
             var rateArray = [];
+
+            var onAllLoadCallback = onLoadCallback;
 
             var onAllLoad = function ( status, arrayOfBuffers ) {
                 arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
@@ -44,8 +48,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
 
                 self.isInitialized = true;
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
             };
 
@@ -122,10 +126,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     sources_ = [];
                     multiTrackGainNodes_ = [];
                     self.multiTrackGain = [];
-                    multiFileLoader.call( self, sounds, context, onAllLoad );
+                    multiFileLoader.call( self, sounds, context, onAllLoad, onProgressCallback );
                 }
-
-                self.releaseGainNode.connect( self.audioContext.destination );
             }
 
             // Public Properties
@@ -193,6 +195,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 this.isInitialized = false;
+                onAllLoadCallback = onLoadCallback;
                 init( sounds );
             };
 
@@ -314,7 +317,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             // Initialize the sounds.
-            init( sounds );
+            if ( sounds )
+                init( sounds );
         }
 
         Looper.prototype = Object.create( BaseSound.prototype );

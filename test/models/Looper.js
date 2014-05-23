@@ -13,9 +13,9 @@ require(["core/Envelope", "models/Looper"], function (Envelope, Looper) {
     // var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Original.wav";
     // var url = "https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.wav";
 
-    // var drums = "https://dl.dropboxusercontent.com/u/77191118/sounds/drum.mp3";
-    // var guitar = "https://dl.dropboxusercontent.com/u/77191118/sounds/guitar.mp3";
-    // var piano = "https://dl.dropboxusercontent.com/u/77191118/sounds/piano.mp3";
+    var drums = "https://dl.dropboxusercontent.com/u/77191118/sounds/drum.mp3";
+    var guitar = "https://dl.dropboxusercontent.com/u/77191118/sounds/guitar.mp3";
+    var piano = "https://dl.dropboxusercontent.com/u/77191118/sounds/piano.mp3";
 
     // var validURL = drums;
     // var validURL1 =  guitar;
@@ -64,12 +64,14 @@ require(["core/Envelope", "models/Looper"], function (Envelope, Looper) {
     // }, context);
 
 
-    looper = new Looper('https://dl.dropboxusercontent.com/u/77191118/sine_marked.mp3', context, function(){
+    looper = new Looper([drums, guitar, piano], context, function(){
         //looper.maxLoops.value = 1;
         looper.start(0);
         // e.start(0, null, null, 0.5);
         // looper.multiTrackGain[0].linearRampToValueAtTime(0.5, context.currentTime + 2 );
         // looper.playSpeed.linearRampToValueAtTime(5, context.currentTime + 1 );
+    },function (progressEvent, sound){
+        console.log(sound, (progressEvent.loaded/progressEvent.total));
     });
 
     // looper.disconnect();

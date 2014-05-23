@@ -15,8 +15,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @param {String/AudioBuffer/File} sound Single URL or AudioBuffer or File of sound.
          * @param {AudioContext} context AudioContext to be used.
          * @param {Function} [onLoadCallback] Callback when the sound has finished loading.
+         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          */
-        function Extender( sound, context, onLoadCallback ) {
+        function Extender( sound, context, onLoadCallback, onProgressCallback ) {
             if ( !( this instanceof Extender ) ) {
                 throw new TypeError( "Extender constructor cannot be called as a function." );
             }
@@ -26,9 +27,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             /*Support a single input only*/
             this.maxSources = 1;
-
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
+            this.modelName = "Extender";
 
             // Private Variables
             var self = this;
@@ -42,6 +43,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var lastEventReleaseTime_ = 0;
             var releaseDur_ = 0;
 
+            var onAllLoadCallback = onLoadCallback;
+
             // Constants
             var MAX_USE = 0.9;
 
@@ -51,9 +54,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 sourceBuffer_ = audioBufferArray[ 0 ];
                 soundQueue_.connect( self.releaseGainNode );
 
-                this.isInitialized = true;
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                self.isInitialized = true;
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
             };
 
@@ -68,8 +71,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                         }
                     };
                 }
-                soundQueue_ = new SoundQueue( context );
-                multiFileLoader.call( self, sound, context, onAllLoad );
+                multiFileLoader.call( self, sound, context, onAllLoad, onProgressCallback );
             }
 
             function extenderCallback() {
@@ -172,6 +174,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @param {Function} [onLoadCallback] Callback when all sound have finished loading.
              */
             this.setSources = function ( sound, onLoadCallback ) {
+                this.isInitialized = false;
+                onAllLoadCallback = onLoadCallback;
                 init( sound );
             };
 
@@ -187,7 +191,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 extenderCallback();
             };
 
-            init( sound );
+            soundQueue_ = new SoundQueue( context );
+
+            if ( sound )
+                init( sound );
         }
 
         Extender.prototype = Object.create( BaseSound.prototype );

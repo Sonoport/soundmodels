@@ -16,8 +16,9 @@ define( [ 'core/FileLoader' ],
          * @param {Array/String/File} sounds Array of or Individual String, AudioBuffer or File Objects which define the sounds to be loaded
          * @param {String} audioContext AudioContext to be used in decoding the file
          * @param {String} [onAllLoad] Callback function to be called when all sounds are loaded
+         * @param {String} [onProgressCallback] Callback function to access the progress of the file loading.
          */
-        function MultiFileLoader( sounds, audioContext, onAllLoad ) {
+        function MultiFileLoader( sounds, audioContext, onAllLoad, onProgressCallback ) {
 
             //Private variables
             var self = this;
@@ -45,6 +46,10 @@ define( [ 'core/FileLoader' ],
                     var fileLoader = new FileLoader( sound, self.audioContext, function ( status ) {
                         if ( status ) {
                             onSingleLoad( status, fileLoader.getBuffer() );
+                        }
+                    }, function ( progressEvent ) {
+                        if ( onProgressCallback && typeof onProgressCallback === "function" ) {
+                            onProgressCallback( progressEvent, sound );
                         }
                     } );
                 } else if ( parameterType === "[object AudioBuffer]" ) {

@@ -12,9 +12,10 @@ define( [ 'core/DetectLoopMarkers' ],
          * @constructor
          * @param {String/File} URL URL of the file to be Loaded
          * @param {String} context AudioContext to be used in decoding the file
-         * @param {String} [onloadCallback] Callback function to be called when the file loading is complete.
+         * @param {Function} [onloadCallback] Callback function to be called when the file loading is
+         * @param {Function} [onProgressCallback] Callback function to access the progress of the file loading.
          */
-        function FileLoader( URL, context, onloadCallback ) {
+        function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
             if ( !( this instanceof FileLoader ) ) {
                 throw new TypeError( "FileLoader constructor cannot be called as a function." );
             }
@@ -125,12 +126,14 @@ define( [ 'core/DetectLoopMarkers' ],
                     var request = new XMLHttpRequest();
                     request.open( 'GET', URL, true );
                     request.responseType = 'arraybuffer';
+                    request.addEventListener( "progress", onProgressCallback, false );
                     request.onload = function () {
                         decodeAudio( request.response, fileExtension );
                     };
                     request.send();
                 } else if ( parameterType === '[object File]' ) {
                     var reader = new FileReader();
+                    reader.addEventListener( "progress", onProgressCallback, false );
                     reader.onload = function () {
                         decodeAudio( reader.result, fileExtension );
                     };

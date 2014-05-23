@@ -16,8 +16,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
          * @param {AudioContext} context AudioContext to be used.
          * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          */
-        function MultiTrigger( sounds, context, onLoadCallback ) {
+        function MultiTrigger( sounds, context, onLoadCallback, onProgressCallback ) {
             if ( !( this instanceof MultiTrigger ) ) {
                 throw new TypeError( "MultiTrigger constructor cannot be called as a function." );
             }
@@ -29,11 +30,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.maxSources = Config.MAX_VOICES;
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
-
-            /*Support upto 8 seperate voices*/
-            this.maxSources = Config.MAX_VOICES;
-            this.numberOfInputs = 1;
-            this.numberOfOutputs = 1;
+            this.modelName = "MultiTrigger";
 
             var lastEventTime_ = 0;
             var timeToNextEvent_ = 0;
@@ -44,10 +41,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var currentEventID_ = 0;
             var currentSourceID_ = 0;
 
+            var onAllLoadCallback = onLoadCallback;
+
             // Private Functions
             function init( sounds ) {
-                soundQueue_ = new SoundQueue( context );
-                multiFileLoader.call( self, sounds, context, onAllLoad );
+                multiFileLoader.call( self, sounds, context, onAllLoad, onProgressCallback );
             }
 
             var onAllLoad = function ( status, audioBufferArray ) {
@@ -56,8 +54,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.connect( self.releaseGainNode );
 
                 self.isInitialized = true;
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
             };
 
@@ -216,10 +214,14 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 this.isInitialized = false;
+                onAllLoadCallback = onLoadCallback;
                 init( sounds );
             };
+            // SoundQueue Based Model.
+            soundQueue_ = new SoundQueue( context );
 
-            init( sounds );
+            if ( sounds )
+                init( sounds );
         }
 
         MultiTrigger.prototype = Object.create( BaseSound.prototype );

@@ -197,26 +197,24 @@
             function generateParam( snd ) {
                 // Loop through all the properties in Sound Model
                 var parambox = "";
-                for ( var param in snd ) {
-                    var prop = snd[ param ];
-                    // Get properties that are of SPAudioParam
-                    if ( prop && prop.hasOwnProperty( "value" ) && prop.hasOwnProperty( "minValue" ) && prop.hasOwnProperty( "maxValue" ) ) {
-                        //console.log( "props existed", param );
-                        var labelnode = "<div class='param-name'><label class='label label-info param-name'>" + param + "</label></div>";
-                        var slider = "<div class='pull-left param-slider'><div id='" + param + "' class='ui-slider'></div></div>";
-                        var switchBtn = "<div class='switch " + param + "'><input type='checkbox' checked data-toggle='switch' on-label='true' off-label='false' /></div>";
-                        var outputVal = "<div class='amount'><input type='text' id='" + param + "val' class='form-control input-sm' /></div>";
-                        // eventRand turns out to be a number!
-                        if ( typeof prop.value === 'number' ) { // The rest of SPAudioParam
-                            $playerParams
-                                .append( "<div class='param-box'>" + labelnode + slider + outputVal + "</div>" );
-                            makeSlider( snd, param, prop.value, prop.minValue, prop.maxValue );
-                        } else if ( typeof prop.value === 'boolean' ) {
-                            $playerParams
-                                .append( "<div class='param-box'>" + labelnode + switchBtn + outputVal + "</div>" );
-                            makeSwitch( snd, param, prop.value, prop.minValue, prop.maxValue );
-                        }
-
+                var allParams = snd.listParams();
+                for ( var pIndex = 0; pIndex < allParams.length; pIndex++ ) {
+                    var param = allParams[ pIndex ];
+                    var paramName = param.name;
+                    //console.log( "props existed", paramName );
+                    var labelnode = "<div class='param-name'><label class='label label-info param-name'>" + paramName + "</label></div>";
+                    var slider = "<div class='pull-left param-slider'><div id='" + paramName + "' class='ui-slider'></div></div>";
+                    var switchBtn = "<div class='switch " + paramName + "'><input type='checkbox' checked data-toggle='switch' on-label='true' off-label='false' /></div>";
+                    var outputVal = "<div class='amount'><input type='text' id='" + paramName + "val' class='form-control input-sm' /></div>";
+                    // eventRand turns out to be a number!
+                    if ( typeof param.value === 'number' ) { // The rest of SPAudioParam
+                        $playerParams
+                            .append( "<div class='param-box'>" + labelnode + slider + outputVal + "</div>" );
+                        makeSlider( snd, paramName, param.value, param.minValue, param.maxValue );
+                    } else if ( typeof param.value === 'boolean' ) {
+                        $playerParams
+                            .append( "<div class='param-box'>" + labelnode + switchBtn + outputVal + "</div>" );
+                        makeSwitch( snd, paramName, param.value, param.minValue, param.maxValue );
                     }
                 }
             }

@@ -13,8 +13,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
          * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
          * @param {AudioContext} context AudioContext to be used.
          * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          */
-        function Scrubber( sound, context, onLoadCallback ) {
+        function Scrubber( sound, context, onLoadCallback, onProgressCallback ) {
             if ( !( this instanceof Scrubber ) ) {
                 throw new TypeError( "Scrubber constructor cannot be called as a function." );
             }
@@ -24,6 +25,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             this.maxSources = 1;
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
+            this.modelName = "Scrubber";
 
             // Private Variables
             var self = this;
@@ -48,6 +50,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             var scale_ = 0;
 
             var scriptNode_;
+
+            var onAllLoadCallback = onLoadCallback;
 
             // Constants
             var MAX_JUMP_SECS = 1.0;
@@ -77,8 +81,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
 
                 self.isInitialized = true;
 
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
 
             };
@@ -94,7 +98,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                         }
                     };
                 }
-                multiFileLoader.call( self, sound, context, onAllLoad );
+                multiFileLoader.call( self, sound, context, onAllLoad, onProgressCallback );
 
                 winLen_ = Config.WINDOW_LENGTH;
                 synthStep_ = winLen_ / 2;
@@ -104,8 +108,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                 for ( var sIndex = 0; sIndex < winLen_; sIndex++ ) {
                     win_[ sIndex ] = 0.25 * ( 1.0 - Math.cos( 2 * Math.PI * ( sIndex + 0.5 ) / winLen_ ) );
                 }
-
-                self.releaseGainNode.connect( self.audioContext.destination );
             }
 
             function scriptNodeCallback( processingEvent ) {
@@ -276,6 +278,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 this.isInitialized = false;
+                onAllLoadCallback = onLoadCallback;
                 init( sounds );
             };
 

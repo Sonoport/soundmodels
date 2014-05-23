@@ -15,8 +15,9 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
          * @param {String/AudioBuffer/File} sound  Either URL or AudioBuffer or File of sound.
          * @param {AudioContext} context AudioContext to be used.
          * @param {Function} [onLoadCallback] Callback when the sound has finished loading.
+         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          */
-        function Activity( sound, context, onLoadCallback ) {
+        function Activity( sound, context, onLoadCallback, onProgressCallback ) {
             if ( !( this instanceof Activity ) ) {
                 throw new TypeError( "Activity constructor cannot be called as a function." );
             }
@@ -27,6 +28,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             this.maxSources = Config.MAX_VOICES;
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
+            this.modelName = "Activity";
 
             // Private vars
             var self = this;
@@ -37,6 +39,10 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             var lastUpdateTime_;
             var smoothDeltaTime_;
             var timeoutID;
+
+            var onAllLoadCallback = onLoadCallback;
+
+            // Constants
 
             var MIN_SENSITIVITY = 0.1;
             var MAX_SENSITIVITY = 100.0;
@@ -54,13 +60,13 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 lastUpdateTime_ = 0;
                 smoothDeltaTime_ = 0;
 
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
             }
 
             function init( sound ) {
-                internalLooper_ = new Looper( sound, context, internalOnLoadCallback, null );
+                internalLooper_ = new Looper( sound, context, internalOnLoadCallback, null, onProgressCallback );
             }
 
             function actionSetter_( aParam, value, audioContext ) {
@@ -206,7 +212,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.setSources = function ( sound, onLoadCallback ) {
                 this.isInitialized = false;
-                internalLooper_.setSources( sound, onLoadCallback );
+                onAllLoadCallback = onLoadCallback;
+                internalLooper_.setSources( sound, internalOnLoadCallback );
             };
 
             /**
@@ -285,7 +292,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 internalLooper_.connect( destination, output, input );
             };
 
-            init( sound );
+            if ( sound )
+                init( sound );
         }
         return Activity;
 

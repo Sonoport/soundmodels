@@ -15,21 +15,23 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
          * @param {AudioContext} context AudioContext to be used.
          * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          * @param {Function} [onEndedCallback] Callback when the Trigger has finished playing.
-
          */
-        function Trigger( sounds, context, onLoadCallback, onEndedCallback ) {
+        function Trigger( sounds, context, onLoadCallback, onProgressCallback, onEndedCallback ) {
             if ( !( this instanceof Trigger ) ) {
                 throw new TypeError( "Trigger constructor cannot be called as a function." );
             }
 
             // Call superclass constructor
             BaseSound.call( this, context );
+            this.releaseGainNode.disconnect();
 
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
             this.numberOfInputs = 1;
             this.numberOfOutputs = 1;
+            this.modelName = "Trigger";
 
             // Private vars
             var self = this;
@@ -39,21 +41,23 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var soundQueue_;
             var currentEventID_ = 0;
             var currentSourceID_ = 0;
+            var onAllLoadCallback = onLoadCallback;
+            var allSounds;
 
             // Private Functions
 
             var onAllLoad = function ( status, audioBufferArray ) {
                 sourceBuffers_ = audioBufferArray;
                 soundQueue_.connect( self.releaseGainNode );
-                this.isInitialized = true;
-                if ( typeof onLoadCallback === 'function' ) {
-                    onLoadCallback( status );
+                self.isInitialized = true;
+                if ( typeof onAllLoadCallback === 'function' ) {
+                    onAllLoadCallback( status );
                 }
             };
 
             function init( sounds ) {
-                soundQueue_ = new SoundQueue( self.audioContext );
-                multiFileLoader.call( self, sounds, self.audioContext, onAllLoad );
+                multiFileLoader.call( self, sounds, self.audioContext, onAllLoad, onProgressCallback );
+                allSounds = sounds;
             }
 
             // Public Properties
@@ -102,6 +106,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 this.isInitialized = false;
+                onAllLoadCallback = onLoadCallback;
                 init( sounds );
             };
 
@@ -119,8 +124,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 }
 
                 var length = 1;
-                if ( Object.prototype.toString.call( sounds ) === '[object Array]' ) {
-                    length = sounds.length;
+                if ( Object.prototype.toString.call( allSounds ) === '[object Array]' ) {
+                    length = allSounds.length;
                 }
 
                 if ( this.eventRand.value ) {
@@ -144,7 +149,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 BaseSound.prototype.start.call( this, 0 );
             };
 
-            init( sounds );
+            // SoundQueue Based Model.
+            soundQueue_ = new SoundQueue( context );
+
+            if ( sounds )
+                init( sounds );
         }
 
         Trigger.prototype = Object.create( BaseSound.prototype );
