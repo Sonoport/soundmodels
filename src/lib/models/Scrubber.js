@@ -98,7 +98,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                         }
                     };
                 }
-                multiFileLoader.call( self, sound, context, onAllLoad, onProgressCallback );
+                multiFileLoader.call( self, sound, self.audioContext, onAllLoad, onProgressCallback );
 
                 winLen_ = Config.WINDOW_LENGTH;
                 synthStep_ = winLen_ / 2;

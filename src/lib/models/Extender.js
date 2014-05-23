@@ -71,11 +71,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                         }
                     };
                 }
-                multiFileLoader.call( self, sound, context, onAllLoad, onProgressCallback );
+                multiFileLoader.call( self, sound, self.audioContext, onAllLoad, onProgressCallback );
             }
 
             function extenderCallback() {
-                var currentTime = context.currentTime;
+                var currentTime = self.audioContext.currentTime;
                 var endTime = currentTime + 1 / Config.NOMINAL_REFRESH_RATE;
                 var eventLen = self.eventPeriod.value;
 
@@ -191,7 +191,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 extenderCallback();
             };
 
-            soundQueue_ = new SoundQueue( context );
+            soundQueue_ = new SoundQueue( this.context );
 
             if ( sound )
                 init( sound );

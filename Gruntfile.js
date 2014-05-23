@@ -28,8 +28,6 @@ module.exports = function ( grunt ) {
             temp: 'src/lib/temp',
             player: 'src/jsmplayer',
             unittest: 'test/unit'
-            math: 'src/lib/core/math',
-            unittest: 'test/unit'
         },
         // JS Beautifier - automatic code cleanup.
         jsbeautifier: {
@@ -289,19 +287,13 @@ module.exports = function ( grunt ) {
                     port: 8000,
                     base: [ '<%= dirs.build %>', 'test/unit' ]
                 }
-            },      
+            },
             sloop: {
                 options: {
                     port: 8080,
                     base: [ '<%= dirs.build %>', 'test/sloop' ],
                     open: true,
                     keepalive: true
-                }
-            },
-            unittest: {
-                options: {
-                    port: 8000,
-                    base: [ '<%= dirs.build %>', 'test/unit' ]
                 }
             }
         },
@@ -350,7 +342,7 @@ module.exports = function ( grunt ) {
 
     // Run this for player testing
     grunt.registerTask( 'player', [ 'jsbeautifier', 'jshint', 'connect:player', 'watch' ] );
-    
+
     // Launch test
     grunt.registerTask( 'unittest', [ 'clean:unittest', 'copy:unittest', 'connect:unittest', 'watch' ] );
 

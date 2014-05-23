@@ -45,7 +45,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             // Private Functions
             function init( sounds ) {
-                multiFileLoader.call( self, sounds, context, onAllLoad, onProgressCallback );
+                multiFileLoader.call( self, sounds, self.audioContext, onAllLoad, onProgressCallback );
             }
 
             var onAllLoad = function ( status, audioBufferArray ) {
@@ -218,7 +218,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 init( sounds );
             };
             // SoundQueue Based Model.
-            soundQueue_ = new SoundQueue( context );
+            soundQueue_ = new SoundQueue( this.audioContext );
 
             if ( sounds )
                 init( sounds );

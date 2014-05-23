@@ -66,7 +66,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             }
 
             function init( sound ) {
-                internalLooper_ = new Looper( sound, context, internalOnLoadCallback, null, onProgressCallback );
+                internalLooper_ = new Looper( sound, self.audioContext, internalOnLoadCallback, null, onProgressCallback );
             }
 
             function actionSetter_( aParam, value, audioContext ) {

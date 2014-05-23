@@ -25,7 +25,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             // Call superclass constructor
             BaseSound.call( this, context );
-            this.releaseGainNode.disconnect();
 
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
@@ -150,7 +149,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             // SoundQueue Based Model.
-            soundQueue_ = new SoundQueue( context );
+            soundQueue_ = new SoundQueue( this.audioContext );
 
             if ( sounds )
                 init( sounds );

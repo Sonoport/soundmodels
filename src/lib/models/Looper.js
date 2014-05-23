@@ -126,7 +126,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     sources_ = [];
                     multiTrackGainNodes_ = [];
                     self.multiTrackGain = [];
-                    multiFileLoader.call( self, sounds, context, onAllLoad, onProgressCallback );
+                    multiFileLoader.call( self, sounds, self.audioContext, onAllLoad, onProgressCallback );
                 }
             }
 
