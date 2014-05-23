@@ -720,7 +720,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 141,
+            "line": 140,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchShift",
@@ -731,7 +731,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 150,
+            "line": 149,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -742,7 +742,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 159,
+            "line": 158,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
@@ -753,7 +753,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 170,
+            "line": 169,
             "description": "Reinitializes a Extender and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -775,7 +775,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 183,
+            "line": 182,
             "description": "Starts playing the sound.",
             "itemtype": "method",
             "name": "play",
@@ -792,7 +792,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 137,
+            "line": 135,
             "itemtype": "property",
             "name": "riseTime",
             "type": "SPAudioParam",
@@ -804,7 +804,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 146,
+            "line": 144,
             "itemtype": "property",
             "name": "decayTime",
             "type": "SPAudioParam",
@@ -816,7 +816,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 155,
+            "line": 153,
             "itemtype": "property",
             "name": "startPoint",
             "type": "SPAudioParam",
@@ -828,7 +828,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 164,
+            "line": 162,
             "itemtype": "property",
             "name": "playSpeed",
             "type": "SPAudioParam",
@@ -840,7 +840,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 173,
+            "line": 171,
             "itemtype": "property",
             "name": "multiTrackGain",
             "type": "Array of SPAudioParams",
@@ -852,7 +852,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 182,
+            "line": 180,
             "itemtype": "property",
             "name": "maxLoops",
             "type": "SPAudioParam",
@@ -864,7 +864,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 191,
+            "line": 189,
             "description": "Reinitializes a Looper and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -886,7 +886,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 204,
+            "line": 202,
             "description": "Plays the sound immediately. If the sound is paused, the sound will be played back from the same position as it was paused at.",
             "itemtype": "method",
             "name": "play",
@@ -895,7 +895,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 224,
+            "line": 222,
             "description": "Start playing after specific time and from a specific offset. If offset is not defined,\nthe value of startPoint property is used.",
             "itemtype": "method",
             "name": "start",
@@ -929,7 +929,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 261,
+            "line": 259,
             "description": "Stops the sound and resets play head to 0.",
             "itemtype": "method",
             "name": "stop",
@@ -945,7 +945,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 290,
+            "line": 288,
             "description": "Pause the currently playing sound at the current position.",
             "itemtype": "method",
             "name": "pause",
@@ -954,7 +954,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 151,
+            "line": 150,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchShift",
@@ -965,7 +965,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 160,
+            "line": 159,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -976,7 +976,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 169,
+            "line": 168,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
@@ -987,7 +987,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 178,
+            "line": 177,
             "description": "Trigger rate for playing the source in Hz.",
             "itemtype": "property",
             "name": "eventRate",
@@ -998,7 +998,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 186,
+            "line": 185,
             "description": "Maximum deviance from the regular trigger interval for a random jitter factor in percentage.",
             "itemtype": "property",
             "name": "eventJitter",
@@ -1009,7 +1009,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 197,
+            "line": 196,
             "description": "Start repeated triggering.",
             "itemtype": "method",
             "name": "play",
@@ -1026,7 +1026,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 209,
+            "line": 208,
             "description": "Reinitializes a MultiTrigger and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1048,7 +1048,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 274,
+            "line": 272,
             "description": "Reinitializes a Scrubber and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1070,7 +1070,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 289,
+            "line": 287,
             "description": "Position of the audio to be played.",
             "itemtype": "property",
             "name": "playPosition",
@@ -1081,7 +1081,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 298,
+            "line": 296,
             "description": "Sets if the audio should fade out when playPosition has not changed for a while.",
             "itemtype": "property",
             "name": "noMotionFade",
@@ -1092,7 +1092,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 307,
+            "line": 305,
             "description": "Sets if moving playPosition to backwards should make any sound.",
             "itemtype": "property",
             "name": "muteOnReverse",
@@ -1103,7 +1103,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 65,
+            "line": 64,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchShift",
@@ -1116,7 +1116,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 76,
+            "line": 75,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -1129,7 +1129,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 87,
+            "line": 86,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
@@ -1142,7 +1142,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 100,
+            "line": 99,
             "description": "Reinitializes a Trigger and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1164,7 +1164,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 113,
+            "line": 112,
             "description": "Triggers a single voice.",
             "itemtype": "method",
             "name": "play",
@@ -1287,7 +1287,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 105,
+            "line": 107,
             "description": "If the parameter `output` is an AudioNode, it connects to the releaseGainNode.\nIf the output is a BaseSound, it will connect BaseSound's releaseGainNode to the output's inputNode.",
             "itemtype": "method",
             "name": "connect",
@@ -1315,7 +1315,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 130,
+            "line": 132,
             "description": "Disconnects the Sound from the AudioNode Chain.",
             "itemtype": "method",
             "name": "disconnect",
@@ -1332,7 +1332,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 140,
+            "line": 142,
             "description": "Start the AudioNode. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "start",
@@ -1361,7 +1361,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 152,
+            "line": 154,
             "description": "Stop the AudioNode. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "stop",
@@ -1378,7 +1378,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 168,
+            "line": 170,
             "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
             "itemtype": "method",
             "name": "release",
@@ -1401,7 +1401,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 197,
+            "line": 199,
             "description": "Play sound. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "play",
@@ -1410,7 +1410,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 206,
+            "line": 208,
             "description": "Pause sound. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "pause",
@@ -1419,7 +1419,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 215,
+            "line": 217,
             "description": "List all SPAudioParams this Sound exposes",
             "itemtype": "method",
             "name": "listParams",
@@ -1849,75 +1849,75 @@
     "warnings": [
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:137"
+            "line": " src/lib/models/Looper.js:135"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:137"
+            "line": " src/lib/models/Looper.js:135"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:146"
+            "line": " src/lib/models/Looper.js:144"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:146"
+            "line": " src/lib/models/Looper.js:144"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:155"
+            "line": " src/lib/models/Looper.js:153"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:155"
+            "line": " src/lib/models/Looper.js:153"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:164"
+            "line": " src/lib/models/Looper.js:162"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:164"
+            "line": " src/lib/models/Looper.js:162"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:173"
+            "line": " src/lib/models/Looper.js:171"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:173"
+            "line": " src/lib/models/Looper.js:171"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:182"
+            "line": " src/lib/models/Looper.js:180"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:182"
+            "line": " src/lib/models/Looper.js:180"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:65"
+            "line": " src/lib/models/Trigger.js:64"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:65"
+            "line": " src/lib/models/Trigger.js:64"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:76"
+            "line": " src/lib/models/Trigger.js:75"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:76"
+            "line": " src/lib/models/Trigger.js:75"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:87"
+            "line": " src/lib/models/Trigger.js:86"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:87"
+            "line": " src/lib/models/Trigger.js:86"
         },
         {
             "message": "Missing item type\n/**\n * @module Core",
