@@ -110,13 +110,43 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             /**
-             * Triggers a single voice.
+             * Stops playing all voices.
+             *
+             * @method stop
+             *
+             */
+            this.stop = function ( when ) {
+                soundQueue_.stop( when );
+            };
+
+            /**
+             * Pauses playing all voices.
+             *
+             * @method pause
+             *
+             */
+            this.pause = function () {
+                soundQueue_.pause();
+            };
+
+            /**
+             * Triggers a single voice immediately.
              *
              * @method play
+             *
+             */
+            this.play = function () {
+                this.start( 0 );
+            };
+
+            /**
+             * Triggers a single voice at the given time
+             *
+             * @method start
              * @param {Number} [when] At what time (in seconds) the sound be triggered
              *
              */
-            this.play = function ( when ) {
+            this.start = function ( when ) {
 
                 if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
                     when = this.audioContext.currentTime;
@@ -145,7 +175,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
                 currentEventID_++;
 
-                BaseSound.prototype.start.call( this, 0 );
+                BaseSound.prototype.start.call( this, when );
             };
 
             // SoundQueue Based Model.

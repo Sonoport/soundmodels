@@ -264,21 +264,14 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             this.stop = function ( when ) {
 
                 if ( this.isPlaying ) {
-                    sources_ = sources_.map( function ( thisSource, index ) {
+                    sources_.forEach( function ( thisSource, index ) {
                         thisSource.stop( when );
+                        thisSource.disconnect();
                         lastStopPosition_[ index ] = 0;
 
                         // Create a new source since SourceNodes can't play again.
-                        var newSource = new SPAudioBufferSourceNode( self.audioContext );
-                        newSource.buffer = thisSource.buffer;
-                        newSource.loopStart = newSource.buffer.duration * self.startPoint.value;
-                        newSource.loopEnd = newSource.buffer.duration;
-                        newSource.connect( multiTrackGainNodes_[ index ] );
-                        newSource.onended = function ( event ) {
-                            onSourceEnded( event, index );
-                        };
-
-                        return newSource;
+                        thisSource.renewBufferSource();
+                        thisSource.connect( multiTrackGainNodes_[ index ] );
                     } );
                 }
 

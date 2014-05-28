@@ -180,15 +180,36 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             /**
-             * Plays playing the sound.
+             * Starts playing the sound
              *
              * @method stop
              * @param {Number} [when] At what time (in seconds) the sound be triggered
              *
              */
-            this.play = function ( when ) {
+            this.start = function ( when ) {
                 BaseSound.prototype.start.call( this, when );
-                extenderCallback();
+                window.setTimeout( extenderCallback, Math.max( when - this.audioContext.currentTime, 0 ) );
+            };
+
+            /**
+             * Plays the sound immediately
+             *
+             * @method play
+             *
+             */
+            this.play = function () {
+                this.start( 0 );
+            };
+
+            /**
+             * Pauses the sound immediately
+             *
+             * @method pause
+             *
+             */
+            this.pause = function () {
+                BaseSound.prototype.pause.call( this );
+                soundQueue_.pause();
             };
 
             /**
@@ -200,7 +221,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.stop = function ( when ) {
                 BaseSound.prototype.stop.call( this, when );
-                soundQueue_.clear( when );
+                soundQueue_.stop( when );
             };
 
             soundQueue_ = new SoundQueue( this.audioContext );

@@ -196,13 +196,43 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             /**
              * Start repeated triggering.
              *
-             * @method play
+             * @method start
              * @param {Number} [when] At what time (in seconds) the sound be triggered
              *
              */
-            this.play = function ( when ) {
-                BaseSound.prototype.start.call( this, 0 );
-                multiTiggerCallback();
+            this.start = function ( when ) {
+                BaseSound.prototype.play.call( this, when );
+                window.setTimeout( multiTiggerCallback, Math.max( when - this.audioContext.currentTime, 0 ) );
+            };
+
+            /**
+             * Start repeated triggering immediately
+             *
+             * @method play
+             *
+             */
+            this.play = function () {
+                this.start( 0 );
+            };
+
+            /**
+             * Stops playing all voices.
+             *
+             * @method stop
+             *
+             */
+            this.stop = function ( when ) {
+                soundQueue_.stop( when );
+            };
+
+            /**
+             * Pauses playing all voices.
+             *
+             * @method pause
+             *
+             */
+            this.pause = function () {
+                soundQueue_.pause();
             };
 
             /**

@@ -16,9 +16,10 @@ define( [ 'core/SPPlaybackRateParam' ],
             var bufferSourceNode = audioContext.createBufferSource();
             var counterNode = audioContext.createBufferSource();
 
-            var scopeNode = audioContext.createScriptProcessor( 256, 1, 0 );
+            var scopeNode = audioContext.createScriptProcessor( 256, 1, 1 );
             var lastPos = 0;
 
+            this.audioContext = audioContext;
             this.channelCount = bufferSourceNode.channelCount;
             this.channelCountMode = bufferSourceNode.channelCountMode;
             this.channelInterpretation = bufferSourceNode.channelInterpretation;
@@ -200,6 +201,18 @@ define( [ 'core/SPPlaybackRateParam' ],
                 counterNode.stop( when );
             };
 
+            this.renewBufferSource = function () {
+                var newSource = this.audioContext.createBufferSource();
+                newSource.buffer = bufferSourceNode.buffer;
+                newSource.loopStart = bufferSourceNode.loopStart;
+                newSource.loopEnd = bufferSourceNode.loopEnd;
+                newSource.onended = bufferSourceNode.onended;
+                bufferSourceNode = newSource;
+                counterNode = audioContext.createBufferSource();
+                counterNode.buffer = createCounterBuffer( bufferSourceNode.buffer );
+                counterNode.connect( scopeNode );
+            };
+
             // Private Methods
 
             function createCounterBuffer( buffer ) {
@@ -223,6 +236,7 @@ define( [ 'core/SPPlaybackRateParam' ],
             function savePosition( processEvent ) {
                 var inputBuffer = processEvent.inputBuffer.getChannelData( 0 );
                 lastPos = inputBuffer[ inputBuffer.length - 1 ] || 0;
+                console.log( "lp ", lastPos / inputBuffer.length );
             }
 
             init();

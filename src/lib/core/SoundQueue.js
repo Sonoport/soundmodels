@@ -230,12 +230,21 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             };
 
             /**
+             * Pauses the SoundQueue. All queued voices are stopped and released.
+             *
+             * @method clear
+             */
+            this.pause = function () {
+                this.stop( 0 );
+            };
+
+            /**
              * Clears the SoundQueue. All queued voices are stopped and released.
              *
              * @method clear
              * @param {Number} [when] A timestamp describing when to clear the SoundQueue
              */
-            this.clear = function ( when ) {
+            this.stop = function ( when ) {
                 processEventsTill( when );
                 eventQueue_ = [];
                 busyVoices_.forEach( function ( thisVoice ) {
