@@ -180,18 +180,30 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             /**
-             * Starts playing the sound.
+             * Plays playing the sound.
              *
-             * @method play
+             * @method stop
              * @param {Number} [when] At what time (in seconds) the sound be triggered
              *
              */
             this.play = function ( when ) {
-                BaseSound.prototype.start.call( this, 0 );
+                BaseSound.prototype.start.call( this, when );
                 extenderCallback();
             };
 
-            soundQueue_ = new SoundQueue( this.context );
+            /**
+             * Stops playing the sound.
+             *
+             * @method stop
+             * @param {Number} [when] At what time (in seconds) the sound be stopped
+             *
+             */
+            this.stop = function ( when ) {
+                BaseSound.prototype.stop.call( this, when );
+                soundQueue_.clear( when );
+            };
+
+            soundQueue_ = new SoundQueue( this.audioContext );
 
             if ( sound )
                 init( sound );
