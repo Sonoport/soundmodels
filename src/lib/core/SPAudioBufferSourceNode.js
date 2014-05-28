@@ -208,9 +208,10 @@ define( [ 'core/SPPlaybackRateParam' ],
                 newSource.loopEnd = bufferSourceNode.loopEnd;
                 newSource.onended = bufferSourceNode.onended;
                 bufferSourceNode = newSource;
-                counterNode = audioContext.createBufferSource();
-                counterNode.buffer = createCounterBuffer( bufferSourceNode.buffer );
-                counterNode.connect( scopeNode );
+                var newCounterNode = audioContext.createBufferSource();
+                newCounterNode.buffer = counterNode.buffer;
+                newCounterNode.connect( scopeNode );
+                counterNode = newCounterNode;
             };
 
             // Private Methods
@@ -236,7 +237,6 @@ define( [ 'core/SPPlaybackRateParam' ],
             function savePosition( processEvent ) {
                 var inputBuffer = processEvent.inputBuffer.getChannelData( 0 );
                 lastPos = inputBuffer[ inputBuffer.length - 1 ] || 0;
-                console.log( "lp ", lastPos / inputBuffer.length );
             }
 
             init();
