@@ -201,7 +201,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              *
              */
             this.start = function ( when ) {
-                BaseSound.prototype.play.call( this, when );
+                BaseSound.prototype.start.call( this, when );
                 window.setTimeout( multiTiggerCallback, Math.max( when - this.audioContext.currentTime, 0 ) );
             };
 
@@ -223,6 +223,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.stop = function ( when ) {
                 soundQueue_.stop( when );
+                BaseSound.prototype.stop.call( this, when );
             };
 
             /**
@@ -233,6 +234,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.pause = function () {
                 soundQueue_.pause();
+                BaseSound.prototype.pause.call( this );
             };
 
             /**

@@ -62,22 +62,27 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
             var insertBufferSource = function ( audioBuffer, trackIndex ) {
                 var source = new SPAudioBufferSourceNode( self.audioContext );
-                var gainNode = self.audioContext.createGain();
-
                 source.buffer = audioBuffer;
                 source.loopEnd = audioBuffer.duration;
                 source.onended = function ( event ) {
                     onSourceEnded( event, trackIndex );
                 };
 
+                var gainNode;
+                if ( multiTrackGainNodes_[ trackIndex ] ) {
+                    gainNode = multiTrackGainNodes_[ trackIndex ];
+                } else {
+                    gainNode = self.audioContext.createGain();
+                    multiTrackGainNodes_[ trackIndex ] = gainNode;
+
+                    var multiChannelGainParam = new SPAudioParam( "gain", 0.0, 1, 1, gainNode.gain, null, null, self.audioContext );
+                    self.multiTrackGain.push[ trackIndex ] = multiChannelGainParam;
+                }
+
                 source.connect( gainNode );
                 gainNode.connect( self.releaseGainNode );
 
-                var multiChannelGainParam = new SPAudioParam( "gainNode", 0.0, 1, 1, gainNode.gain, null, null, self.audioContext );
-
                 sources_.push( source );
-                multiTrackGainNodes_.push( gainNode );
-                self.multiTrackGain.push( multiChannelGainParam );
                 rateArray.push( source.playbackRate );
             };
 
@@ -113,6 +118,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
             function init( sounds ) {
                 var parameterType = Object.prototype.toString.call( sounds );
+                rateArray = [];
+                sources_.forEach( function ( thisSource ) {
+                    thisSource.disconnect();
+                } );
+                sources_ = [];
                 if ( parameterType === "[object Array]" && sounds.length > self.maxSources ) {
                     throw {
                         name: "Unsupported number of sources",
@@ -121,11 +131,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                             return this.name + ": " + this.message;
                         }
                     };
+                } else if ( ( parameterType === "[object AudioBuffer]" ) ) {
+                    onAllLoad( true, [ sounds ] );
                 } else {
-                    rateArray = [];
-                    sources_ = [];
-                    multiTrackGainNodes_ = [];
-                    self.multiTrackGain = [];
                     multiFileLoader.call( self, sounds, self.audioContext, onAllLoad, onProgressCallback );
                 }
             }

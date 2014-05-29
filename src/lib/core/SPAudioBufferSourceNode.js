@@ -212,6 +212,8 @@ define( [ 'core/SPPlaybackRateParam' ],
                 newCounterNode.buffer = counterNode.buffer;
                 newCounterNode.connect( scopeNode );
                 counterNode = newCounterNode;
+
+                this.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
             };
 
             // Private Methods

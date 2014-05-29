@@ -80,7 +80,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
             function createNewVoice( eventID, eventTime ) {
                 var newVoice;
                 if ( freeVoices_.length < 1 ) {
-                    console.warn( "No free voices left. Stealing the oldest" );
+                    //console.warn( "No free voices left. Stealing the oldest" );
                     newVoice = busyVoices_.shift();
                     dequeueEventsHavingID( newVoice.eventID );
                     newVoice.eventID = eventID;

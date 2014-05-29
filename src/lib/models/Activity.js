@@ -53,7 +53,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             // Private Functions
 
             function internalOnLoadCallback( status ) {
-                internalLooper_.playSpeed.setValueAtTime( 0, self.audioContext.currentTime );
+                internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
                 self.isInitialized = true;
 
                 lastPosition_ = 0;
@@ -66,7 +66,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             }
 
             function init( sound ) {
-                internalLooper_ = new Looper( sound, self.audioContext, internalOnLoadCallback, null, onProgressCallback );
+                internalLooper_ = new Looper( sound, self.audioContext, internalOnLoadCallback, onProgressCallback, null );
             }
 
             function actionSetter_( aParam, value, audioContext ) {
@@ -225,6 +225,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.play = function ( when ) {
                 internalLooper_.play( when );
+                BaseSound.prototype.play.call( this, when );
             };
 
             /**
@@ -238,6 +239,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.start = function ( when, offset, duration ) {
                 internalLooper_.start( when, offset, duration );
+                BaseSound.prototype.start.call( this, when, offset, duration );
             };
 
             /**
@@ -247,6 +249,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.stop = function ( when ) {
                 internalLooper_.stop( when );
+                BaseSound.prototype.stop.call( this, when );
             };
 
             /**
@@ -256,6 +259,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.pause = function () {
                 internalLooper_.pause();
+                BaseSound.prototype.pause.call( this );
             };
 
             /**
@@ -267,6 +271,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.release = function ( when, fadeTime ) {
                 internalLooper_.release( when, fadeTime );
+                BaseSound.prototype.release.call( this, when, fadeTime );
             };
 
             /**
@@ -295,6 +300,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             if ( sound )
                 init( sound );
         }
+
+        Activity.prototype = Object.create( BaseSound.prototype );
         return Activity;
 
     } );
