@@ -201,19 +201,33 @@ define( [ 'core/SPPlaybackRateParam' ],
                 counterNode.stop( when );
             };
 
-            this.renewBufferSource = function () {
-                var newSource = this.audioContext.createBufferSource();
-                newSource.buffer = bufferSourceNode.buffer;
-                newSource.loopStart = bufferSourceNode.loopStart;
-                newSource.loopEnd = bufferSourceNode.loopEnd;
-                newSource.onended = bufferSourceNode.onended;
-                bufferSourceNode = newSource;
-                var newCounterNode = audioContext.createBufferSource();
-                newCounterNode.buffer = counterNode.buffer;
-                newCounterNode.connect( scopeNode );
-                counterNode = newCounterNode;
+            /**
+             * Resets the SP Buffer Source with a fresh BufferSource.
+             *
+             * @method resetBufferSource
+             * @param {Number} when Time (in seconds) when the Buffer source should be reset.
+             * @param {AudioNode} output The output to which the BufferSource is to be connected.
+             *
+             */
+            this.resetBufferSource = function ( when, output ) {
 
-                this.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
+                var self = this;
+                window.setTimeout( function () {
+                    self.disconnect( output );
+                    var newSource = self.audioContext.createBufferSource();
+                    newSource.buffer = bufferSourceNode.buffer;
+                    newSource.loopStart = bufferSourceNode.loopStart;
+                    newSource.loopEnd = bufferSourceNode.loopEnd;
+                    newSource.onended = bufferSourceNode.onended;
+                    bufferSourceNode = newSource;
+                    var newCounterNode = audioContext.createBufferSource();
+                    newCounterNode.buffer = counterNode.buffer;
+                    newCounterNode.connect( scopeNode );
+                    counterNode = newCounterNode;
+
+                    self.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
+                    self.connect( output );
+                }, Math.max( when - self.audioContext.currentTime, 0 ) * 1000 );
             };
 
             // Private Methods

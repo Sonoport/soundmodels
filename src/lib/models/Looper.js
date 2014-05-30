@@ -274,12 +274,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 if ( this.isPlaying ) {
                     sources_.forEach( function ( thisSource, index ) {
                         thisSource.stop( when );
-                        thisSource.disconnect();
                         lastStopPosition_[ index ] = 0;
 
                         // Create a new source since SourceNodes can't play again.
-                        thisSource.renewBufferSource();
-                        thisSource.connect( multiTrackGainNodes_[ index ] );
+                        thisSource.resetBufferSource( when, multiTrackGainNodes_[ index ] );
                     } );
                 }
 

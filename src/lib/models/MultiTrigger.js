@@ -202,7 +202,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.start = function ( when ) {
                 BaseSound.prototype.start.call( this, when );
-                window.setTimeout( multiTiggerCallback, Math.max( when - this.audioContext.currentTime, 0 ) );
+                window.setTimeout( multiTiggerCallback, Math.max( when - this.audioContext.currentTime, 0 ) * 1000 );
             };
 
             /**
