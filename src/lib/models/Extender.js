@@ -1,8 +1,8 @@
 /**
  * @module Models
  */
-define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiFileLoader', 'core/Converter' ],
-    function ( Config, BaseSound, SoundQueue, SPAudioParam, multiFileLoader, Converter ) {
+define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiFileLoader', 'core/Converter', 'core/WebAudioDispatch' ],
+    function ( Config, BaseSound, SoundQueue, SPAudioParam, multiFileLoader, Converter, webAudioDispatch ) {
         "use strict";
 
         /**
@@ -105,9 +105,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     }
                     requiredDur = playSpeed * ( eventLen + fadeDur );
 
-                    // Find a suitable start point as a fraction of the total length in the audio,
-                    // taking into account the required amount of audio
-                    var startPoint = Math.max( 0, 1 - requiredDur / audioDur ) * Math.random();
+                    // Find a suitable start point as a offset taking into account the required amount of audio
+                    var startOffset = Math.max( 0, audioDur - requiredDur ) * Math.random();
 
                     //console.log( "Start Point : " + startPoint + " playSpeed : " + playSpeed + " fadeDur : " + fadeDur + " audioDur : " + audioDur + " eventTime : " + eventTime + " eventLen : " + eventLen );
 
@@ -118,9 +117,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     // Queue up an event to specify all the properties
                     soundQueue_.queueSetSource( eventTime, currentEventID_, sourceBuffer_ );
                     soundQueue_.queueSetParameter( eventTime, currentEventID_, "playSpeed", playSpeed );
-                    soundQueue_.queueSetParameter( eventTime, currentEventID_, "startPoint", startPoint );
                     //  Queue the start of the audio snippet
-                    soundQueue_.queueStart( eventTime, currentEventID_, fadeDur );
+                    soundQueue_.queueStart( eventTime, currentEventID_, startOffset, fadeDur );
 
                     releaseDur_ = fadeDur;
                     lastEventTime_ = eventTime;
@@ -188,7 +186,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.start = function ( when ) {
                 BaseSound.prototype.start.call( this, when );
-                window.setTimeout( extenderCallback, Math.max( when - this.audioContext.currentTime, 0 ) * 1000 );
+                webAudioDispatch( extenderCallback, when, this.audioContext );
             };
 
             /**

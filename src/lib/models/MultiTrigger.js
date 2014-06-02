@@ -1,8 +1,8 @@
 /**
  * @module Models
  */
-define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiFileLoader', 'core/Converter' ],
-    function ( Config, BaseSound, SoundQueue, SPAudioParam, multiFileLoader, Converter ) {
+define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiFileLoader', 'core/Converter', 'core/WebAudioDispatch' ],
+    function ( Config, BaseSound, SoundQueue, SPAudioParam, multiFileLoader, Converter, webAudioDispatch ) {
         "use strict";
 
         /**
@@ -119,7 +119,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 if ( isFinite( updateTime ) ) {
                     //Update releaseDur of sounds being released
                     var releaseDur = Math.max( 0.99 * period * ( 1 - self.eventJitter.value ), 0.01 );
-                    soundQueue_.queueUpdate( "QERELEASE", null, "releaseDur", releaseDur );
+                    soundQueue_.queueUpdate( "QERELEASE", null, "releaseDuration", releaseDur );
                 } else {
                     // 1  year in seconds.
                     updateTime = 365 * 24 * 3600;
@@ -163,7 +163,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @type SPAudioParam
              * @default 0
              */
-            this.pitchRand = SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 24.0, 0, this.audioContext );
+            this.pitchRand = SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 24.0, 0.0, this.audioContext );
 
             /**
              * Enable randomness in the order of sources which are triggered.
@@ -202,7 +202,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.start = function ( when ) {
                 BaseSound.prototype.start.call( this, when );
-                window.setTimeout( multiTiggerCallback, Math.max( when - this.audioContext.currentTime, 0 ) * 1000 );
+                webAudioDispatch( multiTiggerCallback, when, this.audioContext );
             };
 
             /**

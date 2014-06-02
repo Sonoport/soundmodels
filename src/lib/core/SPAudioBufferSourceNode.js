@@ -1,8 +1,8 @@
 /**
  * @module Core
  */
-define( [ 'core/SPPlaybackRateParam' ],
-    function ( SPPlaybackRateParam ) {
+define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
+    function ( SPPlaybackRateParam, webAudioDispatch ) {
         "use strict";
 
         /**
@@ -212,7 +212,7 @@ define( [ 'core/SPPlaybackRateParam' ],
             this.resetBufferSource = function ( when, output ) {
 
                 var self = this;
-                window.setTimeout( function () {
+                webAudioDispatch( function () {
                     self.disconnect( output );
                     var newSource = self.audioContext.createBufferSource();
                     newSource.buffer = bufferSourceNode.buffer;
@@ -227,7 +227,7 @@ define( [ 'core/SPPlaybackRateParam' ],
 
                     self.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
                     self.connect( output );
-                }, Math.max( when - self.audioContext.currentTime, 0 ) * 1000 );
+                }, when, this.audioContext );
             };
 
             // Private Methods

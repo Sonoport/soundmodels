@@ -14,7 +14,7 @@ require(["core/Envelope", "models/Looper"], function (Envelope, Looper) {
     // var piano = "https://dl.dropboxusercontent.com/u/77191118/sounds/piano.mp3";
 
     looper = new Looper(workout, context, function(){
-        looper.playSpeed.setValueAtTime(0.00000000001,context.currentTime);
+        //looper.playSpeed.setValueAtTime(0.00000000001,context.currentTime);
         looper.start(0);
     },function (progressEvent, sound){
         console.log(sound, (progressEvent.loaded/progressEvent.total));
