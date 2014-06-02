@@ -197,8 +197,15 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              *
              */
             this.stop = function ( when ) {
-                bufferSourceNode.stop( when );
-                counterNode.stop( when );
+                var state = bufferSourceNode.playbackState;
+                if ( state !== undefined && state === bufferSourceNode.PLAYING_STATE ) {
+                    bufferSourceNode.stop( when );
+                }
+
+                state = counterNode.playbackState;
+                if ( state !== undefined && state === bufferSourceNode.PLAYING_STATE ) {
+                    counterNode.stop( when );
+                }
             };
 
             /**

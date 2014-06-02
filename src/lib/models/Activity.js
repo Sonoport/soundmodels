@@ -106,15 +106,13 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                         //var sensivityScaling:Number = Math.pow( 10, getParamVal(SENSITIVITY) );
                         var targetPlaySpeed_ = maxRate * sensitivityLg * deltaPos / smoothDeltaTime_;
 
-                        // Target level is always positive (hence abs).  We clamp it at some maximum to avoid generating
-                        // ridiculously large levels when deltaTime is small (which happens if the mouse
-                        // events get delayed and clumped up).  The maximum is slightly *higher* than the max rate, i.e.
-                        // we allow some overshoot in the target value.  This is so that if you're shaking the "Action"
-                        // slider vigorously, the rate will get pinned at the maximum, and not momentarily drop below
-                        // the maximum during those very brief instants when the target rate drops well below the max.
+                        // Target level is always positive (hence abs).  We clamp it at some maximum to avoid generating ridiculously large levels when deltaTime is small (which happens if the mouse events get delayed and clumped up).
+                        // The maximum is slightly *higher* than the max rate, i.e. we allow some overshoot in the target value.
+                        //This is so that if you're shaking the "Action" slider vigorously, the rate will get pinned at the maximum, and not momentarily drop below the maximum during those very brief instants when the target rate drops well below the max.
+
                         targetPlaySpeed_ = Math.min( Math.abs( targetPlaySpeed_ ), MAX_OVERSHOOT * maxRate );
 
-                        //console.log( targetPlaySpeed_ );
+                        // console.log( targetPlaySpeed_ );
                         internalLooper_.playSpeed.value = targetPlaySpeed_;
 
                         // We use a timeout to prevent the target level from staying at a non-zero value
@@ -160,7 +158,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              * @type SPAudioParam
              * @default 0
              */
-            this.maxRate = SPAudioParam.createPsuedoParam( "maxRate", 0.05, 10.0, 1, this.audioContext );
+            this.maxRate = SPAudioParam.createPsuedoParam( "maxRate", 0.05, 8.0, 1, this.audioContext );
 
             /**
              * Pitch shift of the triggered voices in semitones.

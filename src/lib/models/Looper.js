@@ -53,8 +53,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 }
             };
 
-            var onSourceEnded = function ( event, trackIndex ) {
+            var onSourceEnded = function ( event, trackIndex, source ) {
                 self.isPlaying = false;
+                var cTime = self.audioContext.currentTime;
+                // Create a new source since SourceNodes can't play again.
+                source.resetBufferSource( cTime, multiTrackGainNodes_[ trackIndex ] );
                 if ( typeof onEndedCallback === 'function' ) {
                     onEndedCallback( self, trackIndex );
                 }
@@ -65,7 +68,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 source.buffer = audioBuffer;
                 source.loopEnd = audioBuffer.duration;
                 source.onended = function ( event ) {
-                    onSourceEnded( event, trackIndex );
+                    onSourceEnded( event, trackIndex, source );
                 };
 
                 var gainNode;
@@ -89,9 +92,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             var playSpeedSetter_ = function ( aParam, value, audioContext ) {
                 if ( self.isInitialized ) {
                     /* 0.001 - 60dB Drop
-                                  e(-n) = 0.001; - Decay Rate of setTargetAtTime.
-                                  n = 6.90776;
-                                  */
+                        e(-n) = 0.001; - Decay Rate of setTargetAtTime.
+                        n = 6.90776;
+                    */
                     var t60multiplier = 6.90776;
 
                     var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
@@ -270,16 +273,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @param {Number} when Time offset to stop
              */
             this.stop = function ( when ) {
-
-                if ( this.isPlaying ) {
-                    sources_.forEach( function ( thisSource, index ) {
+                sources_.forEach( function ( thisSource, index ) {
+                    if ( self.isPlaying ) {
                         thisSource.stop( when );
-                        lastStopPosition_[ index ] = 0;
-
-                        // Create a new source since SourceNodes can't play again.
-                        thisSource.resetBufferSource( when, multiTrackGainNodes_[ index ] );
-                    } );
-                }
+                    }
+                    lastStopPosition_[ index ] = 0;
+                } );
 
                 BaseSound.prototype.stop.call( this, when );
             };
@@ -290,27 +289,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @method pause
              */
             this.pause = function () {
-                if ( this.isPlaying ) {
-                    sources_ = sources_.map( function ( thisSource, index ) {
+                sources_.forEach( function ( thisSource, index ) {
+                    if ( self.isPlaying ) {
                         thisSource.stop( 0 );
-                        lastStopPosition_[ index ] = thisSource.playbackPosition / thisSource.buffer.sampleRate;
-                        //console.log( index + " stopped at " + lastStopPosition_[ index ] );
-
-                        thisSource.disconnect();
-
-                        // Create a new source since SourceNodes can't play again.
-                        var newSource = new SPAudioBufferSourceNode( self.audioContext );
-                        newSource.buffer = thisSource.buffer;
-                        newSource.loopStart = newSource.buffer.duration * self.startPoint.value;
-                        newSource.loopEnd = newSource.buffer.duration;
-                        newSource.connect( multiTrackGainNodes_[ index ] );
-                        newSource.onended = function ( event ) {
-                            onSourceEnded( event, index );
-                        };
-
-                        return newSource;
-                    } );
-                }
+                    }
+                    lastStopPosition_[ index ] = thisSource.playbackPosition / thisSource.buffer.sampleRate;
+                } );
 
                 BaseSound.prototype.stop.call( this, 0 );
             };
