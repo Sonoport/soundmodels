@@ -146,26 +146,26 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             /**
              * @property riseTime
              * @type SPAudioParam
-             * @default 1
+             * @default 1.0
              * @minvalue 0.05
-             * @maxvalue 10
+             * @maxvalue 10.0
              */
             this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 1, this.audioContext );
 
             /**
              * @property decayTime
              * @type SPAudioParam
-             * @default 1
+             * @default 1.0
              * @minvalue 0.05
-             * @maxvalue 10
+             * @maxvalue 10.0
              */
             this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 1, this.audioContext );
 
             /**
              * @property startPoint
              * @type SPAudioParam
-             * @default 0
-             * @minvalue 0
+             * @default 0.0
+             * @minvalue 0.0
              * @maxvalue 0.99
              */
             this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
@@ -173,18 +173,18 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             /**
              * @property playSpeed
              * @type SPAudioParam
-             * @default 1
-             * @minvalue 0
-             * @maxvalue 10
+             * @default 1.0
+             * @minvalue 0.0
+             * @maxvalue 10.0
              */
             this.playSpeed = null;
 
             /**
              * @property multiTrackGain
              * @type Array of SPAudioParams
-             * @default 1
-             * @minvalue 0
-             * @maxvalue 1
+             * @default 1.0
+             * @minvalue 0.0
+             * @maxvalue 1.0
              */
             this.multiTrackGain = [];
 
@@ -192,7 +192,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @property maxLoops
              * @type SPAudioParam
              * @default -1 (Infinite)
-             * @minvalue -1
+             * @minvalue -1 (Infinite)
              * @maxvalue 1
              */
             this.maxLoops = SPAudioParam.createPsuedoParam( "maxLoops", -1, 1, -1, this.audioContext );

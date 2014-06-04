@@ -153,6 +153,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @property pitchShift
              * @type SPAudioParam
              * @default 0
+             * @minvalue -60.0
+             * @maxvalue 60.0
              */
             this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
 
@@ -161,7 +163,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              *
              * @property pitchRand
              * @type SPAudioParam
-             * @default 0
+             * @default 0.0
+             * @minvalue 0.0
+             * @maxvalue 24.0
              */
             this.pitchRand = SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 24.0, 0.0, this.audioContext );
 
@@ -171,6 +175,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @property eventRand
              * @type SPAudioParam
              * @default false
+             * @minvalue true
+             * @maxvalue false
              */
             this.eventRand = SPAudioParam.createPsuedoParam( "eventRand", true, false, false, this.audioContext );
 
@@ -179,7 +185,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              *
              * @property eventRate
              * @type SPAudioParam
-             * @default false
+             * @default 10.0
+             * @minvalue 0.0
+             * @maxvalue 60.0
              */
             this.eventRate = new SPAudioParam( "eventRate", 0, 60.0, 10.0, null, null, eventRateSetter_, this.audioContext );
             /**
@@ -187,7 +195,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              *
              * @property eventJitter
              * @type SPAudioParam
-             * @default false
+             * @default 0.0
+             * @minvalue 0.0
+             * @maxvalue 0.99
              */
             this.eventJitter = SPAudioParam.createPsuedoParam( "eventJitter", 0, 0.99, 0, this.audioContext );
 

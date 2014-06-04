@@ -140,25 +140,31 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              *
              * @property pitchShift
              * @type SPAudioParam
-             * @default 0
+             * @default 0.0
+             * @minvalue -60.0
+             * @maxvalue 60.0
              */
             this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
 
             /**
              * Maximum value for random pitch shift of the triggered voices in semitones.
              *
-             * @property pitchRand
+             * @property eventPeriod
              * @type SPAudioParam
-             * @default 0
+             * @default 2.0
+             * @minvalue 0.1
+             * @maxvalue 10.0
              */
             this.eventPeriod = SPAudioParam.createPsuedoParam( "eventPeriod", 0.1, 10.0, 2.0, this.audioContext );
 
             /**
              * Enable randomness in the order of sources which are triggered.
              *
-             * @property eventRand
+             * @property crossFadeDuration
              * @type SPAudioParam
-             * @default false
+             * @default 0.5
+             * @minvalue 0.1
+             * @maxvalue 0.99
              */
             this.crossFadeDuration = SPAudioParam.createPsuedoParam( "crossFadeDuration", 0.1, 0.99, 0.5, this.audioContext );
 

@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.4.0</em>
+            <em>API Docs for: 1.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -391,13 +391,6 @@
                                 
                             </li>
                         
-                            <li class="index-item property">
-                                <a href="#property_action">action</a>
-
-                                
-                                
-                            </li>
-                        
                             <li class="index-item property inherited">
                                 <a href="#property_audioContext">audioContext</a>
 
@@ -433,6 +426,13 @@
                                 
                             </li>
                         
+                            <li class="index-item property">
+                                <a href="#property_maxRate">maxRate</a>
+
+                                
+                                
+                            </li>
+                        
                             <li class="index-item property inherited">
                                 <a href="#property_modelName">modelName</a>
 
@@ -454,13 +454,6 @@
                                 
                             </li>
                         
-                            <li class="index-item property">
-                                <a href="#property_pitchRand">pitchRand</a>
-
-                                
-                                
-                            </li>
-                        
                             <li class="index-item property inherited">
                                 <a href="#property_releaseGainNode">releaseGainNode</a>
 
@@ -470,6 +463,13 @@
                         
                             <li class="index-item property">
                                 <a href="#property_riseTime">riseTime</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_sensitivity">sensitivity</a>
 
                                 
                                 
@@ -1416,54 +1416,11 @@ the value of startPoint property is used.</p>
     
 
     
-
+           <p><strong>Minimum Value:</strong> 0.0</p>
     
 
     
-
-    
-</div>
-
-                
-                    <div id="property_action" class="property item">
-    <h3 class="name"><code>action</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Pitch shift of the triggered voices in semitones.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+           <p><strong>Maximum Value:</strong> 1.0</p>
     
 
     
@@ -1549,11 +1506,15 @@ the value of startPoint property is used.</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0.05</p>
+        <p><strong>Default Value:</strong> 1</p>
     
 
     
+           <p><strong>Minimum Value:</strong> 0.05</p>
+    
 
+    
+           <p><strong>Maximum Value:</strong> 10.0</p>
     
 
     
@@ -1701,6 +1662,57 @@ Set this value to null if no connection can be made on the input node</p>
 </div>
 
                 
+                    <div id="property_maxRate" class="property item">
+    <h3 class="name"><code>maxRate</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Pitch shift of the triggered voices in semitones.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 1</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0.05</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 8.0</p>
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="property_modelName" class="property item inherited">
     <h3 class="name"><code>modelName</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
@@ -1840,53 +1852,6 @@ Set this value to null if no connection can be made on the input node</p>
 </div>
 
                 
-                    <div id="property_pitchRand" class="property item">
-    <h3 class="name"><code>pitchRand</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Maximum value for random pitch shift of the triggered voices in semitones.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
-    
-
-    
-
-    
-</div>
-
-                
                     <div id="property_releaseGainNode" class="property item inherited">
     <h3 class="name"><code>releaseGainNode</code></h3>
     <span class="type">GainNode</span>
@@ -1968,11 +1933,66 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0.05</p>
+        <p><strong>Default Value:</strong> 1</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0.05</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 10.0</p>
     
 
     
 
+    
+</div>
+
+                
+                    <div id="property_sensitivity" class="property item">
+    <h3 class="name"><code>sensitivity</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Maximum value for random pitch shift of the triggered voices in semitones.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0.5</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0.0</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 1.0</p>
     
 
     
@@ -2014,11 +2034,15 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
+        <p><strong>Default Value:</strong> 0.0</p>
     
 
     
+           <p><strong>Minimum Value:</strong> 0.0</p>
+    
 
+    
+           <p><strong>Maximum Value:</strong> 0.99</p>
     
 
     

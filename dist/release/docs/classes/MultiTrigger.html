@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 0.4.0</em>
+            <em>API Docs for: 1.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -791,7 +791,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_pause" class="method item inherited">
+                    <div id="method_pause" class="method item">
     <h3 class="name"><code>pause</code></h3>
 
     
@@ -814,9 +814,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#method_pause">BaseSound</a>:
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_pause">
+                BaseSound
+            </a>
             
         
         
@@ -829,7 +830,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Pause sound. Abstract method. Override this method when a Node is defined.</p>
+        <p>Pauses playing all voices.</p>
 
     </div>
 
@@ -845,17 +846,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     <h3 class="name"><code>play</code></h3>
 
     
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code class="optional">[when]</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
+        <span class="paren">()</span>
     
 
     
@@ -890,35 +881,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Start repeated triggering.</p>
+        <p>Start repeated triggering immediately</p>
 
     </div>
 
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[when]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>At what time (in seconds) the sound be triggered</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
     
 
     
@@ -1143,7 +1109,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_start" class="method item inherited">
+                    <div id="method_start" class="method item">
     <h3 class="name"><code>start</code></h3>
 
     
@@ -1153,18 +1119,6 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                 <li class="arg">
                     
                         <code class="optional">[when]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[offset]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[duration]</code>
                     
                 </li>
             
@@ -1188,9 +1142,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#method_start">BaseSound</a>:
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_start">
+                BaseSound
+            </a>
             
         
         
@@ -1203,7 +1158,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Start the AudioNode. Abstract method. Override this method when a Node is defined.</p>
+        <p>Start repeated triggering.</p>
 
     </div>
 
@@ -1223,41 +1178,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>At what time (in seconds) the sound should start playing.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[offset]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Offset time in the buffer (in seconds) where playback will begin.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[duration]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Duration of the portion (in seconds) to be played.</p>
+                        <p>At what time (in seconds) the sound be triggered</p>
 
                     </div>
 
@@ -1274,21 +1195,11 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_stop" class="method item inherited">
+                    <div id="method_stop" class="method item">
     <h3 class="name"><code>stop</code></h3>
 
     
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code class="optional">[when]</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
+        <span class="paren">()</span>
     
 
     
@@ -1307,9 +1218,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#method_stop">BaseSound</a>:
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_stop">
+                BaseSound
+            </a>
             
         
         
@@ -1322,35 +1234,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Stop the AudioNode. Abstract method. Override this method when a Node is defined.</p>
+        <p>Stops playing all voices.</p>
 
     </div>
 
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[when]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Time (in seconds) the sound should stop playing</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
     
 
     
@@ -1445,11 +1332,15 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
+        <p><strong>Default Value:</strong> 0.0</p>
     
 
     
+           <p><strong>Minimum Value:</strong> 0.0</p>
+    
 
+    
+           <p><strong>Maximum Value:</strong> 0.99</p>
     
 
     
@@ -1496,7 +1387,11 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     
 
     
+           <p><strong>Minimum Value:</strong> true</p>
+    
 
+    
+           <p><strong>Maximum Value:</strong> false</p>
     
 
     
@@ -1539,11 +1434,15 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
+        <p><strong>Default Value:</strong> 10.0</p>
     
 
     
+           <p><strong>Minimum Value:</strong> 0.0</p>
+    
 
+    
+           <p><strong>Maximum Value:</strong> 60.0</p>
     
 
     
@@ -1864,11 +1763,15 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
+        <p><strong>Default Value:</strong> 0.0</p>
     
 
     
+           <p><strong>Minimum Value:</strong> 0.0</p>
+    
 
+    
+           <p><strong>Maximum Value:</strong> 24.0</p>
     
 
     
@@ -1915,7 +1818,11 @@ Set this value to null if no connection can be made on the input node</p>
     
 
     
+           <p><strong>Minimum Value:</strong> -60.0</p>
+    
 
+    
+           <p><strong>Maximum Value:</strong> 60.0</p>
     
 
     

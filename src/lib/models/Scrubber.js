@@ -289,7 +289,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              *
              * @property playPosition
              * @type SPAudioParam
-             * @default 0
+             * @default 0.0
+             * @minvalue 0.0
+             * @maxvalue 1.0
              */
             this.playPosition = SPAudioParam.createPsuedoParam( "playPosition", 0, 1.0, 0, this.audioContext );
 
@@ -299,6 +301,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @property noMotionFade
              * @type SPAudioParam
              * @default false
+             * @minvalue true
+             * @maxvalue false
              */
             this.noMotionFade = SPAudioParam.createPsuedoParam( "noMotionFade", true, false, true, this.audioContext );
 
@@ -308,6 +312,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @property muteOnReverse
              * @type SPAudioParam
              * @default false
+             * @minvalue true
+             * @maxvalue false
              */
             this.muteOnReverse = SPAudioParam.createPsuedoParam( "muteOnReverse", true, false, true, this.audioContext );
 

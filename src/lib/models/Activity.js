@@ -154,9 +154,11 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             /**
              * Pitch shift of the triggered voices in semitones.
              *
-             * @property action
+             * @property maxRate
              * @type SPAudioParam
-             * @default 0
+             * @default 1
+             * @minvalue 0.05
+             * @maxvalue 8.0
              */
             this.maxRate = SPAudioParam.createPsuedoParam( "maxRate", 0.05, 8.0, 1, this.audioContext );
 
@@ -166,36 +168,46 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              * @property action
              * @type SPAudioParam
              * @default 0
+             * @minvalue 0.0
+             * @maxvalue 1.0
              */
             this.action = new SPAudioParam( "action", 0, 1.0, 0.0, null, null, actionSetter_, this.audioContext );
 
             /**
              * Maximum value for random pitch shift of the triggered voices in semitones.
              *
-             * @property pitchRand
+             * @property sensitivity
              * @type SPAudioParam
-             * @default 0
+             * @default 0.5
+             * @minvalue 0.0
+             * @maxvalue 1.0
              */
             this.sensitivity = SPAudioParam.createPsuedoParam( "sensitivity", 0.0, 1.0, 0.5, this.audioContext );
 
             /**
              * @property riseTime
              * @type SPAudioParam
-             * @default 0.05
+             * @default 1
+             * @minvalue 0.05
+             * @maxvalue 10.0
              */
             this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, riseTimeSetter_, this.audioContext );
 
             /**
              * @property decayTime
              * @type SPAudioParam
-             * @default 0.05
+             * @default 1
+             * @minvalue 0.05
+             * @maxvalue 10.0
              */
             this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, null, decayTimeSetter_, this.audioContext );
 
             /**
              * @property startPoint
              * @type SPAudioParam
-             * @default 0
+             * @default 0.0
+             * @minvalue 0.0
+             * @maxvalue 0.99
              */
             this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
 
