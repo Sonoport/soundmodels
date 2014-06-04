@@ -53,7 +53,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             // Private Functions
 
             function internalOnLoadCallback( status ) {
-                internalLooper_.playSpeed.setValueAtTime( 0, self.audioContext.currentTime );
+                internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
                 self.isInitialized = true;
 
                 lastPosition_ = 0;
@@ -66,7 +66,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             }
 
             function init( sound ) {
-                internalLooper_ = new Looper( sound, self.audioContext, internalOnLoadCallback, null, onProgressCallback );
+                internalLooper_ = new Looper( sound, self.audioContext, internalOnLoadCallback, onProgressCallback, null );
             }
 
             function actionSetter_( aParam, value, audioContext ) {
@@ -106,15 +106,13 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                         //var sensivityScaling:Number = Math.pow( 10, getParamVal(SENSITIVITY) );
                         var targetPlaySpeed_ = maxRate * sensitivityLg * deltaPos / smoothDeltaTime_;
 
-                        // Target level is always positive (hence abs).  We clamp it at some maximum to avoid generating
-                        // ridiculously large levels when deltaTime is small (which happens if the mouse
-                        // events get delayed and clumped up).  The maximum is slightly *higher* than the max rate, i.e.
-                        // we allow some overshoot in the target value.  This is so that if you're shaking the "Action"
-                        // slider vigorously, the rate will get pinned at the maximum, and not momentarily drop below
-                        // the maximum during those very brief instants when the target rate drops well below the max.
+                        // Target level is always positive (hence abs).  We clamp it at some maximum to avoid generating ridiculously large levels when deltaTime is small (which happens if the mouse events get delayed and clumped up).
+                        // The maximum is slightly *higher* than the max rate, i.e. we allow some overshoot in the target value.
+                        //This is so that if you're shaking the "Action" slider vigorously, the rate will get pinned at the maximum, and not momentarily drop below the maximum during those very brief instants when the target rate drops well below the max.
+
                         targetPlaySpeed_ = Math.min( Math.abs( targetPlaySpeed_ ), MAX_OVERSHOOT * maxRate );
 
-                        //console.log( targetPlaySpeed_ );
+                        // console.log( targetPlaySpeed_ );
                         internalLooper_.playSpeed.value = targetPlaySpeed_;
 
                         // We use a timeout to prevent the target level from staying at a non-zero value
@@ -160,7 +158,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              * @type SPAudioParam
              * @default 0
              */
-            this.maxRate = SPAudioParam.createPsuedoParam( "maxRate", 0.05, 10.0, 1, this.audioContext );
+            this.maxRate = SPAudioParam.createPsuedoParam( "maxRate", 0.05, 8.0, 1, this.audioContext );
 
             /**
              * Pitch shift of the triggered voices in semitones.
@@ -225,6 +223,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.play = function ( when ) {
                 internalLooper_.play( when );
+                BaseSound.prototype.play.call( this, when );
             };
 
             /**
@@ -238,6 +237,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.start = function ( when, offset, duration ) {
                 internalLooper_.start( when, offset, duration );
+                BaseSound.prototype.start.call( this, when, offset, duration );
             };
 
             /**
@@ -247,6 +247,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.stop = function ( when ) {
                 internalLooper_.stop( when );
+                BaseSound.prototype.stop.call( this, when );
             };
 
             /**
@@ -256,6 +257,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.pause = function () {
                 internalLooper_.pause();
+                BaseSound.prototype.pause.call( this );
             };
 
             /**
@@ -267,6 +269,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.release = function ( when, fadeTime ) {
                 internalLooper_.release( when, fadeTime );
+                BaseSound.prototype.release.call( this, when, fadeTime );
             };
 
             /**
@@ -295,6 +298,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             if ( sound )
                 init( sound );
         }
+
+        Activity.prototype = Object.create( BaseSound.prototype );
         return Activity;
 
     } );

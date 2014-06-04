@@ -1,8 +1,8 @@
 /**
  * @module Models
  */
-define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiFileLoader', 'core/Converter' ],
-    function ( Config, BaseSound, SoundQueue, SPAudioParam, multiFileLoader, Converter ) {
+define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam', 'core/MultiFileLoader', 'core/Converter', 'core/WebAudioDispatch' ],
+    function ( Config, BaseSound, SoundQueue, SPAudioParam, multiFileLoader, Converter, webAudioDispatch ) {
         "use strict";
 
         /**
@@ -105,9 +105,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     }
                     requiredDur = playSpeed * ( eventLen + fadeDur );
 
-                    // Find a suitable start point as a fraction of the total length in the audio,
-                    // taking into account the required amount of audio
-                    var startPoint = Math.max( 0, 1 - requiredDur / audioDur ) * Math.random();
+                    // Find a suitable start point as a offset taking into account the required amount of audio
+                    var startOffset = Math.max( 0, audioDur - requiredDur ) * Math.random();
 
                     //console.log( "Start Point : " + startPoint + " playSpeed : " + playSpeed + " fadeDur : " + fadeDur + " audioDur : " + audioDur + " eventTime : " + eventTime + " eventLen : " + eventLen );
 
@@ -118,9 +117,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     // Queue up an event to specify all the properties
                     soundQueue_.queueSetSource( eventTime, currentEventID_, sourceBuffer_ );
                     soundQueue_.queueSetParameter( eventTime, currentEventID_, "playSpeed", playSpeed );
-                    soundQueue_.queueSetParameter( eventTime, currentEventID_, "startPoint", startPoint );
                     //  Queue the start of the audio snippet
-                    soundQueue_.queueStart( eventTime, currentEventID_, fadeDur );
+                    soundQueue_.queueStart( eventTime, currentEventID_, startOffset, fadeDur );
 
                     releaseDur_ = fadeDur;
                     lastEventTime_ = eventTime;
@@ -180,18 +178,51 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             /**
-             * Starts playing the sound.
+             * Starts playing the sound
              *
-             * @method play
+             * @method stop
              * @param {Number} [when] At what time (in seconds) the sound be triggered
              *
              */
-            this.play = function ( when ) {
-                BaseSound.prototype.start.call( this, 0 );
-                extenderCallback();
+            this.start = function ( when ) {
+                BaseSound.prototype.start.call( this, when );
+                webAudioDispatch( extenderCallback, when, this.audioContext );
             };
 
-            soundQueue_ = new SoundQueue( this.context );
+            /**
+             * Plays the sound immediately
+             *
+             * @method play
+             *
+             */
+            this.play = function () {
+                this.start( 0 );
+            };
+
+            /**
+             * Pauses the sound immediately
+             *
+             * @method pause
+             *
+             */
+            this.pause = function () {
+                BaseSound.prototype.pause.call( this );
+                soundQueue_.pause();
+            };
+
+            /**
+             * Stops playing the sound.
+             *
+             * @method stop
+             * @param {Number} [when] At what time (in seconds) the sound be stopped
+             *
+             */
+            this.stop = function ( when ) {
+                BaseSound.prototype.stop.call( this, when );
+                soundQueue_.stop( when );
+            };
+
+            soundQueue_ = new SoundQueue( this.audioContext );
 
             if ( sound )
                 init( sound );

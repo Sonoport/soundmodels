@@ -1,12 +1,15 @@
 /**
  * @module Core
  */
-define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
-    function ( Config, Looper, FileLoader, SPEvent ) {
+define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispatch' ],
+    function ( Config, Looper, FileLoader, webaudioDispatch ) {
         "use strict";
 
         /**
          * A primitive which allows events on other Sound Models to be queued based on time of execution and executed at the appropriate time. Enables polyphony.
+         *
+         * Currently supports these types of events. </br>
+         * ["QESTOP", "QESTART", "QESETPARAM", "QESETSRC", "QERELEASE" ]
          *
          * @class SoundQueue
          * @constructor
@@ -34,7 +37,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
             // Private Functions
 
-            function soundQueueCallback( timestamp ) {
+            function soundQueueCallback() {
                 processEventsTill( context.currentTime + 1 / Config.NOMINAL_REFRESH_RATE );
                 window.requestAnimationFrame( soundQueueCallback );
             }
@@ -44,6 +47,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                     freeVoices_[ i ] = new Looper( null, context, null, null, onVoiceEnded );
                     freeVoices_[ i ].disconnect();
                     freeVoices_[ i ].maxLoops.value = 1;
+                    freeVoices_[ i ].voiceIndex = i;
                 }
 
                 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
@@ -53,7 +57,8 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
             }
 
-            function onVoiceEnded( endedVoice, trackIndex ) {
+            function onVoiceEnded( endedVoice ) {
+                //console.log( "freeing " + endedVoice.voiceIndex );
                 freeVoices_.push( endedVoice );
                 busyVoices_.splice( busyVoices_.indexOf( endedVoice ), 1 );
             }
@@ -77,7 +82,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                 }
             }
 
-            function createNewVoice( eventID, eventTime ) {
+            function getFreeVoice( eventID, eventTime ) {
                 var newVoice;
                 if ( freeVoices_.length < 1 ) {
                     console.warn( "No free voices left. Stealing the oldest" );
@@ -99,7 +104,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                 var selectedVoice = findVoiceWithID( thisEvent.eventID );
 
                 if ( ( thisEvent.type == "QESTART" || thisEvent.type == "QESETPARAM" || thisEvent.type == "QESETSRC" ) && selectedVoice === null ) {
-                    selectedVoice = createNewVoice( thisEvent.eventID, thisEvent.time );
+                    selectedVoice = getFreeVoice( thisEvent.eventID, thisEvent.time );
                 }
 
                 // If voice is still null/defined, then skip the event
@@ -107,29 +112,28 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                     return;
                 }
 
-                //console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice );
+                //console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice.voiceIndex );
 
                 if ( thisEvent.type == "QESTART" ) {
-                    selectedVoice.start( thisEvent.time, null, null, thisEvent.paramValue );
+                    //console.log( "starting " + selectedVoice.voiceIndex );
+                    selectedVoice.start( thisEvent.time, thisEvent.offset, null, thisEvent.attackDuration );
                 } else if ( thisEvent.type == "QESETPARAM" ) {
                     if ( selectedVoice[ thisEvent.paramName ] ) {
                         selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
                     }
                 } else if ( thisEvent.type == "QESETSRC" ) {
-                    var setSource = function ( selectedVoice, thisEvent ) {
-                        selectedVoice.setSources( thisEvent.audioBuffer );
-                    };
-                    window.setTimeout( setSource( selectedVoice, thisEvent ), thisEvent.time - context.currentTime );
+                    webaudioDispatch( function () {
+                        selectedVoice.setSources( thisEvent.sourceBuffer );
+                    }, thisEvent.time, context );
                 } else if ( thisEvent.type == "QERELEASE" ) {
-                    selectedVoice.release( thisEvent.time, thisEvent.paramValue );
+                    //console.log( "releasing " + selectedVoice.voiceIndex );
+                    selectedVoice.release( thisEvent.time, thisEvent.releaseDuration );
                 } else if ( thisEvent.type == "QESTOP" ) {
-                    var resetVoice = function ( selectedVoice ) {
+                    selectedVoice.pause( thisEvent.time );
+                    webaudioDispatch( function () {
                         freeVoices_.push( selectedVoice );
                         busyVoices_.splice( busyVoices_.indexOf( selectedVoice ), 1 );
-                    };
-
-                    selectedVoice.pause( thisEvent.time );
-                    window.setTimeout( resetVoice( selectedVoice ), thisEvent.time - context.currentTime );
+                    }, thisEvent.time, context );
                 } else {
                     console.warn( "Unknown Event Type : " + thisEvent );
                 }
@@ -146,6 +150,13 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
                 }
             }
 
+            // this.type = type;
+            // this.time = timeStamp;
+            // this.eventID = eventID;
+            // this.paramName = paramName;
+            // this.paramValue = paramValue;
+            // this.audioBuffer = audioBuffer;
+
             // Public Functions
 
             /**
@@ -154,10 +165,17 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @method queueStart
              * @param {Number} time Time (in seconds) at which the voice will start.
              * @param {Number} eventID Arbitary ID which is common for all related events.
+             * @param {Number} [offset] The starting position of the playhead.
              * @param {Number} [attackDuration] Attack Duration (in seconds) for attack envelope during start.
              */
-            this.queueStart = function ( time, eventID, attackDuration ) {
-                eventQueue_.push( new SPEvent( "QESTART", time, eventID, "attackDur", attackDuration ) );
+            this.queueStart = function ( time, eventID, offset, attackDuration ) {
+                eventQueue_.push( {
+                    "type": "QESTART",
+                    "time": time,
+                    "eventID": eventID,
+                    "offset": offset,
+                    "attackDuration": attackDuration
+                } );
             };
 
             /**
@@ -169,7 +187,12 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @param {Number} releaseDuration Time (in seconds) on the length of the release
              */
             this.queueRelease = function ( time, eventID, releaseDuration ) {
-                eventQueue_.push( new SPEvent( "QERELEASE", time, eventID, "releaseDur", releaseDuration ) );
+                eventQueue_.push( {
+                    "type": "QERELEASE",
+                    "time": time,
+                    "eventID": eventID,
+                    "releaseDuration": releaseDuration
+                } );
             };
 
             /**
@@ -180,7 +203,11 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @param {Number} eventID Arbitary ID which is common for all related events.
              */
             this.queueStop = function ( time, eventID ) {
-                eventQueue_.push( new SPEvent( "QESTOP", time, eventID ) );
+                eventQueue_.push( {
+                    "type": "QESTOP",
+                    "time": time,
+                    "eventID": eventID
+                } );
             };
 
             /**
@@ -194,7 +221,13 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
 
              */
             this.queueSetParameter = function ( time, eventID, paramName, paramValue ) {
-                eventQueue_.push( new SPEvent( "QESETPARAM", time, eventID, paramName, paramValue ) );
+                eventQueue_.push( {
+                    "type": "QESETPARAM",
+                    "time": time,
+                    "eventID": eventID,
+                    "paramName": paramName,
+                    "paramValue": paramValue
+                } );
             };
 
             /**
@@ -206,7 +239,12 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @param {AudioBuffer} sourceBuffer AudioBuffer to be set as source for a voice.
              */
             this.queueSetSource = function ( time, eventID, sourceBuffer ) {
-                eventQueue_.push( new SPEvent( "QESETSRC", time, eventID, null, null, sourceBuffer ) );
+                eventQueue_.push( {
+                    "type": "QESETSRC",
+                    "time": time,
+                    "eventID": eventID,
+                    "sourceBuffer": sourceBuffer
+                } );
             };
 
             /**
@@ -215,18 +253,44 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/SPEvent' ],
              * @method queueUpdate
              * @param {String} Type of the event to be updated.
              * @param {Number} eventID ID of the event to be updated. Null for all events of this type.
-             * @param {String} paramName Name of the parameter to be updated.
-             * @param {Boolean/Number} paramValue Value for the Parameter to be updated
+             * @param {String} propertyName Name of the property to be updated.
+             * @param {Boolean/Number} propertyValue Value for the property to be updated
              */
-            this.queueUpdate = function ( eventType, eventID, paramName, paramValue ) {
+            this.queueUpdate = function ( eventType, eventID, propertyName, propertyValue ) {
                 for ( var eventIndex = 0; eventIndex < eventQueue_.length; eventIndex++ ) {
                     var thisEvent = eventQueue_[ eventIndex ];
                     if ( thisEvent.type === eventType && ( !eventID || thisEvent.eventID == eventID ) ) {
-                        if ( thisEvent.paramName === paramName ) {
-                            thisEvent.paramValue = paramValue;
+                        if ( thisEvent.hasOwnProperty( propertyName ) ) {
+                            thisEvent[ propertyName ] = propertyValue;
                         }
                     }
                 }
+            };
+
+            /**
+             * Pauses the SoundQueue. All queued voices are stopped and released.
+             *
+             * @method clear
+             */
+            this.pause = function () {
+                this.stop( 0 );
+            };
+
+            /**
+             * Clears the SoundQueue. All queued voices are stopped and released.
+             *
+             * @method clear
+             * @param {Number} [when] A timestamp describing when to clear the SoundQueue
+             */
+            this.stop = function ( when ) {
+                processEventsTill( when );
+                eventQueue_ = [];
+                busyVoices_.forEach( function ( thisVoice ) {
+                    thisVoice.release( when );
+                } );
+                freeVoices_.forEach( function ( thisVoice ) {
+                    thisVoice.stop( when );
+                } );
             };
 
             /**

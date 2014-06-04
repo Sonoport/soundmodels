@@ -1,8 +1,8 @@
 /**
  * @module Core
  */
-define( [ 'core/SPPlaybackRateParam' ],
-    function ( SPPlaybackRateParam ) {
+define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
+    function ( SPPlaybackRateParam, webAudioDispatch ) {
         "use strict";
 
         /**
@@ -16,9 +16,10 @@ define( [ 'core/SPPlaybackRateParam' ],
             var bufferSourceNode = audioContext.createBufferSource();
             var counterNode = audioContext.createBufferSource();
 
-            var scopeNode = audioContext.createScriptProcessor( 256, 1, 0 );
+            var scopeNode = audioContext.createScriptProcessor( 256, 1, 1 );
             var lastPos = 0;
 
+            this.audioContext = audioContext;
             this.channelCount = bufferSourceNode.channelCount;
             this.channelCountMode = bufferSourceNode.channelCountMode;
             this.channelInterpretation = bufferSourceNode.channelInterpretation;
@@ -196,8 +197,44 @@ define( [ 'core/SPPlaybackRateParam' ],
              *
              */
             this.stop = function ( when ) {
-                bufferSourceNode.stop( when );
-                counterNode.stop( when );
+                var state = bufferSourceNode.playbackState;
+                if ( state !== undefined && state === bufferSourceNode.PLAYING_STATE ) {
+                    bufferSourceNode.stop( when );
+                }
+
+                state = counterNode.playbackState;
+                if ( state !== undefined && state === bufferSourceNode.PLAYING_STATE ) {
+                    counterNode.stop( when );
+                }
+            };
+
+            /**
+             * Resets the SP Buffer Source with a fresh BufferSource.
+             *
+             * @method resetBufferSource
+             * @param {Number} when Time (in seconds) when the Buffer source should be reset.
+             * @param {AudioNode} output The output to which the BufferSource is to be connected.
+             *
+             */
+            this.resetBufferSource = function ( when, output ) {
+
+                var self = this;
+                webAudioDispatch( function () {
+                    self.disconnect( output );
+                    var newSource = self.audioContext.createBufferSource();
+                    newSource.buffer = bufferSourceNode.buffer;
+                    newSource.loopStart = bufferSourceNode.loopStart;
+                    newSource.loopEnd = bufferSourceNode.loopEnd;
+                    newSource.onended = bufferSourceNode.onended;
+                    bufferSourceNode = newSource;
+                    var newCounterNode = audioContext.createBufferSource();
+                    newCounterNode.buffer = counterNode.buffer;
+                    newCounterNode.connect( scopeNode );
+                    counterNode = newCounterNode;
+
+                    self.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
+                    self.connect( output );
+                }, when, this.audioContext );
             };
 
             // Private Methods

@@ -2,8 +2,8 @@
  ** @module Core
  */
 define(
-    [],
-    function () {
+    [ 'core/WebAudioDispatch' ],
+    function ( webAudioDispatch ) {
         "use strict";
         /**
          * Mock AudioParam used to create Parameters for Sonoport Sound Models. The SPAudioParam supports either a AudioParam backed parameter, or a completely Javascript mocked up Parameter, which supports a rough version of parameter automation.
@@ -179,10 +179,9 @@ define(
                     // Horrible hack for the case we don't have access to
                     // a real AudioParam.
                     var self = this;
-                    var remainingTime_ = startTime - audioContext.currentTime;
-                    window.setTimeout( function () {
+                    webAudioDispatch( function () {
                         self.value = value;
-                    }, remainingTime_ * 1000 );
+                    }, startTime, audioContext );
                 }
             };
 

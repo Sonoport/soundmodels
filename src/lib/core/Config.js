@@ -11,6 +11,17 @@ define( [],
         function Config() {}
 
         /**
+         * Very small number considered non-zero by WebAudio.
+         *
+         * @final
+         * @static
+         * @property ZERO
+         * @default 1e-37
+         *
+         */
+        Config.ZERO = parseFloat( "1e-37" );
+
+        /**
          * Maximum number of voices supported
          *
          * @final
