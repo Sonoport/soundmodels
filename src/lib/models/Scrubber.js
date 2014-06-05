@@ -21,10 +21,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             }
             // Call superclass constructor
             BaseSound.call( this, context );
-
             this.maxSources = 1;
-            this.numberOfInputs = 1;
-            this.numberOfOutputs = 1;
             this.modelName = "Scrubber";
 
             // Private Variables
@@ -90,13 +87,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             function init( sound ) {
                 var parameterType = Object.prototype.toString.call( sound );
                 if ( parameterType === '[object Array]' && sound.length > 1 ) {
-                    throw {
-                        name: "Incorrect Parameter type Exception",
-                        message: "Extender only accepts a single sound as argument",
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    throw ( new Error( "Incorrect Parameter Type - Extender only accepts a single Source as argument" ) );
                 }
                 multiFileLoader.call( self, sound, self.audioContext, onAllLoad, onProgressCallback );
 

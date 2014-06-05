@@ -56,55 +56,29 @@ define( [ 'core/DetectLoopMarkers' ],
                 }
                 // Verify parameters
                 if ( !isInt_( start ) ) {
-                    throw {
-                        name: "Incorrect parameter type Exception",
-                        message: "FileLoader getBuffer start parameter is not an integer",
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    throw ( new Error( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer" ) );
                 } else if ( !isInt_( end ) ) {
-                    throw {
-                        name: "Incorrect parameter type Exception",
-                        message: "FileLoader getBuffer end parameter is not an integer",
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    throw ( new Error( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" ) );
                 }
                 // Check if start is smaller than end
                 if ( start > end ) {
-                    throw {
-                        name: "Incorrect parameter type Exception",
-                        message: "FileLoader getBuffer start parameter should be smaller than end parameter",
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    throw ( new Error( "Incorrect parameter Type - FileLoader getBuffer start parameter should be smaller than end parameter" ) );
                 }
                 // Check if start is within the buffer size
                 if ( start > loopEnd_ || start < loopStart_ ) {
-                    throw {
-                        name: "Incorrect parameter type Exception",
-                        message: "FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length,
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    throw ( new Error( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length ) );
                 }
 
                 // Check if end is within the buffer size
                 if ( end > loopEnd_ || end < loopStart_ ) {
-                    throw {
-                        name: "Incorrect parameter type Exception",
-                        message: "FileLoader getBuffer end parameter should be within the buffer size : 0-" + rawBuffer_.length,
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    throw ( new Error( "Incorrect parameter Type - FileLoader getBuffer end parameter should be within the buffer size : 0-" + rawBuffer_.length ) );
                 }
 
                 var length = end - start;
+
+                if ( !rawBuffer_ ) {
+                    throw ( new Error( "No Buffer Found - Buffer loading has not completed or has failed." ) );
+                }
 
                 // Create the new buffer
                 var newBuffer = context.createBuffer( rawBuffer_.numberOfChannels, length, rawBuffer_.sampleRate );
@@ -131,7 +105,7 @@ define( [ 'core/DetectLoopMarkers' ],
                         decodeAudio( request.response, fileExtension );
                     };
                     request.send();
-                } else if ( parameterType === '[object File]' ) {
+                } else if ( parameterType === '[object File]' || parameterType === '[object Blob]' ) {
                     var reader = new FileReader();
                     reader.addEventListener( "progress", onProgressCallback, false );
                     reader.onload = function () {
@@ -161,7 +135,7 @@ define( [ 'core/DetectLoopMarkers' ],
                         onloadCallback( true );
                     }
                 }, function () {
-                    console.log( "Error Decoding " + URL );
+                    console.warn( "Error Decoding " + URL );
                     if ( onloadCallback && typeof onloadCallback === "function" ) {
                         onloadCallback( false );
                     }
@@ -195,6 +169,9 @@ define( [ 'core/DetectLoopMarkers' ],
              * @returns {AudioBuffer} The original AudioBuffer.
              */
             this.getRawBuffer = function () {
+                if ( !isSoundLoaded_ ) {
+                    throw ( new Error( "No Buffer Found - Buffer loading has not completed or has failed." ) );
+                }
                 return rawBuffer_;
             };
 

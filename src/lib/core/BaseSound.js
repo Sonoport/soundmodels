@@ -32,7 +32,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
          *
          * @property numberOfInputs
          * @type Number
-         * @default 1
+         * @default 0
          */
         this.numberOfInputs = 0;
 
@@ -41,18 +41,35 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
          *
          * @property numberOfOutputs
          * @type Number
-         * @default 1
+         * @default 0
          */
-        this.numberOfOutputs = 0;
+        Object.defineProperty( this, 'numberOfOutputs', {
+            enumerable: true,
+            get: function () {
+                return this.releaseGainNode.numberOfOutputs;
+            }
+        } );
 
         /**
          *Number of sources that can be given to this Sound
          *
-         * @property numberOfInputs
+         * @property maxSources
          * @type Number
          * @default 0
          */
-        this.maxSources = 0;
+        var maxSources_ = 0;
+        Object.defineProperty( this, 'maxSources', {
+            enumerable: true,
+            set: function ( max ) {
+                if ( max < 0 ) {
+                    max = 0;
+                }
+                maxSources_ = Math.round( max );
+            },
+            get: function () {
+                return maxSources_;
+            }
+        } );
 
         /**
          * Release Gain Node

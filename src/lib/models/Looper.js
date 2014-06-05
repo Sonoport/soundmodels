@@ -23,10 +23,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             }
             // Call superclass constructor
             BaseSound.call( this, context );
-
             this.maxSources = Config.MAX_VOICES;
-            this.numberOfInputs = 1;
-            this.numberOfOutputs = 1;
             this.modelName = "Looper";
 
             // Private vars
@@ -127,13 +124,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 } );
                 sources_ = [];
                 if ( parameterType === "[object Array]" && sounds.length > self.maxSources ) {
-                    throw {
-                        name: "Unsupported number of sources",
-                        message: "This sound only supports a maximum of " + self.maxSources + " sources.",
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    throw ( new Error( "Unsupported number of Sources - Looper sound only supports a maximum of " + self.maxSources + " Sources." ) );
                 } else if ( ( parameterType === "[object AudioBuffer]" ) ) {
                     onAllLoad( true, [ sounds ] );
                 } else {

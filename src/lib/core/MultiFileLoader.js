@@ -55,13 +55,7 @@ define( [ 'core/FileLoader' ],
                 } else if ( parameterType === "[object AudioBuffer]" ) {
                     onSingleLoad( true, sound );
                 } else {
-                    throw {
-                        name: "Incorrect Parameter type Exception",
-                        message: "Looper argument is not a URL or AudioBuffer",
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    throw ( new Error( "Incorrect Parameter Type - Source is not a URL or AudioBuffer" ) );
                 }
             }
 
