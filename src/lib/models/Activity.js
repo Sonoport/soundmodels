@@ -185,6 +185,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             this.sensitivity = SPAudioParam.createPsuedoParam( "sensitivity", 0.0, 1.0, 0.5, this.audioContext );
 
             /**
+             * Rise time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink "Activity/action:property"}}{{/crossLink}} property.
+             *
              * @property riseTime
              * @type SPAudioParam
              * @default 1
@@ -194,6 +196,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, riseTimeSetter_, this.audioContext );
 
             /**
+             *  Decay time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink "Activity/action:property"}}{{/crossLink}} property.
+             *
              * @property decayTime
              * @type SPAudioParam
              * @default 1
@@ -203,6 +207,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             this.decayTime = new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, null, decayTimeSetter_, this.audioContext );
 
             /**
+             * Start point (as a factor of the length of the entire track) where the Looping should start from.
+             *
              * @property startPoint
              * @type SPAudioParam
              * @default 0.0

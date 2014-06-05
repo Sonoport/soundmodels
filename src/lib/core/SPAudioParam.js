@@ -30,6 +30,8 @@ define(
             var value_ = 0;
 
             /**
+             * Initial value for the value attribute.
+             *
              * @property defaultValue
              * @type Number/Boolean
              * @default 0
@@ -37,6 +39,9 @@ define(
             this.defaultValue = null;
 
             /**
+             *  Maximum value which the value attribute can be set to.
+             *
+             *
              * @property maxValue
              * @type Number/Boolean
              * @default 0
@@ -44,13 +49,18 @@ define(
             this.maxValue = 0;
 
             /**
+             * Minimum value which the value attribute can be set to.
+             *
              * @property minValue
              * @type Number/Boolean
              * @default 0
              */
 
             this.minValue = 0;
+
             /**
+             * Name of the Parameter.
+             *
              * @property name
              * @type String
              * @default ""
@@ -59,6 +69,9 @@ define(
             this.name = "";
 
             /**
+             * The parameter's value. This attribute is initialized to the defaultValue. If value is set during a time when there are any automation events scheduled then it will be ignored and no exception will be thrown.
+             *
+             *
              * @property value
              * @type Number/Boolean
              * @default 0

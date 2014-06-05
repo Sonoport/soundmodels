@@ -144,33 +144,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             // Public Properties
 
             /**
-             * @property riseTime
-             * @type SPAudioParam
-             * @default 1.0
-             * @minvalue 0.05
-             * @maxvalue 10.0
-             */
-            this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 1, this.audioContext );
-
-            /**
-             * @property decayTime
-             * @type SPAudioParam
-             * @default 1.0
-             * @minvalue 0.05
-             * @maxvalue 10.0
-             */
-            this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 1, this.audioContext );
-
-            /**
-             * @property startPoint
-             * @type SPAudioParam
-             * @default 0.0
-             * @minvalue 0.0
-             * @maxvalue 0.99
-             */
-            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
-
-            /**
+             * Changes the speed of playback of the audio source.
+             *
              * @property playSpeed
              * @type SPAudioParam
              * @default 1.0
@@ -180,6 +155,42 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             this.playSpeed = null;
 
             /**
+             * Rise time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
+             *
+             * @property riseTime
+             * @type SPAudioParam
+             * @default 1.0
+             * @minvalue 0.05
+             * @maxvalue 10.0
+             */
+            this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 1, this.audioContext );
+
+            /**
+             * Decay time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
+             *
+             * @property decayTime
+             * @type SPAudioParam
+             * @default 1.0
+             * @minvalue 0.05
+             * @maxvalue 10.0
+             */
+            this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 1, this.audioContext );
+
+            /**
+             * Start point (as a factor of the length of the entire track) where the Looping should start from.
+             *
+             * @property startPoint
+             * @type SPAudioParam
+             * @default 0.0
+             * @minvalue 0.0
+             * @maxvalue 0.99
+             */
+            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
+
+            /**
+             * An array of Gain Parameters for setting the volume of the individual tracks loaded into the looper. Works even with a single track loaded.
+             *
+             *
              * @property multiTrackGain
              * @type Array of SPAudioParams
              * @default 1.0
@@ -189,6 +200,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             this.multiTrackGain = [];
 
             /**
+             * The max number of Loops the Looper will complete before stopping. Current only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).
+             *
              * @property maxLoops
              * @type SPAudioParam
              * @default -1 (Infinite)

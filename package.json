@@ -40,9 +40,9 @@
         "sound",
         "interactive"
     ],
-    "repository" :{
-        "type" : "git",
-         "url" : "git@bitbucket.org:sonoport/javascript-sound-models.git"
+    "repository": {
+        "type": "git",
+        "url": "git@bitbucket.org:sonoport/javascript-sound-models.git"
     },
     "scripts": {
         "build": "grunt built",

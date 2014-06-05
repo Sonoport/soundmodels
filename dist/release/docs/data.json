@@ -537,6 +537,7 @@
         {
             "file": "src/lib/models/Activity.js",
             "line": 187,
+            "description": "Rise time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink \"Activity/action:property\"}}{{/crossLink}} property.",
             "itemtype": "property",
             "name": "riseTime",
             "type": "SPAudioParam",
@@ -548,7 +549,8 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 196,
+            "line": 198,
+            "description": "Decay time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink \"Activity/action:property\"}}{{/crossLink}} property.",
             "itemtype": "property",
             "name": "decayTime",
             "type": "SPAudioParam",
@@ -560,7 +562,8 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 205,
+            "line": 209,
+            "description": "Start point (as a factor of the length of the entire track) where the Looping should start from.",
             "itemtype": "property",
             "name": "startPoint",
             "type": "SPAudioParam",
@@ -572,7 +575,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 216,
+            "line": 222,
             "description": "Reinitializes a Activity and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -594,7 +597,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 229,
+            "line": 235,
             "description": "Enable playback.",
             "itemtype": "method",
             "name": "play",
@@ -611,7 +614,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 241,
+            "line": 247,
             "description": "Start playing after specific time and from a specific offset. If offset is not defined,\nthe value of startPoint property is used.",
             "itemtype": "method",
             "name": "start",
@@ -639,7 +642,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 255,
+            "line": 261,
             "description": "Stops the sound and resets play head to 0.",
             "itemtype": "method",
             "name": "stop",
@@ -655,7 +658,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 265,
+            "line": 271,
             "description": "Pause the currently playing sound at the current position.",
             "itemtype": "method",
             "name": "pause",
@@ -664,7 +667,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 275,
+            "line": 281,
             "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
             "itemtype": "method",
             "name": "release",
@@ -687,7 +690,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 287,
+            "line": 293,
             "description": "Disconnects the Sound from the AudioNode Chain.",
             "itemtype": "method",
             "name": "disconnect",
@@ -704,7 +707,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 297,
+            "line": 303,
             "description": "If the parameter `output` is an AudioNode, it connects to the releaseGainNode.\nIf the output is a BaseSound, it will connect BaseSound's releaseGainNode to the output's inputNode.",
             "itemtype": "method",
             "name": "connect",
@@ -846,42 +849,7 @@
         {
             "file": "src/lib/models/Looper.js",
             "line": 146,
-            "itemtype": "property",
-            "name": "riseTime",
-            "type": "SPAudioParam",
-            "default": "1.0",
-            "minvalue": "0.05",
-            "maxvalue": "10.0",
-            "class": "Looper",
-            "module": "Models"
-        },
-        {
-            "file": "src/lib/models/Looper.js",
-            "line": 155,
-            "itemtype": "property",
-            "name": "decayTime",
-            "type": "SPAudioParam",
-            "default": "1.0",
-            "minvalue": "0.05",
-            "maxvalue": "10.0",
-            "class": "Looper",
-            "module": "Models"
-        },
-        {
-            "file": "src/lib/models/Looper.js",
-            "line": 164,
-            "itemtype": "property",
-            "name": "startPoint",
-            "type": "SPAudioParam",
-            "default": "0.0",
-            "minvalue": "0.0",
-            "maxvalue": "0.99",
-            "class": "Looper",
-            "module": "Models"
-        },
-        {
-            "file": "src/lib/models/Looper.js",
-            "line": 173,
+            "description": "Changes the speed of playback of the audio source.",
             "itemtype": "property",
             "name": "playSpeed",
             "type": "SPAudioParam",
@@ -893,7 +861,47 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 182,
+            "line": 157,
+            "description": "Rise time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink \"Looper/playSpeed:property\"}}{{/crossLink}} property.",
+            "itemtype": "property",
+            "name": "riseTime",
+            "type": "SPAudioParam",
+            "default": "1.0",
+            "minvalue": "0.05",
+            "maxvalue": "10.0",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 168,
+            "description": "Decay time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink \"Looper/playSpeed:property\"}}{{/crossLink}} property.",
+            "itemtype": "property",
+            "name": "decayTime",
+            "type": "SPAudioParam",
+            "default": "1.0",
+            "minvalue": "0.05",
+            "maxvalue": "10.0",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 179,
+            "description": "Start point (as a factor of the length of the entire track) where the Looping should start from.",
+            "itemtype": "property",
+            "name": "startPoint",
+            "type": "SPAudioParam",
+            "default": "0.0",
+            "minvalue": "0.0",
+            "maxvalue": "0.99",
+            "class": "Looper",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/models/Looper.js",
+            "line": 190,
+            "description": "An array of Gain Parameters for setting the volume of the individual tracks loaded into the looper. Works even with a single track loaded.",
             "itemtype": "property",
             "name": "multiTrackGain",
             "type": "Array of SPAudioParams",
@@ -905,7 +913,8 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 191,
+            "line": 202,
+            "description": "The max number of Loops the Looper will complete before stopping. Current only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).",
             "itemtype": "property",
             "name": "maxLoops",
             "type": "SPAudioParam",
@@ -917,7 +926,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 200,
+            "line": 213,
             "description": "Reinitializes a Looper and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -939,7 +948,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 213,
+            "line": 226,
             "description": "Plays the sound immediately. If the sound is paused, the sound will be played back from the same position as it was paused at.",
             "itemtype": "method",
             "name": "play",
@@ -948,7 +957,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 233,
+            "line": 246,
             "description": "Start playing after specific time and from a specific offset. If offset is not defined,\nthe value of startPoint property is used.",
             "itemtype": "method",
             "name": "start",
@@ -982,7 +991,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 270,
+            "line": 283,
             "description": "Stops the sound and resets play head to 0.",
             "itemtype": "method",
             "name": "stop",
@@ -998,7 +1007,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 286,
+            "line": 299,
             "description": "Pause the currently playing sound at the current position.",
             "itemtype": "method",
             "name": "pause",
@@ -1750,6 +1759,7 @@
         {
             "file": "src/lib/temp/SPAudioParam.js",
             "line": 32,
+            "description": "Initial value for the value attribute.",
             "itemtype": "property",
             "name": "defaultValue",
             "type": "Number/Boolean",
@@ -1759,7 +1769,8 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 39,
+            "line": 41,
+            "description": "Maximum value which the value attribute can be set to.",
             "itemtype": "property",
             "name": "maxValue",
             "type": "Number/Boolean",
@@ -1769,7 +1780,8 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 46,
+            "line": 51,
+            "description": "Minimum value which the value attribute can be set to.",
             "itemtype": "property",
             "name": "minValue",
             "type": "Number/Boolean",
@@ -1779,7 +1791,8 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 53,
+            "line": 61,
+            "description": "Name of the Parameter.",
             "itemtype": "property",
             "name": "name",
             "type": "String",
@@ -1789,7 +1802,8 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 61,
+            "line": 71,
+            "description": "The parameter's value. This attribute is initialized to the defaultValue. If value is set during a time when there are any automation events scheduled then it will be ignored and no exception will be thrown.",
             "itemtype": "property",
             "name": "value",
             "type": "Number/Boolean",
@@ -1799,7 +1813,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 157,
+            "line": 170,
             "description": "Schedules a parameter value change at the given time.",
             "itemtype": "method",
             "name": "setValueAtTime",
@@ -1820,7 +1834,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 188,
+            "line": 201,
             "description": "Start exponentially approaching the target value at the given time with a rate having the given time constant.\n\nDuring the time interval: T0 <= t < T1, where T0 is the startTime parameter and T1 represents the time of the event following this event (or infinity if there are no following events):\n    v(t) = V1 + (V0 - V1) * exp(-(t - T0) / timeConstant)",
             "itemtype": "method",
             "name": "setTargetAtTime",
@@ -1846,7 +1860,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 227,
+            "line": 240,
             "description": "Sets an array of arbitrary parameter values starting at the given time for the given duration. The number of values will be scaled to fit into the desired duration.\n\nDuring the time interval: startTime <= t < startTime + duration, values will be calculated:\n\n  v(t) = values[N * (t - startTime) / duration], where N is the length of the values array.",
             "itemtype": "method",
             "name": "setValueCurveAtTime",
@@ -1872,7 +1886,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 269,
+            "line": 282,
             "description": "Schedules an exponential continuous change in parameter value from the previous scheduled parameter value to the given value.\n\nv(t) = V0 * (V1 / V0) ^ ((t - T0) / (T1 - T0))",
             "itemtype": "method",
             "name": "exponentialRampToValueAtTime",
@@ -1893,7 +1907,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 307,
+            "line": 320,
             "description": "Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.",
             "itemtype": "method",
             "name": "linearRampToValueAtTime",
@@ -1914,7 +1928,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 340,
+            "line": 353,
             "description": "Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.",
             "itemtype": "method",
             "name": "cancelScheduledValues",
@@ -1930,7 +1944,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 361,
+            "line": 374,
             "description": "Static helper method to create Psuedo parameters which are not connected to\n       any WebAudio AudioParams.",
             "itemtype": "method",
             "name": "createPsuedoParam",
@@ -2004,19 +2018,19 @@
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Activity.js:196"
+            "line": " src/lib/models/Activity.js:198"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Activity.js:196"
+            "line": " src/lib/models/Activity.js:198"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Activity.js:205"
+            "line": " src/lib/models/Activity.js:209"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Activity.js:205"
+            "line": " src/lib/models/Activity.js:209"
         },
         {
             "message": "unknown tag: minvalue",
@@ -2052,43 +2066,43 @@
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:155"
+            "line": " src/lib/models/Looper.js:157"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:155"
+            "line": " src/lib/models/Looper.js:157"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:164"
+            "line": " src/lib/models/Looper.js:168"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:164"
+            "line": " src/lib/models/Looper.js:168"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:173"
+            "line": " src/lib/models/Looper.js:179"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:173"
+            "line": " src/lib/models/Looper.js:179"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:182"
+            "line": " src/lib/models/Looper.js:190"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:182"
+            "line": " src/lib/models/Looper.js:190"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:191"
+            "line": " src/lib/models/Looper.js:202"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:191"
+            "line": " src/lib/models/Looper.js:202"
         },
         {
             "message": "unknown tag: minvalue",
