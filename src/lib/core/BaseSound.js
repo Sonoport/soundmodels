@@ -136,13 +136,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         } else if ( destination.inputNode instanceof AudioNode ) {
             this.releaseGainNode.connect( destination.inputNode, output, input );
         } else {
-            throw {
-                name: "No Input Connection Exception",
-                message: "Attempts to connect " + ( typeof output ) + " to " + ( typeof this ),
-                toString: function () {
-                    return this.name + ": " + this.message;
-                }
-            };
+            throw ( new Error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) ) );
         }
     };
 

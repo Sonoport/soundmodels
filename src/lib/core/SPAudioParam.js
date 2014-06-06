@@ -82,13 +82,7 @@ define(
                     // Sanitize the value with min/max
                     // bounds first.
                     if ( typeof value !== typeof defaultValue ) {
-                        throw {
-                            name: "Incorrect value type Exception",
-                            message: "Attempt to set a " + ( typeof defaultValue ) + " parameter to a " + ( typeof value ) + " value",
-                            toString: function () {
-                                return this.name + ": " + this.message;
-                            }
-                        };
+                        throw ( new Error( "Incorrect value Type " - "Attempt to set a " + ( typeof defaultValue ) + " parameter to a " + ( typeof value ) + " value" ) );
                     }
                     // Sanitize the value with min/max
                     // bounds first.
