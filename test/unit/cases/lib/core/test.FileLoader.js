@@ -1,6 +1,12 @@
 require( [ 'core/FileLoader' ], function ( FileLoader ) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     context = new AudioContext();
+    var mp3File = "audio/bullet.mp3";
+    var markedWavFile = "audio/sineloopstereomarked.wav";
+    var markedStereoMp3File = "audio/sineloopstereomarked.mp3";
+    var markedMonoMp3File = "audio/sineloopmonomarked.mp3";
+    var unmarkedMonoWavFile = "audio/sineloopmono.wav";
+    var unmarkedStereoWavFile = "audio/sineloopstereo.wav";
 
     describe( 'FileLoader.js', function () {
 
@@ -55,7 +61,7 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
         describe( '#getBuffer', function () {
 
             it( "should return a buffer if file is loaded", function ( done ) {
-                var fileLoader = new FileLoader( 'audio/bullet.mp3', context, function ( response ) {
+                var fileLoader = new FileLoader( mp3File, context, function ( response ) {
                     var bufferType = Object.prototype.toString.call( fileLoader.getBuffer() );
                     expect( bufferType )
                         .toEqual( '[object AudioBuffer]' );
@@ -79,7 +85,7 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
         describe( '#getRawBuffer', function () {
 
             it( "should return the original unsliced buffer", function ( done ) {
-                var fileLoader = new FileLoader( 'audio/bullet.mp3', context, function ( response ) {
+                var fileLoader = new FileLoader( mp3File, context, function ( response ) {
                     var bufferType = Object.prototype.toString.call( fileLoader.getRawBuffer() );
                     expect( fileLoader.getBuffer()
                         .length )
@@ -92,7 +98,7 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
             } );
 
             it( "should have a buffer length greater than the sliced buffer", function ( done ) {
-                var fileLoader = new FileLoader( 'audio/bullet.mp3', context, function ( response ) {
+                var fileLoader = new FileLoader( mp3File, context, function ( response ) {
                     var buffer = fileLoader.getBuffer();
                     var rawBuffer = fileLoader.getRawBuffer();
                     expect( buffer.length )
@@ -115,7 +121,7 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
 
         describe( '#isLoaded', function () {
             it( "should return true if buffer is loaded", function ( done ) {
-                var fileLoader = new FileLoader( 'audio/bullet.mp3', context, function ( response ) {
+                var fileLoader = new FileLoader( mp3File, context, function ( response ) {
                     expect( response )
                         .toEqual( true );
                     expect( fileLoader.isLoaded() )

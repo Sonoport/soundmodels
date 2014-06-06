@@ -19,6 +19,7 @@ define( function () {
 
         var nLoopStart_ = 0;
         var nLoopEnd_ = 0;
+        var nMarked_ = true;
 
         /**
          * Length of PRE and POSTFIX Silence used in Loop Marking
@@ -215,10 +216,12 @@ define( function () {
 
         if ( ( !findMarkers_( channels_ ) ) ) {
             findSilence_( channels_ );
+            nMarked_ = false;
         }
 
         // return the markers which were found
         return {
+            marked: nMarked_,
             start: nLoopStart_,
             end: nLoopEnd_
         };
