@@ -169,6 +169,9 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      * @param {Number} [when] Time (in seconds) the sound should stop playing
      */
     BaseSound.prototype.stop = function ( when ) {
+
+        var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
+
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         this.isPlaying = false;
         if ( typeof when === "undefined" ) {
@@ -176,6 +179,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         }
         // cancel all scheduled ramps on this releaseGainNode
         this.releaseGainNode.gain.cancelScheduledValues( when );
+        this.releaseGainNode.gain.setValueAtTime( 1, when + FADE_TIME_PAD );
     };
 
     /**

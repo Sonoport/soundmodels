@@ -145,14 +145,31 @@
             function generateInterface( snd ) {
                 $( document )
                     .ready( function () {
+                        $( "#startbtn" )
+                            .attr( "disabled", false );
                         $( "#playbtn" )
                             .attr( "disabled", false );
                         $( "#pausebtn" )
                             .attr( "disabled", true );
                         $( "#stopbtn" )
                             .attr( "disabled", true );
+                        $( "#releasebtn" )
+                            .attr( "disabled", true );
 
                         // toggle sound
+                        $( "#startbtn" )
+                            .click( function () {
+                                // toggle play button
+                                //console.log( "play" );
+                                snd.start( 0 );
+                                $( "#pausebtn" )
+                                    .attr( "disabled", false );
+                                $( "#stopbtn" )
+                                    .attr( "disabled", false );
+                                $( "#releasebtn" )
+                                    .attr( "disabled", false );
+                            } );
+
                         $( "#playbtn" )
                             .click( function () {
                                 // toggle play button
@@ -162,7 +179,10 @@
                                     .attr( "disabled", false );
                                 $( "#stopbtn" )
                                     .attr( "disabled", false );
+                                $( "#releasebtn" )
+                                    .attr( "disabled", false );
                             } );
+
                         $( "#pausebtn" )
                             .click( function () {
                                 //console.log( "pause" );
@@ -172,6 +192,12 @@
                             .click( function () {
                                 //console.log( "stop" );
                                 snd.stop( 0 );
+                            } );
+
+                        $( "#releasebtn" )
+                            .click( function () {
+                                //console.log( "stop" );
+                                snd.release();
                             } );
 
                         // Set Looper url sources
