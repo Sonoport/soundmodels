@@ -1,4 +1,6 @@
 require( [ 'core/Converter' ], function ( Converter ) {
+    "use strict";
+
     describe( 'Converter.js', function () {
         describe( '#Class{}', function () {
             it( "should be able to convert semitones to ratio correctly", function () {

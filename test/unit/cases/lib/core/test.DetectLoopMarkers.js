@@ -1,4 +1,5 @@
 require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
+    "use strict";
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
     var mp3File = "audio/bullet.mp3";
@@ -61,7 +62,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
         describe( '#marked sound - start', function () {
             it( "should detect start marker if available", function ( done ) {
                 loadAndDecode( markedWavFile, function ( buffer ) {
-                    markers = detectLoopMarkers( buffer );
+                    var markers = detectLoopMarkers( buffer );
                     expect( markers.marked )
                         .toEqual( true );
                     expect( markers.start )
@@ -72,7 +73,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
 
             it( "should detect start marker if available in a Mono file", function ( done ) {
                 loadAndDecode( markedMonoMp3File, function ( buffer ) {
-                    markers = detectLoopMarkers( buffer );
+                    var markers = detectLoopMarkers( buffer );
                     expect( markers.marked )
                         .toEqual( true );
                     expect( markers.start )
@@ -83,7 +84,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
 
             it( "should detect start marker if available in a Stereo file", function ( done ) {
                 loadAndDecode( markedStereoMp3File, function ( buffer ) {
-                    markers = detectLoopMarkers( buffer );
+                    var markers = detectLoopMarkers( buffer );
                     expect( markers.marked )
                         .toEqual( true );
                     expect( markers.start )
@@ -96,7 +97,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
         describe( '#unmarked sound - sound', function () {
             it( "should detect start of sound if marker is not available", function ( done ) {
                 loadAndDecode( unmarkedStereoWavFile, function ( buffer ) {
-                    markers = detectLoopMarkers( buffer );
+                    var markers = detectLoopMarkers( buffer );
                     expect( markers.marked )
                         .toEqual( false );
                     expect( markers.start )
@@ -106,7 +107,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
             } );
             it( "should detect start of sound if marker is not available", function ( done ) {
                 loadAndDecode( unmarkedMonoWavFile, function ( buffer ) {
-                    markers = detectLoopMarkers( buffer );
+                    var markers = detectLoopMarkers( buffer );
                     expect( markers.marked )
                         .toEqual( false );
                     expect( markers.start )
@@ -119,7 +120,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
         describe( '#marked sound - end', function () {
             it( "should detect end marker if available", function ( done ) {
                 loadAndDecode( markedWavFile, function ( buffer ) {
-                    markers = detectLoopMarkers( buffer );
+                    var markers = detectLoopMarkers( buffer );
                     expect( markers.marked )
                         .toEqual( true );
                     expect( markers.end )
@@ -130,7 +131,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
 
             it( "should detect end marker if available in a Stereo file", function ( done ) {
                 loadAndDecode( markedStereoMp3File, function ( buffer ) {
-                    markers = detectLoopMarkers( buffer );
+                    var markers = detectLoopMarkers( buffer );
                     expect( markers.marked )
                         .toEqual( true );
                     expect( markers.end )
@@ -141,7 +142,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
 
             it( "should detect end marker if available in a Mono file", function ( done ) {
                 loadAndDecode( markedMonoMp3File, function ( buffer ) {
-                    markers = detectLoopMarkers( buffer );
+                    var markers = detectLoopMarkers( buffer );
                     expect( markers.marked )
                         .toEqual( true );
                     expect( markers.end )
@@ -154,7 +155,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
         describe( 'unmarked sound - end', function () {
             it( "should detect start of sound if marker is not available", function ( done ) {
                 loadAndDecode( unmarkedStereoWavFile, function ( buffer ) {
-                    markers = detectLoopMarkers( buffer );
+                    var markers = detectLoopMarkers( buffer );
                     expect( markers.marked )
                         .toEqual( false );
                     expect( markers.end )
@@ -165,7 +166,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
 
             it( "should detect start of sound if marker is not available", function ( done ) {
                 loadAndDecode( unmarkedMonoWavFile, function ( buffer ) {
-                    markers = detectLoopMarkers( buffer );
+                    var markers = detectLoopMarkers( buffer );
                     expect( markers.marked )
                         .toEqual( false );
                     expect( markers.end )

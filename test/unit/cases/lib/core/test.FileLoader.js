@@ -1,6 +1,7 @@
 require( [ 'core/FileLoader' ], function ( FileLoader ) {
+    "use strict";
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    context = new AudioContext();
+    var context = new AudioContext();
     var mp3File = "audio/bullet.mp3";
     var markedWavFile = "audio/sineloopstereomarked.wav";
     var markedStereoMp3File = "audio/sineloopstereomarked.mp3";
@@ -9,6 +10,27 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
     var unmarkedStereoWavFile = "audio/sineloopstereo.wav";
 
     describe( 'FileLoader.js', function () {
+
+        var customMatchers = {
+            toBeInstanceOf: function () {
+                return {
+                    compare: function ( actual, expected ) {
+                        var result = {};
+                        result.pass = actual instanceof expected;
+                        if ( result.pass ) {
+                            result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
+                        } else {
+                            result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
+                        }
+                        return result;
+                    }
+                };
+            }
+        };
+
+        beforeEach( function () {
+            jasmine.addMatchers( customMatchers );
+        } );
 
         describe( '#new FileLoader( URL, context, onloadCallback )', function () {
 
@@ -62,9 +84,8 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
 
             it( "should return a buffer if file is loaded", function ( done ) {
                 var fileLoader = new FileLoader( mp3File, context, function ( response ) {
-                    var bufferType = Object.prototype.toString.call( fileLoader.getBuffer() );
-                    expect( bufferType )
-                        .toEqual( '[object AudioBuffer]' );
+                    expect( fileLoader.getBuffer() )
+                        .toBeInstanceOf( AudioBuffer );
                     done();
                 } );
 
@@ -85,20 +106,19 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
         describe( '#getRawBuffer', function () {
 
             it( "should return the original unsliced buffer", function ( done ) {
-                var fileLoader = new FileLoader( mp3File, context, function ( response ) {
-                    var bufferType = Object.prototype.toString.call( fileLoader.getRawBuffer() );
+                var fileLoader = new FileLoader( mp3File, context, function () {
                     expect( fileLoader.getBuffer()
                         .length )
                         .not.toEqual( fileLoader.getRawBuffer()
                             .length );
-                    expect( bufferType )
-                        .toEqual( '[object AudioBuffer]' );
+                    expect( fileLoader.getRawBuffer() )
+                        .toBeInstanceOf( AudioBuffer );
                     done();
                 } );
             } );
 
             it( "should have a buffer length greater than the sliced buffer", function ( done ) {
-                var fileLoader = new FileLoader( mp3File, context, function ( response ) {
+                var fileLoader = new FileLoader( mp3File, context, function () {
                     var buffer = fileLoader.getBuffer();
                     var rawBuffer = fileLoader.getRawBuffer();
                     expect( buffer.length )
