@@ -182,6 +182,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              *
              */
             this.start = function ( when ) {
+                if ( !this.isInitialized ) {
+                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                }
                 BaseSound.prototype.start.call( this, when );
                 webAudioDispatch( extenderCallback, when, this.audioContext );
             };

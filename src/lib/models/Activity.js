@@ -237,6 +237,9 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              *
              */
             this.play = function ( when ) {
+                if ( !this.isInitialized ) {
+                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                }
                 internalLooper_.play( when );
                 BaseSound.prototype.play.call( this, when );
             };
@@ -251,6 +254,9 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              * @param {Number} [duration] Duration of the portion (in seconds) to be played
              */
             this.start = function ( when, offset, duration ) {
+                if ( !this.isInitialized ) {
+                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                }
                 internalLooper_.start( when, offset, duration );
                 BaseSound.prototype.start.call( this, when, offset, duration );
             };

@@ -91,7 +91,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     /* 0.001 - 60dB Drop
                         e(-n) = 0.001; - Decay Rate of setTargetAtTime.
                         n = 6.90776;
-                    */
+                        */
                     var t60multiplier = 6.90776;
 
                     var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
@@ -222,6 +222,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              */
             this.play = function () {
 
+                if ( !this.isInitialized ) {
+                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                }
+
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource, index ) {
                         var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : self.startPoint.value * thisSource.buffer.duration;
@@ -245,6 +249,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
              */
             this.start = function ( when, offset, duration, attackDuration ) {
+                if ( !this.isInitialized ) {
+                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                }
+
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource ) {
                         if ( typeof offset == 'undefined' || offset === null ) {
