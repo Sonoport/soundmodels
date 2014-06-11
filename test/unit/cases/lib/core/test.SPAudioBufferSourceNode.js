@@ -60,6 +60,34 @@ require( [ 'core/SPAudioBufferSourceNode', 'core/SPPlaybackRateParam' ], functio
             } );
         } );
 
+        describe( '#playbackPosition ', function () {
+            it( "should be have a parameter called playbackPosition", function () {
+                var sourceNode = new SPAudioBufferSourceNode( context );
+                expect( sourceNode.playbackPosition )
+                    .toBeDefined();
+            } );
+        } );
+
+        describe( '#playbackPosition ', function () {
+            it( "playbackPosition should change when a Source is played", function () {
+                var sourceNode = new SPAudioBufferSourceNode( context );
+                expect( sourceNode.playbackPosition )
+                    .toBeDefined();
+                sourceNode.connect( context.destination );
+                sourceNode.buffer = toneBuffer;
+                sourceNode.loop = true;
+                expect( sourceNode.playbackPosition )
+                    .toBe( 0 );
+                sourceNode.start( 0 );
+                setTimeout( function () {
+                    sourceNode.stop( 0 );
+                    expect( sourceNode.playbackPosition )
+                        .not.toBe( 0 );
+                    done();
+                }, 500 );
+            } );
+        } );
+
         describe( '#connect / #disconnect should', function () {
             it( "should be able to connect to and disconnect from destination", function () {
                 var sourceNode = new SPAudioBufferSourceNode( context );
