@@ -165,7 +165,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
              * @method queueStart
              * @param {Number} time Time (in seconds) at which the voice will start.
              * @param {Number} eventID Arbitary ID which is common for all related events.
-             * @param {Number} [offset] The starting position of the playhead.
+             * @param {Number} [offset] The starting in seconds position of the playhead.
              * @param {Number} [attackDuration] Attack Duration (in seconds) for attack envelope during start.
              */
             this.queueStart = function ( time, eventID, offset, attackDuration ) {

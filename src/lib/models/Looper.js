@@ -244,7 +244,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              *
              * @method start
              * @param {Number} when The delay in seconds before playing the sound
-             * @param {Number} [offset] The starting position of the playhead
+             * @param {Number} [offset] The starting position of the playhead in seconds
              * @param {Number} [duration] Duration of the portion (in seconds) to be played
              * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
              */

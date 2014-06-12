@@ -29,6 +29,7 @@ module.exports = function ( grunt ) {
             temp: 'src/lib/temp',
             player: 'src/jsmplayer',
             unittest: 'test/unit',
+            integration: 'test/integration/',
             manualtest: 'test/manual'
         },
 
@@ -349,6 +350,14 @@ module.exports = function ( grunt ) {
                     open: true,
                     livereload: true
                 }
+            },
+            integration: {
+                options: {
+                    port: 8000,
+                    base: [ '<%= dirs.build %>', '<%= dirs.integration %>' ],
+                    open: true,
+                    livereload: true
+                }
             }
         },
 
@@ -406,5 +415,8 @@ module.exports = function ( grunt ) {
 
     // Jasmine Unit Tests
     grunt.registerTask( 'unittest', [ 'dev-build', 'connect:unittest', 'concurrent:watchTests' ] );
+
+    // Jasmine Integration Tests
+    grunt.registerTask( 'integration', [ 'dev-build', 'connect:integration', 'concurrent:watchTests' ] );
 
 };
