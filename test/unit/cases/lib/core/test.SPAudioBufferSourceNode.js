@@ -69,7 +69,7 @@ require( [ 'core/SPAudioBufferSourceNode', 'core/SPPlaybackRateParam' ], functio
         } );
 
         describe( '#playbackPosition ', function () {
-            it( "playbackPosition should change when a Source is played", function () {
+            it( "playbackPosition should change when a Source is played", function ( done ) {
                 var sourceNode = new SPAudioBufferSourceNode( context );
                 expect( sourceNode.playbackPosition )
                     .toBeDefined();
