@@ -1,5 +1,3 @@
-"use strict";
-
 var spies = {
     start: jasmine.createSpy( 'start' ),
     stop: jasmine.createSpy( 'stop' ),
@@ -10,20 +8,29 @@ var spies = {
     connect: jasmine.createSpy( 'connect' ),
     disconnect: jasmine.createSpy( 'disconnect' ),
     listParams: jasmine.createSpy( 'listParams' ),
-    setValueAtTime: jasmine.createSpy( 'setValueAtTime' )
+    startPointObj: {},
+    riseTimeObj: {
+        setValueAtTime: jasmine.createSpy( 'setValueAtTime' )
+    },
+    maxLoopsObj: {},
+    decayTimeObj: {
+        setValueAtTime: jasmine.createSpy( 'decayTime' )
+    },
+    playSpeedObj: {
+        setValueAtTime: jasmine.createSpy( 'playSpeed' )
+    }
 };
 
 var looperStub = {
     "models/Looper": function () {
+        "use strict";
         return {
             isInitialized: true,
-            playSpeed: {
-                setValueAtTime: spies.setValueAtTime
-            },
-            riseTime: {},
-            decayTime: {},
-            startPoint: {},
-            maxLoops: {},
+            playSpeed: spies.playSpeedObj,
+            riseTime: spies.riseTimeObj,
+            decayTime: spies.decayTimeObj,
+            startPoint: spies.startPointObj,
+            maxLoops: spies.maxLoopsObj,
             start: spies.start,
             stop: spies.stop,
             play: spies.play,
@@ -40,6 +47,7 @@ var looperStub = {
 var requireWithStubbedLooper = stubbedRequire( looperStub );
 
 requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
+    "use strict";
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
     makeContextRun( context );
@@ -64,9 +72,23 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
             }
         };
 
+        function loadAndDecode( URL, ondecode ) {
+            var request = new XMLHttpRequest();
+
+            request.open( 'GET', URL, true );
+            request.responseType = 'arraybuffer';
+
+            request.onload = function () {
+                context.decodeAudioData( request.response, function ( buffer ) {
+                    ondecode( buffer );
+                } );
+            };
+            request.send();
+        }
+
         function resetAllSpies() {
             for ( var key in spies ) {
-                if ( spies.hasOwnProperty( key ) ) {
+                if ( spies.hasOwnProperty( key ) && spies[ key ].calls ) {
                     spies[ key ].calls.reset();
                 }
             }
@@ -113,7 +135,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                     expect( spies.start )
                         .toHaveBeenCalledWith( jasmine.any( Number ), offset, jasmine.any( Object ), attackDuration );
                     done();
-                }, 200 );
+                }, 400 );
             } );
         } );
 
@@ -123,7 +145,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var time = ( Math.random() - 0.1 ) * 0.2 + context.currentTime;
                 var eventID = parseInt( Math.random() * 10000 );
                 var offset = Math.random() * 100;
-                var attackDuration = Math.random() * 10
+                var attackDuration = Math.random() * 10;
                 expect( function () {
                     queue.queueStart( time, eventID, offset, attackDuration );
                     queue.queueStop( time + 0.001, eventID, offset, attackDuration );
@@ -133,14 +155,14 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                     expect( spies.pause )
                         .toHaveBeenCalled();
                     done();
-                }, 200 );
+                }, 400 );
             } );
 
             it( ' an enqued stop event a corresponding start event should be dropped', function ( done ) {
                 var time = context.currentTime;
                 var eventID = parseInt( Math.random() * 10000 );
                 var offset = Math.random() * 100;
-                var attackDuration = Math.random() * 10
+                var attackDuration = Math.random() * 10;
                 expect( function () {
                     queue.queueStop( time, eventID, offset, attackDuration );
                 } )
@@ -149,7 +171,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                     expect( spies.pause )
                         .not.toHaveBeenCalled();
                     done();
-                }, 200 );
+                }, 400 );
             } );
         } );
 
@@ -169,14 +191,14 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                     expect( spies.release )
                         .toHaveBeenCalledWith( jasmine.any( Number ), attackDuration );
                     done();
-                }, 200 );
+                }, 400 );
             } );
 
             it( ' an enqued stop event a corresponding start event should be dropped', function ( done ) {
                 var time = context.currentTime;
                 var eventID = parseInt( Math.random() * 10000 );
                 var offset = Math.random() * 100;
-                var attackDuration = Math.random() * 10
+                var attackDuration = Math.random() * 10;
                 expect( function () {
                     queue.queueRelease( time, eventID, offset, attackDuration );
                 } )
@@ -185,13 +207,13 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                     expect( spies.release )
                         .not.toHaveBeenCalled();
                     done();
-                }, 200 );
+                }, 400 );
             } );
         } );
 
         // this.queueSetParameter = function ( time, eventID, paramName, paramValue ) {
         describe( '#queueSetParameter ', function () {
-            it( ' should be able to enqueue a setParameter event without an error if parameter exists', function ( done ) {
+            it( ' should be able to enqueue a setParameter event without an error of playSpeed', function ( done ) {
                 var time = ( Math.random() - 0.1 ) * 0.2 + context.currentTime;
                 var eventID = parseInt( Math.random() * 10000 );
                 var paramValue = Math.random() * 10;
@@ -201,7 +223,23 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 } )
                     .not.toThrowError();
                 window.setTimeout( function () {
-                    expect( spies.setValueAtTime )
+                    expect( spies.playSpeedObj.setValueAtTime )
+                        .toHaveBeenCalled();
+                    done();
+                }, 400 );
+            } );
+
+            it( ' should be able to enqueue a setParameter event without an error on decayTime', function ( done ) {
+                var time = ( Math.random() - 0.1 ) * 0.2 + context.currentTime;
+                var eventID = parseInt( Math.random() * 10000 );
+                var paramValue = Math.random() * 10;
+                expect( function () {
+                    queue.queueStart( time, eventID );
+                    queue.queueSetParameter( time + 0.001, eventID, 'decayTime', paramValue );
+                } )
+                    .not.toThrowError();
+                window.setTimeout( function () {
+                    expect( spies.decayTimeObj.setValueAtTime )
                         .toHaveBeenCalled();
                     done();
                 }, 400 );
@@ -213,85 +251,115 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var paramValue = Math.random() * 10;
                 expect( function () {
                     queue.queueStart( time, eventID );
-                    queue.queueSetParameter( time + 0.001, eventID, 'asasdasd', paramValue );
+                    queue.queueSetParameter( time + 0.001, eventID, 'randomParameter', paramValue );
                 } )
                     .not.toThrowError();
-
-                window.setTimeout( function () {
-                    expect( spies.setValueAtTime )
-                        .not.toHaveBeenCalled();
-                    done();
-                }, 400 );
+                done();
             } );
         } );
 
         // this.queueSetSource = function ( time, eventID, sourceBuffer ) {
         describe( '#queueSetSource ', function () {
             it( ' should be able to enqueue a setSource event without an error', function ( done ) {
-                expect( function () {
-                    var time = ( Math.random() - 0.1 ) * 10 + context.currentTime;
+
+                loadAndDecode( "audio/sineloopstereomarked.wav", function ( buffer ) {
+                    var time = ( Math.random() - 0.1 ) * 0.2 + context.currentTime;
                     var eventID = parseInt( Math.random() * 10000 );
-                    var offset = Math.random() * 100;
-                    var attackDuration = Math.random() * 10;
-                    queue.queueStart( time, eventID, offset, attackDuration );
+                    expect( function () {
+                        queue.queueSetSource( time, eventID, buffer );
+                    } )
+                        .not.toThrowError();
+
+                    window.setTimeout( function () {
+                        expect( spies.setSources )
+                            .toHaveBeenCalled();
+                        done();
+                    }, 400 );
+                } );
+            } );
+
+            it( ' should be able to throw an error if the source is bad', function ( done ) {
+                var time = ( Math.random() - 0.1 ) * 0.2 + context.currentTime;
+                var eventID = parseInt( Math.random() * 10000 );
+                var offset = Math.random() * 100;
+                var attackDuration = Math.random() * 10;
+                expect( function () {
+                    queue.queueStart( time, eventID, null );
                 } )
                     .not.toThrowError();
-                done();
+
+                window.setTimeout( function () {
+                    expect( spies.setSources )
+                        .not.toHaveBeenCalled();
+                    done();
+                }, 400 );
             } );
         } );
 
-        // this.queueUpdate = function ( eventType, eventID, propertyName, propertyValue ) {
-        describe( '#queueUpdate ', function () {
-            it( ' should be able to update an event without an error', function ( done ) {
-                expect( function () {
-                    var time = ( Math.random() - 0.1 ) * 10 + context.currentTime;
-                    var eventID = parseInt( Math.random() * 10000 );
-                    var offset = Math.random() * 100;
-                    var attackDuration = Math.random() * 10;
-                    queue.queueStart( time, eventID, offset, attackDuration );
-                } )
-                    .not.toThrowError();
-                done();
-            } );
-        } );
+        // // this.queueUpdate = function ( eventType, eventID, propertyName, propertyValue ) {
+        // describe( '#queueUpdate ', function () {
+        //     it( ' should be able to update an event without an error', function ( done ) {
+        //         expect( function () {
+        //             var time = ( Math.random() - 0.1 ) * 10 + context.currentTime;
+        //             var eventID = parseInt( Math.random() * 10000 );
+        //             var offset = Math.random() * 100;
+        //             var attackDuration = Math.random() * 10;
+        //             queue.queueStart( time, eventID, offset, attackDuration );
+        //         } )
+        //             .not.toThrowError();
+        //         done();
+        //     } );
+        // } );
 
         // this.stop = function ( when ) {
         describe( '#pause/stop ', function () {
-            it( ' should be able to stop the queue without errors', function ( done ) {
+            it( ' should be able to pause the queue without errors', function ( done ) {
                 expect( function () {
-                    var time = ( Math.random() - 0.1 ) * 10 + context.currentTime;
-                    var eventID = parseInt( Math.random() * 10000 );
-                    var offset = Math.random() * 100;
-                    var attackDuration = Math.random() * 10;
-                    queue.stop( time, eventID, offset, attackDuration );
+                    queue.pause();
                 } )
                     .not.toThrowError();
                 done();
             } );
 
-            it( ' should be able to pause the queue without errors', function ( done ) {
+            it( ' should be able to stop the queue without errors', function ( done ) {
+                var time = ( Math.random() - 0.1 ) * 0.2 + context.currentTime;
+                var eventID = parseInt( Math.random() * 10000 );
+                var offset = Math.random() * 100;
+                var attackDuration = Math.random() * 10;
                 expect( function () {
-                    var time = ( Math.random() - 0.1 ) * 10 + context.currentTime;
-                    var eventID = parseInt( Math.random() * 10000 );
-                    var offset = Math.random() * 100;
-                    var attackDuration = Math.random() * 10;
-                    queue.pause( time, eventID, offset, attackDuration );
+                    queue.queueStart( time, eventID, offset, attackDuration );
+                    queue.stop( time + 0.1 );
                 } )
                     .not.toThrowError();
-                done();
+                window.setTimeout( function () {
+                    expect( spies.setSources )
+                        .not.toHaveBeenCalled();
+                    expect( spies.connect )
+                        .not.toHaveBeenCalled();
+                    expect( spies.release )
+                        .toHaveBeenCalled();
+                    expect( spies.riseTimeObj.setValueAtTime )
+                        .not.toHaveBeenCalled();
+                    done();
+                }, 400 );
             } );
+
         } );
 
         // this.connect = function ( destination, output, input ) {
         // this.disconnect = function ( outputIndex ) {
         describe( '#connect/disconnect ', function () {
-            it( ' should be able to enqueue a setParameter event without an error if parameter doesn\'t exists', function ( done ) {
+            it( ' should be able to connect to an AudioNode', function ( done ) {
                 expect( function () {
-                    var time = ( Math.random() - 0.1 ) * 10 + context.currentTime;
-                    var eventID = parseInt( Math.random() * 10000 );
-                    var offset = Math.random() * 100;
-                    var attackDuration = Math.random() * 10;
-                    queue.queueStart( time, eventID, offset, attackDuration );
+                    queue.connect( context.destination );
+                } )
+                    .not.toThrowError();
+                done();
+            } );
+            it( ' should be able to disconnect from an AudioNode', function ( done ) {
+                expect( function () {
+                    queue.connect( context.destination );
+                    queue.connect();
                 } )
                     .not.toThrowError();
                 done();
