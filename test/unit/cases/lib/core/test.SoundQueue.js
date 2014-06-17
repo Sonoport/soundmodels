@@ -296,20 +296,31 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
             } );
         } );
 
-        // // this.queueUpdate = function ( eventType, eventID, propertyName, propertyValue ) {
-        // describe( '#queueUpdate ', function () {
-        //     it( ' should be able to update an event without an error', function ( done ) {
-        //         expect( function () {
-        //             var time = ( Math.random() - 0.1 ) * 10 + context.currentTime;
-        //             var eventID = parseInt( Math.random() * 10000 );
-        //             var offset = Math.random() * 100;
-        //             var attackDuration = Math.random() * 10;
-        //             queue.queueStart( time, eventID, offset, attackDuration );
-        //         } )
-        //             .not.toThrowError();
-        //         done();
-        //     } );
-        // } );
+        // this.queueUpdate = function ( eventType, eventID, propertyName, propertyValue ) {
+        describe( '#queueUpdate ', function () {
+            it( ' should be able to update an event without an error', function ( done ) {
+                var time = context.currentTime;
+                var eventID = parseInt( Math.random() * 10000 );
+                var offset = Math.random() * 100;
+                var attackDuration = Math.random() * 10;
+                expect( function () {
+                    queue.queueStart( time, eventID, offset, attackDuration );
+                    queue.queueSetParameter( time + 0.2, eventID, "riseTime", attackDuration );
+                } )
+                    .not.toThrowError();
+
+                expect( function () {
+                    queue.queueUpdate( "QESETPARAM", eventID, "paramValue", attackDuration + 1 );
+                } )
+                    .not.toThrowError();
+
+                window.setTimeout( function () {
+                    expect( spies.riseTimeObj.setValueAtTime )
+                        .toHaveBeenCalledWith( attackDuration + 1, time + 0.2 );
+                    done();
+                }, 600 );
+            } );
+        } );
 
         // this.stop = function ( when ) {
         describe( '#pause/stop ', function () {
@@ -328,10 +339,24 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var attackDuration = Math.random() * 10;
                 expect( function () {
                     queue.queueStart( time, eventID, offset, attackDuration );
-                    queue.stop( time + 0.1 );
+                    queue.queueStart( time + 0.3, eventID, offset, attackDuration );
+                    queue.queueStart( time + 0.5, eventID, offset, attackDuration );
+                    queue.queueSetParameter( time + 0.4, eventID, "riseTime ", attackDuration );
                 } )
                     .not.toThrowError();
+                done();
+
                 window.setTimeout( function () {
+                    expect( function () {
+                        queue.pause();
+                        spies.start.calls.reset();
+                    } )
+                        .not.toThrowError();
+                }, 200 );
+
+                window.setTimeout( function () {
+                    expect( spies.start )
+                        .not.toHaveBeenCalled();
                     expect( spies.setSources )
                         .not.toHaveBeenCalled();
                     expect( spies.connect )
@@ -342,8 +367,8 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                         .not.toHaveBeenCalled();
                     done();
                 }, 400 );
-            } );
 
+            } );
         } );
 
         // this.connect = function ( destination, output, input ) {
