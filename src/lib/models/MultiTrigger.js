@@ -28,8 +28,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             var self = this;
             this.maxSources = Config.MAX_VOICES;
-            this.numberOfInputs = 1;
-            this.numberOfOutputs = 1;
             this.modelName = "MultiTrigger";
 
             var lastEventTime_ = 0;
@@ -211,6 +209,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              *
              */
             this.start = function ( when ) {
+                if ( !this.isInitialized ) {
+                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                }
                 BaseSound.prototype.start.call( this, when );
                 webAudioDispatch( multiTiggerCallback, when, this.audioContext );
             };

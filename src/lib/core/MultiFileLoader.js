@@ -22,6 +22,7 @@ define( [ 'core/FileLoader' ],
 
             //Private variables
             var self = this;
+            this.audioContext = audioContext;
             var sourcesToLoad_ = 0;
             var loadedAudioBuffers_ = [];
 
@@ -46,6 +47,8 @@ define( [ 'core/FileLoader' ],
                     var fileLoader = new FileLoader( sound, self.audioContext, function ( status ) {
                         if ( status ) {
                             onSingleLoad( status, fileLoader.getBuffer() );
+                        } else {
+                            onSingleLoad( status );
                         }
                     }, function ( progressEvent ) {
                         if ( onProgressCallback && typeof onProgressCallback === "function" ) {
@@ -55,24 +58,19 @@ define( [ 'core/FileLoader' ],
                 } else if ( parameterType === "[object AudioBuffer]" ) {
                     onSingleLoad( true, sound );
                 } else {
-                    throw {
-                        name: "Incorrect Parameter type Exception",
-                        message: "Looper argument is not a URL or AudioBuffer",
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    throw ( new Error( "Incorrect Parameter Type - Source is not a URL or AudioBuffer" ) );
                 }
             }
 
             function onSingleLoad( status, audioBuffer ) {
+                if ( status ) {
+                    loadedAudioBuffers_.push( audioBuffer );
+                }
                 sourcesToLoad_--;
-                loadedAudioBuffers_.push( audioBuffer );
                 if ( sourcesToLoad_ === 0 ) {
-                    onAllLoad( status, loadedAudioBuffers_ );
+                    onAllLoad( loadedAudioBuffers_.length === sounds.length, loadedAudioBuffers_ );
                 }
             }
-
             init();
         }
 

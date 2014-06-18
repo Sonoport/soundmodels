@@ -25,11 +25,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             // Call superclass constructor
             BaseSound.call( this, context );
-
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
-            this.numberOfInputs = 1;
-            this.numberOfOutputs = 1;
             this.modelName = "Trigger";
 
             // Private vars
@@ -147,6 +144,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              *
              */
             this.start = function ( when ) {
+                if ( !this.isInitialized ) {
+                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                }
 
                 if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
                     when = this.audioContext.currentTime;

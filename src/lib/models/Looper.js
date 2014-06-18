@@ -23,10 +23,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             }
             // Call superclass constructor
             BaseSound.call( this, context );
-
             this.maxSources = Config.MAX_VOICES;
-            this.numberOfInputs = 1;
-            this.numberOfOutputs = 1;
             this.modelName = "Looper";
 
             // Private vars
@@ -94,7 +91,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     /* 0.001 - 60dB Drop
                         e(-n) = 0.001; - Decay Rate of setTargetAtTime.
                         n = 6.90776;
-                    */
+                        */
                     var t60multiplier = 6.90776;
 
                     var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
@@ -127,13 +124,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 } );
                 sources_ = [];
                 if ( parameterType === "[object Array]" && sounds.length > self.maxSources ) {
-                    throw {
-                        name: "Unsupported number of sources",
-                        message: "This sound only supports a maximum of " + self.maxSources + " sources.",
-                        toString: function () {
-                            return this.name + ": " + this.message;
-                        }
-                    };
+                    throw ( new Error( "Unsupported number of Sources - Looper sound only supports a maximum of " + self.maxSources + " Sources." ) );
                 } else if ( ( parameterType === "[object AudioBuffer]" ) ) {
                     onAllLoad( true, [ sounds ] );
                 } else {
@@ -231,6 +222,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              */
             this.play = function () {
 
+                if ( !this.isInitialized ) {
+                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                }
+
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource, index ) {
                         var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : self.startPoint.value * thisSource.buffer.duration;
@@ -249,11 +244,15 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              *
              * @method start
              * @param {Number} when The delay in seconds before playing the sound
-             * @param {Number} [offset] The starting position of the playhead
+             * @param {Number} [offset] The starting position of the playhead in seconds
              * @param {Number} [duration] Duration of the portion (in seconds) to be played
              * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
              */
             this.start = function ( when, offset, duration, attackDuration ) {
+                if ( !this.isInitialized ) {
+                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                }
+
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource ) {
                         if ( typeof offset == 'undefined' || offset === null ) {

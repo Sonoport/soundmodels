@@ -32,7 +32,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
          *
          * @property numberOfInputs
          * @type Number
-         * @default 1
+         * @default 0
          */
         this.numberOfInputs = 0;
 
@@ -41,18 +41,35 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
          *
          * @property numberOfOutputs
          * @type Number
-         * @default 1
+         * @default 0
          */
-        this.numberOfOutputs = 0;
+        Object.defineProperty( this, 'numberOfOutputs', {
+            enumerable: true,
+            get: function () {
+                return this.releaseGainNode.numberOfOutputs;
+            }
+        } );
 
         /**
          *Number of sources that can be given to this Sound
          *
-         * @property numberOfInputs
+         * @property maxSources
          * @type Number
          * @default 0
          */
-        this.maxSources = 0;
+        var maxSources_ = 0;
+        Object.defineProperty( this, 'maxSources', {
+            enumerable: true,
+            set: function ( max ) {
+                if ( max < 0 ) {
+                    max = 0;
+                }
+                maxSources_ = Math.round( max );
+            },
+            get: function () {
+                return maxSources_;
+            }
+        } );
 
         /**
          * Release Gain Node
@@ -119,13 +136,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         } else if ( destination.inputNode instanceof AudioNode ) {
             this.releaseGainNode.connect( destination.inputNode, output, input );
         } else {
-            throw {
-                name: "No Input Connection Exception",
-                message: "Attempts to connect " + ( typeof output ) + " to " + ( typeof this ),
-                toString: function () {
-                    return this.name + ": " + this.message;
-                }
-            };
+            throw ( new Error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) ) );
         }
     };
 
@@ -158,6 +169,9 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      * @param {Number} [when] Time (in seconds) the sound should stop playing
      */
     BaseSound.prototype.stop = function ( when ) {
+
+        var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
+
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         this.isPlaying = false;
         if ( typeof when === "undefined" ) {
@@ -165,6 +179,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         }
         // cancel all scheduled ramps on this releaseGainNode
         this.releaseGainNode.gain.cancelScheduledValues( when );
+        this.releaseGainNode.gain.setValueAtTime( 1, when + FADE_TIME_PAD );
     };
 
     /**
