@@ -150,22 +150,22 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              *
              * @property riseTime
              * @type SPAudioParam
-             * @default 1.0
+             * @default 0.05
              * @minvalue 0.05
              * @maxvalue 10.0
              */
-            this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 1, this.audioContext );
+            this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 0.05, this.audioContext );
 
             /**
              * Decay time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
              *
              * @property decayTime
              * @type SPAudioParam
-             * @default 1.0
+             * @default 0.05
              * @minvalue 0.05
              * @maxvalue 10.0
              */
-            this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 1, this.audioContext );
+            this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 0.05, this.audioContext );
 
             /**
              * Start point (as a factor of the length of the entire track) where the Looping should start from.
