@@ -232,7 +232,9 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                     newCounterNode.connect( scopeNode );
                     counterNode = newCounterNode;
 
+                    var playBackRateVal = self.playbackRate.value;
                     self.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
+                    self.playbackRate.setValueAtTime( playBackRateVal, 0 );
                     self.connect( output );
                 }, when, this.audioContext );
             };
