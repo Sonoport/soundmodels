@@ -39,7 +39,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var currentEventID_ = 0;
             var currentSourceID_ = 0;
 
-            var wasPlaying = false;
+            var wasPlaying_ = false;
 
             var onAllLoadCallback = onLoadCallback;
 
@@ -131,11 +131,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             function eventRateSetter_( aParam, value ) {
                 if ( value === 0 ) {
                     if ( self.isPlaying ) {
-                        wasPlaying = true;
+                        wasPlaying_ = true;
                         self.pause();
                     }
                 } else {
-                    if ( !self.isPlaying && self.isInitialized && wasPlaying ) {
+                    if ( !self.isPlaying && self.isInitialized && wasPlaying_ ) {
                         self.play();
                     }
                     if ( self.isInitialized ) {
@@ -236,7 +236,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.stop = function ( when ) {
                 soundQueue_.stop( when );
-                wasPlaying = false;
+                wasPlaying_ = false;
                 BaseSound.prototype.stop.call( this, when );
             };
 
@@ -248,7 +248,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.pause = function () {
                 soundQueue_.pause();
-                wasPlaying = false;
+                wasPlaying_ = false;
                 BaseSound.prototype.pause.call( this );
             };
 
