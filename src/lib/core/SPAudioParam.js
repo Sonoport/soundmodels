@@ -82,7 +82,7 @@ define(
                     // Sanitize the value with min/max
                     // bounds first.
                     if ( typeof value !== typeof defaultValue ) {
-                        throw ( new Error( "Incorrect value Type " - "Attempt to set a " + ( typeof defaultValue ) + " parameter to a " + ( typeof value ) + " value" ) );
+                        throw ( new Error( "Attempt to set a " + ( typeof defaultValue ) + " parameter to a " + ( typeof value ) + " value" ) );
                     }
                     // Sanitize the value with min/max
                     // bounds first.
