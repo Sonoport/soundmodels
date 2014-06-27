@@ -257,7 +257,7 @@ module.exports = function ( grunt ) {
                 files: [ {
                     expand: true,
                     src: [ '<%= dirs.build %>/models/*.js' ],
-                    dest: '<%= dirs.release %>/lib/models',
+                    dest: '<%= dirs.release %>/models',
                     filter: 'isFile',
                     flatten: true
                 }, ]
@@ -291,7 +291,7 @@ module.exports = function ( grunt ) {
                     linebreak: true
                 },
                 files: {
-                    src: [ '<%= dirs.release %>/lib/**/*.js' ]
+                    src: [ '<%= dirs.release %>/**/*.js' ]
                 }
             }
         },
@@ -330,7 +330,7 @@ module.exports = function ( grunt ) {
             release: {
                 options: {
                     port: 8000,
-                    base: [ '<%= dirs.release %>/lib', '<%= dirs.manualtest %>' ],
+                    base: [ '<%= dirs.release %>', '<%= dirs.manualtest %>' ],
                     open: true,
                     livereload: true
                 }
