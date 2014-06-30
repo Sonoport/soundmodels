@@ -590,6 +590,12 @@
                     "description": "Callback when all sound have finished loading.",
                     "type": "Function",
                     "optional": true
+                },
+                {
+                    "name": "onProgressCallback",
+                    "description": "Callback when the audio file is being downloaded.",
+                    "type": "Function",
+                    "optional": true
                 }
             ],
             "class": "Activity",
@@ -635,6 +641,12 @@
                     "description": "Duration of the portion (in seconds) to be played",
                     "type": "Number",
                     "optional": true
+                },
+                {
+                    "name": "attackDuration",
+                    "description": "Duration (in seconds) of attack ramp of the envelope.",
+                    "type": "Number",
+                    "optional": true
                 }
             ],
             "class": "Activity",
@@ -642,7 +654,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 264,
+            "line": 265,
             "description": "Stops the sound and resets play head to 0.",
             "itemtype": "method",
             "name": "stop",
@@ -658,7 +670,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 274,
+            "line": 275,
             "description": "Pause the currently playing sound at the current position.",
             "itemtype": "method",
             "name": "pause",
@@ -667,7 +679,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 284,
+            "line": 285,
             "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
             "itemtype": "method",
             "name": "release",
@@ -690,7 +702,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 296,
+            "line": 297,
             "description": "Disconnects the Sound from the AudioNode Chain.",
             "itemtype": "method",
             "name": "disconnect",
@@ -707,7 +719,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 306,
+            "line": 307,
             "description": "If the parameter `output` is an AudioNode, it connects to the releaseGainNode.\nIf the output is a BaseSound, it will connect BaseSound's releaseGainNode to the output's inputNode.",
             "itemtype": "method",
             "name": "connect",
@@ -789,6 +801,12 @@
                     "description": "Callback when all sound have finished loading.",
                     "type": "Function",
                     "optional": true
+                },
+                {
+                    "name": "onProgressCallback",
+                    "description": "Callback when the audio file is being downloaded.",
+                    "type": "Function",
+                    "optional": true
                 }
             ],
             "class": "Extender",
@@ -803,7 +821,24 @@
             "params": [
                 {
                     "name": "when",
-                    "description": "At what time (in seconds) the sound be triggered",
+                    "description": "The delay in seconds before playing the sound",
+                    "type": "Number"
+                },
+                {
+                    "name": "offset",
+                    "description": "The starting position of the playhead",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "duration",
+                    "description": "Duration of the portion (in seconds) to be played",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "attackDuration",
+                    "description": "Duration (in seconds) of attack ramp of the envelope.",
                     "type": "Number",
                     "optional": true
                 }
@@ -813,7 +848,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 192,
+            "line": 195,
             "description": "Plays the sound immediately",
             "itemtype": "method",
             "name": "play",
@@ -822,7 +857,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 202,
+            "line": 205,
             "description": "Pauses the sound immediately",
             "itemtype": "method",
             "name": "pause",
@@ -831,7 +866,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 213,
+            "line": 216,
             "description": "Stops playing the sound.",
             "itemtype": "method",
             "name": "stop",
@@ -941,6 +976,12 @@
                     "description": "Callback when all sounds have finished loading.",
                     "type": "Function",
                     "optional": true
+                },
+                {
+                    "name": "onProgressCallback",
+                    "description": "Callback when the audio file is being downloaded.",
+                    "type": "Function",
+                    "optional": true
                 }
             ],
             "class": "Looper",
@@ -991,7 +1032,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 282,
+            "line": 271,
             "description": "Stops the sound and resets play head to 0.",
             "itemtype": "method",
             "name": "stop",
@@ -1007,7 +1048,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 298,
+            "line": 287,
             "description": "Pause the currently playing sound at the current position.",
             "itemtype": "method",
             "name": "pause",
@@ -1016,7 +1057,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 150,
+            "line": 149,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchShift",
@@ -1029,7 +1070,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 161,
+            "line": 160,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -1042,7 +1083,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 172,
+            "line": 171,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
@@ -1055,7 +1096,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 183,
+            "line": 182,
             "description": "Trigger rate for playing the source in Hz.",
             "itemtype": "property",
             "name": "eventRate",
@@ -1068,7 +1109,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 193,
+            "line": 192,
             "description": "Maximum deviance from the regular trigger interval for a random jitter factor in percentage.",
             "itemtype": "property",
             "name": "eventJitter",
@@ -1081,14 +1122,31 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 206,
+            "line": 205,
             "description": "Start repeated triggering.",
             "itemtype": "method",
             "name": "start",
             "params": [
                 {
                     "name": "when",
-                    "description": "At what time (in seconds) the sound be triggered",
+                    "description": "The delay in seconds before playing the sound",
+                    "type": "Number"
+                },
+                {
+                    "name": "offset",
+                    "description": "The starting position of the playhead",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "duration",
+                    "description": "Duration of the portion (in seconds) to be played",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "attackDuration",
+                    "description": "Duration (in seconds) of attack ramp of the envelope.",
                     "type": "Number",
                     "optional": true
                 }
@@ -1098,7 +1156,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 221,
+            "line": 223,
             "description": "Start repeated triggering immediately",
             "itemtype": "method",
             "name": "play",
@@ -1107,7 +1165,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 231,
+            "line": 233,
             "description": "Stops playing all voices.",
             "itemtype": "method",
             "name": "stop",
@@ -1116,7 +1174,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 243,
+            "line": 245,
             "description": "Pauses playing all voices.",
             "itemtype": "method",
             "name": "pause",
@@ -1125,7 +1183,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 255,
+            "line": 257,
             "description": "Reinitializes a MultiTrigger and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1140,6 +1198,12 @@
                     "description": "Callback when all sounds have finished loading.",
                     "type": "Function",
                     "optional": true
+                },
+                {
+                    "name": "onProgressCallback",
+                    "description": "Callback when the audio file is being downloaded.",
+                    "type": "Function",
+                    "optional": true
                 }
             ],
             "class": "MultiTrigger",
@@ -1147,7 +1211,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 263,
+            "line": 269,
             "description": "Reinitializes a Scrubber and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1162,6 +1226,12 @@
                     "description": "Callback when all sounds have finished loading.",
                     "type": "Function",
                     "optional": true
+                },
+                {
+                    "name": "onProgressCallback",
+                    "description": "Callback when the audio file is being downloaded.",
+                    "type": "Function",
+                    "optional": true
                 }
             ],
             "class": "Scrubber",
@@ -1169,7 +1239,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 278,
+            "line": 284,
             "description": "Position of the audio to be played.",
             "itemtype": "property",
             "name": "playPosition",
@@ -1182,7 +1252,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 289,
+            "line": 295,
             "description": "Sets if the audio should fade out when playPosition has not changed for a while.",
             "itemtype": "property",
             "name": "noMotionFade",
@@ -1195,7 +1265,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 300,
+            "line": 306,
             "description": "Sets if moving playPosition to backwards should make any sound.",
             "itemtype": "property",
             "name": "muteOnReverse",
@@ -1208,7 +1278,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 61,
+            "line": 62,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchShift",
@@ -1221,7 +1291,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 72,
+            "line": 73,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -1234,7 +1304,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 83,
+            "line": 84,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
@@ -1247,7 +1317,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 96,
+            "line": 97,
             "description": "Reinitializes a Trigger and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1262,6 +1332,12 @@
                     "description": "Callback when all sounds have finished loading.",
                     "type": "Function",
                     "optional": true
+                },
+                {
+                    "name": "onProgressCallback",
+                    "description": "Callback when the audio file is being downloaded.",
+                    "type": "Function",
+                    "optional": true
                 }
             ],
             "class": "Trigger",
@@ -1269,7 +1345,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 109,
+            "line": 110,
             "description": "Stops playing all voices.",
             "itemtype": "method",
             "name": "stop",
@@ -1278,7 +1354,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 119,
+            "line": 121,
             "description": "Pauses playing all voices.",
             "itemtype": "method",
             "name": "pause",
@@ -1287,7 +1363,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 129,
+            "line": 131,
             "description": "Triggers a single voice immediately.",
             "itemtype": "method",
             "name": "play",
@@ -1296,14 +1372,31 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 139,
+            "line": 141,
             "description": "Triggers a single voice at the given time",
             "itemtype": "method",
             "name": "start",
             "params": [
                 {
                     "name": "when",
-                    "description": "At what time (in seconds) the sound be triggered",
+                    "description": "The delay in seconds before playing the sound",
+                    "type": "Number"
+                },
+                {
+                    "name": "offset",
+                    "description": "The starting position of the playhead",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "duration",
+                    "description": "Duration of the portion (in seconds) to be played",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "attackDuration",
+                    "description": "Duration (in seconds) of attack ramp of the envelope.",
                     "type": "Number",
                     "optional": true
                 }
@@ -1471,19 +1564,24 @@
             "params": [
                 {
                     "name": "when",
-                    "description": "At what time (in seconds) the sound should start playing.",
-                    "type": "Number",
-                    "optional": true
+                    "description": "The delay in seconds before playing the sound",
+                    "type": "Number"
                 },
                 {
                     "name": "offset",
-                    "description": "Offset time in the buffer (in seconds) where playback will begin.",
+                    "description": "The starting position of the playhead",
                     "type": "Number",
                     "optional": true
                 },
                 {
                     "name": "duration",
-                    "description": "Duration of the portion (in seconds) to be played.",
+                    "description": "Duration of the portion (in seconds) to be played",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "attackDuration",
+                    "description": "Duration (in seconds) of attack ramp of the envelope.",
                     "type": "Number",
                     "optional": true
                 }
@@ -1493,7 +1591,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 165,
+            "line": 176,
             "description": "Stop the AudioNode. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "stop",
@@ -1510,7 +1608,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 185,
+            "line": 200,
             "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
             "itemtype": "method",
             "name": "release",
@@ -1533,7 +1631,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 214,
+            "line": 229,
             "description": "Play sound. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "play",
@@ -1542,7 +1640,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 223,
+            "line": 238,
             "description": "Pause sound. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "pause",
@@ -1551,7 +1649,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 232,
+            "line": 247,
             "description": "List all SPAudioParams this Sound exposes",
             "itemtype": "method",
             "name": "listParams",
@@ -2106,91 +2204,91 @@
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:150"
+            "line": " src/lib/models/MultiTrigger.js:149"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:150"
+            "line": " src/lib/models/MultiTrigger.js:149"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:161"
+            "line": " src/lib/models/MultiTrigger.js:160"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:161"
+            "line": " src/lib/models/MultiTrigger.js:160"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:172"
+            "line": " src/lib/models/MultiTrigger.js:171"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:172"
+            "line": " src/lib/models/MultiTrigger.js:171"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:183"
+            "line": " src/lib/models/MultiTrigger.js:182"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:183"
+            "line": " src/lib/models/MultiTrigger.js:182"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:193"
+            "line": " src/lib/models/MultiTrigger.js:192"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:193"
+            "line": " src/lib/models/MultiTrigger.js:192"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Scrubber.js:278"
+            "line": " src/lib/models/Scrubber.js:284"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Scrubber.js:278"
+            "line": " src/lib/models/Scrubber.js:284"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Scrubber.js:289"
+            "line": " src/lib/models/Scrubber.js:295"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Scrubber.js:289"
+            "line": " src/lib/models/Scrubber.js:295"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Scrubber.js:300"
+            "line": " src/lib/models/Scrubber.js:306"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Scrubber.js:300"
+            "line": " src/lib/models/Scrubber.js:306"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:61"
+            "line": " src/lib/models/Trigger.js:62"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:61"
+            "line": " src/lib/models/Trigger.js:62"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:72"
+            "line": " src/lib/models/Trigger.js:73"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:72"
+            "line": " src/lib/models/Trigger.js:73"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:83"
+            "line": " src/lib/models/Trigger.js:84"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:83"
+            "line": " src/lib/models/Trigger.js:84"
         },
         {
             "message": "Missing item type\n/**\n * @module Core",

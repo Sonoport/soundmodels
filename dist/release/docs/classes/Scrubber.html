@@ -1010,6 +1010,12 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
                 </li>
             
+                <li class="arg">
+                    
+                        <code class="optional">[onProgressCallback]</code>
+                    
+                </li>
+            
             </ul><span class="paren">)</span>
         </div>
     
@@ -1089,6 +1095,23 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
                 </li>
             
+                <li class="param">
+                    
+                        <code class="param-name optional">[onProgressCallback]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when the audio file is being downloaded.</p>
+
+                    </div>
+
+                    
+                </li>
+            
             </ul>
         </div>
     
@@ -1108,7 +1131,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code class="optional">[when]</code>
+                        <code>when</code>
                     
                 </li>
             
@@ -1121,6 +1144,12 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                 <li class="arg">
                     
                         <code class="optional">[duration]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[attackDuration]</code>
                     
                 </li>
             
@@ -1171,15 +1200,14 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name optional">[when]</code>
+                        <code class="param-name">when</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>At what time (in seconds) the sound should start playing.</p>
+                        <p>The delay in seconds before playing the sound</p>
 
                     </div>
 
@@ -1196,7 +1224,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>Offset time in the buffer (in seconds) where playback will begin.</p>
+                        <p>The starting position of the playhead</p>
 
                     </div>
 
@@ -1213,7 +1241,24 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>Duration of the portion (in seconds) to be played.</p>
+                        <p>Duration of the portion (in seconds) to be played</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[attackDuration]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Duration (in seconds) of attack ramp of the envelope.</p>
 
                     </div>
 
