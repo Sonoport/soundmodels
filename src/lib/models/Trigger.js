@@ -177,7 +177,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
                 soundQueue_.queueSetSource( timeStamp, currentEventID_, sourceBuffers_[ currentSourceID_ ] );
                 soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
-                console.log( playSpeed, currentSourceID_ );
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
                 currentEventID_++;
 

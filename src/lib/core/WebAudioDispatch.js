@@ -28,7 +28,7 @@ define( [],
                 //console.log( "Dispatching now" );
                 functionCall();
             } else {
-                console.log( "Dispatching in ", ( time - currentTime ) * 1000 );
+                //console.log( "Dispatching in ", ( time - currentTime ) * 1000 );
                 window.setTimeout( function () {
                     //console.log( "Diff at dispatch ", ( time - audioContext.currentTime ) * 1000 );
                     functionCall();

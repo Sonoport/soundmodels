@@ -88,10 +88,10 @@ define(
                     // bounds first.
                     if ( typeof value === "number" ) {
                         if ( value > maxValue ) {
-                            console.log( this.name + ' clamping to max' );
+                            console.warn( this.name + ' clamping to max' );
                             value = maxValue;
                         } else if ( value < minValue ) {
-                            console.log( this.name + ' clamping to min' );
+                            console.warn( this.name + ' clamping to min' );
                             value = minValue;
                         }
                     }
