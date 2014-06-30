@@ -227,8 +227,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             soundQueue_ = new SoundQueue( this.audioContext );
 
-            if ( sound )
+            if ( sound ) {
                 init( sound, onLoadCallback, onProgressCallback );
+            }
         }
 
         Extender.prototype = Object.create( BaseSound.prototype );
