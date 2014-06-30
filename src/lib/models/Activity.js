@@ -37,8 +37,6 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             var smoothDeltaTime_;
             var timeoutID;
 
-            var onAllLoadCallback = onLoadCallback;
-
             // Constants
 
             var MIN_SENSITIVITY = 0.1;
@@ -49,21 +47,23 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
 
             // Private Functions
 
-            function internalOnLoadCallback( status ) {
-                internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
-                self.isInitialized = true;
+            function createCallbackWith( onLoadCallback ) {
+                return function ( status ) {
+                    internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
+                    self.isInitialized = true;
 
-                lastPosition_ = 0;
-                lastUpdateTime_ = 0;
-                smoothDeltaTime_ = 0;
+                    lastPosition_ = 0;
+                    lastUpdateTime_ = 0;
+                    smoothDeltaTime_ = 0;
 
-                if ( typeof onAllLoadCallback === 'function' ) {
-                    onAllLoadCallback( status );
-                }
+                    if ( typeof onLoadCallback === 'function' ) {
+                        onLoadCallback( status );
+                    }
+                };
             }
 
-            function init( sound ) {
-                internalLooper_ = new Looper( sound, self.audioContext, internalOnLoadCallback, onProgressCallback, null );
+            function init( sound, onLoadCallback, onProgressCallback ) {
+                internalLooper_ = new Looper( sound, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback, null );
             }
 
             function actionSetter_( aParam, value, audioContext ) {
@@ -222,11 +222,11 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              * @method setSources
              * @param {Array/AudioBuffer/String/File} sound Single or Array of either URLs or AudioBuffers of sound.
              * @param {Function} [onLoadCallback] Callback when all sound have finished loading.
+             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
-            this.setSources = function ( sound, onLoadCallback ) {
+            this.setSources = function ( sound, onLoadCallback, onProgressCallback ) {
                 this.isInitialized = false;
-                onAllLoadCallback = onLoadCallback;
-                internalLooper_.setSources( sound, internalOnLoadCallback );
+                internalLooper_.setSources( sound, createCallbackWith( onLoadCallback ), onProgressCallback );
             };
 
             /**
@@ -252,13 +252,14 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              * @param {Number} when The delay in seconds before playing the sound
              * @param {Number} [offset] The starting position of the playhead
              * @param {Number} [duration] Duration of the portion (in seconds) to be played
+             * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
              */
-            this.start = function ( when, offset, duration ) {
+            this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
                     throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
                 }
                 internalLooper_.start( when, offset, duration );
-                BaseSound.prototype.start.call( this, when, offset, duration );
+                BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
             };
 
             /**
@@ -317,7 +318,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             };
 
             if ( sound )
-                init( sound );
+                init( sound, onLoadCallback, onProgressCallback );
         }
 
         Activity.prototype = Object.create( BaseSound.prototype );

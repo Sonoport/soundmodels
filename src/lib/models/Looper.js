@@ -34,20 +34,20 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             var lastStopPosition_ = [];
             var rateArray = [];
 
-            var onAllLoadCallback = onLoadCallback;
+            var createCallbackWith = function ( onLoadCallback ) {
+                return function ( status, arrayOfBuffers ) {
+                    arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
+                        lastStopPosition_.push( 0 );
+                        insertBufferSource( thisBuffer, trackIndex );
+                    } );
 
-            var onAllLoad = function ( status, arrayOfBuffers ) {
-                arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
-                    lastStopPosition_.push( 0 );
-                    insertBufferSource( thisBuffer, trackIndex );
-                } );
+                    self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
 
-                self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
-
-                self.isInitialized = true;
-                if ( typeof onAllLoadCallback === 'function' ) {
-                    onAllLoadCallback( status );
-                }
+                    self.isInitialized = true;
+                    if ( typeof onLoadCallback === 'function' ) {
+                        onLoadCallback( status );
+                    }
+                };
             };
 
             var onSourceEnded = function ( event, trackIndex, source ) {
@@ -116,7 +116,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 } );
             };
 
-            function init( sounds ) {
+            function init( sounds, onLoadCallback, onProgressCallback ) {
                 var parameterType = Object.prototype.toString.call( sounds );
                 rateArray = [];
                 sources_.forEach( function ( thisSource ) {
@@ -126,9 +126,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 if ( parameterType === "[object Array]" && sounds.length > self.maxSources ) {
                     throw ( new Error( "Unsupported number of Sources - Looper sound only supports a maximum of " + self.maxSources + " Sources." ) );
                 } else if ( ( parameterType === "[object AudioBuffer]" ) ) {
-                    onAllLoad( true, [ sounds ] );
+                    createCallbackWith( onLoadCallback )( true, [ sounds ] );
                 } else {
-                    multiFileLoader.call( self, sounds, self.audioContext, onAllLoad, onProgressCallback );
+                    multiFileLoader.call( self, sounds, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
                 }
             }
 
@@ -207,11 +207,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @method setSources
              * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
              * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
-            this.setSources = function ( sounds, onLoadCallback ) {
+            this.setSources = function ( sounds, onLoadCallback, onProgressCallback ) {
                 this.isInitialized = false;
-                onAllLoadCallback = onLoadCallback;
-                init( sounds );
+                init( sounds, onLoadCallback, onProgressCallback );
             };
 
             /**
@@ -262,21 +262,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                             duration = thisSource.buffer.duration;
                         }
                         thisSource.loop = ( self.maxLoops.value !== 1 );
-
-                        if ( typeof attackDuration !== 'undefined' ) {
-                            //console.log( "Ramping from " + offset + "  in " + attackDuration );
-                            var now = self.audioContext.currentTime;
-                            self.releaseGainNode.gain.cancelScheduledValues( now );
-                            self.releaseGainNode.gain.setValueAtTime( 0, now );
-                            self.releaseGainNode.gain.linearRampToValueAtTime( 1, now + attackDuration );
-                        } else {
-                            self.releaseGainNode.gain.setValueAtTime( 1, self.audioContext.currentTime );
-                        }
                         thisSource.start( when, offset, duration );
                     } );
+                    BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
                 }
-
-                BaseSound.prototype.start.call( this, when, offset, duration );
             };
 
             /**
@@ -313,7 +302,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
             // Initialize the sounds.
             if ( sounds )
-                init( sounds );
+                init( sounds, onLoadCallback, onProgressCallback );
         }
 
         Looper.prototype = Object.create( BaseSound.prototype );

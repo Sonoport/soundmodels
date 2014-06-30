@@ -47,49 +47,49 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             var scale_ = 0;
 
             var scriptNode_;
-
-            var onAllLoadCallback = onLoadCallback;
-
             // Constants
             var MAX_JUMP_SECS = 1.0;
             var ALPHA = 0.95;
             var SPEED_THRESH = 0.05;
             var SPEED_ALPHA = 0.8;
 
-            var onAllLoad = function ( status, audioBufferArray ) {
-                var sourceBuffer_ = audioBufferArray[ 0 ];
+            var zeroArray;
 
-                // store audiosource attributes
-                numSamples_ = sourceBuffer_.length;
-                numChannels_ = sourceBuffer_.numberOfChannels;
-                sampleRate_ = sourceBuffer_.sampleRate;
+            var createCallbackWith = function ( onLoadCallback ) {
+                return function ( status, audioBufferArray ) {
+                    var sourceBuffer_ = audioBufferArray[ 0 ];
 
-                for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
-                    sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
-                }
+                    // store audiosource attributes
+                    numSamples_ = sourceBuffer_.length;
+                    numChannels_ = sourceBuffer_.numberOfChannels;
+                    sampleRate_ = sourceBuffer_.sampleRate;
 
-                scriptNode_ = self.audioContext.createScriptProcessor( 256, 0, numChannels_ );
-                scriptNode_.onaudioprocess = scriptNodeCallback;
-                scriptNode_.connect( self.releaseGainNode );
+                    for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
+                        sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
+                    }
 
-                // create buffers
-                synthBuf_ = newBuffer( winLen_, numChannels_ );
-                srcBuf_ = newBuffer( winLen_, numChannels_ );
+                    scriptNode_ = self.audioContext.createScriptProcessor( Config.CHUNK_LENGTH, 0, numChannels_ );
+                    scriptNode_.onaudioprocess = scriptNodeCallback;
+                    scriptNode_.connect( self.releaseGainNode );
 
-                self.isInitialized = true;
+                    // create buffers
+                    synthBuf_ = newBuffer( winLen_, numChannels_ );
+                    srcBuf_ = newBuffer( winLen_, numChannels_ );
 
-                if ( typeof onAllLoadCallback === 'function' ) {
-                    onAllLoadCallback( status );
-                }
+                    self.isInitialized = true;
 
+                    if ( typeof onLoadCallback === 'function' ) {
+                        onLoadCallback( status );
+                    }
+                };
             };
 
-            function init( sound ) {
+            function init( sound, onLoadCallback, onProgressCallback ) {
                 var parameterType = Object.prototype.toString.call( sound );
                 if ( parameterType === '[object Array]' && sound.length > 1 ) {
                     throw ( new Error( "Incorrect Parameter Type - Extender only accepts a single Source as argument" ) );
                 }
-                multiFileLoader.call( self, sound, self.audioContext, onAllLoad, onProgressCallback );
+                multiFileLoader.call( self, sound, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
 
                 winLen_ = Config.WINDOW_LENGTH;
                 synthStep_ = winLen_ / 2;
@@ -99,10 +99,16 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                 for ( var sIndex = 0; sIndex < winLen_; sIndex++ ) {
                     win_[ sIndex ] = 0.25 * ( 1.0 - Math.cos( 2 * Math.PI * ( sIndex + 0.5 ) / winLen_ ) );
                 }
+
+                zeroArray = new Float32Array( Config.CHUNK_LENGTH );
             }
 
             function scriptNodeCallback( processingEvent ) {
                 if ( !self.isPlaying || !self.isInitialized ) {
+                    for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
+                        processingEvent.outputBuffer.getChannelData( cIndex )
+                            .set( zeroArray );
+                    }
                     return;
                 }
 
@@ -266,11 +272,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @method setSources
              * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
              * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
-            this.setSources = function ( sounds, onLoadCallback ) {
+            this.setSources = function ( sounds, onLoadCallback, onProgressCallback ) {
                 this.isInitialized = false;
-                onAllLoadCallback = onLoadCallback;
-                init( sounds );
+                init( sounds, onLoadCallback, onProgressCallback );
             };
 
             // Public Parameters
@@ -308,7 +314,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              */
             this.muteOnReverse = SPAudioParam.createPsuedoParam( "muteOnReverse", true, false, true, this.audioContext );
 
-            init( sound );
+            if ( sound ) {
+                init( sound, onLoadCallback, onProgressCallback );
+            }
 
         }
 

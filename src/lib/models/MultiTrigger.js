@@ -40,23 +40,22 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var currentSourceID_ = 0;
 
             var wasPlaying_ = false;
-
-            var onAllLoadCallback = onLoadCallback;
-
             // Private Functions
-            function init( sounds ) {
-                multiFileLoader.call( self, sounds, self.audioContext, onAllLoad, onProgressCallback );
+            function init( sounds, onLoadCallback, onProgressCallback ) {
+                multiFileLoader.call( self, sounds, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
             }
 
-            var onAllLoad = function ( status, audioBufferArray ) {
-                sourceBuffers_ = audioBufferArray;
-                timeToNextEvent_ = updateTimeToNextEvent( self.eventRate.value );
-                soundQueue_.connect( self.releaseGainNode );
+            var createCallbackWith = function ( onLoadCallback ) {
+                return function ( status, audioBufferArray ) {
+                    sourceBuffers_ = audioBufferArray;
+                    timeToNextEvent_ = updateTimeToNextEvent( self.eventRate.value );
+                    soundQueue_.connect( self.releaseGainNode );
 
-                self.isInitialized = true;
-                if ( typeof onAllLoadCallback === 'function' ) {
-                    onAllLoadCallback( status );
-                }
+                    self.isInitialized = true;
+                    if ( typeof onLoadCallback === 'function' ) {
+                        onLoadCallback( status );
+                    }
+                };
             };
 
             function triggerOnce( eventTime ) {
@@ -207,14 +206,17 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * Start repeated triggering.
              *
              * @method start
-             * @param {Number} [when] At what time (in seconds) the sound be triggered
+             * @param {Number} when The delay in seconds before playing the sound
+             * @param {Number} [offset] The starting position of the playhead
+             * @param {Number} [duration] Duration of the portion (in seconds) to be played
+             * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
              *
              */
-            this.start = function ( when ) {
+            this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
                     throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
                 }
-                BaseSound.prototype.start.call( this, when );
+                BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
                 webAudioDispatch( multiTiggerCallback, when, this.audioContext );
             };
 
@@ -258,17 +260,17 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @method setSources
              * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
              * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
             this.setSources = function ( sounds, onLoadCallback ) {
                 this.isInitialized = false;
-                onAllLoadCallback = onLoadCallback;
-                init( sounds );
+                init( sounds, onLoadCallback, onProgressCallback );
             };
             // SoundQueue Based Model.
             soundQueue_ = new SoundQueue( this.audioContext );
 
             if ( sounds )
-                init( sounds );
+                init( sounds, onLoadCallback, onProgressCallback );
         }
 
         MultiTrigger.prototype = Object.create( BaseSound.prototype );
