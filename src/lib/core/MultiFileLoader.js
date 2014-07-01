@@ -68,7 +68,12 @@ define( [ 'core/FileLoader' ],
                 }
                 sourcesToLoad_--;
                 if ( sourcesToLoad_ === 0 ) {
-                    onAllLoad( loadedAudioBuffers_.length === sounds.length, loadedAudioBuffers_ );
+                    if ( typeof sounds === Array ) {
+                        status = loadedAudioBuffers_.length === sounds.length;
+                    } else {
+                        status = loadedAudioBuffers_.length === 1;
+                    }
+                    onAllLoad( status, loadedAudioBuffers_ );
                 }
             }
             init();
