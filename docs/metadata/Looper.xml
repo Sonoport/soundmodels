@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model>
+	<name>Looper</name>
+	<version>1.0.2</version>
+	<sources>
+		<!-- <source>http://sonoport-studio-preview.herokuapp.com/loop1.mp3</source> -->
+		<!-- <source>http://sonoport-studio-preview.herokuapp.com/loop2.mp3</source> -->
+	</sources>
+	<description>Loops a given source (or a set of sources) continuously. </description>
+	<params>
+		<param>
+			<name>gain</name>
+			<displayname>Gain</displayname>
+			<description> The volume (loudness) of the audio produced by the model. </description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>1.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>pan</name>
+			<displayname>Pan</displayname>
+			<description> Left/Right panning (in degrees) of the position of the source with respect to the listener</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>-90.00</min>
+			<max>90.00</max>
+			<value>0.00</value>
+		</param>
+		<param>
+			<name>playSpeed</name>
+			<displayname>Play Speed</displayname>
+			<description> Speed of playback of the source. Affects both pitch and tempo.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>10.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>riseTime</name>
+			<displayname>Rise Time</displayname>
+			<description> Rate of increase of Play Speed. Affect how quickly Play Speed rises to a set value.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>10.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>decayTime</name>
+			<displayname>Decay Time</displayname>
+			<description> Rate of decrease of Play Speed. Affect how quickly Play Speed decays to a set value.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>10.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>maxLoops</name>
+			<displayname>Maximum Loops</displayname>
+			<description> Maximum number of times the source will loop. (-1 indicates loop forever)</description>
+			<type>Integer</type>
+			<step>1</step>
+			<min>-1</min>
+			<max>1</max>
+			<value>-1</value>
+		</param>
+	</params>
+</model>

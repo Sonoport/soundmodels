@@ -291,7 +291,7 @@ module.exports = function ( grunt ) {
                     linebreak: true
                 },
                 files: {
-                    src: [ '<%= dirs.release %>/**/*.js' ]
+                    src: [ '<%= dirs.release %>/**/*.js', '!<%= dirs.release %>/dev/*.js', '!<%= dirs.release %>/docs/*.js' ]
                 }
             }
         },
