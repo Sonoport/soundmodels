@@ -6,16 +6,17 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
         "use strict";
         /**
          *
-         * A sound model which loads a sound file and allows it to be scrubbed using a position parameter
+         * A model which loads a source and allows it to be scrubbed using a position parameter.
+         *
          * @class Scrubber
          * @constructor
          * @extends BaseSound
-         * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
+         * @param {Array/String/AudioBuffer/File} source  A URL or AudioBuffer or File Object of the audio source.
          * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onLoadCallback] Callback when the source has finished loading.
          * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          */
-        function Scrubber( sound, context, onLoadCallback, onProgressCallback ) {
+        function Scrubber( source, context, onLoadCallback, onProgressCallback ) {
             if ( !( this instanceof Scrubber ) ) {
                 throw new TypeError( "Scrubber constructor cannot be called as a function." );
             }
@@ -84,12 +85,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                 };
             };
 
-            function init( sound, onLoadCallback, onProgressCallback ) {
-                var parameterType = Object.prototype.toString.call( sound );
-                if ( parameterType === '[object Array]' && sound.length > 1 ) {
+            function init( source, onLoadCallback, onProgressCallback ) {
+                var parameterType = Object.prototype.toString.call( source );
+                if ( parameterType === '[object Array]' && source.length > 1 ) {
                     throw ( new Error( "Incorrect Parameter Type - Extender only accepts a single Source as argument" ) );
                 }
-                multiFileLoader.call( self, sound, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
+                multiFileLoader.call( self, source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
 
                 winLen_ = Config.WINDOW_LENGTH;
                 synthStep_ = winLen_ / 2;
@@ -131,7 +132,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                             var source = synthBuf_[ cIndex ].subarray( synthStep_ - numReady_, synthStep_ - numReady_ + numToCopy );
                             processingEvent.outputBuffer.getChannelData( cIndex )
                                 .set( source, processingEvent.outputBuffer.length - numToGo_ );
-                            //processingEvent.outputBuffer.copyToChannel( source, cIndex, numSamples_ - numToGo_ );
                         }
 
                         numToGo_ -= numToCopy;
@@ -270,13 +270,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * Reinitializes a Scrubber and sets it's sources.
              *
              * @method setSources
-             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
-             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             * @param {Array/AudioBuffer/String/File} source URL or AudioBuffer or File Object of the audio source.
+             * @param {Function} [onLoadCallback] Callback when the source has finished loading.
              * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
-            this.setSources = function ( sounds, onLoadCallback, onProgressCallback ) {
+            this.setSources = function ( source, onLoadCallback, onProgressCallback ) {
                 this.isInitialized = false;
-                init( sounds, onLoadCallback, onProgressCallback );
+                init( source, onLoadCallback, onProgressCallback );
             };
 
             // Public Parameters
@@ -304,7 +304,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             this.noMotionFade = SPAudioParam.createPsuedoParam( "noMotionFade", true, false, true, this.audioContext );
 
             /**
-             * Sets if moving playPosition to backwards should make any sound.
+             * Sets if moving playPosition to backwards should mute the model.
              *
              * @property muteOnReverse
              * @type SPAudioParam
@@ -314,8 +314,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              */
             this.muteOnReverse = SPAudioParam.createPsuedoParam( "muteOnReverse", true, false, true, this.audioContext );
 
-            if ( sound ) {
-                init( sound, onLoadCallback, onProgressCallback );
+            if ( source ) {
+                init( source, onLoadCallback, onProgressCallback );
             }
 
         }

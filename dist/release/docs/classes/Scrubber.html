@@ -126,7 +126,7 @@
 
 
 <div class="box intro">
-    <p>A sound model which loads a sound file and allows it to be scrubbed using a position parameter</p>
+    <p>A model which loads a source and allows it to be scrubbed using a position parameter.</p>
 
 </div>
 
@@ -142,7 +142,7 @@
             
                 <li class="arg">
                     
-                        <code>sounds</code>
+                        <code>source</code>
                     
                 </li>
             
@@ -211,14 +211,14 @@
             
                 <li class="param">
                     
-                        <code class="param-name">sounds</code>
+                        <code class="param-name">source</code>
                         <span class="type">Array/String/AudioBuffer/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers or File of sounds.</p>
+                        <p>A URL or AudioBuffer or File Object of the audio source.</p>
 
                     </div>
 
@@ -251,7 +251,7 @@
                     
 
                     <div class="param-description">
-                        <p>Callback when all sounds have finished loading.</p>
+                        <p>Callback when the source has finished loading.</p>
 
                     </div>
 
@@ -1000,7 +1000,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code>sounds</code>
+                        <code>source</code>
                     
                 </li>
             
@@ -1064,14 +1064,14 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name">sounds</code>
+                        <code class="param-name">source</code>
                         <span class="type">Array/AudioBuffer/String/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers of sounds.</p>
+                        <p>URL or AudioBuffer or File Object of the audio source.</p>
 
                     </div>
 
@@ -1088,7 +1088,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>Callback when all sounds have finished loading.</p>
+                        <p>Callback when the source has finished loading.</p>
 
                     </div>
 
@@ -1672,7 +1672,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     <div class="description">
-        <p>Sets if moving playPosition to backwards should make any sound.</p>
+        <p>Sets if moving playPosition to backwards should mute the model.</p>
 
     </div>
 

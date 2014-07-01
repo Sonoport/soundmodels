@@ -6,19 +6,19 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
         "use strict";
 
         /**
-         * A sound model which triggers a single or multiple sound files with multiple voices (polyphony).
+         * A model which triggers a single or multiple audio sources with multiple voices (polyphony).
          *
          *
          * @class Trigger
          * @constructor
          * @extends BaseSound
-         * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
+         * @param {Array/String/AudioBuffer/File} sources Single or Array of either URLs or AudioBuffers or File Objects of audio sources.
          * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
          * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          * @param {Function} [onEndedCallback] Callback when the Trigger has finished playing.
          */
-        function Trigger( sounds, context, onLoadCallback, onProgressCallback, onEndedCallback ) {
+        function Trigger( sources, context, onLoadCallback, onProgressCallback, onEndedCallback ) {
             if ( !( this instanceof Trigger ) ) {
                 throw new TypeError( "Trigger constructor cannot be called as a function." );
             }
@@ -52,9 +52,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 };
             };
 
-            function init( sounds, onLoadCallback, onProgressCallback ) {
-                multiFileLoader.call( self, sounds, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
-                allSounds = sounds;
+            function init( sources, onLoadCallback, onProgressCallback ) {
+                multiFileLoader.call( self, sources, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
+                allSounds = sources;
             }
 
             // Public Properties
@@ -95,16 +95,16 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             // Public Functions
 
             /**
-             * Reinitializes a Trigger and sets it's sources.
+             * Reinitializes the model and sets it's sources.
              *
              * @method setSources
-             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
-             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             * @param {Array/AudioBuffer/String/File} sources Single or Array of either URLs or AudioBuffers or File Objects of the audio sources.
+             * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
              * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
-            this.setSources = function ( sounds, onLoadCallback, onProgressCallback ) {
+            this.setSources = function ( sources, onLoadCallback, onProgressCallback ) {
                 this.isInitialized = false;
-                init( sounds, onLoadCallback, onProgressCallback );
+                init( sources, onLoadCallback, onProgressCallback );
             };
 
             /**
@@ -142,7 +142,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * Triggers a single voice at the given time
              *
              * @method start
-             * @param {Number} when The delay in seconds before playing the sound
+             * @param {Number} when The delay in seconds before playing the model
              * @param {Number} [offset] The starting position of the playhead
              * @param {Number} [duration] Duration of the portion (in seconds) to be played
              * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
@@ -183,11 +183,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
             };
 
-            // SoundQueue Based Model.
+            // SoundQueue based model.
             soundQueue_ = new SoundQueue( this.audioContext );
 
-            if ( sounds ) {
-                init( sounds, onLoadCallback, onProgressCallback );
+            if ( sources ) {
+                init( sources, onLoadCallback, onProgressCallback );
             }
         }
 

@@ -126,7 +126,7 @@
 
 
 <div class="box intro">
-    <p>A sound model which loads a sound file and allows it to be looped continuously at variable speed.</p>
+    <p>A model which loads one or more sources and allows them to be looped continuously at variable speed.</p>
 
 </div>
 
@@ -142,7 +142,7 @@
             
                 <li class="arg">
                     
-                        <code>sounds</code>
+                        <code>sources</code>
                     
                 </li>
             
@@ -217,14 +217,14 @@
             
                 <li class="param">
                     
-                        <code class="param-name">sounds</code>
+                        <code class="param-name">sources</code>
                         <span class="type">Array/String/AudioBuffer/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers or File of sounds.</p>
+                        <p>Single or Array of either URLs or AudioBuffers or File Object of the audio source.</p>
 
                     </div>
 
@@ -257,7 +257,7 @@
                     
 
                     <div class="param-description">
-                        <p>Callback when all sounds have finished loading.</p>
+                        <p>Callback when all sources have finished loading.</p>
 
                     </div>
 
@@ -866,7 +866,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Pause the currently playing sound at the current position.</p>
+        <p>Pause the currently playing model at the current position.</p>
 
     </div>
 
@@ -917,7 +917,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Plays the sound immediately. If the sound is paused, the sound will be played back from the same position as it was paused at.</p>
+        <p>Plays the model immediately. If the model is paused, the model will be played back from the same position as it was paused at.</p>
 
     </div>
 
@@ -1046,7 +1046,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code>sounds</code>
+                        <code>sources</code>
                     
                 </li>
             
@@ -1110,14 +1110,14 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name">sounds</code>
+                        <code class="param-name">sources</code>
                         <span class="type">Array/AudioBuffer/String/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers of sounds.</p>
+                        <p>Single or Array of either URLs or AudioBuffers of sources.</p>
 
                     </div>
 
@@ -1134,7 +1134,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>Callback when all sounds have finished loading.</p>
+                        <p>Callback when all sources have finished loading.</p>
 
                     </div>
 
@@ -1255,7 +1255,7 @@ the value of startPoint property is used.</p>
                     
 
                     <div class="param-description">
-                        <p>The delay in seconds before playing the sound</p>
+                        <p>The delay in seconds before playing the model</p>
 
                     </div>
 
@@ -1372,7 +1372,7 @@ the value of startPoint property is used.</p>
     </div>
 
     <div class="description">
-        <p>Stops the sound and resets play head to 0.</p>
+        <p>Stops the model and resets play head to 0.</p>
 
     </div>
 
@@ -1489,7 +1489,7 @@ the value of startPoint property is used.</p>
     </div>
 
     <div class="description">
-        <p>Decay time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the <a href="../classes/Looper.html#property_playSpeed" class="crosslink">playSpeed</a> property.</p>
+        <p>Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the <a href="../classes/Looper.html#property_playSpeed" class="crosslink">playSpeed</a> property.</p>
 
     </div>
 
@@ -1679,7 +1679,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     <div class="description">
-        <p>The max number of Loops the Looper will complete before stopping. Current only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).</p>
+        <p>The maximum number time the source will be looped before stopping. Currently only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).</p>
 
     </div>
 
@@ -1822,7 +1822,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     <div class="description">
-        <p>An array of Gain Parameters for setting the volume of the individual tracks loaded into the looper. Works even with a single track loaded.</p>
+        <p>The volume (loudness) for each individual track if multiple sources are used. Works even if a single source is used.</p>
 
     </div>
 
@@ -1965,7 +1965,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     <div class="description">
-        <p>Changes the speed of playback of the audio source.</p>
+        <p>Speed of playback of the source. Affects both pitch and tempo.</p>
 
     </div>
 
@@ -2064,7 +2064,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     <div class="description">
-        <p>Rise time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the <a href="../classes/Looper.html#property_playSpeed" class="crosslink">playSpeed</a> property.</p>
+        <p>Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the <a href="../classes/Looper.html#property_playSpeed" class="crosslink">playSpeed</a> property.</p>
 
     </div>
 

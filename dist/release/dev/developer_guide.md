@@ -56,19 +56,19 @@ require(["models/Looper"], function (Looper) {
     var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
         console.log("Loaded!");
         loop.play();
-        
+
         // Pause the Looper after 1 second
         window.setTimeout(function(){
            console.log("Pausing!");
            loop.pause();
         }, 1000);
-        
+
         // Restart the Looper after 3 seconds
         window.setTimeout(function(){
            console.log("Playing Again!");
            loop.play();
         }, 3000);
-        
+
         // Stop the Looper after 5 seconds
         window.setTimeout(function(){
            console.log("Stopping!");
@@ -130,7 +130,7 @@ Here is an example of how a Gain Node can be added to the Looper Sound Model
 require(["models/Looper"], function (Looper) {
     var gain;
     var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
-    
+
         // Create a Gain Node
         gain = loop.audioContext.createGain();
 

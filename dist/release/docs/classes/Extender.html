@@ -126,7 +126,7 @@
 
 
 <div class="box intro">
-    <p>A sound model which extends the playing of a single sound infinitely with windowed overlapping.</p>
+    <p>A model which extends the playing of a single source infinitely with windowed overlapping.</p>
 
 </div>
 
@@ -142,7 +142,7 @@
             
                 <li class="arg">
                     
-                        <code>sound</code>
+                        <code>source</code>
                     
                 </li>
             
@@ -211,14 +211,14 @@
             
                 <li class="param">
                     
-                        <code class="param-name">sound</code>
+                        <code class="param-name">source</code>
                         <span class="type">String/AudioBuffer/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single URL or AudioBuffer or File of sound.</p>
+                        <p>Single URL or AudioBuffer or File Object of the audio source.</p>
 
                     </div>
 
@@ -251,7 +251,7 @@
                     
 
                     <div class="param-description">
-                        <p>Callback when the sound has finished loading.</p>
+                        <p>Callback when the source has finished loading.</p>
 
                     </div>
 
@@ -829,7 +829,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Pauses the sound immediately</p>
+        <p>Pauses the model immediately</p>
 
     </div>
 
@@ -880,7 +880,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Plays the sound immediately</p>
+        <p>Plays the model immediately</p>
 
     </div>
 
@@ -1009,7 +1009,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code>sound</code>
+                        <code>source</code>
                     
                 </li>
             
@@ -1073,14 +1073,14 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name">sound</code>
+                        <code class="param-name">source</code>
                         <span class="type">Array/AudioBuffer/String/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers of sound.</p>
+                        <p>Single or Array of either URLs or AudioBuffers of source.</p>
 
                     </div>
 
@@ -1097,7 +1097,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>Callback when all sound have finished loading.</p>
+                        <p>Callback when all source have finished loading.</p>
 
                     </div>
 
@@ -1351,7 +1351,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Starts playing the sound</p>
+        <p>Starts playing the source</p>
 
     </div>
 
@@ -1370,7 +1370,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>The delay in seconds before playing the sound</p>
+                        <p>The delay in seconds before playing the source</p>
 
                     </div>
 
@@ -1487,7 +1487,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Stops playing the sound.</p>
+        <p>Stops playing the model.</p>
 
     </div>
 
@@ -1507,7 +1507,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>At what time (in seconds) the sound be stopped</p>
+                        <p>At what time (in seconds) the model be stopped</p>
 
                     </div>
 
@@ -1605,7 +1605,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Enable randomness in the order of sources which are triggered.</p>
+        <p>Fraction of each window of the source that is overlapped with the succeding window of the source.</p>
 
     </div>
 
@@ -1656,7 +1656,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Maximum value for random pitch shift of the triggered voices in semitones.</p>
+        <p>The length (in seconds) of each window used to overlap the source.</p>
 
     </div>
 
@@ -2030,7 +2030,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     <div class="description">
-        <p>Pitch shift of the triggered voices in semitones.</p>
+        <p>Amount of pitch shift of the source in the each window (in semitones).</p>
 
     </div>
 

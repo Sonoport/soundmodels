@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model>
+	<name>Activity</name>
+	<version>1.0.2</version>
+	<sources>
+		<!-- <source>http://sonoport-studio-preview.herokuapp.com/loop1.mp3</source> -->
+	</sources>
+	<description>Plays back the source at various speeds based on the movement of the activity parameter.</description>
+	<params>
+		<param>
+			<name>maxSpeed</name>
+			<displayname>Maximum Speed</displayname>
+			<description> Maximum value at which the playback speed of the source will be capped to.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0.05</min>
+			<max>8.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>action</name>
+			<displayname>Action</displayname>
+			<description> Controls the playback of the source. The more this parameter is changed, the higher the speed of playback.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>1.00</max>
+			<value>0</value>
+		</param>
+		<param>
+			<name>sensitivity</name>
+			<displayname>Sensitivity</displayname>
+			<description> Sensitivity of the Action property. The higher the Sensitivity the lesser the change in Action is needed to affect the speed of playback</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>1.00</max>
+			<value>0.5</value>
+		</param>
+		<param>
+			<name>riseTime</name>
+			<displayname>Rise Time</displayname>
+			<description> Rate of increase of Play Speed. Affect how quickly Play Speed rises to a set value.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>10.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>decayTime</name>
+			<displayname>Decay Time</displayname>
+			<description> Rate of decrease of Play Speed. Affect how quickly Play Speed decays to a set value.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>10.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>startPoint</name>
+			<displayname>Starting Point</displayname>
+			<description> Starting point (as a fraction of the length of entire track) where the Looping should start from.</description>
+			<type>Integer</type>
+			<step>1</step>
+			<min>-1</min>
+			<max>1</max>
+			<value>-1</value>
+		</param>
+		<param>
+			<name>gain</name>
+			<displayname>Gain</displayname>
+			<description> The volume (loudness) of the audio produced by the model. </description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>1.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>pan</name>
+			<displayname>Pan</displayname>
+			<description> Left/Right panning (in degrees) of the position of the source with respect to the listener</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>-90.00</min>
+			<max>90.00</max>
+			<value>0.00</value>
+		</param>
+	</params>
+</model>

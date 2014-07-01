@@ -6,19 +6,19 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
         "use strict";
 
         /**
-         * A sound model which triggers a single or multiple sound files with multiple voices (polyphony)
+         * A model which triggers a single or multiple sources with multiple voices (polyphony)
          * repeatedly.
          *
          *
          * @class MultiTrigger
          * @constructor
          * @extends BaseSound
-         * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
+         * @param {Array/String/AudioBuffer/File} sources Single or Array of either URLs or AudioBuffers or File Object of audio sources.
          * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
          * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          */
-        function MultiTrigger( sounds, context, onLoadCallback, onProgressCallback ) {
+        function MultiTrigger( sources, context, onLoadCallback, onProgressCallback ) {
             if ( !( this instanceof MultiTrigger ) ) {
                 throw new TypeError( "MultiTrigger constructor cannot be called as a function." );
             }
@@ -41,8 +41,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             var wasPlaying_ = false;
             // Private Functions
-            function init( sounds, onLoadCallback, onProgressCallback ) {
-                multiFileLoader.call( self, sounds, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
+            function init( sources, onLoadCallback, onProgressCallback ) {
+                multiFileLoader.call( self, sources, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
             }
 
             var createCallbackWith = function ( onLoadCallback ) {
@@ -102,7 +102,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     timeToNextEvent_ = updateTimeToNextEvent( self.eventRate.value );
                 }
 
-                // Keep making callback request if sound is still playing.
+                // Keep making callback request if model is still playing.
                 if ( self.isPlaying ) {
                     window.requestAnimationFrame( multiTiggerCallback );
                 }
@@ -116,7 +116,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 var updateTime = period * jitterRand;
 
                 if ( isFinite( updateTime ) ) {
-                    //Update releaseDur of sounds being released
+                    //Update releaseDur of Loopers being released
                     var releaseDur = Math.max( 0.99 * period * ( 1 - self.eventJitter.value ), 0.01 );
                     soundQueue_.queueUpdate( "QERELEASE", null, "releaseDuration", releaseDur );
                 } else {
@@ -180,7 +180,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.eventRand = SPAudioParam.createPsuedoParam( "eventRand", true, false, false, this.audioContext );
 
             /**
-             * Trigger rate for playing the source in Hz.
+             * Trigger rate for playing the model in Hz.
              *
              * @property eventRate
              * @type SPAudioParam
@@ -190,7 +190,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.eventRate = new SPAudioParam( "eventRate", 0, 60.0, 10.0, null, null, eventRateSetter_, this.audioContext );
             /**
-             * Maximum deviance from the regular trigger interval for a random jitter factor in percentage.
+             * Maximum deviation from the regular trigger interval (as a factor of 1).
              *
              * @property eventJitter
              * @type SPAudioParam
@@ -206,7 +206,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * Start repeated triggering.
              *
              * @method start
-             * @param {Number} when The delay in seconds before playing the sound
+             * @param {Number} when The delay in seconds before playing the model
              * @param {Number} [offset] The starting position of the playhead
              * @param {Number} [duration] Duration of the portion (in seconds) to be played
              * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
@@ -258,19 +258,19 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * Reinitializes a MultiTrigger and sets it's sources.
              *
              * @method setSources
-             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
-             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             * @param {Array/AudioBuffer/String/File} sources Single or Array of either URLs or AudioBuffers or File Objects of audio sources.
+             * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
              * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
-            this.setSources = function ( sounds, onLoadCallback ) {
+            this.setSources = function ( sources, onLoadCallback ) {
                 this.isInitialized = false;
-                init( sounds, onLoadCallback, onProgressCallback );
+                init( sources, onLoadCallback, onProgressCallback );
             };
-            // SoundQueue Based Model.
+            // SoundQueue based model.
             soundQueue_ = new SoundQueue( this.audioContext );
 
-            if ( sounds )
-                init( sounds, onLoadCallback, onProgressCallback );
+            if ( sources )
+                init( sources, onLoadCallback, onProgressCallback );
         }
 
         MultiTrigger.prototype = Object.create( BaseSound.prototype );

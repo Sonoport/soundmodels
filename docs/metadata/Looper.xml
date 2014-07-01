@@ -9,24 +9,14 @@
 	<description>Loops a given source (or a set of sources) continuously. </description>
 	<params>
 		<param>
-			<name>gain</name>
-			<displayname>Gain</displayname>
-			<description> The volume (loudness) of the audio produced by the model. </description>
+			<name>multiTrackGain</name>
+			<displayname>Multitrack Gain</displayname>
+			<description> The volume (loudness) for each individual track if multiple sources are used. Works even if a single source is used.</description>
 			<type>Double</type>
 			<step>0.01</step>
 			<min>0</min>
 			<max>1.00</max>
 			<value>1.00</value>
-		</param>
-		<param>
-			<name>pan</name>
-			<displayname>Pan</displayname>
-			<description> Left/Right panning (in degrees) of the position of the source with respect to the listener</description>
-			<type>Double</type>
-			<step>0.01</step>
-			<min>-90.00</min>
-			<max>90.00</max>
-			<value>0.00</value>
 		</param>
 		<param>
 			<name>playSpeed</name>
@@ -61,12 +51,42 @@
 		<param>
 			<name>maxLoops</name>
 			<displayname>Maximum Loops</displayname>
-			<description> Maximum number of times the source will loop. (-1 indicates loop forever)</description>
+			<description> The maximum number time the source will be looped before stopping. Currently only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).</description>
 			<type>Integer</type>
 			<step>1</step>
 			<min>-1</min>
 			<max>1</max>
 			<value>-1</value>
+		</param>
+		<param>
+			<name>startPoint</name>
+			<displayname>Starting Point</displayname>
+			<description> Starting point (as a fraction of the length of entire track) where the Looping should start from.</description>
+			<type>Integer</type>
+			<step>1</step>
+			<min>-1</min>
+			<max>1</max>
+			<value>-1</value>
+		</param>
+		<param>
+			<name>gain</name>
+			<displayname>Gain</displayname>
+			<description> The volume (loudness) of the audio produced by the model. </description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>1.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>pan</name>
+			<displayname>Pan</displayname>
+			<description> Left/Right panning (in degrees) of the position of the source with respect to the listener</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>-90.00</min>
+			<max>90.00</max>
+			<value>0.00</value>
 		</param>
 	</params>
 </model>
