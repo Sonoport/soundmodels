@@ -185,8 +185,16 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                 if ( typeof duration == 'undefined' ) {
                     duration = bufferSourceNode.buffer.duration;
                 }
-                bufferSourceNode.start( when, offset, duration );
-                counterNode.start( when, offset, duration );
+
+                var state = bufferSourceNode.playbackState;
+                if ( state !== undefined && state === bufferSourceNode.UNSCHEDULED_STATE ) {
+                    bufferSourceNode.start( when, offset, duration );
+                }
+
+                state = counterNode.playbackState;
+                if ( state !== undefined && state === bufferSourceNode.UNSCHEDULED_STATE ) {
+                    counterNode.start( when, offset, duration );
+                }
             };
 
             /**

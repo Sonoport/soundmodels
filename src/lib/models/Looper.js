@@ -226,16 +226,16 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
                 }
 
+                var now = this.audioContext.currentTime;
+
                 if ( !this.isPlaying ) {
                     sources_.forEach( function ( thisSource, index ) {
                         var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : self.startPoint.value * thisSource.buffer.duration;
                         thisSource.loop = ( self.maxLoops.value !== 1 );
-                        thisSource.start( 0, offset );
+                        thisSource.start( now, offset );
                     } );
+                    BaseSound.prototype.start.call( this, now );
                 }
-
-                BaseSound.prototype.start.call( this, 0 );
-
             };
 
             /**

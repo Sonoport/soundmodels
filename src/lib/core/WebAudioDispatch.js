@@ -19,7 +19,7 @@ define( [],
 
         function WebAudioDispatch( functionCall, time, audioContext ) {
             if ( !audioContext ) {
-                //console.warn( "No AudioContext provided" );
+                console.warn( "No AudioContext provided" );
                 return;
             }
             var currentTime = audioContext.currentTime;
