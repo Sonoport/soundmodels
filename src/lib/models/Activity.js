@@ -6,18 +6,18 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
         "use strict";
 
         /**
-         * A sound model which triggers a single or multiple sound files with multiple voices (polyphony).
+         * A model plays back the source at various speeds based on the movement of the activity parameter.
          *
          *
          * @class Activity
          * @constructor
          * @extends BaseSound
-         * @param {String/AudioBuffer/File} sound  Either URL or AudioBuffer or File of sound.
+         * @param {String/AudioBuffer/File} source Either a URL or AudioBuffer or File Object of of the audio source.
          * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when the sound has finished loading.
+         * @param {Function} [onLoadCallback] Callback when the source has finished loading.
          * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          */
-        function Activity( sound, context, onLoadCallback, onProgressCallback ) {
+        function Activity( source, context, onLoadCallback, onProgressCallback ) {
             if ( !( this instanceof Activity ) ) {
                 throw new TypeError( "Activity constructor cannot be called as a function." );
             }
@@ -37,8 +37,6 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             var smoothDeltaTime_;
             var timeoutID;
 
-            var onAllLoadCallback = onLoadCallback;
-
             // Constants
 
             var MIN_SENSITIVITY = 0.1;
@@ -49,21 +47,23 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
 
             // Private Functions
 
-            function internalOnLoadCallback( status ) {
-                internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
-                self.isInitialized = true;
+            function createCallbackWith( onLoadCallback ) {
+                return function ( status ) {
+                    internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
+                    self.isInitialized = true;
 
-                lastPosition_ = 0;
-                lastUpdateTime_ = 0;
-                smoothDeltaTime_ = 0;
+                    lastPosition_ = 0;
+                    lastUpdateTime_ = 0;
+                    smoothDeltaTime_ = 0;
 
-                if ( typeof onAllLoadCallback === 'function' ) {
-                    onAllLoadCallback( status );
-                }
+                    if ( typeof onLoadCallback === 'function' ) {
+                        onLoadCallback( status );
+                    }
+                };
             }
 
-            function init( sound ) {
-                internalLooper_ = new Looper( sound, self.audioContext, internalOnLoadCallback, onProgressCallback, null );
+            function init( source, onLoadCallback, onProgressCallback ) {
+                internalLooper_ = new Looper( source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback, null );
             }
 
             function actionSetter_( aParam, value, audioContext ) {
@@ -149,18 +149,18 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             // Public Properties
 
             /**
-             * Pitch shift of the triggered voices in semitones.
+             *  Maximum value at which the playback speed of the source will be capped to.
              *
-             * @property maxRate
+             * @property maxSpeed
              * @type SPAudioParam
              * @default 1
              * @minvalue 0.05
              * @maxvalue 8.0
              */
-            this.maxRate = SPAudioParam.createPsuedoParam( "maxRate", 0.05, 8.0, 1, this.audioContext );
+            this.maxSpeed = SPAudioParam.createPsuedoParam( "maxSpeed", 0.05, 8.0, 1, this.audioContext );
 
             /**
-             * Pitch shift of the triggered voices in semitones.
+             * Controls the playback of the source. The more this parameter is moved, the higher the speed of playback.
              *
              * @property action
              * @type SPAudioParam
@@ -182,7 +182,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             this.sensitivity = SPAudioParam.createPsuedoParam( "sensitivity", 0.0, 1.0, 0.5, this.audioContext );
 
             /**
-             * Rise time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink "Activity/action:property"}}{{/crossLink}} property.
+             * Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
              *
              * @property riseTime
              * @type SPAudioParam
@@ -193,7 +193,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             this.riseTime = new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, riseTimeSetter_, this.audioContext );
 
             /**
-             *  Decay time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the {{#crossLink "Activity/action:property"}}{{/crossLink}} property.
+             *  Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
              *
              * @property decayTime
              * @type SPAudioParam
@@ -220,20 +220,20 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              * Reinitializes a Activity and sets it's sources.
              *
              * @method setSources
-             * @param {Array/AudioBuffer/String/File} sound Single or Array of either URLs or AudioBuffers of sound.
-             * @param {Function} [onLoadCallback] Callback when all sound have finished loading.
+             * @param {Array/AudioBuffer/String/File} source Single or Array of either URLs or AudioBuffers of audio sources.
+             * @param {Function} [onLoadCallback] Callback when all source have finished loading.
+             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
-            this.setSources = function ( sound, onLoadCallback ) {
+            this.setSources = function ( source, onLoadCallback, onProgressCallback ) {
                 this.isInitialized = false;
-                onAllLoadCallback = onLoadCallback;
-                internalLooper_.setSources( sound, internalOnLoadCallback );
+                internalLooper_.setSources( source, createCallbackWith( onLoadCallback ), onProgressCallback );
             };
 
             /**
              * Enable playback.
              *
              * @method play
-             * @param {Number} [when] At what time (in seconds) the sound be triggered
+             * @param {Number} [when] At what time (in seconds) the source be triggered
              *
              */
             this.play = function ( when ) {
@@ -249,20 +249,21 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              * the value of startPoint property is used.
              *
              * @method start
-             * @param {Number} when The delay in seconds before playing the sound
+             * @param {Number} when The delay in seconds before playing the model
              * @param {Number} [offset] The starting position of the playhead
              * @param {Number} [duration] Duration of the portion (in seconds) to be played
+             * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
              */
-            this.start = function ( when, offset, duration ) {
+            this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
                     throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
                 }
                 internalLooper_.start( when, offset, duration );
-                BaseSound.prototype.start.call( this, when, offset, duration );
+                BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
             };
 
             /**
-             * Stops the sound and resets play head to 0.
+             * Stops the source and resets play head to 0.
              * @method stop
              * @param {Number} when Time offset to stop
              */
@@ -272,7 +273,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             };
 
             /**
-             * Pause the currently playing sound at the current position.
+             * Pause the currently playing source at the current position.
              *
              * @method pause
              */
@@ -316,8 +317,9 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 internalLooper_.connect( destination, output, input );
             };
 
-            if ( sound )
-                init( sound );
+            if ( source ) {
+                init( source, onLoadCallback, onProgressCallback );
+            }
         }
 
         Activity.prototype = Object.create( BaseSound.prototype );

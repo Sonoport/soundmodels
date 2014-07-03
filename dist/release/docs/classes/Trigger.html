@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.1</em>
+            <em>API Docs for: 1.0.2</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -126,7 +126,7 @@
 
 
 <div class="box intro">
-    <p>A sound model which triggers a single or multiple sound files with multiple voices (polyphony).</p>
+    <p>A model which triggers a single or multiple audio sources with multiple voices (polyphony).</p>
 
 </div>
 
@@ -142,7 +142,7 @@
             
                 <li class="arg">
                     
-                        <code>sounds</code>
+                        <code>sources</code>
                     
                 </li>
             
@@ -217,14 +217,14 @@
             
                 <li class="param">
                     
-                        <code class="param-name">sounds</code>
+                        <code class="param-name">sources</code>
                         <span class="type">Array/String/AudioBuffer/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers or File of sounds.</p>
+                        <p>Single or Array of either URLs or AudioBuffers or File Objects of audio sources.</p>
 
                     </div>
 
@@ -257,7 +257,7 @@
                     
 
                     <div class="param-description">
-                        <p>Callback when all sounds have finished loading.</p>
+                        <p>Callback when all sources have finished loading.</p>
 
                     </div>
 
@@ -1025,13 +1025,19 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code>sounds</code>
+                        <code>sources</code>
                     
                 </li>
             
                 <li class="arg">
                     
                         <code class="optional">[onLoadCallback]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onProgressCallback]</code>
                     
                 </li>
             
@@ -1071,7 +1077,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Reinitializes a Trigger and sets it&#39;s sources.</p>
+        <p>Reinitializes the model and sets it&#39;s sources.</p>
 
     </div>
 
@@ -1083,14 +1089,14 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name">sounds</code>
+                        <code class="param-name">sources</code>
                         <span class="type">Array/AudioBuffer/String/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers of sounds.</p>
+                        <p>Single or Array of either URLs or AudioBuffers or File Objects of the audio sources.</p>
 
                     </div>
 
@@ -1107,7 +1113,24 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>Callback when all sounds have finished loading.</p>
+                        <p>Callback when all sources have finished loading.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onProgressCallback]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when the audio file is being downloaded.</p>
 
                     </div>
 
@@ -1133,7 +1156,25 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code class="optional">[when]</code>
+                        <code>when</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[offset]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[duration]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[attackDuration]</code>
                     
                 </li>
             
@@ -1185,7 +1226,23 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name optional">[when]</code>
+                        <code class="param-name">when</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The delay in seconds before playing the model</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[offset]</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -1193,7 +1250,41 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>At what time (in seconds) the sound be triggered</p>
+                        <p>The starting position of the playhead</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[duration]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Duration of the portion (in seconds) to be played</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[attackDuration]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Duration (in seconds) of attack ramp of the envelope.</p>
 
                     </div>
 

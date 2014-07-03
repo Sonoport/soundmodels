@@ -6,18 +6,18 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
         "use strict";
 
         /**
-         * A sound model which extends the playing of a single sound infinitely with windowed overlapping.
+         * A model which extends the playing of a single source infinitely with windowed overlapping.
          *
          *
          * @class Extender
          * @constructor
          * @extends BaseSound
-         * @param {String/AudioBuffer/File} sound Single URL or AudioBuffer or File of sound.
+         * @param {String/AudioBuffer/File} source Single URL or AudioBuffer or File Object of the audio source.
          * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when the sound has finished loading.
+         * @param {Function} [onLoadCallback] Callback when the source has finished loading.
          * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          */
-        function Extender( sound, context, onLoadCallback, onProgressCallback ) {
+        function Extender( source, context, onLoadCallback, onProgressCallback ) {
             if ( !( this instanceof Extender ) ) {
                 throw new TypeError( "Extender constructor cannot be called as a function." );
             }
@@ -40,29 +40,29 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var lastEventReleaseTime_ = 0;
             var releaseDur_ = 0;
 
-            var onAllLoadCallback = onLoadCallback;
-
             // Constants
             var MAX_USE = 0.9;
 
             // Private Functions
 
-            var onAllLoad = function ( status, audioBufferArray ) {
-                sourceBuffer_ = audioBufferArray[ 0 ];
-                soundQueue_.connect( self.releaseGainNode );
+            var createCallbackWith = function ( onLoadCallback ) {
+                return function ( status, audioBufferArray ) {
+                    sourceBuffer_ = audioBufferArray[ 0 ];
+                    soundQueue_.connect( self.releaseGainNode );
 
-                self.isInitialized = true;
-                if ( typeof onAllLoadCallback === 'function' ) {
-                    onAllLoadCallback( status );
-                }
+                    self.isInitialized = true;
+                    if ( typeof onLoadCallback === 'function' ) {
+                        onLoadCallback( status );
+                    }
+                };
             };
 
-            function init( sound ) {
-                var parameterType = Object.prototype.toString.call( sound );
-                if ( parameterType === '[object Array]' && sound.length > 1 ) {
+            function init( source, onLoadCallback, onProgressCallback ) {
+                var parameterType = Object.prototype.toString.call( source );
+                if ( parameterType === '[object Array]' && source.length > 1 ) {
                     throw ( new Error( "Incorrect Parameter Type - Extender only accepts a single Source as argument" ) );
                 }
-                multiFileLoader.call( self, sound, self.audioContext, onAllLoad, onProgressCallback );
+                multiFileLoader.call( self, source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
             }
 
             function extenderCallback() {
@@ -118,7 +118,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     ++currentEventID_;
                 }
 
-                // Keep making callback request if sound is still playing.
+                // Keep making callback request if source is still playing.
                 if ( self.isPlaying ) {
                     window.requestAnimationFrame( extenderCallback );
                 }
@@ -127,7 +127,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             // Public Properties
 
             /**
-             * Pitch shift of the triggered voices in semitones.
+             * Amount of pitch shift of the source in the each window (in semitones).
              *
              * @property pitchShift
              * @type SPAudioParam
@@ -138,7 +138,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
 
             /**
-             * Maximum value for random pitch shift of the triggered voices in semitones.
+             * The length (in seconds) of each window used to overlap the source.
              *
              * @property eventPeriod
              * @type SPAudioParam
@@ -149,7 +149,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.eventPeriod = SPAudioParam.createPsuedoParam( "eventPeriod", 0.1, 10.0, 2.0, this.audioContext );
 
             /**
-             * Enable randomness in the order of sources which are triggered.
+             * Fraction of each window of the source that is overlapped with the succeding window of the source.
              *
              * @property crossFadeDuration
              * @type SPAudioParam
@@ -165,32 +165,35 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * Reinitializes a Extender and sets it's sources.
              *
              * @method setSources
-             * @param {Array/AudioBuffer/String/File} sound Single or Array of either URLs or AudioBuffers of sound.
-             * @param {Function} [onLoadCallback] Callback when all sound have finished loading.
+             * @param {Array/AudioBuffer/String/File} source Single or Array of either URLs or AudioBuffers of source.
+             * @param {Function} [onLoadCallback] Callback when all source have finished loading.
+             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
-            this.setSources = function ( sound, onLoadCallback ) {
+            this.setSources = function ( source, onLoadCallback, onProgressCallback ) {
                 this.isInitialized = false;
-                onAllLoadCallback = onLoadCallback;
-                init( sound );
+                init( source, onLoadCallback, onProgressCallback );
             };
 
             /**
-             * Starts playing the sound
+             * Starts playing the source
              *
              * @method stop
-             * @param {Number} [when] At what time (in seconds) the sound be triggered
+             * @param {Number} when The delay in seconds before playing the source
+             * @param {Number} [offset] The starting position of the playhead
+             * @param {Number} [duration] Duration of the portion (in seconds) to be played
+             * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
              *
              */
-            this.start = function ( when ) {
+            this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
                     throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
                 }
-                BaseSound.prototype.start.call( this, when );
+                BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
                 webAudioDispatch( extenderCallback, when, this.audioContext );
             };
 
             /**
-             * Plays the sound immediately
+             * Plays the model immediately
              *
              * @method play
              *
@@ -200,7 +203,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             /**
-             * Pauses the sound immediately
+             * Pauses the model immediately
              *
              * @method pause
              *
@@ -211,10 +214,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             /**
-             * Stops playing the sound.
+             * Stops playing the model.
              *
              * @method stop
-             * @param {Number} [when] At what time (in seconds) the sound be stopped
+             * @param {Number} [when] At what time (in seconds) the model be stopped
              *
              */
             this.stop = function ( when ) {
@@ -224,8 +227,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             soundQueue_ = new SoundQueue( this.audioContext );
 
-            if ( sound )
-                init( sound );
+            if ( source ) {
+                init( source, onLoadCallback, onProgressCallback );
+            }
         }
 
         Extender.prototype = Object.create( BaseSound.prototype );

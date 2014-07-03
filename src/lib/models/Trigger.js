@@ -6,19 +6,19 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
         "use strict";
 
         /**
-         * A sound model which triggers a single or multiple sound files with multiple voices (polyphony).
+         * A model which triggers a single or multiple audio sources with multiple voices (polyphony).
          *
          *
          * @class Trigger
          * @constructor
          * @extends BaseSound
-         * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
+         * @param {Array/String/AudioBuffer/File} sources Single or Array of either URLs or AudioBuffers or File Objects of audio sources.
          * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
          * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          * @param {Function} [onEndedCallback] Callback when the Trigger has finished playing.
          */
-        function Trigger( sounds, context, onLoadCallback, onProgressCallback, onEndedCallback ) {
+        function Trigger( sources, context, onLoadCallback, onProgressCallback, onEndedCallback ) {
             if ( !( this instanceof Trigger ) ) {
                 throw new TypeError( "Trigger constructor cannot be called as a function." );
             }
@@ -37,23 +37,24 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var soundQueue_;
             var currentEventID_ = 0;
             var currentSourceID_ = 0;
-            var onAllLoadCallback = onLoadCallback;
             var allSounds;
 
             // Private Functions
 
-            var onAllLoad = function ( status, audioBufferArray ) {
-                sourceBuffers_ = audioBufferArray;
-                soundQueue_.connect( self.releaseGainNode );
-                self.isInitialized = true;
-                if ( typeof onAllLoadCallback === 'function' ) {
-                    onAllLoadCallback( status );
-                }
+            var createCallbackWith = function ( onLoadCallback ) {
+                return function ( status, audioBufferArray ) {
+                    sourceBuffers_ = audioBufferArray;
+                    soundQueue_.connect( self.releaseGainNode );
+                    self.isInitialized = true;
+                    if ( typeof onLoadCallback === 'function' ) {
+                        onLoadCallback( status );
+                    }
+                };
             };
 
-            function init( sounds ) {
-                multiFileLoader.call( self, sounds, self.audioContext, onAllLoad, onProgressCallback );
-                allSounds = sounds;
+            function init( sources, onLoadCallback, onProgressCallback ) {
+                multiFileLoader.call( self, sources, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
+                allSounds = sources;
             }
 
             // Public Properties
@@ -94,16 +95,16 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             // Public Functions
 
             /**
-             * Reinitializes a Trigger and sets it's sources.
+             * Reinitializes the model and sets it's sources.
              *
              * @method setSources
-             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
-             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             * @param {Array/AudioBuffer/String/File} sources Single or Array of either URLs or AudioBuffers or File Objects of the audio sources.
+             * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
+             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
-            this.setSources = function ( sounds, onLoadCallback ) {
+            this.setSources = function ( sources, onLoadCallback, onProgressCallback ) {
                 this.isInitialized = false;
-                onAllLoadCallback = onLoadCallback;
-                init( sounds );
+                init( sources, onLoadCallback, onProgressCallback );
             };
 
             /**
@@ -114,6 +115,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.stop = function ( when ) {
                 soundQueue_.stop( when );
+                BaseSound.prototype.stop.call( this, when );
             };
 
             /**
@@ -140,10 +142,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * Triggers a single voice at the given time
              *
              * @method start
-             * @param {Number} [when] At what time (in seconds) the sound be triggered
+             * @param {Number} when The delay in seconds before playing the model
+             * @param {Number} [offset] The starting position of the playhead
+             * @param {Number} [duration] Duration of the portion (in seconds) to be played
+             * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
              *
              */
-            this.start = function ( when ) {
+            this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
                     throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
                 }
@@ -175,14 +180,15 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
                 currentEventID_++;
 
-                BaseSound.prototype.start.call( this, when );
+                BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
             };
 
-            // SoundQueue Based Model.
+            // SoundQueue based model.
             soundQueue_ = new SoundQueue( this.audioContext );
 
-            if ( sounds )
-                init( sounds );
+            if ( sources ) {
+                init( sources, onLoadCallback, onProgressCallback );
+            }
         }
 
         Trigger.prototype = Object.create( BaseSound.prototype );

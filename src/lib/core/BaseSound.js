@@ -2,7 +2,7 @@
 /**
  * @module Core
  */
-define( [ 'core/AudioContextMonkeyPatch' ], function () {
+define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( webAudioDispatch ) {
     'use strict';
 
     /**
@@ -154,11 +154,22 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      * Start the AudioNode. Abstract method. Override this method when a Node is defined.
      *
      * @method start
-     * @param {Number} [when] At what time (in seconds) the sound should start playing.
-     * @param {Number} [offset] Offset time in the buffer (in seconds) where playback will begin.
-     * @param {Number} [duration] Duration of the portion (in seconds) to be played.
+     * @param {Number} when The delay in seconds before playing the sound
+     * @param {Number} [offset] The starting position of the playhead
+     * @param {Number} [duration] Duration of the portion (in seconds) to be played
+     * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
      */
-    BaseSound.prototype.start = function ( when, offset, duration ) {
+    BaseSound.prototype.start = function ( when, offset, duration, attackDuration ) {
+        var now = this.audioContext.currentTime;
+
+        if ( typeof attackDuration !== 'undefined' ) {
+            //console.log( "Ramping from " + offset + "  in " + attackDuration );
+            this.releaseGainNode.gain.cancelScheduledValues( now );
+            this.releaseGainNode.gain.setValueAtTime( 0, now );
+            this.releaseGainNode.gain.linearRampToValueAtTime( 1, now + attackDuration );
+        } else {
+            this.releaseGainNode.gain.setValueAtTime( 1, now );
+        }
         this.isPlaying = true;
     };
 
@@ -170,16 +181,20 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
      */
     BaseSound.prototype.stop = function ( when ) {
 
-        var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
+        var FADE_TIME_PAD = 10 / this.audioContext.sampleRate;
 
-        // This boolean is not accurate. Need a better way track if the actual audio is still playing.
-        this.isPlaying = false;
         if ( typeof when === "undefined" ) {
             when = 0;
         }
+
+        // This boolean is not accurate. Need a better way track if the actual audio is still playing.
+        self = this;
+        webAudioDispatch( function () {
+            self.isPlaying = false;
+        }, when, this.audioContext );
+
         // cancel all scheduled ramps on this releaseGainNode
         this.releaseGainNode.gain.cancelScheduledValues( when );
-        this.releaseGainNode.gain.setValueAtTime( 1, when + FADE_TIME_PAD );
     };
 
     /**

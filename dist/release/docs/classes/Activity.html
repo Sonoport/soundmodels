@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.1</em>
+            <em>API Docs for: 1.0.2</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -126,7 +126,7 @@
 
 
 <div class="box intro">
-    <p>A sound model which triggers a single or multiple sound files with multiple voices (polyphony).</p>
+    <p>A model plays back the source at various speeds based on the movement of the activity parameter.</p>
 
 </div>
 
@@ -142,7 +142,7 @@
             
                 <li class="arg">
                     
-                        <code>sound</code>
+                        <code>source</code>
                     
                 </li>
             
@@ -211,14 +211,14 @@
             
                 <li class="param">
                     
-                        <code class="param-name">sound</code>
+                        <code class="param-name">source</code>
                         <span class="type">String/AudioBuffer/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Either URL or AudioBuffer or File of sound.</p>
+                        <p>Either a URL or AudioBuffer or File Object of of the audio source.</p>
 
                     </div>
 
@@ -251,7 +251,7 @@
                     
 
                     <div class="param-description">
-                        <p>Callback when the sound has finished loading.</p>
+                        <p>Callback when the source has finished loading.</p>
 
                     </div>
 
@@ -426,15 +426,15 @@
                                 
                             </li>
                         
-                            <li class="index-item property">
-                                <a href="#property_maxRate">maxRate</a>
+                            <li class="index-item property inherited">
+                                <a href="#property_maxSources">maxSources</a>
 
                                 
                                 
                             </li>
                         
-                            <li class="index-item property inherited">
-                                <a href="#property_maxSources">maxSources</a>
+                            <li class="index-item property">
+                                <a href="#property_maxSpeed">maxSpeed</a>
 
                                 
                                 
@@ -845,7 +845,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Pause the currently playing sound at the current position.</p>
+        <p>Pause the currently playing source at the current position.</p>
 
     </div>
 
@@ -926,7 +926,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>At what time (in seconds) the sound be triggered</p>
+                        <p>At what time (in seconds) the source be triggered</p>
 
                     </div>
 
@@ -1061,13 +1061,19 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code>sound</code>
+                        <code>source</code>
                     
                 </li>
             
                 <li class="arg">
                     
                         <code class="optional">[onLoadCallback]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onProgressCallback]</code>
                     
                 </li>
             
@@ -1119,14 +1125,14 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name">sound</code>
+                        <code class="param-name">source</code>
                         <span class="type">Array/AudioBuffer/String/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers of sound.</p>
+                        <p>Single or Array of either URLs or AudioBuffers of audio sources.</p>
 
                     </div>
 
@@ -1143,7 +1149,24 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>Callback when all sound have finished loading.</p>
+                        <p>Callback when all source have finished loading.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onProgressCallback]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when the audio file is being downloaded.</p>
 
                     </div>
 
@@ -1182,6 +1205,12 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                 <li class="arg">
                     
                         <code class="optional">[duration]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[attackDuration]</code>
                     
                 </li>
             
@@ -1241,7 +1270,7 @@ the value of startPoint property is used.</p>
                     
 
                     <div class="param-description">
-                        <p>The delay in seconds before playing the sound</p>
+                        <p>The delay in seconds before playing the model</p>
 
                     </div>
 
@@ -1276,6 +1305,23 @@ the value of startPoint property is used.</p>
 
                     <div class="param-description">
                         <p>Duration of the portion (in seconds) to be played</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[attackDuration]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Duration (in seconds) of attack ramp of the envelope.</p>
 
                     </div>
 
@@ -1341,7 +1387,7 @@ the value of startPoint property is used.</p>
     </div>
 
     <div class="description">
-        <p>Stops the sound and resets play head to 0.</p>
+        <p>Stops the source and resets play head to 0.</p>
 
     </div>
 
@@ -1414,7 +1460,7 @@ the value of startPoint property is used.</p>
     </div>
 
     <div class="description">
-        <p>Pitch shift of the triggered voices in semitones.</p>
+        <p>Controls the playback of the source. The more this parameter is moved, the higher the speed of playback.</p>
 
     </div>
 
@@ -1509,7 +1555,7 @@ the value of startPoint property is used.</p>
     </div>
 
     <div class="description">
-        <p>Decay time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the <a href="../classes/Activity.html#property_action" class="crosslink">action</a> property.</p>
+        <p>Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the <a href="../classes/Looper.html#property_playSpeed" class="crosslink">playSpeed</a> property.</p>
 
     </div>
 
@@ -1670,57 +1716,6 @@ Set this value to null if no connection can be made on the input node</p>
 </div>
 
                 
-                    <div id="property_maxRate" class="property item">
-    <h3 class="name"><code>maxRate</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Pitch shift of the triggered voices in semitones.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 1</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0.05</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 8.0</p>
-    
-
-    
-
-    
-</div>
-
-                
                     <div id="property_maxSources" class="property item inherited">
     <h3 class="name"><code>maxSources</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
@@ -1759,6 +1754,57 @@ Set this value to null if no connection can be made on the input node</p>
 
     
 
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_maxSpeed" class="property item">
+    <h3 class="name"><code>maxSpeed</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Maximum value at which the playback speed of the source will be capped to.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 1</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0.05</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 8.0</p>
     
 
     
@@ -1982,7 +2028,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     <div class="description">
-        <p>Rise time (time-constant value of first-order filter (exponential) ) to approach the target speed set by the <a href="../classes/Activity.html#property_action" class="crosslink">action</a> property.</p>
+        <p>Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the <a href="../classes/Looper.html#property_playSpeed" class="crosslink">playSpeed</a> property.</p>
 
     </div>
 

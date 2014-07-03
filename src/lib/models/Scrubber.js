@@ -6,16 +6,17 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
         "use strict";
         /**
          *
-         * A sound model which loads a sound file and allows it to be scrubbed using a position parameter
+         * A model which loads a source and allows it to be scrubbed using a position parameter.
+         *
          * @class Scrubber
          * @constructor
          * @extends BaseSound
-         * @param {Array/String/AudioBuffer/File} sounds Single or Array of either URLs or AudioBuffers or File of sounds.
+         * @param {Array/String/AudioBuffer/File} source  A URL or AudioBuffer or File Object of the audio source.
          * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+         * @param {Function} [onLoadCallback] Callback when the source has finished loading.
          * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
          */
-        function Scrubber( sound, context, onLoadCallback, onProgressCallback ) {
+        function Scrubber( source, context, onLoadCallback, onProgressCallback ) {
             if ( !( this instanceof Scrubber ) ) {
                 throw new TypeError( "Scrubber constructor cannot be called as a function." );
             }
@@ -47,49 +48,49 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             var scale_ = 0;
 
             var scriptNode_;
-
-            var onAllLoadCallback = onLoadCallback;
-
             // Constants
             var MAX_JUMP_SECS = 1.0;
             var ALPHA = 0.95;
             var SPEED_THRESH = 0.05;
             var SPEED_ALPHA = 0.8;
 
-            var onAllLoad = function ( status, audioBufferArray ) {
-                var sourceBuffer_ = audioBufferArray[ 0 ];
+            var zeroArray;
 
-                // store audiosource attributes
-                numSamples_ = sourceBuffer_.length;
-                numChannels_ = sourceBuffer_.numberOfChannels;
-                sampleRate_ = sourceBuffer_.sampleRate;
+            var createCallbackWith = function ( onLoadCallback ) {
+                return function ( status, audioBufferArray ) {
+                    var sourceBuffer_ = audioBufferArray[ 0 ];
 
-                for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
-                    sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
-                }
+                    // store audiosource attributes
+                    numSamples_ = sourceBuffer_.length;
+                    numChannels_ = sourceBuffer_.numberOfChannels;
+                    sampleRate_ = sourceBuffer_.sampleRate;
 
-                scriptNode_ = self.audioContext.createScriptProcessor( 256, 0, numChannels_ );
-                scriptNode_.onaudioprocess = scriptNodeCallback;
-                scriptNode_.connect( self.releaseGainNode );
+                    for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
+                        sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
+                    }
 
-                // create buffers
-                synthBuf_ = newBuffer( winLen_, numChannels_ );
-                srcBuf_ = newBuffer( winLen_, numChannels_ );
+                    scriptNode_ = self.audioContext.createScriptProcessor( Config.CHUNK_LENGTH, 0, numChannels_ );
+                    scriptNode_.onaudioprocess = scriptNodeCallback;
+                    scriptNode_.connect( self.releaseGainNode );
 
-                self.isInitialized = true;
+                    // create buffers
+                    synthBuf_ = newBuffer( winLen_, numChannels_ );
+                    srcBuf_ = newBuffer( winLen_, numChannels_ );
 
-                if ( typeof onAllLoadCallback === 'function' ) {
-                    onAllLoadCallback( status );
-                }
+                    self.isInitialized = true;
 
+                    if ( typeof onLoadCallback === 'function' ) {
+                        onLoadCallback( status );
+                    }
+                };
             };
 
-            function init( sound ) {
-                var parameterType = Object.prototype.toString.call( sound );
-                if ( parameterType === '[object Array]' && sound.length > 1 ) {
+            function init( source, onLoadCallback, onProgressCallback ) {
+                var parameterType = Object.prototype.toString.call( source );
+                if ( parameterType === '[object Array]' && source.length > 1 ) {
                     throw ( new Error( "Incorrect Parameter Type - Extender only accepts a single Source as argument" ) );
                 }
-                multiFileLoader.call( self, sound, self.audioContext, onAllLoad, onProgressCallback );
+                multiFileLoader.call( self, source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
 
                 winLen_ = Config.WINDOW_LENGTH;
                 synthStep_ = winLen_ / 2;
@@ -99,10 +100,16 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                 for ( var sIndex = 0; sIndex < winLen_; sIndex++ ) {
                     win_[ sIndex ] = 0.25 * ( 1.0 - Math.cos( 2 * Math.PI * ( sIndex + 0.5 ) / winLen_ ) );
                 }
+
+                zeroArray = new Float32Array( Config.CHUNK_LENGTH );
             }
 
             function scriptNodeCallback( processingEvent ) {
                 if ( !self.isPlaying || !self.isInitialized ) {
+                    for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
+                        processingEvent.outputBuffer.getChannelData( cIndex )
+                            .set( zeroArray );
+                    }
                     return;
                 }
 
@@ -125,7 +132,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                             var source = synthBuf_[ cIndex ].subarray( synthStep_ - numReady_, synthStep_ - numReady_ + numToCopy );
                             processingEvent.outputBuffer.getChannelData( cIndex )
                                 .set( source, processingEvent.outputBuffer.length - numToGo_ );
-                            //processingEvent.outputBuffer.copyToChannel( source, cIndex, numSamples_ - numToGo_ );
                         }
 
                         numToGo_ -= numToCopy;
@@ -264,13 +270,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * Reinitializes a Scrubber and sets it's sources.
              *
              * @method setSources
-             * @param {Array/AudioBuffer/String/File} sounds Single or Array of either URLs or AudioBuffers of sounds.
-             * @param {Function} [onLoadCallback] Callback when all sounds have finished loading.
+             * @param {Array/AudioBuffer/String/File} source URL or AudioBuffer or File Object of the audio source.
+             * @param {Function} [onLoadCallback] Callback when the source has finished loading.
+             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
              */
-            this.setSources = function ( sounds, onLoadCallback ) {
+            this.setSources = function ( source, onLoadCallback, onProgressCallback ) {
                 this.isInitialized = false;
-                onAllLoadCallback = onLoadCallback;
-                init( sounds );
+                init( source, onLoadCallback, onProgressCallback );
             };
 
             // Public Parameters
@@ -298,7 +304,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             this.noMotionFade = SPAudioParam.createPsuedoParam( "noMotionFade", true, false, true, this.audioContext );
 
             /**
-             * Sets if moving playPosition to backwards should make any sound.
+             * Sets if moving playPosition to backwards should mute the model.
              *
              * @property muteOnReverse
              * @type SPAudioParam
@@ -308,7 +314,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              */
             this.muteOnReverse = SPAudioParam.createPsuedoParam( "muteOnReverse", true, false, true, this.audioContext );
 
-            init( sound );
+            if ( source ) {
+                init( source, onLoadCallback, onProgressCallback );
+            }
 
         }
 

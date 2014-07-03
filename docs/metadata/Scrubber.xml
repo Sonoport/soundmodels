@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model>
+	<name>Scrubber</name>
+	<version>1.0.2</version>
+	<sources>
+		<!-- <source>http://sonoport-studio-preview.herokuapp.com/loop1.mp3</source> -->
+	</sources>
+	<description>Allows a source to be scrubbed using a position parameter</description>
+	<params>
+		<param>
+			<name>playPosition</name>
+			<displayname>Play Position</displayname>
+			<description>Position (as a fraction of the length) of the audio to be played instantenously.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>1.00</max>
+			<value>0</value>
+		</param>
+		<param>
+			<name>noMotionFade</name>
+			<displayname>No Motion Fade</displayname>
+			<description>If the audio should fade out when playPosition has not changed for a while.</description>
+			<type>Boolean</type>
+			<min>true</min>
+			<max>false</max>
+			<value>false</value>
+		</param>
+		<param>
+			<name>muteOnReverse</name>
+			<displayname>Mute on Reverse</displayname>
+			<description>Sets if moving playPosition to backwards should mute the model.</description>
+			<type>Boolean</type>
+			<min>true</min>
+			<max>false</max>
+			<value>true</value>
+		</param>
+		<param>
+			<name>gain</name>
+			<displayname>Gain</displayname>
+			<description> The volume (loudness) of the audio produced by the model. </description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>1.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>pan</name>
+			<displayname>Pan</displayname>
+			<description> Left/Right panning (in degrees) of the position of the source with respect to the listener</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>-90.00</min>
+			<max>90.00</max>
+			<value>0.00</value>
+		</param>
+		<param>
+			<name>playSpeed</name>
+			<displayname>Play Speed</displayname>
+			<description> Speed of playback of the source. Affects both pitch and tempo.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>10.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>riseTime</name>
+			<displayname>Rise Time</displayname>
+			<description> Rate of increase of Play Speed. Affect how quickly Play Speed rises to a set value.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>10.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>decayTime</name>
+			<displayname>Decay Time</displayname>
+			<description> Rate of decrease of Play Speed. Affect how quickly Play Speed decays to a set value.</description>
+			<type>Double</type>
+			<step>0.01</step>
+			<min>0</min>
+			<max>10.00</max>
+			<value>1.00</value>
+		</param>
+		<param>
+			<name>maxLoops</name>
+			<displayname>Maximum Loops</displayname>
+			<description> The maximum number time the source will be looped before stopping. Currently only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).</description>
+			<type>Integer</type>
+			<step>1</step>
+			<min>-1</min>
+			<max>1</max>
+			<value>-1</value>
+		</param>
+		<param>
+			<name>startPoint</name>
+			<displayname>Starting Point</displayname>
+			<description> Starting point (as a fraction of the length of entire track) where the Looping should start from.</description>
+			<type>Integer</type>
+			<step>1</step>
+			<min>-1</min>
+			<max>1</max>
+			<value>-1</value>
+		</param>
+	</params>
+</model>

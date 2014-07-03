@@ -54,5 +54,16 @@ define( [],
          */
         Config.WINDOW_LENGTH = 512;
 
+        /**
+         * Default Chunk Length for ScriptNodes.
+         *
+         * @final
+         * @static
+         * @property CHUNK_LENGTH
+         * @default 256
+         *
+         */
+        Config.CHUNK_LENGTH = 256;
+
         return Config;
     } );

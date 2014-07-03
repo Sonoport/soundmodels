@@ -146,14 +146,19 @@
                 $( document )
                     .ready( function () {
                         $( "#startbtn" )
+                            .unbind( 'click' )
                             .attr( "disabled", false );
                         $( "#playbtn" )
+                            .unbind( 'click' )
                             .attr( "disabled", false );
                         $( "#pausebtn" )
+                            .unbind( 'click' )
                             .attr( "disabled", true );
                         $( "#stopbtn" )
+                            .unbind( 'click' )
                             .attr( "disabled", true );
                         $( "#releasebtn" )
+                            .unbind( 'click' )
                             .attr( "disabled", true );
 
                         // toggle sound
