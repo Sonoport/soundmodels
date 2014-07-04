@@ -68,7 +68,7 @@ define( [ 'core/FileLoader' ],
                 }
                 sourcesToLoad_--;
                 if ( sourcesToLoad_ === 0 ) {
-                    if ( typeof sounds === Array ) {
+                    if ( sounds instanceof Array ) {
                         status = loadedAudioBuffers_.length === sounds.length;
                     } else {
                         status = loadedAudioBuffers_.length === 1;
