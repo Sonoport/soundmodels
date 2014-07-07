@@ -1445,7 +1445,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 53,
+            "line": 54,
             "description": "Number of sources that can be given to this Sound",
             "itemtype": "property",
             "name": "maxSources",
@@ -1456,7 +1456,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 74,
+            "line": 76,
             "description": "Release Gain Node",
             "itemtype": "property",
             "name": "releaseGainNode",
@@ -1468,7 +1468,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 84,
+            "line": 86,
             "description": "If Sound is currently playing.",
             "itemtype": "property",
             "name": "isPlaying",
@@ -1479,7 +1479,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 93,
+            "line": 95,
             "description": "If Sound is currently initialized.",
             "itemtype": "property",
             "name": "isInitialized",
@@ -1490,7 +1490,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 102,
+            "line": 104,
             "description": "The input node that the output node will be connected to. <br />\nSet this value to null if no connection can be made on the input node",
             "itemtype": "property",
             "name": "inputNode",
@@ -1501,7 +1501,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 112,
+            "line": 114,
             "description": "String name of the model.",
             "itemtype": "property",
             "name": "modelName",
@@ -1512,7 +1512,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 124,
+            "line": 126,
             "description": "If the parameter `output` is an AudioNode, it connects to the releaseGainNode.\nIf the output is a BaseSound, it will connect BaseSound's releaseGainNode to the output's inputNode.",
             "itemtype": "method",
             "name": "connect",
@@ -1540,7 +1540,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 143,
+            "line": 145,
             "description": "Disconnects the Sound from the AudioNode Chain.",
             "itemtype": "method",
             "name": "disconnect",
@@ -1557,7 +1557,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 153,
+            "line": 155,
             "description": "Start the AudioNode. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "start",
@@ -1591,7 +1591,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 176,
+            "line": 178,
             "description": "Stop the AudioNode. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "stop",
@@ -1608,7 +1608,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 200,
+            "line": 202,
             "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
             "itemtype": "method",
             "name": "release",
@@ -1631,7 +1631,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 229,
+            "line": 231,
             "description": "Play sound. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "play",
@@ -1640,7 +1640,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 238,
+            "line": 240,
             "description": "Pause sound. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "pause",
@@ -1649,7 +1649,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 247,
+            "line": 249,
             "description": "List all SPAudioParams this Sound exposes",
             "itemtype": "method",
             "name": "listParams",
@@ -1911,7 +1911,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 164,
+            "line": 165,
             "description": "Schedules a parameter value change at the given time.",
             "itemtype": "method",
             "name": "setValueAtTime",
@@ -1932,7 +1932,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 195,
+            "line": 196,
             "description": "Start exponentially approaching the target value at the given time with a rate having the given time constant.\n\nDuring the time interval: T0 <= t < T1, where T0 is the startTime parameter and T1 represents the time of the event following this event (or infinity if there are no following events):\n    v(t) = V1 + (V0 - V1) * exp(-(t - T0) / timeConstant)",
             "itemtype": "method",
             "name": "setTargetAtTime",
@@ -1958,7 +1958,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 234,
+            "line": 235,
             "description": "Sets an array of arbitrary parameter values starting at the given time for the given duration. The number of values will be scaled to fit into the desired duration.\n\nDuring the time interval: startTime <= t < startTime + duration, values will be calculated:\n\n  v(t) = values[N * (t - startTime) / duration], where N is the length of the values array.",
             "itemtype": "method",
             "name": "setValueCurveAtTime",
@@ -1984,7 +1984,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 276,
+            "line": 277,
             "description": "Schedules an exponential continuous change in parameter value from the previous scheduled parameter value to the given value.\n\nv(t) = V0 * (V1 / V0) ^ ((t - T0) / (T1 - T0))",
             "itemtype": "method",
             "name": "exponentialRampToValueAtTime",
@@ -2005,7 +2005,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 314,
+            "line": 315,
             "description": "Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.",
             "itemtype": "method",
             "name": "linearRampToValueAtTime",
@@ -2026,7 +2026,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 347,
+            "line": 348,
             "description": "Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.",
             "itemtype": "method",
             "name": "cancelScheduledValues",
@@ -2042,7 +2042,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 368,
+            "line": 369,
             "description": "Static helper method to create Psuedo parameters which are not connected to\n       any WebAudio AudioParams.",
             "itemtype": "method",
             "name": "createPsuedoParam",
