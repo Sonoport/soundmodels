@@ -1,7 +1,7 @@
 // main file
 ( function ( $ ) {
     "use strict";
-    var AudioContext = webkitAudioContext || AudioContext;
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
 
     // Save the name of the Sound Model class

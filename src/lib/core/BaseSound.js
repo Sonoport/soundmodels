@@ -45,6 +45,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
          */
         Object.defineProperty( this, 'numberOfOutputs', {
             enumerable: true,
+            configurable: false,
             get: function () {
                 return this.releaseGainNode.numberOfOutputs;
             }
@@ -60,6 +61,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         var maxSources_ = 0;
         Object.defineProperty( this, 'maxSources', {
             enumerable: true,
+            configurable: false,
             set: function ( max ) {
                 if ( max < 0 ) {
                     max = 0;
@@ -188,7 +190,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         }
 
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
-        self = this;
+        var self = this;
         webAudioDispatch( function () {
             self.isPlaying = false;
         }, when, this.audioContext );

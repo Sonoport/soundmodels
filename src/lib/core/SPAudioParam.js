@@ -78,6 +78,7 @@ define(
              */
             Object.defineProperty( this, 'value', {
                 enumerable: true,
+                configurable: false,
                 set: function ( value ) {
                     // Sanitize the value with min/max
                     // bounds first.
