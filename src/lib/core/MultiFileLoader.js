@@ -32,12 +32,14 @@ define( [ 'core/FileLoader' ],
 
                 if ( parameterType === '[object Array]' ) {
                     sourcesToLoad_ = sounds.length;
-                    sounds.forEach( function ( thisSound ) {
-                        loadSingleSound( thisSound, onSingleLoad );
+                    loadedAudioBuffers_ = new Array( sourcesToLoad_ );
+                    sounds.forEach( function ( thisSound, index ) {
+                        loadSingleSound( thisSound, onSingleLoadAt( index ) );
                     } );
                 } else if ( sounds !== undefined && sounds !== null ) {
                     sourcesToLoad_ = 1;
-                    loadSingleSound( sounds, onSingleLoad );
+                    loadedAudioBuffers_ = new Array( sourcesToLoad_ );
+                    loadSingleSound( sounds, onSingleLoadAt( 0 ) );
                 }
             }
 
@@ -62,19 +64,23 @@ define( [ 'core/FileLoader' ],
                 }
             }
 
-            function onSingleLoad( status, audioBuffer ) {
-                if ( status ) {
-                    loadedAudioBuffers_.push( audioBuffer );
-                }
-                sourcesToLoad_--;
-                if ( sourcesToLoad_ === 0 ) {
-                    if ( sounds instanceof Array ) {
-                        status = loadedAudioBuffers_.length === sounds.length;
-                    } else {
-                        status = loadedAudioBuffers_.length === 1;
+            function onSingleLoadAt( index ) {
+                return function ( status, audioBuffer ) {
+                    if ( status ) {
+                        loadedAudioBuffers_[ index ] = audioBuffer;
                     }
-                    onAllLoad( status, loadedAudioBuffers_ );
-                }
+                    sourcesToLoad_--;
+                    if ( sourcesToLoad_ === 0 ) {
+                        var allStatus = true;
+                        for ( var bIndex = 0; bIndex < loadedAudioBuffers_.length; ++bIndex ) {
+                            if ( !loadedAudioBuffers_[ bIndex ] ) {
+                                allStatus = false;
+                                break;
+                            }
+                        }
+                        onAllLoad( allStatus, loadedAudioBuffers_ );
+                    }
+                };
             }
             init();
         }

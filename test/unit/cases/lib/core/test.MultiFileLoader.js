@@ -40,18 +40,24 @@ require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
                         expect( thisBuffer )
                             .toBeInstanceOf( AudioBuffer );
                     } );
+                    expect( buffers[ 0 ].numberOfChannels )
+                        .toBe( 2 );
+                    expect( buffers[ 1 ].numberOfChannels )
+                        .toBe( 2 );
+                    expect( buffers[ 2 ].numberOfChannels )
+                        .toBe( 1 );
                     done();
                 } );
             } );
 
-            it( "should return status false and empty array on callback if urls supplied is invalid", function ( done ) {
+            it( "should return status false and array of undefined on callback if urls supplied is invalid", function ( done ) {
                 multiFileLoader.call( {}, invalidSounds, context, function ( status, buffers ) {
                     expect( status )
                         .toBe( false );
                     expect( buffers.length )
                         .toBeDefined();
                     expect( buffers.length )
-                        .toBe( 0 );
+                        .toBe( invalidSounds.length );
                     done();
                 } );
             } );
