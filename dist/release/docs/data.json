@@ -1057,7 +1057,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 149,
+            "line": 150,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchShift",
@@ -1070,7 +1070,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 160,
+            "line": 161,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -1083,7 +1083,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 171,
+            "line": 172,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
@@ -1096,7 +1096,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 182,
+            "line": 183,
             "description": "Trigger rate for playing the model in Hz.",
             "itemtype": "property",
             "name": "eventRate",
@@ -1109,7 +1109,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 192,
+            "line": 193,
             "description": "Maximum deviation from the regular trigger interval (as a factor of 1).",
             "itemtype": "property",
             "name": "eventJitter",
@@ -1122,7 +1122,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 205,
+            "line": 206,
             "description": "Start repeated triggering.",
             "itemtype": "method",
             "name": "start",
@@ -1156,7 +1156,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 223,
+            "line": 224,
             "description": "Start repeated triggering immediately",
             "itemtype": "method",
             "name": "play",
@@ -1165,7 +1165,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 233,
+            "line": 234,
             "description": "Stops playing all voices.",
             "itemtype": "method",
             "name": "stop",
@@ -1174,7 +1174,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 245,
+            "line": 246,
             "description": "Pauses playing all voices.",
             "itemtype": "method",
             "name": "pause",
@@ -1183,7 +1183,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 257,
+            "line": 258,
             "description": "Reinitializes a MultiTrigger and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -2204,43 +2204,43 @@
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:149"
+            "line": " src/lib/models/MultiTrigger.js:150"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:149"
+            "line": " src/lib/models/MultiTrigger.js:150"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:160"
+            "line": " src/lib/models/MultiTrigger.js:161"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:160"
+            "line": " src/lib/models/MultiTrigger.js:161"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:171"
+            "line": " src/lib/models/MultiTrigger.js:172"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:171"
+            "line": " src/lib/models/MultiTrigger.js:172"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:182"
+            "line": " src/lib/models/MultiTrigger.js:183"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:182"
+            "line": " src/lib/models/MultiTrigger.js:183"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:192"
+            "line": " src/lib/models/MultiTrigger.js:193"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:192"
+            "line": " src/lib/models/MultiTrigger.js:193"
         },
         {
             "message": "unknown tag: minvalue",
