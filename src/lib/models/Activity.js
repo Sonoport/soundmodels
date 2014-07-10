@@ -66,6 +66,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
 
             function init( source, onLoadCallback, onProgressCallback ) {
                 internalLooper_ = new Looper( source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback, null );
+                internalLooper_.riseTime.value = self.riseTime.value;
+                internalLooper_.decayTime.value = self.decayTime.value;
             }
 
             function actionSetter_( aParam, value, audioContext ) {
