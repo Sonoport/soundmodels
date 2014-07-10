@@ -45,7 +45,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 return function ( status, audioBufferArray ) {
                     sourceBuffers_ = audioBufferArray;
                     soundQueue_.connect( self.releaseGainNode );
-                    self.isInitialized = true;
+                    if (status){
+                        self.isInitialized = true;
+                    }
                     if ( typeof onLoadCallback === 'function' ) {
                         onLoadCallback( status );
                     }

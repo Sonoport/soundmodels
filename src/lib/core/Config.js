@@ -11,6 +11,17 @@ define( [],
         function Config() {}
 
         /**
+         * Define if Errors are logged using errorception.
+         *
+         * @final
+         * @static
+         * @property LOG_ERRORS
+         * @default true
+         *
+         */
+        Config.LOG_ERRORS = true;
+
+        /**
          * Very small number considered non-zero by WebAudio.
          *
          * @final

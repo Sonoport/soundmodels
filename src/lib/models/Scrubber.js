@@ -77,8 +77,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                     synthBuf_ = newBuffer( winLen_, numChannels_ );
                     srcBuf_ = newBuffer( winLen_, numChannels_ );
 
-                    self.isInitialized = true;
-
+                    if (status){
+                        self.isInitialized = true;
+                    }
                     if ( typeof onLoadCallback === 'function' ) {
                         onLoadCallback( status );
                     }
