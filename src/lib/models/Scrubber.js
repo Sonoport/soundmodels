@@ -23,6 +23,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             // Call superclass constructor
             BaseSound.call( this, context );
             this.maxSources = 1;
+            this.minSources = 1;
             this.modelName = "Scrubber";
 
             // Private Variables

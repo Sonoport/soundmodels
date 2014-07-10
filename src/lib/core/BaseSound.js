@@ -52,7 +52,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         } );
 
         /**
-         *Number of sources that can be given to this Sound
+         *Maximum number of sources that can be given to this Sound
          *
          * @property maxSources
          * @type Number
@@ -70,6 +70,28 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             },
             get: function () {
                 return maxSources_;
+            }
+        } );
+
+        /**
+         *Minimum number of sources that can be given to this Sound
+         *
+         * @property minSources
+         * @type Number
+         * @default 0
+         */
+        var minSources_ = 0;
+        Object.defineProperty( this, 'minSources', {
+            enumerable: true,
+            configurable: false,
+            set: function ( max ) {
+                if ( max < 0 ) {
+                    max = 0;
+                }
+                minSources_ = Math.round( max );
+            },
+            get: function () {
+                return minSources_;
             }
         } );
 

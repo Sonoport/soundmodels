@@ -31,17 +31,14 @@ define( [ 'core/FileLoader' ],
                 var parameterType = Object.prototype.toString.call( sounds );
 
                 if ( parameterType === '[object Array]' ) {
-                    if ( sounds.length > 0 && sounds.length <= self.maxSources ) {
+                    if ( sounds.length >= self.minSources && sounds.length <= self.maxSources ) {
                         sourcesToLoad_ = sounds.length;
                         loadedAudioBuffers_ = new Array( sourcesToLoad_ );
                         sounds.forEach( function ( thisSound, index ) {
                             loadSingleSound( thisSound, onSingleLoadAt( index ) );
                         } );
-                    } else if ( sounds.length > self.maxSources ) {
-                        console.error( "Unsupported number of Sources -" + self.modelName + " only supports a maximum of " + self.maxSources + " sources." );
-                        onAllLoad( false, loadedAudioBuffers_ );
                     } else {
-                        console.warn( "Setting empty source. No sound may be heard" );
+                        console.error( "Unsupported number of Sources -" + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources." );
                         onAllLoad( false, loadedAudioBuffers_ );
                     }
                 } else if ( sounds ) {

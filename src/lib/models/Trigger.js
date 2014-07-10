@@ -27,6 +27,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             BaseSound.call( this, context );
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
+            this.minSources = 1;
             this.modelName = "Trigger";
 
             // Private vars

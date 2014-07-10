@@ -25,6 +25,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             BaseSound.call( this, context );
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
+            this.minSources = 1;
             this.modelName = "Activity";
 
             // Private vars

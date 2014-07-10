@@ -24,6 +24,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             // Call superclass constructor
             BaseSound.call( this, context );
             this.maxSources = Config.MAX_VOICES;
+            this.minSources = 1;
             this.modelName = "Looper";
 
             // Private vars

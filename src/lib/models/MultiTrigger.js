@@ -28,6 +28,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             var self = this;
             this.maxSources = Config.MAX_VOICES;
+            this.minSources = 1;
             this.modelName = "MultiTrigger";
 
             var lastEventTime_ = 0;
