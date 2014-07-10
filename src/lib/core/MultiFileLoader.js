@@ -31,15 +31,26 @@ define( [ 'core/FileLoader' ],
                 var parameterType = Object.prototype.toString.call( sounds );
 
                 if ( parameterType === '[object Array]' ) {
-                    sourcesToLoad_ = sounds.length;
-                    loadedAudioBuffers_ = new Array( sourcesToLoad_ );
-                    sounds.forEach( function ( thisSound, index ) {
-                        loadSingleSound( thisSound, onSingleLoadAt( index ) );
-                    } );
-                } else if ( sounds !== undefined && sounds !== null ) {
+                    if ( sounds.length > 0 && sounds.length <= self.maxSources ) {
+                        sourcesToLoad_ = sounds.length;
+                        loadedAudioBuffers_ = new Array( sourcesToLoad_ );
+                        sounds.forEach( function ( thisSound, index ) {
+                            loadSingleSound( thisSound, onSingleLoadAt( index ) );
+                        } );
+                    } else if ( sounds.length > self.maxSources ) {
+                        console.error( "Unsupported number of Sources -" + self.modelName + " only supports a maximum of " + self.maxSources + " sources." );
+                        onAllLoad( false, loadedAudioBuffers_ );
+                    } else {
+                        console.warn( "Setting empty source. No sound may be heard" );
+                        onAllLoad( false, loadedAudioBuffers_ );
+                    }
+                } else if ( sounds ) {
                     sourcesToLoad_ = 1;
                     loadedAudioBuffers_ = new Array( sourcesToLoad_ );
                     loadSingleSound( sounds, onSingleLoadAt( 0 ) );
+                } else {
+                    console.warn( "Setting empty source. No sound may be heard" );
+                    onAllLoad( false, loadedAudioBuffers_ );
                 }
             }
 
@@ -60,7 +71,8 @@ define( [ 'core/FileLoader' ],
                 } else if ( parameterType === "[object AudioBuffer]" ) {
                     onSingleLoad( true, sound );
                 } else {
-                    throw ( new Error( "Incorrect Parameter Type - Source is not a URL or AudioBuffer" ) );
+                    console.error( "Incorrect Parameter Type - Source is not a URL, File or AudioBuffer" );
+                    onSingleLoad( false, {} );
                 }
             }
 

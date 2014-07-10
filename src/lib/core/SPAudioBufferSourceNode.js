@@ -314,7 +314,9 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
             function wrapAroundOnEnded( node, onended ) {
                 return function ( event ) {
                     node.playbackState = node.FINISHED_STATE;
-                    onended( event );
+                    if ( typeof onended === 'function' ) {
+                        onended( event );
+                    }
                 };
             }
 

@@ -29,7 +29,9 @@ require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
 
         describe( '# multiFileLoader( sounds, audioContext, onAllLoad, onProgressCallback ) ', function () {
             it( "should return status true and an array of buffers on callback if urls supplied is valid", function ( done ) {
-                multiFileLoader.call( {}, validSounds, context, function ( status, buffers ) {
+                multiFileLoader.call( {
+                    maxSources: 8
+                }, validSounds, context, function ( status, buffers ) {
                     expect( status )
                         .toBe( true );
                     expect( buffers.length )
@@ -51,7 +53,9 @@ require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
             } );
 
             it( "should return status false and array of undefined on callback if urls supplied is invalid", function ( done ) {
-                multiFileLoader.call( {}, invalidSounds, context, function ( status, buffers ) {
+                multiFileLoader.call( {
+                    maxSources: 8
+                }, invalidSounds, context, function ( status, buffers ) {
                     expect( status )
                         .toBe( false );
                     expect( buffers.length )

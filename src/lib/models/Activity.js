@@ -50,7 +50,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             function createCallbackWith( onLoadCallback ) {
                 return function ( status ) {
                     internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
-                    if (status){
+                    if ( status ) {
                         self.isInitialized = true;
                     }
                     lastPosition_ = 0;

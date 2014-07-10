@@ -51,7 +51,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     timeToNextEvent_ = updateTimeToNextEvent( self.eventRate.value );
                     soundQueue_.connect( self.releaseGainNode );
 
-                    if (status){
+                    if ( status ) {
                         self.isInitialized = true;
                     }
                     if ( typeof onLoadCallback === 'function' ) {
@@ -272,8 +272,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             // SoundQueue based model.
             soundQueue_ = new SoundQueue( this.audioContext );
 
-            if ( sources )
+            if ( sources ) {
                 init( sources, onLoadCallback, onProgressCallback );
+            }
         }
 
         MultiTrigger.prototype = Object.create( BaseSound.prototype );

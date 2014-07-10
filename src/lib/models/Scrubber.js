@@ -77,7 +77,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                     synthBuf_ = newBuffer( winLen_, numChannels_ );
                     srcBuf_ = newBuffer( winLen_, numChannels_ );
 
-                    if (status){
+                    if ( status ) {
                         self.isInitialized = true;
                     }
                     if ( typeof onLoadCallback === 'function' ) {
@@ -87,10 +87,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             };
 
             function init( source, onLoadCallback, onProgressCallback ) {
-                var parameterType = Object.prototype.toString.call( source );
-                if ( parameterType === '[object Array]' && source.length > 1 ) {
-                    throw ( new Error( "Incorrect Parameter Type - Extender only accepts a single Source as argument" ) );
-                }
                 multiFileLoader.call( self, source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
 
                 winLen_ = Config.WINDOW_LENGTH;
