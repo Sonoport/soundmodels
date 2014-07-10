@@ -100,7 +100,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                             smoothDeltaTime_ = deltaTime;
                         }
 
-                        var maxRate = self.maxRate.value;
+                        var maxRate = self.maxSpeed.value;
 
                         //var sensivityScaling:Number = Math.pow( 10, getParamVal(SENSITIVITY) );
                         var targetPlaySpeed_ = maxRate * sensitivityLg * deltaPos / smoothDeltaTime_;
