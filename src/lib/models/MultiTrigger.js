@@ -218,7 +218,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
-                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    return;
                 }
                 BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
                 webAudioDispatch( multiTiggerCallback, when, this.audioContext );

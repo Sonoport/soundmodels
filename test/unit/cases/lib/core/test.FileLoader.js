@@ -93,10 +93,8 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
 
             it( "should throw an error if no buffer is available", function ( done ) {
                 var fileLoader = new FileLoader( '', context, function ( response ) {
-                    expect( function () {
-                        fileLoader.getBuffer();
-                    } )
-                        .toThrowError();
+                    expect( fileLoader.getBuffer() )
+                        .toBeNull();
                     done();
                 } );
             } );
@@ -130,10 +128,8 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
 
             it( "should throw an error if no buffer is available", function ( done ) {
                 var fileLoader = new FileLoader( '', context, function ( response ) {
-                    expect( function () {
-                        fileLoader.getBuffer();
-                    } )
-                        .toThrowError();
+                    expect( fileLoader.getBuffer() )
+                        .toBeNull();
                     done();
                 } );
             } );

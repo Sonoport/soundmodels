@@ -31,6 +31,7 @@ require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
             it( "should return status true and an array of buffers on callback if urls supplied is valid", function ( done ) {
                 multiFileLoader.call( {
                     maxSources: 8
+                    minSources: 1
                 }, validSounds, context, function ( status, buffers ) {
                     expect( status )
                         .toBe( true );

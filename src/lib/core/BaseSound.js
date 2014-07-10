@@ -160,7 +160,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         } else if ( destination.inputNode instanceof AudioNode ) {
             this.releaseGainNode.connect( destination.inputNode, output, input );
         } else {
-            throw ( new Error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) ) );
+            console.error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) );
         }
     };
 
