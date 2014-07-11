@@ -47,7 +47,7 @@ define( [ 'core/FileLoader' ],
                     loadSingleSound( sounds, onSingleLoadAt( 0 ) );
                 } else {
                     console.warn( "Setting empty source. No sound may be heard" );
-                    onAllLoad( false, loadedAudioBuffers_ );
+                    onAllLoad( true, loadedAudioBuffers_ );
                 }
             }
 
