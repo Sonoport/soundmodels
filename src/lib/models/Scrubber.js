@@ -312,9 +312,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              */
             this.muteOnReverse = SPAudioParam.createPsuedoParam( "muteOnReverse", true, false, true, this.audioContext );
 
-            if ( source ) {
-                init( source, onLoadCallback, onProgressCallback );
-            }
+            init( source, onLoadCallback, onProgressCallback );
 
         }
 

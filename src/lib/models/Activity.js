@@ -323,9 +323,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 internalLooper_.connect( destination, output, input );
             };
 
-            if ( source ) {
-                init( source, onLoadCallback, onProgressCallback );
-            }
+            init( source, onLoadCallback, onProgressCallback );
         }
 
         Activity.prototype = Object.create( BaseSound.prototype );

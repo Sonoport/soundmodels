@@ -42,7 +42,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                         insertBufferSource( thisBuffer, trackIndex );
                     } );
 
-                    self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
+                    if ( rateArray && rateArray.length > 0 ) {
+                        self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
+                    }
 
                     if ( status ) {
                         self.isInitialized = true;
@@ -139,7 +141,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue 0.0
              * @maxvalue 10.0
              */
-            this.playSpeed = null;
+            this.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, null, null, playSpeedSetter_, self.audioContext );
 
             /**
              * Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
@@ -298,8 +300,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             // Initialize the sources.
-            if ( sources )
-                init( sources, onLoadCallback, onProgressCallback );
+            init( sources, onLoadCallback, onProgressCallback );
         }
 
         Looper.prototype = Object.create( BaseSound.prototype );

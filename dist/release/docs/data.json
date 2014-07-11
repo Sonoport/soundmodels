@@ -883,7 +883,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 133,
+            "line": 135,
             "description": "Speed of playback of the source. Affects both pitch and tempo.",
             "itemtype": "property",
             "name": "playSpeed",
@@ -896,7 +896,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 144,
+            "line": 146,
             "description": "Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink \"Looper/playSpeed:property\"}}{{/crossLink}} property.",
             "itemtype": "property",
             "name": "riseTime",
@@ -909,7 +909,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 155,
+            "line": 157,
             "description": "Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink \"Looper/playSpeed:property\"}}{{/crossLink}} property.",
             "itemtype": "property",
             "name": "decayTime",
@@ -922,7 +922,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 166,
+            "line": 168,
             "description": "Start point (as a factor of the length of the entire track) where the Looping should start from.",
             "itemtype": "property",
             "name": "startPoint",
@@ -935,7 +935,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 177,
+            "line": 179,
             "description": "The volume (loudness) for each individual track if multiple sources are used. Works even if a single source is used.",
             "itemtype": "property",
             "name": "multiTrackGain",
@@ -948,7 +948,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 189,
+            "line": 191,
             "description": "The maximum number time the source will be looped before stopping. Currently only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).",
             "itemtype": "property",
             "name": "maxLoops",
@@ -961,7 +961,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 200,
+            "line": 202,
             "description": "Reinitializes a Looper and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -989,7 +989,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 213,
+            "line": 215,
             "description": "Plays the model immediately. If the model is paused, the model will be played back from the same position as it was paused at.",
             "itemtype": "method",
             "name": "play",
@@ -998,7 +998,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 237,
+            "line": 239,
             "description": "Start playing after specific time and from a specific offset. If offset is not defined,\nthe value of startPoint property is used.",
             "itemtype": "method",
             "name": "start",
@@ -1032,7 +1032,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 268,
+            "line": 270,
             "description": "Stops the model and resets play head to 0.",
             "itemtype": "method",
             "name": "stop",
@@ -1048,7 +1048,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 284,
+            "line": 286,
             "description": "Pause the currently playing model at the current position.",
             "itemtype": "method",
             "name": "pause",
@@ -2167,51 +2167,51 @@
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:133"
+            "line": " src/lib/models/Looper.js:135"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:133"
+            "line": " src/lib/models/Looper.js:135"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:144"
+            "line": " src/lib/models/Looper.js:146"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:144"
+            "line": " src/lib/models/Looper.js:146"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:155"
+            "line": " src/lib/models/Looper.js:157"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:155"
+            "line": " src/lib/models/Looper.js:157"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:166"
+            "line": " src/lib/models/Looper.js:168"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:166"
+            "line": " src/lib/models/Looper.js:168"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:177"
+            "line": " src/lib/models/Looper.js:179"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:177"
+            "line": " src/lib/models/Looper.js:179"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:189"
+            "line": " src/lib/models/Looper.js:191"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:189"
+            "line": " src/lib/models/Looper.js:191"
         },
         {
             "message": "unknown tag: minvalue",

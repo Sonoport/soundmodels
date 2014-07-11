@@ -191,9 +191,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             // SoundQueue based model.
             soundQueue_ = new SoundQueue( this.audioContext );
 
-            if ( sources ) {
-                init( sources, onLoadCallback, onProgressCallback );
-            }
+            init( sources, onLoadCallback, onProgressCallback );
         }
 
         Trigger.prototype = Object.create( BaseSound.prototype );
