@@ -38,7 +38,7 @@ define( [ 'core/FileLoader' ],
                             loadSingleSound( thisSound, onSingleLoadAt( index ) );
                         } );
                     } else {
-                        console.error( "Unsupported number of Sources -" + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources." );
+                        console.error( "Unsupported number of Sources. " + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources. Trying to load " + sounds.length + "." );
                         onAllLoad( false, loadedAudioBuffers_ );
                     }
                 } else if ( sounds ) {
