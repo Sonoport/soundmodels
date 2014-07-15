@@ -14,7 +14,7 @@
         var tap4 = "https://dl.dropboxusercontent.com/u/77191118/sounds/Hit8.mp3";
 
         // Single test
-        trigger = new Trigger( [ tap1, tap2, tap3, tap4 ], null, function () {
+        trigger = new Trigger( [], null, function () {
             var trigButton = document.getElementById( 'trigger' );
             trigButton.disabled = false;
 

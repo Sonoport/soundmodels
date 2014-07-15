@@ -28,6 +28,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             var self = this;
             this.maxSources = Config.MAX_VOICES;
+            this.minSources = 1;
             this.modelName = "MultiTrigger";
 
             var lastEventTime_ = 0;
@@ -51,7 +52,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     timeToNextEvent_ = updateTimeToNextEvent( self.eventRate.value );
                     soundQueue_.connect( self.releaseGainNode );
 
-                    self.isInitialized = true;
+                    if ( status ) {
+                        self.isInitialized = true;
+                    }
                     if ( typeof onLoadCallback === 'function' ) {
                         onLoadCallback( status );
                     }
@@ -72,12 +75,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
                 if ( self.eventRand.value ) {
                     if ( length > 2 ) {
-                        currentSourceID_ = ( currentSourceID_ + 1 + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
+                        currentSourceID_ = ( currentSourceID_ + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
                     } else {
                         currentSourceID_ = Math.floor( Math.random() * ( length - 1 ) );
                     }
                 } else {
-                    currentSourceID_ = ( currentSourceID_ + 1 ) % length;
+                    currentSourceID_ = currentSourceID_ % length;
                 }
 
                 var timeStamp = eventTime;
@@ -87,6 +90,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
                 currentEventID_++;
+                currentSourceID_++;
 
             }
 
@@ -214,7 +218,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
-                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    return;
                 }
                 BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
                 webAudioDispatch( multiTiggerCallback, when, this.audioContext );
@@ -269,8 +274,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             // SoundQueue based model.
             soundQueue_ = new SoundQueue( this.audioContext );
 
-            if ( sources )
-                init( sources, onLoadCallback, onProgressCallback );
+            init( sources, onLoadCallback, onProgressCallback );
         }
 
         MultiTrigger.prototype = Object.create( BaseSound.prototype );

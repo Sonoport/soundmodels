@@ -78,11 +78,13 @@ define(
              */
             Object.defineProperty( this, 'value', {
                 enumerable: true,
+                configurable: false,
                 set: function ( value ) {
                     // Sanitize the value with min/max
                     // bounds first.
                     if ( typeof value !== typeof defaultValue ) {
-                        throw ( new Error( "Attempt to set a " + ( typeof defaultValue ) + " parameter to a " + ( typeof value ) + " value" ) );
+                        console.error( "Attempt to set a " + ( typeof defaultValue ) + " parameter to a " + ( typeof value ) + " value" );
+                        return;
                     }
                     // Sanitize the value with min/max
                     // bounds first.

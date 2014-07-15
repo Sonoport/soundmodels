@@ -56,28 +56,34 @@ define( [ 'core/DetectLoopMarkers' ],
                 }
                 // Verify parameters
                 if ( !isInt_( start ) ) {
-                    throw ( new Error( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer" ) );
+                    start = isNan( start ) ? 0 : Math.round( Number( start ) );
+                    console.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer. Coercing it to an Integer - start" );
                 } else if ( !isInt_( end ) ) {
-                    throw ( new Error( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" ) );
+                    console.warn( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" );
+                    end = isNan( end ) ? 0 : Math.round( Number( end ) );
                 }
                 // Check if start is smaller than end
                 if ( start > end ) {
-                    throw ( new Error( "Incorrect parameter Type - FileLoader getBuffer start parameter should be smaller than end parameter" ) );
+                    console.error( "Incorrect parameter Type - FileLoader getBuffer start parameter " + start + " should be smaller than end parameter " + end + " . Setting them to the same value " + start );
+                    end = start;
                 }
                 // Check if start is within the buffer size
                 if ( start > loopEnd_ || start < loopStart_ ) {
-                    throw ( new Error( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length ) );
+                    console.error( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length + " . Setting start to " + loopStart_ );
+                    start = loopStart_;
                 }
 
                 // Check if end is within the buffer size
                 if ( end > loopEnd_ || end < loopStart_ ) {
-                    throw ( new Error( "Incorrect parameter Type - FileLoader getBuffer end parameter should be within the buffer size : 0-" + rawBuffer_.length ) );
+                    console.error( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length + " . Setting start to " + loopEnd_ );
+                    end = loopEnd_;
                 }
 
                 var length = end - start;
 
                 if ( !rawBuffer_ ) {
-                    throw ( new Error( "No Buffer Found - Buffer loading has not completed or has failed." ) );
+                    console.error( "No Buffer Found - Buffer loading has not completed or has failed." );
+                    return null;
                 }
 
                 // Create the new buffer
@@ -170,7 +176,8 @@ define( [ 'core/DetectLoopMarkers' ],
              */
             this.getRawBuffer = function () {
                 if ( !isSoundLoaded_ ) {
-                    throw ( new Error( "No Buffer Found - Buffer loading has not completed or has failed." ) );
+                    console.error( "No Buffer Found - Buffer loading has not completed or has failed." );
+                    return null;
                 }
                 return rawBuffer_;
             };

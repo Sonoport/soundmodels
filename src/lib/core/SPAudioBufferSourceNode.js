@@ -25,7 +25,43 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
             this.channelInterpretation = bufferSourceNode.channelInterpretation;
             this.numberOfInputs = bufferSourceNode.numberOfInputs;
             this.numberOfOutputs = bufferSourceNode.numberOfOutputs;
-            this.playbackState = bufferSourceNode.playbackState;
+            this.playbackState = 0;
+
+            /**
+             * Playback States Constant.
+             *
+             * @property UNSCHEDULED_STATE
+             * @type Number
+             * @default "Model"
+             **/
+            this.UNSCHEDULED_STATE = 0;
+
+            /**
+             * Playback States Constant.
+             *
+             * @property SCHEDULED_STATE
+             * @type Number
+             * @default "1"
+             **/
+            this.SCHEDULED_STATE = 1;
+
+            /**
+             * Playback States Constant.
+             *
+             * @property PLAYING_STATE
+             * @type Number
+             * @default "2"
+             **/
+            this.PLAYING_STATE = 2;
+
+            /**
+             * Playback States Constant.
+             *
+             * @property FINISHED_STATE
+             * @type Number
+             * @default "3"
+             **/
+            this.FINISHED_STATE = 3;
 
             /**
              * The speed at which to render the audio stream. Its default value is 1. This parameter is a-rate.
@@ -47,6 +83,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              */
             Object.defineProperty( this, 'loopEnd', {
                 enumerable: true,
+                configurable: false,
                 set: function ( loopEnd ) {
                     bufferSourceNode.loopEnd = loopEnd;
                     counterNode.loopEnd = loopEnd;
@@ -66,6 +103,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              */
             Object.defineProperty( this, 'loopStart', {
                 enumerable: true,
+                configurable: false,
                 set: function ( loopStart ) {
                     bufferSourceNode.loopStart = loopStart;
                     counterNode.loopStart = loopStart;
@@ -85,8 +123,9 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              */
             Object.defineProperty( this, 'onended', {
                 enumerable: true,
+                configurable: false,
                 set: function ( onended ) {
-                    bufferSourceNode.onended = onended;
+                    bufferSourceNode.onended = wrapAroundOnEnded( this, onended );
                 },
                 get: function () {
                     return bufferSourceNode.onended;
@@ -103,6 +142,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              */
             Object.defineProperty( this, 'loop', {
                 enumerable: true,
+                configurable: false,
                 set: function ( loop ) {
                     bufferSourceNode.loop = loop;
                     counterNode.loop = loop;
@@ -122,6 +162,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              */
             Object.defineProperty( this, 'playbackPosition', {
                 enumerable: true,
+                configurable: false,
                 get: function () {
                     return lastPos;
                 }
@@ -137,6 +178,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              */
             Object.defineProperty( this, 'buffer', {
                 enumerable: true,
+                configurable: false,
                 set: function ( buffer ) {
                     bufferSourceNode.buffer = buffer;
                     counterNode.buffer = createCounterBuffer( buffer );
@@ -186,15 +228,16 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                     duration = bufferSourceNode.buffer.duration;
                 }
 
-                var state = bufferSourceNode.playbackState;
-                if ( state !== undefined && state === bufferSourceNode.UNSCHEDULED_STATE ) {
+                if ( this.playbackState === this.UNSCHEDULED_STATE ) {
                     bufferSourceNode.start( when, offset, duration );
+                    counterNode.start( when, offset, duration );
+                    this.playbackState = this.SCHEDULED_STATE;
                 }
 
-                state = counterNode.playbackState;
-                if ( state !== undefined && state === bufferSourceNode.UNSCHEDULED_STATE ) {
-                    counterNode.start( when, offset, duration );
-                }
+                var self = this;
+                webAudioDispatch( function () {
+                    self.playbackState = self.PLAYING_STATE;
+                }, when, this.audioContext );
             };
 
             /**
@@ -205,13 +248,8 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              *
              */
             this.stop = function ( when ) {
-                var state = bufferSourceNode.playbackState;
-                if ( state !== undefined && state === bufferSourceNode.PLAYING_STATE ) {
+                if ( this.playbackState === this.PLAYING_STATE || this.playbackState === this.SCHEDULED_STATE ) {
                     bufferSourceNode.stop( when );
-                }
-
-                state = counterNode.playbackState;
-                if ( state !== undefined && state === bufferSourceNode.PLAYING_STATE ) {
                     counterNode.stop( when );
                 }
             };
@@ -233,7 +271,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                     newSource.buffer = bufferSourceNode.buffer;
                     newSource.loopStart = bufferSourceNode.loopStart;
                     newSource.loopEnd = bufferSourceNode.loopEnd;
-                    newSource.onended = bufferSourceNode.onended;
+                    newSource.onended = wrapAroundOnEnded( self, bufferSourceNode.onended );
                     bufferSourceNode = newSource;
                     var newCounterNode = audioContext.createBufferSource();
                     newCounterNode.buffer = counterNode.buffer;
@@ -244,6 +282,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                     self.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
                     self.playbackRate.setValueAtTime( playBackRateVal, 0 );
                     self.connect( output );
+                    self.playbackState = self.UNSCHEDULED_STATE;
                 }, when, this.audioContext );
             };
 
@@ -270,6 +309,15 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
             function savePosition( processEvent ) {
                 var inputBuffer = processEvent.inputBuffer.getChannelData( 0 );
                 lastPos = inputBuffer[ inputBuffer.length - 1 ] || 0;
+            }
+
+            function wrapAroundOnEnded( node, onended ) {
+                return function ( event ) {
+                    node.playbackState = node.FINISHED_STATE;
+                    if ( typeof onended === 'function' ) {
+                        onended( event );
+                    }
+                };
             }
 
             init();

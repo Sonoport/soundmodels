@@ -29,7 +29,10 @@ require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
 
         describe( '# multiFileLoader( sounds, audioContext, onAllLoad, onProgressCallback ) ', function () {
             it( "should return status true and an array of buffers on callback if urls supplied is valid", function ( done ) {
-                multiFileLoader.call( {}, validSounds, context, function ( status, buffers ) {
+                multiFileLoader.call( {
+                    maxSources: 8,
+                    minSources: 1
+                }, validSounds, context, function ( status, buffers ) {
                     expect( status )
                         .toBe( true );
                     expect( buffers.length )
@@ -40,18 +43,27 @@ require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
                         expect( thisBuffer )
                             .toBeInstanceOf( AudioBuffer );
                     } );
+                    expect( buffers[ 0 ].numberOfChannels )
+                        .toBe( 2 );
+                    expect( buffers[ 1 ].numberOfChannels )
+                        .toBe( 2 );
+                    expect( buffers[ 2 ].numberOfChannels )
+                        .toBe( 1 );
                     done();
                 } );
             } );
 
-            it( "should return status false and empty array on callback if urls supplied is invalid", function ( done ) {
-                multiFileLoader.call( {}, invalidSounds, context, function ( status, buffers ) {
+            it( "should return status false and array of undefined on callback if urls supplied is invalid", function ( done ) {
+                multiFileLoader.call( {
+                    maxSources: 8,
+                    minSources: 1
+                }, invalidSounds, context, function ( status, buffers ) {
                     expect( status )
                         .toBe( false );
                     expect( buffers.length )
                         .toBeDefined();
                     expect( buffers.length )
-                        .toBe( 0 );
+                        .toBe( invalidSounds.length );
                     done();
                 } );
             } );

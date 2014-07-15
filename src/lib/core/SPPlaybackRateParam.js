@@ -22,6 +22,7 @@ define( [],
 
             Object.defineProperty( this, 'value', {
                 enumerable: true,
+                configurable: false,
                 set: function ( rate ) {
                     audioParam.value = rate;
                     counterParam.value = rate;

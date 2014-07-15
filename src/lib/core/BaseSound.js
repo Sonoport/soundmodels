@@ -45,13 +45,14 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
          */
         Object.defineProperty( this, 'numberOfOutputs', {
             enumerable: true,
+            configurable: false,
             get: function () {
                 return this.releaseGainNode.numberOfOutputs;
             }
         } );
 
         /**
-         *Number of sources that can be given to this Sound
+         *Maximum number of sources that can be given to this Sound
          *
          * @property maxSources
          * @type Number
@@ -60,6 +61,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         var maxSources_ = 0;
         Object.defineProperty( this, 'maxSources', {
             enumerable: true,
+            configurable: false,
             set: function ( max ) {
                 if ( max < 0 ) {
                     max = 0;
@@ -68,6 +70,28 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             },
             get: function () {
                 return maxSources_;
+            }
+        } );
+
+        /**
+         *Minimum number of sources that can be given to this Sound
+         *
+         * @property minSources
+         * @type Number
+         * @default 0
+         */
+        var minSources_ = 0;
+        Object.defineProperty( this, 'minSources', {
+            enumerable: true,
+            configurable: false,
+            set: function ( max ) {
+                if ( max < 0 ) {
+                    max = 0;
+                }
+                minSources_ = Math.round( max );
+            },
+            get: function () {
+                return minSources_;
             }
         } );
 
@@ -136,7 +160,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         } else if ( destination.inputNode instanceof AudioNode ) {
             this.releaseGainNode.connect( destination.inputNode, output, input );
         } else {
-            throw ( new Error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) ) );
+            console.error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) );
         }
     };
 
@@ -188,7 +212,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         }
 
         // This boolean is not accurate. Need a better way track if the actual audio is still playing.
-        self = this;
+        var self = this;
         webAudioDispatch( function () {
             self.isPlaying = false;
         }, when, this.audioContext );

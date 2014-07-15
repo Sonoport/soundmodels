@@ -25,6 +25,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             BaseSound.call( this, context );
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
+            this.minSources = 1;
             this.modelName = "Activity";
 
             // Private vars
@@ -50,8 +51,9 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             function createCallbackWith( onLoadCallback ) {
                 return function ( status ) {
                     internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
-                    self.isInitialized = true;
-
+                    if ( status ) {
+                        self.isInitialized = true;
+                    }
                     lastPosition_ = 0;
                     lastUpdateTime_ = 0;
                     smoothDeltaTime_ = 0;
@@ -64,6 +66,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
 
             function init( source, onLoadCallback, onProgressCallback ) {
                 internalLooper_ = new Looper( source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback, null );
+                internalLooper_.riseTime.value = self.riseTime.value;
+                internalLooper_.decayTime.value = self.decayTime.value;
             }
 
             function actionSetter_( aParam, value, audioContext ) {
@@ -98,7 +102,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                             smoothDeltaTime_ = deltaTime;
                         }
 
-                        var maxRate = self.maxRate.value;
+                        var maxRate = self.maxSpeed.value;
 
                         //var sensivityScaling:Number = Math.pow( 10, getParamVal(SENSITIVITY) );
                         var targetPlaySpeed_ = maxRate * sensitivityLg * deltaPos / smoothDeltaTime_;
@@ -238,7 +242,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.play = function ( when ) {
                 if ( !this.isInitialized ) {
-                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    return;
                 }
                 internalLooper_.play( when );
                 BaseSound.prototype.play.call( this, when );
@@ -256,7 +261,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
-                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    return;
                 }
                 internalLooper_.start( when, offset, duration );
                 BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
@@ -317,9 +323,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 internalLooper_.connect( destination, output, input );
             };
 
-            if ( source ) {
-                init( source, onLoadCallback, onProgressCallback );
-            }
+            init( source, onLoadCallback, onProgressCallback );
         }
 
         Activity.prototype = Object.create( BaseSound.prototype );

@@ -26,6 +26,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             BaseSound.call( this, context );
             /*Support a single input only*/
             this.maxSources = 1;
+            this.minSources = 1;
             this.modelName = "Extender";
 
             // Private Variables
@@ -50,7 +51,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     sourceBuffer_ = audioBufferArray[ 0 ];
                     soundQueue_.connect( self.releaseGainNode );
 
-                    self.isInitialized = true;
+                    if ( status ) {
+                        self.isInitialized = true;
+                    }
                     if ( typeof onLoadCallback === 'function' ) {
                         onLoadCallback( status );
                     }
@@ -58,10 +61,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             function init( source, onLoadCallback, onProgressCallback ) {
-                var parameterType = Object.prototype.toString.call( source );
-                if ( parameterType === '[object Array]' && source.length > 1 ) {
-                    throw ( new Error( "Incorrect Parameter Type - Extender only accepts a single Source as argument" ) );
-                }
                 multiFileLoader.call( self, source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
             }
 
@@ -186,7 +185,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
-                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    return;
                 }
                 BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
                 webAudioDispatch( extenderCallback, when, this.audioContext );
@@ -227,9 +227,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             soundQueue_ = new SoundQueue( this.audioContext );
 
-            if ( source ) {
-                init( source, onLoadCallback, onProgressCallback );
-            }
+            init( source, onLoadCallback, onProgressCallback );
         }
 
         Extender.prototype = Object.create( BaseSound.prototype );

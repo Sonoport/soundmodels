@@ -24,6 +24,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             // Call superclass constructor
             BaseSound.call( this, context );
             this.maxSources = Config.MAX_VOICES;
+            this.minSources = 1;
             this.modelName = "Looper";
 
             // Private vars
@@ -41,9 +42,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                         insertBufferSource( thisBuffer, trackIndex );
                     } );
 
-                    self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
+                    if ( rateArray && rateArray.length > 0 ) {
+                        self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
+                    }
 
-                    self.isInitialized = true;
+                    if ( status ) {
+                        self.isInitialized = true;
+                    }
                     if ( typeof onLoadCallback === 'function' ) {
                         onLoadCallback( status );
                     }
@@ -117,19 +122,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             function init( sources, onLoadCallback, onProgressCallback ) {
-                var parameterType = Object.prototype.toString.call( sources );
                 rateArray = [];
                 sources_.forEach( function ( thisSource ) {
                     thisSource.disconnect();
                 } );
                 sources_ = [];
-                if ( parameterType === "[object Array]" && sources.length > self.maxSources ) {
-                    throw ( new Error( "Unsupported number of Sources - Looper model only supports a maximum of " + self.maxSources + " Sources." ) );
-                } else if ( ( parameterType === "[object AudioBuffer]" ) ) {
-                    createCallbackWith( onLoadCallback )( true, [ sources ] );
-                } else {
-                    multiFileLoader.call( self, sources, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
-                }
+                multiFileLoader.call( self, sources, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
             }
 
             // Public Properties
@@ -143,7 +141,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue 0.0
              * @maxvalue 10.0
              */
-            this.playSpeed = null;
+            this.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, null, null, playSpeedSetter_, self.audioContext );
 
             /**
              * Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
@@ -250,7 +248,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              */
             this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
-                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    return;
                 }
 
                 if ( !this.isPlaying ) {
@@ -301,8 +300,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             // Initialize the sources.
-            if ( sources )
-                init( sources, onLoadCallback, onProgressCallback );
+            init( sources, onLoadCallback, onProgressCallback );
         }
 
         Looper.prototype = Object.create( BaseSound.prototype );

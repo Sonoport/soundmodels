@@ -31,13 +31,23 @@ define( [ 'core/FileLoader' ],
                 var parameterType = Object.prototype.toString.call( sounds );
 
                 if ( parameterType === '[object Array]' ) {
-                    sourcesToLoad_ = sounds.length;
-                    sounds.forEach( function ( thisSound ) {
-                        loadSingleSound( thisSound, onSingleLoad );
-                    } );
-                } else if ( sounds !== undefined && sounds !== null ) {
+                    if ( sounds.length >= self.minSources && sounds.length <= self.maxSources ) {
+                        sourcesToLoad_ = sounds.length;
+                        loadedAudioBuffers_ = new Array( sourcesToLoad_ );
+                        sounds.forEach( function ( thisSound, index ) {
+                            loadSingleSound( thisSound, onSingleLoadAt( index ) );
+                        } );
+                    } else {
+                        console.error( "Unsupported number of Sources. " + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources. Trying to load " + sounds.length + "." );
+                        onAllLoad( false, loadedAudioBuffers_ );
+                    }
+                } else if ( sounds ) {
                     sourcesToLoad_ = 1;
-                    loadSingleSound( sounds, onSingleLoad );
+                    loadedAudioBuffers_ = new Array( sourcesToLoad_ );
+                    loadSingleSound( sounds, onSingleLoadAt( 0 ) );
+                } else {
+                    console.log( "Setting empty source. No sound may be heard" );
+                    onAllLoad( true, loadedAudioBuffers_ );
                 }
             }
 
@@ -58,23 +68,28 @@ define( [ 'core/FileLoader' ],
                 } else if ( parameterType === "[object AudioBuffer]" ) {
                     onSingleLoad( true, sound );
                 } else {
-                    throw ( new Error( "Incorrect Parameter Type - Source is not a URL or AudioBuffer" ) );
+                    console.error( "Incorrect Parameter Type - Source is not a URL, File or AudioBuffer" );
+                    onSingleLoad( false, {} );
                 }
             }
 
-            function onSingleLoad( status, audioBuffer ) {
-                if ( status ) {
-                    loadedAudioBuffers_.push( audioBuffer );
-                }
-                sourcesToLoad_--;
-                if ( sourcesToLoad_ === 0 ) {
-                    if ( sounds instanceof Array ) {
-                        status = loadedAudioBuffers_.length === sounds.length;
-                    } else {
-                        status = loadedAudioBuffers_.length === 1;
+            function onSingleLoadAt( index ) {
+                return function ( status, audioBuffer ) {
+                    if ( status ) {
+                        loadedAudioBuffers_[ index ] = audioBuffer;
                     }
-                    onAllLoad( status, loadedAudioBuffers_ );
-                }
+                    sourcesToLoad_--;
+                    if ( sourcesToLoad_ === 0 ) {
+                        var allStatus = true;
+                        for ( var bIndex = 0; bIndex < loadedAudioBuffers_.length; ++bIndex ) {
+                            if ( !loadedAudioBuffers_[ bIndex ] ) {
+                                allStatus = false;
+                                break;
+                            }
+                        }
+                        onAllLoad( allStatus, loadedAudioBuffers_ );
+                    }
+                };
             }
             init();
         }

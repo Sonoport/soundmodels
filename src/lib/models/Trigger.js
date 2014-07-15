@@ -27,6 +27,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             BaseSound.call( this, context );
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
+            this.minSources = 1;
             this.modelName = "Trigger";
 
             // Private vars
@@ -45,7 +46,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 return function ( status, audioBufferArray ) {
                     sourceBuffers_ = audioBufferArray;
                     soundQueue_.connect( self.releaseGainNode );
-                    self.isInitialized = true;
+                    if ( status ) {
+                        self.isInitialized = true;
+                    }
                     if ( typeof onLoadCallback === 'function' ) {
                         onLoadCallback( status );
                     }
@@ -150,7 +153,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
-                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    return;
                 }
 
                 if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
@@ -164,12 +168,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
                 if ( this.eventRand.value ) {
                     if ( length > 2 ) {
-                        currentSourceID_ = ( currentSourceID_ + 1 + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
+                        currentSourceID_ = ( currentSourceID_ + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
                     } else {
                         currentSourceID_ = Math.floor( Math.random() * ( length - 1 ) );
                     }
                 } else {
-                    currentSourceID_ = ( currentSourceID_ + 1 ) % length;
+                    currentSourceID_ = currentSourceID_ % length;
                 }
 
                 var timeStamp = when;
@@ -179,6 +183,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
                 currentEventID_++;
+                currentSourceID_++;
 
                 BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
             };
@@ -186,9 +191,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             // SoundQueue based model.
             soundQueue_ = new SoundQueue( this.audioContext );
 
-            if ( sources ) {
-                init( sources, onLoadCallback, onProgressCallback );
-            }
+            init( sources, onLoadCallback, onProgressCallback );
         }
 
         Trigger.prototype = Object.create( BaseSound.prototype );

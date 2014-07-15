@@ -497,7 +497,7 @@
     "classitems": [
         {
             "file": "src/lib/models/Activity.js",
-            "line": 151,
+            "line": 155,
             "description": "Maximum value at which the playback speed of the source will be capped to.",
             "itemtype": "property",
             "name": "maxSpeed",
@@ -510,7 +510,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 162,
+            "line": 166,
             "description": "Controls the playback of the source. The more this parameter is moved, the higher the speed of playback.",
             "itemtype": "property",
             "name": "action",
@@ -523,7 +523,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 173,
+            "line": 177,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "sensitivity",
@@ -536,7 +536,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 184,
+            "line": 188,
             "description": "Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink \"Looper/playSpeed:property\"}}{{/crossLink}} property.",
             "itemtype": "property",
             "name": "riseTime",
@@ -549,7 +549,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 195,
+            "line": 199,
             "description": "Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink \"Looper/playSpeed:property\"}}{{/crossLink}} property.",
             "itemtype": "property",
             "name": "decayTime",
@@ -562,7 +562,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 206,
+            "line": 210,
             "description": "Start point (as a factor of the length of the entire track) where the Looping should start from.",
             "itemtype": "property",
             "name": "startPoint",
@@ -575,7 +575,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 219,
+            "line": 223,
             "description": "Reinitializes a Activity and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -603,7 +603,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 232,
+            "line": 236,
             "description": "Enable playback.",
             "itemtype": "method",
             "name": "play",
@@ -620,7 +620,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 247,
+            "line": 252,
             "description": "Start playing after specific time and from a specific offset. If offset is not defined,\nthe value of startPoint property is used.",
             "itemtype": "method",
             "name": "start",
@@ -654,7 +654,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 265,
+            "line": 271,
             "description": "Stops the source and resets play head to 0.",
             "itemtype": "method",
             "name": "stop",
@@ -670,7 +670,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 275,
+            "line": 281,
             "description": "Pause the currently playing source at the current position.",
             "itemtype": "method",
             "name": "pause",
@@ -679,7 +679,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 285,
+            "line": 291,
             "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
             "itemtype": "method",
             "name": "release",
@@ -702,7 +702,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 297,
+            "line": 303,
             "description": "Disconnects the Sound from the AudioNode Chain.",
             "itemtype": "method",
             "name": "disconnect",
@@ -719,7 +719,7 @@
         },
         {
             "file": "src/lib/models/Activity.js",
-            "line": 307,
+            "line": 313,
             "description": "If the parameter `output` is an AudioNode, it connects to the releaseGainNode.\nIf the output is a BaseSound, it will connect BaseSound's releaseGainNode to the output's inputNode.",
             "itemtype": "method",
             "name": "connect",
@@ -747,7 +747,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 129,
+            "line": 128,
             "description": "Amount of pitch shift of the source in the each window (in semitones).",
             "itemtype": "property",
             "name": "pitchShift",
@@ -760,7 +760,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 140,
+            "line": 139,
             "description": "The length (in seconds) of each window used to overlap the source.",
             "itemtype": "property",
             "name": "eventPeriod",
@@ -773,7 +773,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 151,
+            "line": 150,
             "description": "Fraction of each window of the source that is overlapped with the succeding window of the source.",
             "itemtype": "property",
             "name": "crossFadeDuration",
@@ -786,7 +786,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 164,
+            "line": 163,
             "description": "Reinitializes a Extender and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -814,7 +814,7 @@
         },
         {
             "file": "src/lib/models/Extender.js",
-            "line": 177,
+            "line": 176,
             "description": "Starts playing the source",
             "itemtype": "method",
             "name": "stop",
@@ -883,7 +883,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 137,
+            "line": 135,
             "description": "Speed of playback of the source. Affects both pitch and tempo.",
             "itemtype": "property",
             "name": "playSpeed",
@@ -896,7 +896,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 148,
+            "line": 146,
             "description": "Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink \"Looper/playSpeed:property\"}}{{/crossLink}} property.",
             "itemtype": "property",
             "name": "riseTime",
@@ -909,7 +909,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 159,
+            "line": 157,
             "description": "Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink \"Looper/playSpeed:property\"}}{{/crossLink}} property.",
             "itemtype": "property",
             "name": "decayTime",
@@ -922,7 +922,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 170,
+            "line": 168,
             "description": "Start point (as a factor of the length of the entire track) where the Looping should start from.",
             "itemtype": "property",
             "name": "startPoint",
@@ -935,7 +935,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 181,
+            "line": 179,
             "description": "The volume (loudness) for each individual track if multiple sources are used. Works even if a single source is used.",
             "itemtype": "property",
             "name": "multiTrackGain",
@@ -948,7 +948,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 193,
+            "line": 191,
             "description": "The maximum number time the source will be looped before stopping. Currently only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).",
             "itemtype": "property",
             "name": "maxLoops",
@@ -961,7 +961,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 204,
+            "line": 202,
             "description": "Reinitializes a Looper and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -989,7 +989,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 217,
+            "line": 215,
             "description": "Plays the model immediately. If the model is paused, the model will be played back from the same position as it was paused at.",
             "itemtype": "method",
             "name": "play",
@@ -998,7 +998,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 241,
+            "line": 239,
             "description": "Start playing after specific time and from a specific offset. If offset is not defined,\nthe value of startPoint property is used.",
             "itemtype": "method",
             "name": "start",
@@ -1032,7 +1032,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 271,
+            "line": 270,
             "description": "Stops the model and resets play head to 0.",
             "itemtype": "method",
             "name": "stop",
@@ -1048,7 +1048,7 @@
         },
         {
             "file": "src/lib/models/Looper.js",
-            "line": 287,
+            "line": 286,
             "description": "Pause the currently playing model at the current position.",
             "itemtype": "method",
             "name": "pause",
@@ -1057,7 +1057,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 149,
+            "line": 153,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchShift",
@@ -1070,7 +1070,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 160,
+            "line": 164,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -1083,7 +1083,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 171,
+            "line": 175,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
@@ -1096,7 +1096,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 182,
+            "line": 186,
             "description": "Trigger rate for playing the model in Hz.",
             "itemtype": "property",
             "name": "eventRate",
@@ -1109,7 +1109,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 192,
+            "line": 196,
             "description": "Maximum deviation from the regular trigger interval (as a factor of 1).",
             "itemtype": "property",
             "name": "eventJitter",
@@ -1122,7 +1122,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 205,
+            "line": 209,
             "description": "Start repeated triggering.",
             "itemtype": "method",
             "name": "start",
@@ -1156,7 +1156,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 223,
+            "line": 228,
             "description": "Start repeated triggering immediately",
             "itemtype": "method",
             "name": "play",
@@ -1165,7 +1165,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 233,
+            "line": 238,
             "description": "Stops playing all voices.",
             "itemtype": "method",
             "name": "stop",
@@ -1174,7 +1174,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 245,
+            "line": 250,
             "description": "Pauses playing all voices.",
             "itemtype": "method",
             "name": "pause",
@@ -1183,7 +1183,7 @@
         },
         {
             "file": "src/lib/models/MultiTrigger.js",
-            "line": 257,
+            "line": 262,
             "description": "Reinitializes a MultiTrigger and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1211,7 +1211,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 269,
+            "line": 267,
             "description": "Reinitializes a Scrubber and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1239,7 +1239,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 284,
+            "line": 282,
             "description": "Position of the audio to be played.",
             "itemtype": "property",
             "name": "playPosition",
@@ -1252,7 +1252,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 295,
+            "line": 293,
             "description": "Sets if the audio should fade out when playPosition has not changed for a while.",
             "itemtype": "property",
             "name": "noMotionFade",
@@ -1265,7 +1265,7 @@
         },
         {
             "file": "src/lib/models/Scrubber.js",
-            "line": 306,
+            "line": 304,
             "description": "Sets if moving playPosition to backwards should mute the model.",
             "itemtype": "property",
             "name": "muteOnReverse",
@@ -1278,7 +1278,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 62,
+            "line": 65,
             "description": "Pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchShift",
@@ -1291,7 +1291,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 73,
+            "line": 76,
             "description": "Maximum value for random pitch shift of the triggered voices in semitones.",
             "itemtype": "property",
             "name": "pitchRand",
@@ -1304,7 +1304,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 84,
+            "line": 87,
             "description": "Enable randomness in the order of sources which are triggered.",
             "itemtype": "property",
             "name": "eventRand",
@@ -1317,7 +1317,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 97,
+            "line": 100,
             "description": "Reinitializes the model and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1345,7 +1345,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 110,
+            "line": 113,
             "description": "Stops playing all voices.",
             "itemtype": "method",
             "name": "stop",
@@ -1354,7 +1354,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 121,
+            "line": 124,
             "description": "Pauses playing all voices.",
             "itemtype": "method",
             "name": "pause",
@@ -1363,7 +1363,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 131,
+            "line": 134,
             "description": "Triggers a single voice immediately.",
             "itemtype": "method",
             "name": "play",
@@ -1372,7 +1372,7 @@
         },
         {
             "file": "src/lib/models/Trigger.js",
-            "line": 141,
+            "line": 144,
             "description": "Triggers a single voice at the given time",
             "itemtype": "method",
             "name": "start",
@@ -1445,8 +1445,8 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 53,
-            "description": "Number of sources that can be given to this Sound",
+            "line": 54,
+            "description": "Maximum number of sources that can be given to this Sound",
             "itemtype": "property",
             "name": "maxSources",
             "type": "Number",
@@ -1456,7 +1456,18 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 74,
+            "line": 76,
+            "description": "Minimum number of sources that can be given to this Sound",
+            "itemtype": "property",
+            "name": "minSources",
+            "type": "Number",
+            "default": "0",
+            "class": "BaseSound",
+            "module": "Models"
+        },
+        {
+            "file": "src/lib/temp/BaseSound.js",
+            "line": 98,
             "description": "Release Gain Node",
             "itemtype": "property",
             "name": "releaseGainNode",
@@ -1468,7 +1479,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 84,
+            "line": 108,
             "description": "If Sound is currently playing.",
             "itemtype": "property",
             "name": "isPlaying",
@@ -1479,7 +1490,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 93,
+            "line": 117,
             "description": "If Sound is currently initialized.",
             "itemtype": "property",
             "name": "isInitialized",
@@ -1490,7 +1501,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 102,
+            "line": 126,
             "description": "The input node that the output node will be connected to. <br />\nSet this value to null if no connection can be made on the input node",
             "itemtype": "property",
             "name": "inputNode",
@@ -1501,7 +1512,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 112,
+            "line": 136,
             "description": "String name of the model.",
             "itemtype": "property",
             "name": "modelName",
@@ -1512,7 +1523,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 124,
+            "line": 148,
             "description": "If the parameter `output` is an AudioNode, it connects to the releaseGainNode.\nIf the output is a BaseSound, it will connect BaseSound's releaseGainNode to the output's inputNode.",
             "itemtype": "method",
             "name": "connect",
@@ -1540,7 +1551,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 143,
+            "line": 167,
             "description": "Disconnects the Sound from the AudioNode Chain.",
             "itemtype": "method",
             "name": "disconnect",
@@ -1557,7 +1568,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 153,
+            "line": 177,
             "description": "Start the AudioNode. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "start",
@@ -1591,7 +1602,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 176,
+            "line": 200,
             "description": "Stop the AudioNode. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "stop",
@@ -1608,7 +1619,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 200,
+            "line": 224,
             "description": "Linearly ramp down the gain of the audio in time (seconds) to 0.",
             "itemtype": "method",
             "name": "release",
@@ -1631,7 +1642,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 229,
+            "line": 253,
             "description": "Play sound. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "play",
@@ -1640,7 +1651,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 238,
+            "line": 262,
             "description": "Pause sound. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "pause",
@@ -1649,7 +1660,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 247,
+            "line": 271,
             "description": "List all SPAudioParams this Sound exposes",
             "itemtype": "method",
             "name": "listParams",
@@ -1911,7 +1922,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 164,
+            "line": 166,
             "description": "Schedules a parameter value change at the given time.",
             "itemtype": "method",
             "name": "setValueAtTime",
@@ -1932,7 +1943,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 195,
+            "line": 197,
             "description": "Start exponentially approaching the target value at the given time with a rate having the given time constant.\n\nDuring the time interval: T0 <= t < T1, where T0 is the startTime parameter and T1 represents the time of the event following this event (or infinity if there are no following events):\n    v(t) = V1 + (V0 - V1) * exp(-(t - T0) / timeConstant)",
             "itemtype": "method",
             "name": "setTargetAtTime",
@@ -1958,7 +1969,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 234,
+            "line": 236,
             "description": "Sets an array of arbitrary parameter values starting at the given time for the given duration. The number of values will be scaled to fit into the desired duration.\n\nDuring the time interval: startTime <= t < startTime + duration, values will be calculated:\n\n  v(t) = values[N * (t - startTime) / duration], where N is the length of the values array.",
             "itemtype": "method",
             "name": "setValueCurveAtTime",
@@ -1984,7 +1995,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 276,
+            "line": 278,
             "description": "Schedules an exponential continuous change in parameter value from the previous scheduled parameter value to the given value.\n\nv(t) = V0 * (V1 / V0) ^ ((t - T0) / (T1 - T0))",
             "itemtype": "method",
             "name": "exponentialRampToValueAtTime",
@@ -2005,7 +2016,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 314,
+            "line": 316,
             "description": "Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.",
             "itemtype": "method",
             "name": "linearRampToValueAtTime",
@@ -2026,7 +2037,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 347,
+            "line": 349,
             "description": "Schedules a linear continuous change in parameter value from the previous scheduled parameter value to the given value.",
             "itemtype": "method",
             "name": "cancelScheduledValues",
@@ -2042,7 +2053,7 @@
         },
         {
             "file": "src/lib/temp/SPAudioParam.js",
-            "line": 368,
+            "line": 370,
             "description": "Static helper method to create Psuedo parameters which are not connected to\n       any WebAudio AudioParams.",
             "itemtype": "method",
             "name": "createPsuedoParam",
@@ -2084,211 +2095,211 @@
     "warnings": [
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Activity.js:151"
+            "line": " src/lib/models/Activity.js:155"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Activity.js:151"
+            "line": " src/lib/models/Activity.js:155"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Activity.js:162"
+            "line": " src/lib/models/Activity.js:166"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Activity.js:162"
+            "line": " src/lib/models/Activity.js:166"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Activity.js:173"
+            "line": " src/lib/models/Activity.js:177"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Activity.js:173"
+            "line": " src/lib/models/Activity.js:177"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Activity.js:184"
+            "line": " src/lib/models/Activity.js:188"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Activity.js:184"
+            "line": " src/lib/models/Activity.js:188"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Activity.js:195"
+            "line": " src/lib/models/Activity.js:199"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Activity.js:195"
+            "line": " src/lib/models/Activity.js:199"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Activity.js:206"
+            "line": " src/lib/models/Activity.js:210"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Activity.js:206"
+            "line": " src/lib/models/Activity.js:210"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Extender.js:129"
+            "line": " src/lib/models/Extender.js:128"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Extender.js:129"
+            "line": " src/lib/models/Extender.js:128"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Extender.js:140"
+            "line": " src/lib/models/Extender.js:139"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Extender.js:140"
+            "line": " src/lib/models/Extender.js:139"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Extender.js:151"
+            "line": " src/lib/models/Extender.js:150"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Extender.js:151"
+            "line": " src/lib/models/Extender.js:150"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:137"
+            "line": " src/lib/models/Looper.js:135"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:137"
+            "line": " src/lib/models/Looper.js:135"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:148"
+            "line": " src/lib/models/Looper.js:146"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:148"
+            "line": " src/lib/models/Looper.js:146"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:159"
+            "line": " src/lib/models/Looper.js:157"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:159"
+            "line": " src/lib/models/Looper.js:157"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:170"
+            "line": " src/lib/models/Looper.js:168"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:170"
+            "line": " src/lib/models/Looper.js:168"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:181"
+            "line": " src/lib/models/Looper.js:179"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:181"
+            "line": " src/lib/models/Looper.js:179"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Looper.js:193"
+            "line": " src/lib/models/Looper.js:191"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Looper.js:193"
+            "line": " src/lib/models/Looper.js:191"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:149"
+            "line": " src/lib/models/MultiTrigger.js:153"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:149"
+            "line": " src/lib/models/MultiTrigger.js:153"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:160"
+            "line": " src/lib/models/MultiTrigger.js:164"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:160"
+            "line": " src/lib/models/MultiTrigger.js:164"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:171"
+            "line": " src/lib/models/MultiTrigger.js:175"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:171"
+            "line": " src/lib/models/MultiTrigger.js:175"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:182"
+            "line": " src/lib/models/MultiTrigger.js:186"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:182"
+            "line": " src/lib/models/MultiTrigger.js:186"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/MultiTrigger.js:192"
+            "line": " src/lib/models/MultiTrigger.js:196"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/MultiTrigger.js:192"
+            "line": " src/lib/models/MultiTrigger.js:196"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Scrubber.js:284"
+            "line": " src/lib/models/Scrubber.js:282"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Scrubber.js:284"
+            "line": " src/lib/models/Scrubber.js:282"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Scrubber.js:295"
+            "line": " src/lib/models/Scrubber.js:293"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Scrubber.js:295"
+            "line": " src/lib/models/Scrubber.js:293"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Scrubber.js:306"
+            "line": " src/lib/models/Scrubber.js:304"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Scrubber.js:306"
+            "line": " src/lib/models/Scrubber.js:304"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:62"
+            "line": " src/lib/models/Trigger.js:65"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:62"
+            "line": " src/lib/models/Trigger.js:65"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:73"
+            "line": " src/lib/models/Trigger.js:76"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:73"
+            "line": " src/lib/models/Trigger.js:76"
         },
         {
             "message": "unknown tag: minvalue",
-            "line": " src/lib/models/Trigger.js:84"
+            "line": " src/lib/models/Trigger.js:87"
         },
         {
             "message": "unknown tag: maxvalue",
-            "line": " src/lib/models/Trigger.js:84"
+            "line": " src/lib/models/Trigger.js:87"
         },
         {
             "message": "Missing item type\n/**\n * @module Core",
