@@ -55,7 +55,8 @@ require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
 
             it( "should return status false and array of undefined on callback if urls supplied is invalid", function ( done ) {
                 multiFileLoader.call( {
-                    maxSources: 8
+                    maxSources: 8,
+                    minSources: 1
                 }, invalidSounds, context, function ( status, buffers ) {
                     expect( status )
                         .toBe( false );
