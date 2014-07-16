@@ -12,12 +12,14 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
          * @class Activity
          * @constructor
          * @extends BaseSound
-         * @param {String/AudioBuffer/File} source Either a URL or AudioBuffer or File Object of of the audio source.
-         * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when the source has finished loading.
-         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
+         * @param {AudioContext} [context] AudioContext to be used.
+         * @param {Array/String/AudioBuffer/File} [source] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
+         * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+         * @param {Function} [onLoadComplete] Callback when the source has finished loading.
+         * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
+         * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
          */
-        function Activity( source, context, onLoadCallback, onProgressCallback ) {
+        function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
             if ( !( this instanceof Activity ) ) {
                 throw new TypeError( "Activity constructor cannot be called as a function." );
             }
@@ -28,6 +30,11 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             this.minSources = 1;
             this.modelName = "Activity";
 
+            this.onLoadProgress = onLoadProgress;
+            this.onLoadComplete = onLoadComplete;
+            this.onAudioStart = onAudioStart;
+            this.onAudioEnd = onAudioEnd;
+
             // Private vars
             var self = this;
 
@@ -36,7 +43,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             var lastPosition_ = 0;
             var lastUpdateTime_;
             var smoothDeltaTime_;
-            var timeoutID;
+            var timeoutID, endEventTimeout;
+            var audioPlaying = false;
 
             // Constants
 
@@ -48,24 +56,22 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
 
             // Private Functions
 
-            function createCallbackWith( onLoadCallback ) {
-                return function ( status ) {
-                    internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
-                    if ( status ) {
-                        self.isInitialized = true;
-                    }
-                    lastPosition_ = 0;
-                    lastUpdateTime_ = 0;
-                    smoothDeltaTime_ = 0;
+            function onLoadAll( status ) {
+                internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
+                if ( status ) {
+                    self.isInitialized = true;
+                }
+                lastPosition_ = 0;
+                lastUpdateTime_ = 0;
+                smoothDeltaTime_ = 0;
 
-                    if ( typeof onLoadCallback === 'function' ) {
-                        onLoadCallback( status );
-                    }
-                };
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status );
+                }
             }
 
-            function init( source, onLoadCallback, onProgressCallback ) {
-                internalLooper_ = new Looper( source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback, null );
+            function init( source ) {
+                internalLooper_ = new Looper( self.audioContext, source, self.onLoadProgress, onLoadAll );
                 internalLooper_.riseTime.value = self.riseTime.value;
                 internalLooper_.decayTime.value = self.decayTime.value;
             }
@@ -113,8 +119,12 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
 
                         targetPlaySpeed_ = Math.min( Math.abs( targetPlaySpeed_ ), MAX_OVERSHOOT * maxRate );
 
-                        // console.log( targetPlaySpeed_ );
                         internalLooper_.playSpeed.value = targetPlaySpeed_;
+
+                        if ( targetPlaySpeed_ > 0 && !audioPlaying ) {
+                            audioPlaying = true;
+                            self.onAudioStart();
+                        }
 
                         // We use a timeout to prevent the target level from staying at a non-zero value
                         // forever when motion stops.  For best response, we adapt the timeout based on
@@ -125,6 +135,16 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                         timeoutID = window.setTimeout( function () {
                             internalLooper_.playSpeed.value = 0;
                         }, 1000 * Math.min( 10 * deltaTime, MAX_TIME_OUT ) );
+
+                        if ( endEventTimeout ) {
+                            window.clearTimeout( endEventTimeout );
+                        }
+                        endEventTimeout = window.setTimeout( function () {
+                            if ( audioPlaying ) {
+                                audioPlaying = false;
+                                self.onAudioEnd();
+                            }
+                        }, 1000 * internalLooper_.decayTime.value );
                     }
 
                     lastPosition_ = newPosition;
@@ -225,12 +245,12 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              *
              * @method setSources
              * @param {Array/AudioBuffer/String/File} source Single or Array of either URLs or AudioBuffers of audio sources.
-             * @param {Function} [onLoadCallback] Callback when all source have finished loading.
-             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
              */
-            this.setSources = function ( source, onLoadCallback, onProgressCallback ) {
-                this.isInitialized = false;
-                internalLooper_.setSources( source, createCallbackWith( onLoadCallback ), onProgressCallback );
+            this.setSources = function ( source, onLoadProgress, onLoadComplete ) {
+                BaseSound.prototype.setSources.call( this, source, onLoadProgress, onLoadComplete );
+                internalLooper_.setSources( source, onLoadProgress, onLoadComplete );
             };
 
             /**
@@ -323,7 +343,11 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 internalLooper_.connect( destination, output, input );
             };
 
-            init( source, onLoadCallback, onProgressCallback );
+            // Initialize the sources.
+            window.setTimeout( function () {
+                init( source );
+            }, 0 );
+
         }
 
         Activity.prototype = Object.create( BaseSound.prototype );

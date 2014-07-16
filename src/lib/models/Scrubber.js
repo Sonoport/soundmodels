@@ -11,12 +11,14 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
          * @class Scrubber
          * @constructor
          * @extends BaseSound
-         * @param {Array/String/AudioBuffer/File} source  A URL or AudioBuffer or File Object of the audio source.
-         * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when the source has finished loading.
-         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
+         * @param {AudioContext} [context] AudioContext to be used.
+         * @param {Array/String/AudioBuffer/File} [source] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
+         * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+         * @param {Function} [onLoadComplete] Callback when the source has finished loading.
+         * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
+         * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
          */
-        function Scrubber( source, context, onLoadCallback, onProgressCallback ) {
+        function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
             if ( !( this instanceof Scrubber ) ) {
                 throw new TypeError( "Scrubber constructor cannot be called as a function." );
             }
@@ -25,6 +27,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             this.maxSources = 1;
             this.minSources = 1;
             this.modelName = "Scrubber";
+
+            this.onLoadProgress = onLoadProgress;
+            this.onLoadComplete = onLoadComplete;
+            this.onAudioStart = onAudioStart;
+            this.onAudioEnd = onAudioEnd;
 
             // Private Variables
             var self = this;
@@ -54,41 +61,42 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             var ALPHA = 0.95;
             var SPEED_THRESH = 0.05;
             var SPEED_ALPHA = 0.8;
+            var AUDIOEVENT_TRESHOLD = 0.0001;
+
+            var audioPlaying = false;
 
             var zeroArray;
 
-            var createCallbackWith = function ( onLoadCallback ) {
-                return function ( status, audioBufferArray ) {
-                    var sourceBuffer_ = audioBufferArray[ 0 ];
+            var onLoadAll = function ( status, audioBufferArray ) {
+                var sourceBuffer_ = audioBufferArray[ 0 ];
 
-                    // store audiosource attributes
-                    numSamples_ = sourceBuffer_.length;
-                    numChannels_ = sourceBuffer_.numberOfChannels;
-                    sampleRate_ = sourceBuffer_.sampleRate;
+                // store audiosource attributes
+                numSamples_ = sourceBuffer_.length;
+                numChannels_ = sourceBuffer_.numberOfChannels;
+                sampleRate_ = sourceBuffer_.sampleRate;
 
-                    for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
-                        sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
-                    }
+                for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
+                    sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
+                }
 
-                    scriptNode_ = self.audioContext.createScriptProcessor( Config.CHUNK_LENGTH, 0, numChannels_ );
-                    scriptNode_.onaudioprocess = scriptNodeCallback;
-                    scriptNode_.connect( self.releaseGainNode );
+                scriptNode_ = self.audioContext.createScriptProcessor( Config.CHUNK_LENGTH, 0, numChannels_ );
+                scriptNode_.onaudioprocess = scriptNodeCallback;
+                scriptNode_.connect( self.releaseGainNode );
 
-                    // create buffers
-                    synthBuf_ = newBuffer( winLen_, numChannels_ );
-                    srcBuf_ = newBuffer( winLen_, numChannels_ );
+                // create buffers
+                synthBuf_ = newBuffer( winLen_, numChannels_ );
+                srcBuf_ = newBuffer( winLen_, numChannels_ );
 
-                    if ( status ) {
-                        self.isInitialized = true;
-                    }
-                    if ( typeof onLoadCallback === 'function' ) {
-                        onLoadCallback( status );
-                    }
-                };
+                if ( status ) {
+                    self.isInitialized = true;
+                }
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status );
+                }
             };
 
-            function init( source, onLoadCallback, onProgressCallback ) {
-                multiFileLoader.call( self, source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
+            function init( source ) {
+                multiFileLoader.call( self, source, self.audioContext, self.onLoadProgress, onLoadAll );
 
                 winLen_ = Config.WINDOW_LENGTH;
                 synthStep_ = winLen_ / 2;
@@ -240,6 +248,16 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                             scale_ = 0.0;
                         }
 
+                        if ( audioPlaying && ( ( muteOnReverse && scale_ < AUDIOEVENT_TRESHOLD ) || Math.abs( scale_ ) < AUDIOEVENT_TRESHOLD ) ) {
+                            audioPlaying = false;
+                            self.onAudioEnd();
+                        }
+
+                        if ( scale_ > AUDIOEVENT_TRESHOLD && !audioPlaying ) {
+                            audioPlaying = true;
+                            self.onAudioStart();
+                        }
+
                         // Add the new frame into the output summing buffer
                         for ( sIndex = 0; sIndex < winLen_; sIndex++ ) {
                             for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
@@ -269,12 +287,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              *
              * @method setSources
              * @param {Array/AudioBuffer/String/File} source URL or AudioBuffer or File Object of the audio source.
-             * @param {Function} [onLoadCallback] Callback when the source has finished loading.
-             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
              */
-            this.setSources = function ( source, onLoadCallback, onProgressCallback ) {
-                this.isInitialized = false;
-                init( source, onLoadCallback, onProgressCallback );
+            this.setSources = function ( source, onLoadProgress, onLoadComplete ) {
+                BaseSound.prototype.setSources.call( this, source, onLoadProgress, onLoadComplete );
+                init( source );
             };
 
             // Public Parameters
@@ -312,7 +330,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              */
             this.muteOnReverse = SPAudioParam.createPsuedoParam( "muteOnReverse", true, false, true, this.audioContext );
 
-            init( source, onLoadCallback, onProgressCallback );
+            // Initialize the sources.
+            window.setTimeout( function () {
+                init( source );
+            }, 0 );
 
         }
 

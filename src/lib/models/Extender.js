@@ -12,12 +12,14 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @class Extender
          * @constructor
          * @extends BaseSound
-         * @param {String/AudioBuffer/File} source Single URL or AudioBuffer or File Object of the audio source.
-         * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when the source has finished loading.
-         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
+         * @param {AudioContext} [context] AudioContext to be used.
+         * @param {Array/String/AudioBuffer/File} [source] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
+         * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+         * @param {Function} [onLoadComplete] Callback when the source has finished loading.
+         * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
+         * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
          */
-        function Extender( source, context, onLoadCallback, onProgressCallback ) {
+        function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
             if ( !( this instanceof Extender ) ) {
                 throw new TypeError( "Extender constructor cannot be called as a function." );
             }
@@ -28,6 +30,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.maxSources = 1;
             this.minSources = 1;
             this.modelName = "Extender";
+
+            this.onLoadProgress = onLoadProgress;
+            this.onLoadComplete = onLoadComplete;
+            this.onAudioStart = onAudioStart;
+            this.onAudioEnd = onAudioEnd;
 
             // Private Variables
             var self = this;
@@ -46,22 +53,20 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             // Private Functions
 
-            var createCallbackWith = function ( onLoadCallback ) {
-                return function ( status, audioBufferArray ) {
-                    sourceBuffer_ = audioBufferArray[ 0 ];
-                    soundQueue_.connect( self.releaseGainNode );
+            var onLoadAll = function ( status, audioBufferArray ) {
+                sourceBuffer_ = audioBufferArray[ 0 ];
+                soundQueue_.connect( self.releaseGainNode );
 
-                    if ( status ) {
-                        self.isInitialized = true;
-                    }
-                    if ( typeof onLoadCallback === 'function' ) {
-                        onLoadCallback( status );
-                    }
-                };
+                if ( status ) {
+                    self.isInitialized = true;
+                }
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status );
+                }
             };
 
-            function init( source, onLoadCallback, onProgressCallback ) {
-                multiFileLoader.call( self, source, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
+            function init( source ) {
+                multiFileLoader.call( self, source, self.audioContext, self.onLoadProgress, onLoadAll );
             }
 
             function extenderCallback() {
@@ -165,12 +170,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              *
              * @method setSources
              * @param {Array/AudioBuffer/String/File} source Single or Array of either URLs or AudioBuffers of source.
-             * @param {Function} [onLoadCallback] Callback when all source have finished loading.
-             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
              */
-            this.setSources = function ( source, onLoadCallback, onProgressCallback ) {
-                this.isInitialized = false;
-                init( source, onLoadCallback, onProgressCallback );
+            this.setSources = function ( source, onLoadProgress, onLoadComplete ) {
+                BaseSound.prototype.setSources.call( this, source, onLoadProgress, onLoadComplete );
+                init( source );
             };
 
             /**
@@ -225,9 +230,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 soundQueue_.stop( when );
             };
 
-            soundQueue_ = new SoundQueue( this.audioContext );
+            soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
 
-            init( source, onLoadCallback, onProgressCallback );
+            // Initialize the sources.
+            window.setTimeout( function () {
+                init( source );
+            }, 0 );
         }
 
         Extender.prototype = Object.create( BaseSound.prototype );

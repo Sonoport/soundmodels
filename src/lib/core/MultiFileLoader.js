@@ -15,10 +15,10 @@ define( [ 'core/FileLoader' ],
          * @method MuliFileLoader
          * @param {Array/String/File} sounds Array of or Individual String, AudioBuffer or File Objects which define the sounds to be loaded
          * @param {String} audioContext AudioContext to be used in decoding the file
-         * @param {String} [onAllLoad] Callback function to be called when all sounds are loaded
-         * @param {String} [onProgressCallback] Callback function to access the progress of the file loading.
+         * @param {String} [onLoadProgress] Callback function to access the progress of the file loading.
+         * @param {String} [onLoadComplete] Callback function to be called when all sounds are loaded
          */
-        function MultiFileLoader( sounds, audioContext, onAllLoad, onProgressCallback ) {
+        function MultiFileLoader( sounds, audioContext, onLoadProgress, onLoadComplete ) {
 
             //Private variables
             var self = this;
@@ -39,7 +39,7 @@ define( [ 'core/FileLoader' ],
                         } );
                     } else {
                         console.error( "Unsupported number of Sources. " + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources. Trying to load " + sounds.length + "." );
-                        onAllLoad( false, loadedAudioBuffers_ );
+                        onLoadComplete( false, loadedAudioBuffers_ );
                     }
                 } else if ( sounds ) {
                     sourcesToLoad_ = 1;
@@ -47,7 +47,7 @@ define( [ 'core/FileLoader' ],
                     loadSingleSound( sounds, onSingleLoadAt( 0 ) );
                 } else {
                     console.log( "Setting empty source. No sound may be heard" );
-                    onAllLoad( true, loadedAudioBuffers_ );
+                    onLoadComplete( false, loadedAudioBuffers_ );
                 }
             }
 
@@ -61,8 +61,8 @@ define( [ 'core/FileLoader' ],
                             onSingleLoad( status );
                         }
                     }, function ( progressEvent ) {
-                        if ( onProgressCallback && typeof onProgressCallback === "function" ) {
-                            onProgressCallback( progressEvent, sound );
+                        if ( onLoadProgress && typeof onLoadProgress === "function" ) {
+                            onLoadProgress( progressEvent, sound );
                         }
                     } );
                 } else if ( parameterType === "[object AudioBuffer]" ) {
@@ -87,7 +87,7 @@ define( [ 'core/FileLoader' ],
                                 break;
                             }
                         }
-                        onAllLoad( allStatus, loadedAudioBuffers_ );
+                        onLoadComplete( allStatus, loadedAudioBuffers_ );
                     }
                 };
             }

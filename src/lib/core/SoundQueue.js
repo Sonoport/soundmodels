@@ -14,10 +14,12 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
          * @class SoundQueue
          * @constructor
          * @param {AudioContext} context AudioContext to be used in running the queue.
+         * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
+         * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
          * @param {Number} [numberOfVoices] Number of polyphonic voices the Queue can have.
          *
          */
-        function SoundQueue( context, numberOfVoices ) {
+        function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
             if ( !( this instanceof SoundQueue ) ) {
                 throw new TypeError( "SoundQueue constructor cannot be called as a function." );
             }
@@ -28,6 +30,9 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
 
             // Private Variables
             var self = this;
+
+            this.onAudioEnd = onAudioEnd;
+            this.onAudioStart = onAudioStart;
 
             var eventQueue_ = [];
             var busyVoices_ = [];
@@ -44,7 +49,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
 
             function init() {
                 for ( var i = 0; i < numberOfVoices; i++ ) {
-                    freeVoices_[ i ] = new Looper( null, context, null, null, onVoiceEnded );
+                    freeVoices_[ i ] = new Looper( context, null, null, null, null, null, onVoiceEnded );
                     freeVoices_[ i ].disconnect();
                     freeVoices_[ i ].maxLoops.value = 1;
                     freeVoices_[ i ].voiceIndex = i;
@@ -61,6 +66,17 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
                 //console.log( "freeing " + endedVoice.voiceIndex );
                 freeVoices_.push( endedVoice );
                 busyVoices_.splice( busyVoices_.indexOf( endedVoice ), 1 );
+
+                var noPlayableEvents = eventQueue_.reduce( function ( prev, thisEvent ) {
+                    return prev || thisEvent.type !== "QESTART";
+                }, ( eventQueue_.length === 0 ) );
+
+                if ( self.isPlaying && busyVoices_.length === 0 && noPlayableEvents ) {
+                    self.isPlaying = false;
+                    if ( typeof self.onAudioEnd === 'function' ) {
+                        self.onAudioEnd();
+                    }
+                }
             }
 
             function findVoiceWithID( eventID ) {
@@ -117,6 +133,14 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
                 if ( thisEvent.type == "QESTART" ) {
                     //console.log( "starting " + selectedVoice.voiceIndex );
                     selectedVoice.start( thisEvent.time, thisEvent.offset, null, thisEvent.attackDuration );
+                    webaudioDispatch( function () {
+                        if ( !self.isPlaying ) {
+                            self.isPlaying = true;
+                            if ( typeof onAudioStart === 'function' ) {
+                                onAudioStart();
+                            }
+                        }
+                    }, thisEvent.time, context );
                 } else if ( thisEvent.type == "QESETPARAM" ) {
                     if ( selectedVoice[ thisEvent.paramName ] ) {
                         selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
@@ -150,12 +174,8 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
                 }
             }
 
-            // this.type = type;
-            // this.time = timeStamp;
-            // this.eventID = eventID;
-            // this.paramName = paramName;
-            // this.paramValue = paramValue;
-            // this.audioBuffer = audioBuffer;
+            // Public Properties
+            this.isPlaying = false;
 
             // Public Functions
 

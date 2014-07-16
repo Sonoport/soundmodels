@@ -13,12 +13,15 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @class MultiTrigger
          * @constructor
          * @extends BaseSound
-         * @param {Array/String/AudioBuffer/File} sources Single or Array of either URLs or AudioBuffers or File Object of audio sources.
-         * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
-         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
+         * @extends BaseSound
+         * @param {AudioContext} [context] AudioContext to be used.
+         * @param {Array/String/AudioBuffer/File} [sources] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
+         * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+         * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
+         * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
+         * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
          */
-        function MultiTrigger( sources, context, onLoadCallback, onProgressCallback ) {
+        function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
             if ( !( this instanceof MultiTrigger ) ) {
                 throw new TypeError( "MultiTrigger constructor cannot be called as a function." );
             }
@@ -31,6 +34,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.minSources = 1;
             this.modelName = "MultiTrigger";
 
+            this.onLoadProgress = onLoadProgress;
+            this.onLoadComplete = onLoadComplete;
+            this.onAudioStart = onAudioStart;
+            this.onAudioEnd = onAudioEnd;
+
             var lastEventTime_ = 0;
             var timeToNextEvent_ = 0;
 
@@ -42,23 +50,21 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             var wasPlaying_ = false;
             // Private Functions
-            function init( sources, onLoadCallback, onProgressCallback ) {
-                multiFileLoader.call( self, sources, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
+            function init( sources ) {
+                multiFileLoader.call( self, sources, self.audioContext, onLoadProgress, onLoadAll );
             }
 
-            var createCallbackWith = function ( onLoadCallback ) {
-                return function ( status, audioBufferArray ) {
-                    sourceBuffers_ = audioBufferArray;
-                    timeToNextEvent_ = updateTimeToNextEvent( self.eventRate.value );
-                    soundQueue_.connect( self.releaseGainNode );
+            var onLoadAll = function ( status, audioBufferArray ) {
+                sourceBuffers_ = audioBufferArray;
+                timeToNextEvent_ = updateTimeToNextEvent( self.eventRate.value );
+                soundQueue_.connect( self.releaseGainNode );
 
-                    if ( status ) {
-                        self.isInitialized = true;
-                    }
-                    if ( typeof onLoadCallback === 'function' ) {
-                        onLoadCallback( status );
-                    }
-                };
+                if ( status ) {
+                    self.isInitialized = true;
+                }
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status );
+                }
             };
 
             function triggerOnce( eventTime ) {
@@ -264,17 +270,20 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              *
              * @method setSources
              * @param {Array/AudioBuffer/String/File} sources Single or Array of either URLs or AudioBuffers or File Objects of audio sources.
-             * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
-             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
              */
-            this.setSources = function ( sources, onLoadCallback ) {
-                this.isInitialized = false;
-                init( sources, onLoadCallback, onProgressCallback );
+            this.setSources = function ( sources, onLoadProgress, onLoadComplete ) {
+                BaseSound.prototype.setSources.call( this, sources, onLoadProgress, onLoadComplete );
+                init( sources );
             };
             // SoundQueue based model.
-            soundQueue_ = new SoundQueue( this.audioContext );
+            soundQueue_ = new SoundQueue( this.audioContext, onAudioStart, onAudioEnd );
 
-            init( sources, onLoadCallback, onProgressCallback );
+            window.setTimeout( function () {
+                init( sources );
+            }, 0 );
+
         }
 
         MultiTrigger.prototype = Object.create( BaseSound.prototype );
