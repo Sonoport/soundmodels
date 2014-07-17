@@ -15,7 +15,7 @@
         }, function () {
             var slider = document.getElementById( 'activity' );
             slider.disabled = false;
-            activity.decayTime.value = 5;
+            activity.decayTime.value = 10;
             slider.addEventListener( 'input', function () {
                 if ( !activity.isPlaying ) {
                     activity.play();

@@ -53,6 +53,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             var MAX_OVERSHOOT = 1.2;
             var MAX_TIME_OUT = 0.1;
             var MIN_DIFF = 0.001;
+            var t60multiplier = 6.90776;
 
             // Private Functions
 
@@ -71,7 +72,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             }
 
             function init( source ) {
-                internalLooper_ = new Looper( self.audioContext, source, self.onLoadProgress, onLoadAll );
+                internalLooper_ = new Looper( self.audioContext, source, self.onLoadProgress, onLoadAll, self.onAudioStart, self.onAudioEnd );
                 internalLooper_.riseTime.value = self.riseTime.value;
                 internalLooper_.decayTime.value = self.decayTime.value;
             }
@@ -123,7 +124,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
 
                         if ( targetPlaySpeed_ > 0 && !audioPlaying ) {
                             audioPlaying = true;
-                            self.onAudioStart();
+                            self.play();
                         }
 
                         // We use a timeout to prevent the target level from staying at a non-zero value
@@ -142,7 +143,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                         endEventTimeout = window.setTimeout( function () {
                             if ( audioPlaying ) {
                                 audioPlaying = false;
-                                self.onAudioEnd();
+                                self.release();
                             }
                         }, 1000 * internalLooper_.decayTime.value );
                     }
@@ -317,7 +318,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.release = function ( when, fadeTime ) {
                 internalLooper_.release( when, fadeTime );
-                BaseSound.prototype.release.call( this, when, fadeTime );
+                //BaseSound.prototype.release.call( this, when, fadeTime );
             };
 
             /**

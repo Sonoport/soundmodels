@@ -220,13 +220,13 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
      */
     BaseSound.prototype.start = function ( when, offset, duration, attackDuration ) {
-        if ( typeof when === "undefined" ) {
-            when = 0;
+        if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+            when = this.audioContext.currentTime;
         }
 
+        this.releaseGainNode.gain.cancelScheduledValues( when );
         if ( typeof attackDuration !== 'undefined' ) {
             //console.log( "Ramping from " + offset + "  in " + attackDuration );
-            this.releaseGainNode.gain.cancelScheduledValues( when );
             this.releaseGainNode.gain.setValueAtTime( 0, when );
             this.releaseGainNode.gain.linearRampToValueAtTime( 1, when + attackDuration );
         } else {
@@ -246,8 +246,8 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * @param {Number} [when] Time (in seconds) the sound should stop playing
      */
     BaseSound.prototype.stop = function ( when ) {
-        if ( typeof when === "undefined" ) {
-            when = 0;
+        if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+            when = this.audioContext.currentTime;
         }
 
         var self = this;
@@ -270,9 +270,8 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
 
         if ( this.isPlaying ) {
             var FADE_TIME = 0.5;
-            var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
 
-            if ( typeof when === "undefined" ) {
+            if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
                 when = this.audioContext.currentTime;
             }
 
@@ -283,8 +282,11 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             // Now there won't be any glitch and there is a smooth ramp down.
             this.releaseGainNode.gain.linearRampToValueAtTime( 0, when + fadeTime );
 
-            // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
-            this.stop( when + fadeTime + FADE_TIME_PAD );
+            // Pause the sound after currentTime + fadeTime + FADE_TIME_PAD
+            var self = this;
+            webAudioDispatch( function () {
+                self.pause();
+            }, when + fadeTime, this.audioContext );
         }
     };
 
