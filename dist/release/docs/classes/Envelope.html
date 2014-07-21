@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.3</em>
+            <em>API Docs for: 1.1.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -300,6 +300,13 @@
                             </li>
                         
                             <li class="index-item method inherited">
+                                <a href="#method_setSources">setSources</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
                                 <a href="#method_start">start</a>
 
                                 
@@ -381,6 +388,34 @@
                         
                             <li class="index-item property inherited">
                                 <a href="#property_numberOfOutputs">numberOfOutputs</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onAudioEnd">onAudioEnd</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onAudioStart">onAudioStart</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onLoadComplete">onLoadComplete</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onLoadProgress">onLoadProgress</a>
 
                                 
                                 
@@ -1192,6 +1227,136 @@
 </div>
 
                 
+                    <div id="method_setSources" class="method item inherited">
+    <h3 class="name"><code>setSources</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>sources</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onLoadProgress]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onLoadComplete]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_setSources">BaseSound</a>:
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Reinitializes the model and sets it&#39;s sources.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">sources</code>
+                        <span class="type">Array/AudioBuffer/String/File</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Single or Array of either URLs or AudioBuffers or File Objects of the audio sources.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onLoadProgress]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when the audio file is being downloaded.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onLoadComplete]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when all sources have finished loading.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="method_start" class="method item">
     <h3 class="name"><code>start</code></h3>
 
@@ -1773,6 +1938,190 @@
 
     
         <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onAudioEnd" class="property item inherited">
+    <h3 class="name"><code>onAudioEnd</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onAudioEnd">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for the audio is about to stop playing.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onAudioStart" class="property item inherited">
+    <h3 class="name"><code>onAudioStart</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onAudioStart">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for when the audio is about to start playing.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onLoadComplete" class="property item inherited">
+    <h3 class="name"><code>onLoadComplete</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onLoadComplete">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for when loading of audio files is done and the the model is initalized.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onLoadProgress" class="property item inherited">
+    <h3 class="name"><code>onLoadProgress</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onLoadProgress">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for handling progress events thrown during loading of audio files.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
     
 
     

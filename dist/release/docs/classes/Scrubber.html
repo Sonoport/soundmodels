@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.0.3</em>
+            <em>API Docs for: 1.1.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -142,25 +142,37 @@
             
                 <li class="arg">
                     
-                        <code>source</code>
+                        <code class="optional">[context]</code>
                     
                 </li>
             
                 <li class="arg">
                     
-                        <code>context</code>
+                        <code class="optional">[source]</code>
                     
                 </li>
             
                 <li class="arg">
                     
-                        <code class="optional">[onLoadCallback]</code>
+                        <code class="optional">[onLoadProgress]</code>
                     
                 </li>
             
                 <li class="arg">
                     
-                        <code class="optional">[onProgressCallback]</code>
+                        <code class="optional">[onLoadComplete]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onAudioStart]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onAudioEnd]</code>
                     
                 </li>
             
@@ -211,24 +223,9 @@
             
                 <li class="param">
                     
-                        <code class="param-name">source</code>
-                        <span class="type">Array/String/AudioBuffer/File</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>A URL or AudioBuffer or File Object of the audio source.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name">context</code>
+                        <code class="param-name optional">[context]</code>
                         <span class="type">AudioContext</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
                     
 
                     
@@ -243,7 +240,41 @@
             
                 <li class="param">
                     
-                        <code class="param-name optional">[onLoadCallback]</code>
+                        <code class="param-name optional">[source]</code>
+                        <span class="type">Array/String/AudioBuffer/File</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Single or Array of either URLs or AudioBuffers or File Object of the audio source.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onLoadProgress]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when the audio file is being downloaded.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onLoadComplete]</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -260,7 +291,7 @@
             
                 <li class="param">
                     
-                        <code class="param-name optional">[onProgressCallback]</code>
+                        <code class="param-name optional">[onAudioStart]</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -268,7 +299,24 @@
                     
 
                     <div class="param-description">
-                        <p>Callback when the audio file is being downloaded.</p>
+                        <p>Callback when the audio is about to start playing.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onAudioEnd]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when the audio has finished playing.</p>
 
                     </div>
 
@@ -353,7 +401,7 @@
                                 
                             </li>
                         
-                            <li class="index-item method">
+                            <li class="index-item method inherited">
                                 <a href="#method_setSources">setSources</a>
 
                                 
@@ -456,6 +504,34 @@
                         
                             <li class="index-item property inherited">
                                 <a href="#property_numberOfOutputs">numberOfOutputs</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onAudioEnd">onAudioEnd</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onAudioStart">onAudioStart</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onLoadComplete">onLoadComplete</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onLoadProgress">onLoadProgress</a>
 
                                 
                                 
@@ -1013,13 +1089,13 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code class="optional">[onLoadCallback]</code>
+                        <code class="optional">[onLoadProgress]</code>
                     
                 </li>
             
                 <li class="arg">
                     
-                        <code class="optional">[onProgressCallback]</code>
+                        <code class="optional">[onLoadComplete]</code>
                     
                 </li>
             
@@ -1043,10 +1119,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            
-                
-                <p>
-                
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_setSources">
+                BaseSound
+            </a>
             
         
         
@@ -1087,24 +1163,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name optional">[onLoadCallback]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Callback when the source has finished loading.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[onProgressCallback]</code>
+                        <code class="param-name optional">[onLoadProgress]</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -1113,6 +1172,23 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
                     <div class="param-description">
                         <p>Callback when the audio file is being downloaded.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onLoadComplete]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when all sources have finished loading.</p>
 
                     </div>
 
@@ -1214,7 +1290,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>The delay in seconds before playing the sound</p>
+                        <p>Time (in seconds) when the sound should start playing.</p>
 
                     </div>
 
@@ -1878,6 +1954,190 @@ Set this value to null if no connection can be made on the input node</p>
 
     
         <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onAudioEnd" class="property item inherited">
+    <h3 class="name"><code>onAudioEnd</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onAudioEnd">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for the audio is about to stop playing.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onAudioStart" class="property item inherited">
+    <h3 class="name"><code>onAudioStart</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onAudioStart">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for when the audio is about to start playing.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onLoadComplete" class="property item inherited">
+    <h3 class="name"><code>onLoadComplete</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onLoadComplete">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for when loading of audio files is done and the the model is initalized.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onLoadProgress" class="property item inherited">
+    <h3 class="name"><code>onLoadProgress</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onLoadProgress">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for handling progress events thrown during loading of audio files.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
     
 
     
