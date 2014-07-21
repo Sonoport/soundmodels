@@ -31,7 +31,7 @@
 			});
 
 			require(["models/Looper"], function (Looper){
-				loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav", null,function(){
+				loop = new Looper(null,"https://dl.dropboxusercontent.com/u/77191118/loop.wav", null,function(){
 					button.disabled = false;
 					loop.start();
 				});

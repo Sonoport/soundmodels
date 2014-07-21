@@ -6,8 +6,8 @@ A developer guide to Sonoport JavaScript Sound Models
 ## Introduction
 The Sonoport JavaScript Sound Models allow developer to leverage the new WebAudio API to create interactive experiences with dynamic sound in the browser. This plugin-free technology is purely based on JavaScript, and only requires a browser which has WebAudio API enabled. Chrome, Firefox, Safari and Opera have the API currently enabled.
 
-## Release 1.0.3
-The current release is 1.0.3. It currently only contains six sound models, `Looper`, `Trigger`,  `MultiTrigger`, `Extender`, `Activity` and `Scrubber`.
+## Release 1.1.0
+The current release is 1.1.0. It currently contains six sound models, `Looper`, `Trigger`,  `MultiTrigger`, `Extender`, `Activity` and `Scrubber`.
 
 All current models require some sort of source material, _mp3_ or _wav_ audio files, which can be used by the models as source.
 
@@ -53,7 +53,7 @@ require(["models/Looper"], function (Looper) {
 ```
 require(["models/Looper"], function (Looper) {
     // Create a new Looper
-    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
+    var loop = new Looper(null,"https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
         console.log("Loaded!");
         loop.play();
 
@@ -82,7 +82,7 @@ require(["models/Looper"], function (Looper) {
 
 ```
 require(["models/Looper"], function (Looper) {
-    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
+    var loop = new Looper(null ,"https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
         console.log("Play Faster");
         loop.playSpeed.value = 2;
         loop.play();
@@ -129,7 +129,7 @@ Here is an example of how a Gain Node can be added to the Looper Sound Model
 ```
 require(["models/Looper"], function (Looper) {
     var gain;
-    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
+    var loop = new Looper(null,"https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
 
         // Create a Gain Node
         gain = loop.audioContext.createGain();
