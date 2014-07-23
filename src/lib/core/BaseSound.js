@@ -271,7 +271,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
 
         if ( this.isPlaying ) {
             var FADE_TIME = 0.5;
-            var FADE_TIME_PAD = 1/this.audioContext.sampleRate;
+            var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
 
             if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
                 when = this.audioContext.currentTime;
@@ -285,9 +285,9 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             this.releaseGainNode.gain.linearRampToValueAtTime( 0, when + fadeTime );
 
             // Pause the sound after currentTime + fadeTime + FADE_TIME_PAD
-            if (stopOnRelease){
-                this.stop(when+FADE_TIME+FADE_TIME_PAD);
-            }else{
+            if ( stopOnRelease ) {
+                this.stop( when + FADE_TIME + FADE_TIME_PAD );
+            } else {
                 var self = this;
                 webAudioDispatch( function () {
                     self.pause();
