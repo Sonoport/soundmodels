@@ -265,7 +265,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * @method release
      * @param {Number} [when] Time (in seconds) at which the Envelope will release.
      * @param {Number} [fadeTime] Amount of time (seconds) it takes for linear ramp down to happen.
-     * @param {Boolean} [stopOnRelease] Boolean to define if release stops (resets) the Source or just pauses the
+     * @param {Boolean} [stopOnRelease] Boolean to define if release stops (resets) the playback or just pauses it.
      */
     BaseSound.prototype.release = function ( when, fadeTime, stopOnRelease ) {
 

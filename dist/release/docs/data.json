@@ -1768,6 +1768,12 @@
                     "description": "Amount of time (seconds) it takes for linear ramp down to happen.",
                     "type": "Number",
                     "optional": true
+                },
+                {
+                    "name": "stopOnRelease",
+                    "description": "Boolean to define if release stops (resets) the playback or just pauses it.",
+                    "type": "Boolean",
+                    "optional": true
                 }
             ],
             "class": "BaseSound",
@@ -1775,7 +1781,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 293,
+            "line": 299,
             "description": "Reinitializes the model and sets it's sources.",
             "itemtype": "method",
             "name": "setSources",
@@ -1803,7 +1809,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 313,
+            "line": 319,
             "description": "Play sound. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "play",
@@ -1812,7 +1818,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 322,
+            "line": 328,
             "description": "Pause sound. Abstract method. Override this method when a Node is defined.",
             "itemtype": "method",
             "name": "pause",
@@ -1821,7 +1827,7 @@
         },
         {
             "file": "src/lib/temp/BaseSound.js",
-            "line": 331,
+            "line": 337,
             "description": "List all SPAudioParams this Sound exposes",
             "itemtype": "method",
             "name": "listParams",
