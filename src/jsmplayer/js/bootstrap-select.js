@@ -549,7 +549,7 @@
                     .parent()
                     .index(),
                     $this = $( this )
-                        .parent(),
+                    .parent(),
                     $select = $this.parents( '.select' );
 
                 //Dont close on multi choice menu    
