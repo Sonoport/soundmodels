@@ -142,6 +142,42 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
          **/
         this.modelName = "Model";
 
+        /**
+         * Callback for handling progress events thrown during loading of audio files.
+         *
+         * @property onLoadProgress
+         * @type Function
+         * @default null
+         */
+        this.onLoadProgress = null;
+
+        /**
+         * Callback for when loading of audio files is done and the the model is initalized.
+         *
+         * @property onLoadComplete
+         * @type Function
+         * @default null
+         */
+        this.onLoadComplete = null;
+
+        /**
+         * Callback for when the audio is about to start playing.
+         *
+         * @property onAudioStart
+         * @type Function
+         * @default null
+         */
+        this.onAudioStart = null;
+
+        /**
+         * Callback for the audio is about to stop playing.
+         *
+         * @property onAudioEnd
+         * @type Function
+         * @default null
+         */
+        this.onAudioEnd = null;
+
         this.releaseGainNode.connect( this.audioContext.destination );
     }
 
@@ -178,23 +214,29 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * Start the AudioNode. Abstract method. Override this method when a Node is defined.
      *
      * @method start
-     * @param {Number} when The delay in seconds before playing the sound
+     * @param {Number} when Time (in seconds) when the sound should start playing.
      * @param {Number} [offset] The starting position of the playhead
      * @param {Number} [duration] Duration of the portion (in seconds) to be played
      * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
      */
     BaseSound.prototype.start = function ( when, offset, duration, attackDuration ) {
-        var now = this.audioContext.currentTime;
+        if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+            when = this.audioContext.currentTime;
+        }
 
+        this.releaseGainNode.gain.cancelScheduledValues( when );
         if ( typeof attackDuration !== 'undefined' ) {
             //console.log( "Ramping from " + offset + "  in " + attackDuration );
-            this.releaseGainNode.gain.cancelScheduledValues( now );
-            this.releaseGainNode.gain.setValueAtTime( 0, now );
-            this.releaseGainNode.gain.linearRampToValueAtTime( 1, now + attackDuration );
+            this.releaseGainNode.gain.setValueAtTime( 0, when );
+            this.releaseGainNode.gain.linearRampToValueAtTime( 1, when + attackDuration );
         } else {
-            this.releaseGainNode.gain.setValueAtTime( 1, now );
+            this.releaseGainNode.gain.setValueAtTime( 1, when );
         }
-        this.isPlaying = true;
+
+        var self = this;
+        webAudioDispatch( function () {
+            self.isPlaying = true;
+        }, when, this.audioContext );
     };
 
     /**
@@ -204,14 +246,10 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * @param {Number} [when] Time (in seconds) the sound should stop playing
      */
     BaseSound.prototype.stop = function ( when ) {
-
-        var FADE_TIME_PAD = 10 / this.audioContext.sampleRate;
-
-        if ( typeof when === "undefined" ) {
-            when = 0;
+        if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+            when = this.audioContext.currentTime;
         }
 
-        // This boolean is not accurate. Need a better way track if the actual audio is still playing.
         var self = this;
         webAudioDispatch( function () {
             self.isPlaying = false;
@@ -227,14 +265,15 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * @method release
      * @param {Number} [when] Time (in seconds) at which the Envelope will release.
      * @param {Number} [fadeTime] Amount of time (seconds) it takes for linear ramp down to happen.
+     * @param {Boolean} [stopOnRelease] Boolean to define if release stops (resets) the playback or just pauses it.
      */
-    BaseSound.prototype.release = function ( when, fadeTime ) {
+    BaseSound.prototype.release = function ( when, fadeTime, stopOnRelease ) {
 
         if ( this.isPlaying ) {
             var FADE_TIME = 0.5;
             var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
 
-            if ( typeof when === "undefined" ) {
+            if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
                 when = this.audioContext.currentTime;
             }
 
@@ -245,8 +284,35 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             // Now there won't be any glitch and there is a smooth ramp down.
             this.releaseGainNode.gain.linearRampToValueAtTime( 0, when + fadeTime );
 
-            // Stops the sound after currentTime + fadeTime + FADE_TIME_PAD
-            this.stop( when + fadeTime + FADE_TIME_PAD );
+            // Pause the sound after currentTime + fadeTime + FADE_TIME_PAD
+            if ( stopOnRelease ) {
+                this.stop( when + FADE_TIME + FADE_TIME_PAD );
+            } else {
+                var self = this;
+                webAudioDispatch( function () {
+                    self.pause();
+                }, when + fadeTime, this.audioContext );
+            }
+        }
+    };
+
+    /**
+     * Reinitializes the model and sets it's sources.
+     *
+     * @method setSources
+     * @param {Array/AudioBuffer/String/File} sources Single or Array of either URLs or AudioBuffers or File Objects of the audio sources.
+     * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+     * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
+     */
+    BaseSound.prototype.setSources = function ( sources, onLoadProgress, onLoadComplete ) {
+        this.isInitialized = false;
+
+        if ( typeof onLoadProgress === 'function' ) {
+            this.onLoadProgress = onLoadProgress;
+        }
+
+        if ( typeof onLoadComplete === 'function' ) {
+            this.onLoadComplete = onLoadComplete;
         }
     };
 

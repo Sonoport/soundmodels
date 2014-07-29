@@ -106,11 +106,23 @@
             }
 
             // Load model class
-            var sndModel = new Model( files, context, onLoad, null );
+            var sndModel = new Model( context, files, null, onLoad, onAudioStart, onAudioEnd );
             var $playerParams = $( '.player-params' );
 
             $( "#filebtn" )
                 .on( 'change', handleFileSelect );
+
+            function onAudioStart() {
+                $( "#speaker" )
+                    .removeClass( "icon-nosound" )
+                    .addClass( "icon-sound" );
+            }
+
+            function onAudioEnd() {
+                $( "#speaker" )
+                    .removeClass( "icon-sound" )
+                    .addClass( "icon-nosound" );
+            }
 
             function onLoad( status ) {
                 // After sound is loaded
@@ -139,7 +151,7 @@
                 }
                 // Remove sliders
                 $playerParams.empty();
-                sndModel.setSources( localSources, onLoad );
+                sndModel.setSources( localSources, null, onLoad );
             }
 
             function generateInterface( snd ) {

@@ -1,8 +1,8 @@
 /**
  * @module Models
  */
-define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode", 'core/MultiFileLoader' ],
-    function ( Config, BaseSound, SPAudioParam, SPAudioBufferSourceNode, multiFileLoader ) {
+define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode", 'core/MultiFileLoader', 'core/WebAudioDispatch' ],
+    function ( Config, BaseSound, SPAudioParam, SPAudioBufferSourceNode, multiFileLoader, webAudioDispatch ) {
         "use strict";
 
         /**
@@ -11,13 +11,15 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
          * @class Looper
          * @constructor
          * @extends BaseSound
-         * @param {Array/String/AudioBuffer/File} sources Single or Array of either URLs or AudioBuffers or File Object of the audio source.
-         * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
-         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
-         * @param {Function} [onEndedCallback] Callback when the Looper has finished playing.
+         * @param {AudioContext} [context] AudioContext to be used.
+         * @param {Array/String/AudioBuffer/File} [sources] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
+         * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+         * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
+         * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
+         * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
+         * @param {Function} [onTrackEnd] Callback when an individual track has finished playing.
          */
-        function Looper( sources, context, onLoadCallback, onProgressCallback, onEndedCallback ) {
+        function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd, onTrackEnd ) {
             if ( !( this instanceof Looper ) ) {
                 throw new TypeError( "Looper constructor cannot be called as a function." );
             }
@@ -27,41 +29,57 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             this.minSources = 1;
             this.modelName = "Looper";
 
+            this.onLoadProgress = onLoadProgress;
+            this.onLoadComplete = onLoadComplete;
+            this.onAudioStart = onAudioStart;
+            this.onAudioEnd = onAudioEnd;
+
             // Private vars
             var self = this;
 
-            var sources_ = [];
+            var sourceBufferNodes_ = [];
             var multiTrackGainNodes_ = [];
             var lastStopPosition_ = [];
             var rateArray = [];
 
-            var createCallbackWith = function ( onLoadCallback ) {
-                return function ( status, arrayOfBuffers ) {
-                    arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
-                        lastStopPosition_.push( 0 );
-                        insertBufferSource( thisBuffer, trackIndex );
-                    } );
+            var onLoadAll = function ( status, arrayOfBuffers ) {
+                arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
+                    lastStopPosition_.push( 0 );
+                    insertBufferSource( thisBuffer, trackIndex );
+                } );
 
-                    if ( rateArray && rateArray.length > 0 ) {
-                        self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
-                    }
+                if ( rateArray && rateArray.length > 0 ) {
+                    self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
+                }
 
-                    if ( status ) {
-                        self.isInitialized = true;
-                    }
-                    if ( typeof onLoadCallback === 'function' ) {
-                        onLoadCallback( status );
-                    }
-                };
+                if ( status ) {
+                    self.isInitialized = true;
+                }
+
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status );
+                }
             };
 
-            var onSourceEnded = function ( event, trackIndex, source ) {
-                self.isPlaying = false;
+            var onSourceEnd = function ( event, trackIndex, source ) {
                 var cTime = self.audioContext.currentTime;
                 // Create a new source since SourceNodes can't play again.
                 source.resetBufferSource( cTime, multiTrackGainNodes_[ trackIndex ] );
-                if ( typeof onEndedCallback === 'function' ) {
-                    onEndedCallback( self, trackIndex );
+
+                if ( typeof self.onTrackEnd === 'function' ) {
+                    onTrackEnd( self, trackIndex );
+                }
+
+                var allSourcesEnded = sourceBufferNodes_.reduce( function ( prevState, thisSource ) {
+                    return prevState && ( thisSource.playbackState === thisSource.FINISHED_STATE ||
+                        thisSource.playbackState === thisSource.UNSCHEDULED_STATE );
+                }, true );
+
+                if ( allSourcesEnded && self.isPlaying ) {
+                    self.isPlaying = false;
+                    if ( typeof self.onAudioEnd === 'function' ) {
+                        self.onAudioEnd();
+                    }
                 }
             };
 
@@ -70,7 +88,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 source.buffer = audioBuffer;
                 source.loopEnd = audioBuffer.duration;
                 source.onended = function ( event ) {
-                    onSourceEnded( event, trackIndex, source );
+                    onSourceEnd( event, trackIndex, source );
                 };
 
                 var gainNode;
@@ -87,7 +105,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 source.connect( gainNode );
                 gainNode.connect( self.releaseGainNode );
 
-                sources_.push( source );
+                sourceBufferNodes_.push( source );
                 rateArray.push( source.playbackRate );
             };
 
@@ -99,15 +117,15 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                         */
                     var t60multiplier = 6.90776;
 
-                    var currentSpeed = sources_[ 0 ] ? sources_[ 0 ].playbackRate.value : 1;
+                    var currentSpeed = sourceBufferNodes_[ 0 ] ? sourceBufferNodes_[ 0 ].playbackRate.value : 1;
 
                     if ( value > currentSpeed ) {
-                        sources_.forEach( function ( thisSource ) {
+                        sourceBufferNodes_.forEach( function ( thisSource ) {
                             thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
                             thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.riseTime.value / t60multiplier );
                         } );
                     } else if ( value < currentSpeed ) {
-                        sources_.forEach( function ( thisSource ) {
+                        sourceBufferNodes_.forEach( function ( thisSource ) {
                             thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
                             thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.decayTime.value / t60multiplier );
                         } );
@@ -116,21 +134,30 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             var startPointSetter_ = function ( aParam, value ) {
-                sources_.forEach( function ( thisSource ) {
+                sourceBufferNodes_.forEach( function ( thisSource ) {
                     thisSource.loopStart = value * thisSource.buffer.duration;
                 } );
             };
 
-            function init( sources, onLoadCallback, onProgressCallback ) {
+            function init( sources ) {
                 rateArray = [];
-                sources_.forEach( function ( thisSource ) {
+                sourceBufferNodes_.forEach( function ( thisSource ) {
                     thisSource.disconnect();
                 } );
-                sources_ = [];
-                multiFileLoader.call( self, sources, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
+                sourceBufferNodes_ = [];
+                multiFileLoader.call( self, sources, self.audioContext, self.onLoadProgress, onLoadAll );
             }
 
             // Public Properties
+
+            /**
+             * Event Handler or Callback for ending of a individual track.
+             *
+             * @property onTrackEnd
+             * @type Function
+             * @default null
+             */
+            this.onTrackEnd = onTrackEnd;
 
             /**
              * Speed of playback of the source. Affects both pitch and tempo.
@@ -204,12 +231,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              *
              * @method setSources
              * @param {Array/AudioBuffer/String/File} sources Single or Array of either URLs or AudioBuffers of sources.
-             * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
-             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
              */
-            this.setSources = function ( sources, onLoadCallback, onProgressCallback ) {
-                this.isInitialized = false;
-                init( sources, onLoadCallback, onProgressCallback );
+            this.setSources = function ( sources, onLoadProgress, onLoadComplete ) {
+                BaseSound.prototype.setSources.call( this, sources, onLoadProgress, onLoadComplete );
+                init( sources );
             };
 
             /**
@@ -221,18 +248,23 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             this.play = function () {
 
                 if ( !this.isInitialized ) {
-                    throw new Error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    throw new Error( this.modelName, "hasn't finished Initializing yet. Please wait before calling start/play" );
                 }
 
                 var now = this.audioContext.currentTime;
 
                 if ( !this.isPlaying ) {
-                    sources_.forEach( function ( thisSource, index ) {
+                    sourceBufferNodes_.forEach( function ( thisSource, index ) {
                         var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : self.startPoint.value * thisSource.buffer.duration;
                         thisSource.loop = ( self.maxLoops.value !== 1 );
                         thisSource.start( now, offset );
                     } );
                     BaseSound.prototype.start.call( this, now );
+                    webAudioDispatch( function () {
+                        if ( typeof self.onAudioStart === 'function' ) {
+                            self.onAudioStart();
+                        }
+                    }, now, this.audioContext );
                 }
             };
 
@@ -241,7 +273,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * the value of startPoint property is used.
              *
              * @method start
-             * @param {Number} when The delay in seconds before playing the model
+             * @param {Number} when Time (in seconds) when the sound should start playing.
              * @param {Number} [offset] The starting position of the playhead in seconds
              * @param {Number} [duration] Duration of the portion (in seconds) to be played
              * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
@@ -253,7 +285,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 }
 
                 if ( !this.isPlaying ) {
-                    sources_.forEach( function ( thisSource ) {
+                    sourceBufferNodes_.forEach( function ( thisSource ) {
                         if ( typeof offset == 'undefined' || offset === null ) {
                             offset = self.startPoint.value * thisSource.buffer.duration;
                         }
@@ -263,7 +295,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                         thisSource.loop = ( self.maxLoops.value !== 1 );
                         thisSource.start( when, offset, duration );
                     } );
+
                     BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
+                    webAudioDispatch( function () {
+                        if ( typeof self.onAudioStart === 'function' ) {
+                            self.onAudioStart();
+                        }
+                    }, when, this.audioContext );
                 }
             };
 
@@ -273,14 +311,19 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @param {Number} when Time offset to stop
              */
             this.stop = function ( when ) {
-                sources_.forEach( function ( thisSource, index ) {
-                    if ( self.isPlaying ) {
+                if ( self.isPlaying ) {
+                    sourceBufferNodes_.forEach( function ( thisSource, index ) {
                         thisSource.stop( when );
-                    }
-                    lastStopPosition_[ index ] = 0;
-                } );
+                        lastStopPosition_[ index ] = 0;
+                    } );
 
-                BaseSound.prototype.stop.call( this, when );
+                    BaseSound.prototype.stop.call( this, when );
+                    webAudioDispatch( function () {
+                        if ( typeof self.onAudioEnd === 'function' ) {
+                            self.onAudioEnd();
+                        }
+                    }, when, this.audioContext );
+                }
             };
 
             /**
@@ -289,18 +332,26 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @method pause
              */
             this.pause = function () {
-                sources_.forEach( function ( thisSource, index ) {
-                    if ( self.isPlaying ) {
-                        thisSource.stop( 0 );
-                    }
-                    lastStopPosition_[ index ] = thisSource.playbackPosition / thisSource.buffer.sampleRate;
-                } );
+                if ( self.isPlaying ) {
 
-                BaseSound.prototype.stop.call( this, 0 );
+                    sourceBufferNodes_.forEach( function ( thisSource, index ) {
+                        thisSource.stop( 0 );
+                        lastStopPosition_[ index ] = thisSource.playbackPosition / thisSource.buffer.sampleRate;
+                    } );
+
+                    BaseSound.prototype.stop.call( this, 0 );
+                    webAudioDispatch( function () {
+                        if ( typeof self.onAudioEnd === 'function' ) {
+                            self.onAudioEnd();
+                        }
+                    }, 0, this.audioContext );
+                }
             };
 
             // Initialize the sources.
-            init( sources, onLoadCallback, onProgressCallback );
+            window.setTimeout( function () {
+                init( sources );
+            }, 0 );
         }
 
         Looper.prototype = Object.create( BaseSound.prototype );

@@ -32,7 +32,7 @@ require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
                 multiFileLoader.call( {
                     maxSources: 8,
                     minSources: 1
-                }, validSounds, context, function ( status, buffers ) {
+                }, validSounds, context, null, function ( status, buffers ) {
                     expect( status )
                         .toBe( true );
                     expect( buffers.length )
@@ -57,7 +57,7 @@ require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
                 multiFileLoader.call( {
                     maxSources: 8,
                     minSources: 1
-                }, invalidSounds, context, function ( status, buffers ) {
+                }, invalidSounds, context, null, function ( status, buffers ) {
                     expect( status )
                         .toBe( false );
                     expect( buffers.length )

@@ -12,13 +12,14 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
          * @class Trigger
          * @constructor
          * @extends BaseSound
-         * @param {Array/String/AudioBuffer/File} sources Single or Array of either URLs or AudioBuffers or File Objects of audio sources.
-         * @param {AudioContext} context AudioContext to be used.
-         * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
-         * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
-         * @param {Function} [onEndedCallback] Callback when the Trigger has finished playing.
+         * @param {AudioContext} [context] AudioContext to be used.
+         * @param {Array/String/AudioBuffer/File} [sources] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
+         * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+         * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
+         * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
+         * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
          */
-        function Trigger( sources, context, onLoadCallback, onProgressCallback, onEndedCallback ) {
+        function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
             if ( !( this instanceof Trigger ) ) {
                 throw new TypeError( "Trigger constructor cannot be called as a function." );
             }
@@ -29,6 +30,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.maxSources = Config.MAX_VOICES;
             this.minSources = 1;
             this.modelName = "Trigger";
+
+            this.onLoadProgress = onLoadProgress;
+            this.onLoadComplete = onLoadComplete;
+            this.onAudioStart = onAudioStart;
+            this.onAudioEnd = onAudioEnd;
 
             // Private vars
             var self = this;
@@ -42,21 +48,19 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             // Private Functions
 
-            var createCallbackWith = function ( onLoadCallback ) {
-                return function ( status, audioBufferArray ) {
-                    sourceBuffers_ = audioBufferArray;
-                    soundQueue_.connect( self.releaseGainNode );
-                    if ( status ) {
-                        self.isInitialized = true;
-                    }
-                    if ( typeof onLoadCallback === 'function' ) {
-                        onLoadCallback( status );
-                    }
-                };
+            var onLoadAll = function ( status, audioBufferArray ) {
+                sourceBuffers_ = audioBufferArray;
+                soundQueue_.connect( self.releaseGainNode );
+                if ( status ) {
+                    self.isInitialized = true;
+                }
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status );
+                }
             };
 
-            function init( sources, onLoadCallback, onProgressCallback ) {
-                multiFileLoader.call( self, sources, self.audioContext, createCallbackWith( onLoadCallback ), onProgressCallback );
+            function init( sources ) {
+                multiFileLoader.call( self, sources, self.audioContext, self.onLoadProgress, onLoadAll );
                 allSounds = sources;
             }
 
@@ -101,13 +105,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * Reinitializes the model and sets it's sources.
              *
              * @method setSources
-             * @param {Array/AudioBuffer/String/File} sources Single or Array of either URLs or AudioBuffers or File Objects of the audio sources.
-             * @param {Function} [onLoadCallback] Callback when all sources have finished loading.
-             * @param {Function} [onProgressCallback] Callback when the audio file is being downloaded.
+             * @param {Array/AudioBuffer/String/File} sources Single or Array of either URLs or AudioBuffers of sources.
+             * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
+             * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
              */
-            this.setSources = function ( sources, onLoadCallback, onProgressCallback ) {
-                this.isInitialized = false;
-                init( sources, onLoadCallback, onProgressCallback );
+            this.setSources = function ( sources, onLoadProgress, onLoadComplete ) {
+                BaseSound.prototype.setSources.call( this, sources, onLoadProgress, onLoadComplete );
+                init( sources );
             };
 
             /**
@@ -153,7 +157,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.start = function ( when, offset, duration, attackDuration ) {
                 if ( !this.isInitialized ) {
-                    console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+                    console.error( this.modelName, "hasn't finished Initializing yet. Please wait before calling start/play" );
                     return;
                 }
 
@@ -189,9 +193,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             };
 
             // SoundQueue based model.
-            soundQueue_ = new SoundQueue( this.audioContext );
+            soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
 
-            init( sources, onLoadCallback, onProgressCallback );
+            window.setTimeout( function () {
+                init( sources );
+            }, 0 );
         }
 
         Trigger.prototype = Object.create( BaseSound.prototype );

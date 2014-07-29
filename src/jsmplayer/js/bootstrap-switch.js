@@ -73,7 +73,7 @@
 
                     if ( $element.data( 'animated' ) !== false )
                         $div.addClass( 'switch-animate' )
-                            .data( 'animated', true );
+                        .data( 'animated', true );
 
                     $div
                         .append( $switchLeft )
@@ -89,7 +89,7 @@
                     if ( $element.find( 'input' )
                         .is( ':disabled' ) )
                         $( this )
-                            .addClass( 'deactivate' );
+                        .addClass( 'deactivate' );
 
                     var changeStatus = function ( $this ) {
                         $this.siblings( 'label' )
@@ -130,7 +130,7 @@
 
                                 if ( thisState )
                                     $element.removeClass( 'switch-off' )
-                                        .addClass( 'switch-on' );
+                                    .addClass( 'switch-on' );
                                 else $element.removeClass( 'switch-on' )
                                     .addClass( 'switch-off' );
 
@@ -165,7 +165,7 @@
                                     var $element = $( this )
                                         .closest( '.switch' ),
                                         relativeX = ( e.pageX || e.originalEvent.targetTouches[ 0 ].pageX ) - $element.offset()
-                                            .left,
+                                        .left,
                                         percent = ( relativeX / $element.width() ) * 100,
                                         left = 25,
                                         right = 75;
@@ -243,7 +243,7 @@
             setActive: function ( active ) {
                 if ( active )
                     $( this )
-                        .removeClass( 'deactivate' );
+                    .removeClass( 'deactivate' );
                 else $( this )
                     .addClass( 'deactivate' );
             },

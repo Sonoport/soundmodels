@@ -16,7 +16,9 @@
 
         var url = "https://dl.dropboxusercontent.com/u/77191118/sounds/gettysburg_address.mp3";
         // Single test
-        scrubber = new Scrubber( url, context, function () {
+        scrubber = new Scrubber( context, url, function ( progressEvent, sound ) {
+            console.log( sound, ( progressEvent.loaded / progressEvent.total ) );
+        }, function () {
             var slider = document.getElementById( 'scrubber' );
             slider.disabled = false;
 
@@ -26,6 +28,10 @@
                 }
                 scrubber.playPosition.value = parseFloat( slider.value );
             } );
+        }, function () {
+            console.log( "Starting...", context.currentTime );
+        }, function () {
+            console.log( "Ended...", context.currentTime );
         } );
 
     } );

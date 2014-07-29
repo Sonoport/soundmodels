@@ -44,7 +44,7 @@ footer {
 	@include breakpoint($screen-md-min) {
 		width: span(8);
 	}
-	
+
 	@include breakpoint($screen-lg-min) {
 		width: span(6);
 	}
@@ -54,7 +54,7 @@ footer {
 
 .container {
 	//@include container(show);
-	
+
 	@include breakpoint($screen-md-min) {
 		@include container(90%);
 	}
@@ -95,7 +95,7 @@ footer {
 
 .soundmodels {
 	margin: 100px 0 0 0;
-	width: 200px;
+	width: 350px;
 }
 
 .pull-left {

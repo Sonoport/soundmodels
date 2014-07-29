@@ -10,7 +10,9 @@
 
         var url = "https://dl.dropboxusercontent.com/u/77191118/Ocean_Surf.mp3";
 
-        extender = new Extender( url, context, function () {
+        extender = new Extender( context, url, function ( progressEvent, sound ) {
+            console.log( "Loading.. ", sound, ( progressEvent.loaded / progressEvent.total ) );
+        }, function () {
             var slider = document.getElementById( 'extender' );
             slider.disabled = false;
             extender.play();
@@ -18,7 +20,16 @@
             slider.addEventListener( 'input', function () {
                 extender.eventPeriod.value = parseFloat( slider.value );
             } );
+        }, function () {
+            console.log( "Starting...", context.currentTime );
+        }, function () {
+            console.log( "Ended...", context.currentTime );
         } );
+
+        window.setTimeout( function () {
+            console.log( "pausing" );
+            extender.release();
+        }, 2000 );
 
     } );
 } )();
