@@ -58,11 +58,11 @@ define( [ 'core/DetectLoopMarkers' ],
                 }
                 // Verify parameters
                 if ( !isInt_( start ) ) {
-                    start = isNan( start ) ? 0 : Math.round( Number( start ) );
+                    start = Number.isNan( start ) ? 0 : Math.round( Number( start ) );
                     console.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer. Coercing it to an Integer - start" );
                 } else if ( !isInt_( end ) ) {
                     console.warn( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" );
-                    end = isNan( end ) ? 0 : Math.round( Number( end ) );
+                    end = Number.isNan( end ) ? 0 : Math.round( Number( end ) );
                 }
                 // Check if start is smaller than end
                 if ( start > end ) {

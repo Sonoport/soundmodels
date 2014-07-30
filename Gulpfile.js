@@ -1,15 +1,20 @@
 "use strict";
 
 var pkg = require('./package.json');
+
 var gulp = require('gulp');
 var yuidoc = require("gulp-yuidoc");
 var prettify = require('gulp-jsbeautifier');
+var jshint = require('gulp-jshint');
+var gulpFilter = require('gulp-filter');
+
+//var debug = require('gulp-debug');
 
 var through = require('through2');
 
-var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
-'<%= grunt.template.today("yyyy-mm-dd") %> */ \n' +
-'console.log("   ____                           __ \\n" + "  / _____  ___ ___  ___ ___  ____/ /_\\n" + " _\\\\ \\\\/ _ \\\\/ _ / _ \\\\/ _ / _ \\\\/ __/ __/\\n" + "/___/\\\\___/_//_\\\\___/ .__\\\\___/_/  \\\\__/ \\n" + "                 /_/                 \\n" + "Hello Developer!\\n" + "Thanks for using Sonoport Dynamic Sound Library v<%= pkg.version %>.");\n';
+// var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
+// '<%= grunt.template.today("yyyy-mm-dd") %> */ \n' +
+// 'console.log("   ____                           __ \\n" + "  / _____  ___ ___  ___ ___  ____/ /_\\n" + " _\\\\ \\\\/ _ \\\\/ _ / _ \\\\/ _ / _ \\\\/ __/ __/\\n" + "/___/\\\\___/_//_\\\\___/ .__\\\\___/_/  \\\\__/ \\n" + "                 /_/                 \\n" + "Hello Developer!\\n" + "Thanks for using Sonoport Dynamic Sound Library v<%= pkg.version %>.");\n';
 
 var paths = {
     files: {
@@ -22,16 +27,17 @@ var paths = {
         unitTestCases: 'test/unit/cases/**/**/.js'
     },
     dirs: {
-        src: 'src',
-        docs: 'docs/yuidocs',
         build: 'build',
         dist: 'dist',
         release: 'dist/release',
+        src: 'src',
+        player: 'src/jsmplayer',
+        lib: 'src/lib',
         core: 'src/lib/core',
         models: 'src/lib/models',
-        themedir: 'docs/yuitheme',
         temp: 'src/lib/temp',
-        player: 'src/jsmplayer',
+        docs: 'docs/yuidocs',
+        themedir: 'docs/yuitheme',
         unittest: 'test/unit',
         integration: 'test/integration/',
         manualtest: 'test/manual'
@@ -90,12 +96,46 @@ gulp.task('publishdocs', function() {
     .pipe(gulp.dest(paths.dirs.release + "/docs"));
 });
 
-gulp.task('devbuild', function() {
+gulp.task('jshint', function(){
+    var hintFiler = gulpFilter(['**', '!**/AudioContextMonkeyPatch.js', '!**/vendor/*.js']);
 
+    gulp.src([paths.files.jsSrc, 'package.json', 'Gulpfile.js'])
+    .pipe(hintFiler)
+    //.pipe(debug())
+    .pipe(jshint('.jshintrc'))
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(jshint.reporter('fail'));
+});
+
+gulp.task('jsbeautify', ['jshint'], function(){
     gulp.src(paths.files.libSrc)
     .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
-    .pipe(gulp.dest("./test/"));
+    .pipe(gulp.dest(paths.dirs.lib));
 });
+
+gulp.task('devbuild', ['jshint', 'jsbeautify'], function() {
+    var rjsOptions = {
+        optimize: "none",
+        baseUrl: paths.dirs.lib,
+        out: paths.dirs.build,
+        modules: [ {
+            name: 'models/Looper'
+        }, {
+            name: 'models/Extender'
+        }, {
+            name: 'models/Scrubber'
+        }, {
+            name: 'models/Trigger'
+        }, {
+            name: 'models/MultiTrigger'
+        }, {
+            name: 'models/Activity'
+        }, ],
+    };
+
+});
+
+
 
 // Runnable Tasks
 // gulp.task( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs:debug' ] );

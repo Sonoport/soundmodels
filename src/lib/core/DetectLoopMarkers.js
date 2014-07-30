@@ -5,10 +5,9 @@ define( function () {
     "use strict";
 
     /**
-    * @class DetectLoopMarkers
-    * @static
-    */
-
+     * @class DetectLoopMarkers
+     * @static
+     */
 
     /**
      *Detector for Loop Marker or Silence. This method helps to detect and trim given AudioBuffer based on Sonoport Loop Markers or based on silence detection.

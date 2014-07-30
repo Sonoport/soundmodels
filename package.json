@@ -37,13 +37,16 @@
     "gulp": "^3.8.6",
     "gulp-compass": "^1.2.0",
     "gulp-debug": "^1.0.0",
+    "gulp-filter": "^1.0.0",
     "gulp-header": "^1.0.5",
     "gulp-jsbeautifier": "0.0.2",
     "gulp-jshint": "^1.8.0",
     "gulp-requirejs": "^0.1.3",
     "gulp-rimraf": "^0.1.0",
+    "gulp-rjs": "^0.1.0",
     "gulp-webserver": "^0.4.0",
     "gulp-yuidoc": "^0.1.2",
+    "jshint-stylish": "^0.4.0",
     "through2": "^0.5.1"
   },
   "keywords": [

@@ -343,10 +343,12 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         var paramList = [];
 
         for ( var paramName in this ) {
-            var param = this[ paramName ];
-            // Get properties that are of SPAudioParam
-            if ( param && param.hasOwnProperty( "value" ) && param.hasOwnProperty( "minValue" ) && param.hasOwnProperty( "maxValue" ) ) {
-                paramList.push( param );
+            if ( this.hasOwnProperty( paramName ) ) {
+                var param = this[ paramName ];
+                // Get properties that are of SPAudioParam
+                if ( param && param.hasOwnProperty( "value" ) && param.hasOwnProperty( "minValue" ) && param.hasOwnProperty( "maxValue" ) ) {
+                    paramList.push( param );
+                }
             }
         }
         return paramList;

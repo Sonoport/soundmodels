@@ -9,10 +9,10 @@ define(
         'use strict';
 
         /*
-        *  MonkeyPatch for AudioContext. Normalizes AudioContext across browsers and implementations.
-        *
-        * @class AudioContextMonkeyPatch
-        */
+         *  MonkeyPatch for AudioContext. Normalizes AudioContext across browsers and implementations.
+         *
+         * @class AudioContextMonkeyPatch
+         */
 
         function fixSetTarget( param ) {
             if ( !param ) { // if NYI, just return
