@@ -113,25 +113,30 @@ gulp.task('jsbeautify', ['jshint'], function(){
     .pipe(gulp.dest(paths.dirs.lib));
 });
 
-gulp.task('devbuild', ['jshint', 'jsbeautify'], function() {
+
+var rjs = function (opts){
+    return through.obj(function(file, enc, callback) {
+        if (file.isBuffer()) {
+            console.log("bufffer ", file.content);
+        }
+        if (file.isStream()) {
+            console.log("stream ", file.content);
+        }
+        this.push(file);
+        return callback();
+    });
+};
+
+gulp.task('devbuild', /*['jshint', 'jsbeautify'],*/ function() {
     var rjsOptions = {
         optimize: "none",
         baseUrl: paths.dirs.lib,
         out: paths.dirs.build,
-        modules: [ {
-            name: 'models/Looper'
-        }, {
-            name: 'models/Extender'
-        }, {
-            name: 'models/Scrubber'
-        }, {
-            name: 'models/Trigger'
-        }, {
-            name: 'models/MultiTrigger'
-        }, {
-            name: 'models/Activity'
-        }, ],
     };
+
+    gulp.src(paths.files.modelSrc)
+    .pipe(rjs(rjsOptions))
+    .pipe(gulp.dest(paths.dirs.build));
 
 });
 
