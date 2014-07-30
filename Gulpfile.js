@@ -77,6 +77,12 @@ gulp.task('makedoc', function() {
     .pipe(gulp.dest(paths.dirs.docs));
 });
 
+gulp.task('publishdocs', function() {
+    var generatorOpt = {
+        themedir: paths.dirs.themedir,
+        linkNatives: "true",
+        nocode: "true"
+    };
 
 gulp.task('publishdocs', function() {
     var generatorOpt = {
@@ -84,6 +90,12 @@ gulp.task('publishdocs', function() {
         linkNatives: "true",
         nocode: "true"
     };
+gulp.task('devbuild', function() {
+
+    gulp.src(paths.files.libSrc)
+    .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
+    .pipe(gulp.dest("./test/"));
+});
 
     var fileFilter = gulpFilter(['**', '!**/files/**']);
 
