@@ -3,9 +3,9 @@
 var pkg = require('./package.json');
 var gulp = require('gulp');
 var yuidoc = require("gulp-yuidoc");
-var debug = require("gulp-debug");
 var prettify = require('gulp-jsbeautifier');
 
+var through = require('through2');
 
 var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
 '<%= grunt.template.today("yyyy-mm-dd") %> */ \n' +
@@ -65,6 +65,17 @@ gulp.task('makedoc', function() {
     .pipe(gulp.dest(paths.dirs.docs));
 });
 
+var removeYUIDocFiles =  through.obj(function(file, enc, callback) {
+    if (file.isBuffer()) {
+        var data = JSON.parse(file.contents.toString('utf-8'));
+        data.files = [];
+        file.contents = new Buffer(JSON.stringify(data), 'utf-8');
+    }
+    this.push(file);
+    return callback();
+});
+
+
 gulp.task('publishdocs', function() {
     var generatorOpt = {
         themedir: paths.dirs.themedir,
@@ -74,6 +85,7 @@ gulp.task('publishdocs', function() {
 
     gulp.src(paths.files.modelSrc)
     .pipe(yuidoc.parser(yuiParserOpts))
+    .pipe(removeYUIDocFiles)
     .pipe(yuidoc.generator(generatorOpt))
     .pipe(gulp.dest(paths.dirs.release + "/docs"));
 });

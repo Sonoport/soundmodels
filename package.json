@@ -43,7 +43,8 @@
     "gulp-requirejs": "^0.1.3",
     "gulp-rimraf": "^0.1.0",
     "gulp-webserver": "^0.4.0",
-    "gulp-yuidoc": "^0.1.2"
+    "gulp-yuidoc": "^0.1.2",
+    "through2": "^0.5.1"
   },
   "keywords": [
     "sonoport",
