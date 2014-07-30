@@ -1,4 +1,3 @@
-/*javascript-sound-models - v1.1.0 - 2014-07-29 */ 
 YUI().use('node', function(Y) {
     var code = Y.all('.prettyprint.linenums');
     if (code.size()) {

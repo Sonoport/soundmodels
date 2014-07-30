@@ -1,4 +1,3 @@
-/*javascript-sound-models - v1.1.0 - 2014-07-29 */ 
 YUI.add('api-search', function (Y) {
 
 var Lang   = Y.Lang,

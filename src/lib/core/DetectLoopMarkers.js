@@ -1,17 +1,20 @@
 /**
  * @module Core
- *
- * @class DetectLoopMarkers
- * @static
  */
 define( function () {
     "use strict";
 
     /**
+    * @class DetectLoopMarkers
+    * @static
+    */
+
+
+    /**
      *Detector for Loop Marker or Silence. This method helps to detect and trim given AudioBuffer based on Sonoport Loop Markers or based on silence detection.
      *
      *
-     * @method DetectLoopMarkers
+     * @class DetectLoopMarkers
      * @param {AudioBuffer} buffer A buffer to be trimmed to Loop Markers or Silence.
      * @return {Object} An object with `start` and `end` properties containing the index of the detected start and end points.
      */
@@ -21,42 +24,42 @@ define( function () {
         var nLoopEnd_ = 0;
         var nMarked_ = true;
 
-        /**
+        /*
          * Length of PRE and POSTFIX Silence used in Loop Marking
          */
         var PREPOSTFIX_LEN = 5000;
 
-        /**
+        /*
          * Threshold for Spike Detection in Loop Marking
          */
         var SPIKE_THRESH = 0.5;
 
-        /**
+        /*
          * Index bounds for searching for Loop Markers and Silence.
          */
         var MAX_MP3_SILENCE = 20000;
 
-        /**
+        /*
          * Threshold for Silence Detection
          */
         var SILENCE_THRESH = 0.01;
 
-        /**
+        /*
          * Length for which the channel has to be empty
          */
         var EMPTY_CHECK_LENGTH = 1024;
 
-        /**
+        /*
          * Length samples to ignore after the spike
          */
         var IGNORE_LENGTH = 16;
 
-        /**
+        /*
          * Array of all Channel Data
          */
         var channels_ = [];
 
-        /**
+        /*
          * Number of samples in the buffer
          */
         var numSamples_ = 0;

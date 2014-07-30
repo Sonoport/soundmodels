@@ -1,5 +1,4 @@
 /**
-/**
  * @module Core
  */
 define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( webAudioDispatch ) {
