@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Extender - javascript-sound-models</title>
+    <title>Envelope - javascript-sound-models</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -102,7 +102,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Extender Class</h1>
+                        <h1>Envelope Class</h1>
 <div class="box meta">
     
 
@@ -116,7 +116,7 @@
 
     
         
-            Module: <a href="../modules/Models.html">Models</a>
+            Module: <a href="../modules/Core.html">Core</a>
         
     
 
@@ -126,15 +126,15 @@
 
 
 <div class="box intro">
-    <p>A model which extends the playing of a single source infinitely with windowed overlapping.</p>
+    <p>Implements an ASDR Envelope.</p>
 
 </div>
 
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_Extender" class="method item">
-    <h3 class="name"><code>Extender</code></h3>
+        <div id="method_Envelope" class="method item">
+    <h3 class="name"><code>Envelope</code></h3>
 
     
         <div class="args">
@@ -142,37 +142,7 @@
             
                 <li class="arg">
                     
-                        <code class="optional">[context]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[source]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[onLoadProgress]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[onLoadComplete]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[onAudioStart]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[onAudioEnd]</code>
+                        <code>context</code>
                     
                 </li>
             
@@ -223,100 +193,14 @@
             
                 <li class="param">
                     
-                        <code class="param-name optional">[context]</code>
+                        <code class="param-name">context</code>
                         <span class="type">AudioContext</span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>AudioContext to be used.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[source]</code>
-                        <span class="type">Array/String/AudioBuffer/File</span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers or File Object of the audio source.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[onLoadProgress]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Callback when the audio file is being downloaded.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[onLoadComplete]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Callback when the source has finished loading.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[onAudioStart]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Callback when the audio is about to start playing.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[onAudioEnd]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Callback when the audio has finished playing.</p>
+                        <p>AudioContext in which this Sound is defined.</p>
 
                     </div>
 
@@ -373,6 +257,13 @@
                                 
                             </li>
                         
+                            <li class="index-item method">
+                                <a href="#method_initADSR">initADSR</a>
+
+                                
+                                
+                            </li>
+                        
                             <li class="index-item method inherited">
                                 <a href="#method_listParams">listParams</a>
 
@@ -389,6 +280,13 @@
                         
                             <li class="index-item method inherited">
                                 <a href="#method_play">play</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method">
+                                <a href="#method_reinit">reinit</a>
 
                                 
                                 
@@ -422,13 +320,6 @@
                                 
                             </li>
                         
-                            <li class="index-item method">
-                                <a href="#method_stop">stop</a>
-
-                                
-                                
-                            </li>
-                        
                     </ul>
                 </div>
             
@@ -441,20 +332,6 @@
                         
                             <li class="index-item property inherited">
                                 <a href="#property_audioContext">audioContext</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_crossFadeDuration">crossFadeDuration</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_eventPeriod">eventPeriod</a>
 
                                 
                                 
@@ -544,13 +421,6 @@
                                 
                             </li>
                         
-                            <li class="index-item property">
-                                <a href="#property_pitchShift">pitchShift</a>
-
-                                
-                                
-                            </li>
-                        
                             <li class="index-item property inherited">
                                 <a href="#property_releaseGainNode">releaseGainNode</a>
 
@@ -572,7 +442,7 @@
                 <h2 class="off-left">Methods</h2>
 
                 
-                    <div id="method_connect" class="method item inherited">
+                    <div id="method_connect" class="method item">
     <h3 class="name"><code>connect</code></h3>
 
     
@@ -617,9 +487,10 @@
 
     <div class="meta">
         
-            
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#method_connect">BaseSound</a>:
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_connect">
+                BaseSound
+            </a>
             
         
         
@@ -632,8 +503,7 @@
     </div>
 
     <div class="description">
-        <p>If the parameter <code>output</code> is an AudioNode, it connects to the releaseGainNode.
-If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to the output&#39;s inputNode.</p>
+        <p>Connect to release Gain Node.</p>
 
     </div>
 
@@ -703,7 +573,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_disconnect" class="method item inherited">
+                    <div id="method_disconnect" class="method item">
     <h3 class="name"><code>disconnect</code></h3>
 
     
@@ -736,9 +606,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#method_disconnect">BaseSound</a>:
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_disconnect">
+                BaseSound
+            </a>
             
         
         
@@ -751,7 +622,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Disconnects the Sound from the AudioNode Chain.</p>
+        <p>Disconnect from release Gain Node.</p>
 
     </div>
 
@@ -775,6 +646,171 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
                     </div>
 
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_initADSR" class="method item">
+    <h3 class="name"><code>initADSR</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[options]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Initialize as a classic four-segment ADSR (Attack, Decay, Sustain, Release) envelope.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[options]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Values that can be passed in to change the shape of the ADSR Envelope.</p>
+
+                    </div>
+
+                    
+                        <ul class="params-list">
+                            
+                            <li class="param">
+                                
+                                    <code class="param-name optional">[useSustain=false]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+                                
+
+                                <div class="param-description">
+                                    <p>If true, hold the sustain end val indefinitely until stop() is called.</p>
+
+                                </div>
+
+                                
+                            </li>
+                            
+                            <li class="param">
+                                
+                                    <code class="param-name optional">[attackDur=0.01]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+                                
+
+                                <div class="param-description">
+                                    <p>Attack Duration (s)</p>
+
+                                </div>
+
+                                
+                            </li>
+                            
+                            <li class="param">
+                                
+                                    <code class="param-name optional">[decayDur=0.01]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+                                
+
+                                <div class="param-description">
+                                    <p>Decay Duration (s)</p>
+
+                                </div>
+
+                                
+                            </li>
+                            
+                            <li class="param">
+                                
+                                    <code class="param-name optional">[releaseDur=0.01]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+                                
+
+                                <div class="param-description">
+                                    <p>Release Duration (s)</p>
+
+                                </div>
+
+                                
+                            </li>
+                            
+                            <li class="param">
+                                
+                                    <code class="param-name optional">[sustainVal=0.5]</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                                    <span class="flag optional" title="This parameter is optional.">optional</span>
+                                
+
+                                <div class="param-description">
+                                    <p>Sustain Level (s)</p>
+
+                                </div>
+
+                                
+                            </li>
+                            
+                        </ul>
                     
                 </li>
             
@@ -873,7 +909,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_pause" class="method item">
+                    <div id="method_pause" class="method item inherited">
     <h3 class="name"><code>pause</code></h3>
 
     
@@ -896,10 +932,9 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            <p>Inherited from
-            <a href="../classes/BaseSound.html#method_pause">
-                BaseSound
-            </a>
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_pause">BaseSound</a>:
             
         
         
@@ -912,7 +947,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Pauses the model immediately</p>
+        <p>Pause sound. Abstract method. Override this method when a Node is defined.</p>
 
     </div>
 
@@ -924,7 +959,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_play" class="method item">
+                    <div id="method_play" class="method item inherited">
     <h3 class="name"><code>play</code></h3>
 
     
@@ -947,10 +982,9 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            <p>Inherited from
-            <a href="../classes/BaseSound.html#method_play">
-                BaseSound
-            </a>
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_play">BaseSound</a>:
             
         
         
@@ -963,7 +997,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Plays the model immediately</p>
+        <p>Play sound. Abstract method. Override this method when a Node is defined.</p>
 
     </div>
 
@@ -975,8 +1009,8 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_release" class="method item inherited">
-    <h3 class="name"><code>release</code></h3>
+                    <div id="method_reinit" class="method item">
+    <h3 class="name"><code>reinit</code></h3>
 
     
         <div class="args">
@@ -984,19 +1018,13 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
+                        <code class="optional">[hard]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
                         <code class="optional">[when]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[fadeTime]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[stopOnRelease]</code>
                     
                 </li>
             
@@ -1021,8 +1049,9 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     <div class="meta">
         
             
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#method_release">BaseSound</a>:
+                
+                <p>
+                
             
         
         
@@ -1035,7 +1064,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Linearly ramp down the gain of the audio in time (seconds) to 0.</p>
+        <p>Resets all flags and counters to begin a new envelope traversal.</p>
 
     </div>
 
@@ -1044,6 +1073,132 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             <h4>Parameters:</h4>
 
             <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[hard]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>If true, do &#39;hard&#39; reinit, otherwise attempt to smoothly continue current envelope value.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[when]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Time (in seconds) at which the Envelope will reinit.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_release" class="method item">
+    <h3 class="name"><code>release</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[fadeTime]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[when]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_release">
+                BaseSound
+            </a>
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Linearly ramps down the gain of releaseGainNode from current value to 0 in fadeTime (s). It is better to call this method on a user initiated event or after some time (in seconds) has passed.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[fadeTime]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Amount of time (seconds) taken to release or fade out the sound.</p>
+
+                    </div>
+
+                    
+                </li>
             
                 <li class="param">
                     
@@ -1062,40 +1217,6 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
                 </li>
             
-                <li class="param">
-                    
-                        <code class="param-name optional">[fadeTime]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Amount of time (seconds) it takes for linear ramp down to happen.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[stopOnRelease]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Boolean to define if release stops (resets) the playback or just pauses it.</p>
-
-                    </div>
-
-                    
-                </li>
-            
             </ul>
         </div>
     
@@ -1106,7 +1227,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_setSources" class="method item">
+                    <div id="method_setSources" class="method item inherited">
     <h3 class="name"><code>setSources</code></h3>
 
     
@@ -1115,7 +1236,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code>source</code>
+                        <code>sources</code>
                     
                 </li>
             
@@ -1151,10 +1272,9 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            <p>Inherited from
-            <a href="../classes/BaseSound.html#method_setSources">
-                BaseSound
-            </a>
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_setSources">BaseSound</a>:
             
         
         
@@ -1167,7 +1287,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Reinitializes a Extender and sets it&#39;s sources.</p>
+        <p>Reinitializes the model and sets it&#39;s sources.</p>
 
     </div>
 
@@ -1179,14 +1299,14 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name">source</code>
+                        <code class="param-name">sources</code>
                         <span class="type">Array/AudioBuffer/String/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers of source.</p>
+                        <p>Single or Array of either URLs or AudioBuffers or File Objects of the audio sources.</p>
 
                     </div>
 
@@ -1237,7 +1357,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_start" class="method item inherited">
+                    <div id="method_start" class="method item">
     <h3 class="name"><code>start</code></h3>
 
     
@@ -1246,178 +1366,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code>when</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[offset]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[duration]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[attackDuration]</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#method_start">BaseSound</a>:
-            
-        
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Start the AudioNode. Abstract method. Override this method when a Node is defined.</p>
-
-    </div>
-
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name">when</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Time (in seconds) when the sound should start playing.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[offset]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>The starting position of the playhead</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[duration]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Duration of the portion (in seconds) to be played</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[attackDuration]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Duration (in seconds) of attack ramp of the envelope.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="method_stop" class="method item">
-    <h3 class="name"><code>stop</code></h3>
-
-    
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code>when</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[offset]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[duration]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[attackDuration]</code>
+                        <code class="optional">[when]</code>
                     
                 </li>
             
@@ -1442,7 +1391,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     <div class="meta">
         
             <p>Inherited from
-            <a href="../classes/BaseSound.html#method_stop">
+            <a href="../classes/BaseSound.html#method_start">
                 BaseSound
             </a>
             
@@ -1457,7 +1406,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Starts playing the source</p>
+        <p>Start the Envelope.</p>
 
     </div>
 
@@ -1469,23 +1418,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name">when</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>The delay in seconds before playing the source</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[offset]</code>
+                        <code class="param-name optional">[when]</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -1493,41 +1426,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>The starting position of the playhead</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[duration]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Duration of the portion (in seconds) to be played</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[attackDuration]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Duration (in seconds) of attack ramp of the envelope.</p>
+                        <p>Time (in seconds) at which the Envelope will start.</p>
 
                     </div>
 
@@ -1577,10 +1476,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            
-                
-                <p>
-                
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_stop">
+                BaseSound
+            </a>
             
         
         
@@ -1593,7 +1492,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Stops playing the model.</p>
+        <p>Stop the Envelope.</p>
 
     </div>
 
@@ -1613,7 +1512,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>At what time (in seconds) the model be stopped</p>
+                        <p>Time (in seconds) at which the Envelope will stop.</p>
 
                     </div>
 
@@ -1682,109 +1581,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="property_crossFadeDuration" class="property item">
-    <h3 class="name"><code>crossFadeDuration</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Fraction of each window of the source that is overlapped with the succeding window of the source.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 0.5</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0.1</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 0.99</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_eventPeriod" class="property item">
-    <h3 class="name"><code>eventPeriod</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>The length (in seconds) of each window used to overlap the source.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 2.0</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0.1</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 10.0</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_inputNode" class="property item inherited">
+                    <div id="property_inputNode" class="property item">
     <h3 class="name"><code>inputNode</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
 
@@ -1798,9 +1595,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#property_inputNode">BaseSound</a>:
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#property_inputNode">
+                BaseSound
+            </a>
             
         
         
@@ -1812,13 +1610,12 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>The input node that the output node will be connected to. <br />
-Set this value to null if no connection can be made on the input node</p>
+        <p>The input node that the output node will be connected to.</p>
 
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
+        <p><strong>Default Value:</strong> Internal Release-GainNode</p>
     
 
     
@@ -2329,57 +2126,6 @@ Set this value to null if no connection can be made on the input node</p>
 
     
 
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_pitchShift" class="property item">
-    <h3 class="name"><code>pitchShift</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Amount of pitch shift of the source in the each window (in semitones).</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 0.0</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> -60.0</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 60.0</p>
     
 
     

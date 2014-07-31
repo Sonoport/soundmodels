@@ -1,46 +1,52 @@
 "use strict";
 
 var pkg = require('./package.json');
+var rjsconfig = require('./rjsconfig.js');
 
 var gulp = require('gulp');
 var yuidoc = require("gulp-yuidoc");
 var prettify = require('gulp-jsbeautifier');
 var jshint = require('gulp-jshint');
+var header = require('gulp-header');
 var gulpFilter = require('gulp-filter');
+var compass = require('gulp-compass');
+var webserver = require('gulp-webserver');
+var cached = require('gulp-cached');
 
 //var debug = require('gulp-debug');
 
-var through = require('through2');
+var requirejs = require('requirejs');
 
-// var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
-// '<%= grunt.template.today("yyyy-mm-dd") %> */ \n' +
-// 'console.log("   ____                           __ \\n" + "  / _____  ___ ___  ___ ___  ____/ /_\\n" + " _\\\\ \\\\/ _ \\\\/ _ / _ \\\\/ _ / _ \\\\/ __/ __/\\n" + "/___/\\\\___/_//_\\\\___/ .__\\\\___/_/  \\\\__/ \\n" + "                 /_/                 \\n" + "Hello Developer!\\n" + "Thanks for using Sonoport Dynamic Sound Library v<%= pkg.version %>.");\n';
+var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
+'<%= new Date() %> */ \n' +
+'console.log("   ____                           __ \\n" + "  / _____  ___ ___  ___ ___  ____/ /_\\n" + " _\\\\ \\\\/ _ \\\\/ _ / _ \\\\/ _ / _ \\\\/ __/ __/\\n" + "/___/\\\\___/_//_\\\\___/ .__\\\\___/_/  \\\\__/ \\n" + "                 /_/                 \\n" + "Hello Developer!\\n" + "Thanks for using Sonoport Dynamic Sound Library v<%= pkg.version %>.");\n';
 
 var paths = {
     files: {
         jsSrc: 'src/**/**/*.js',
-        playerSrc: 'src/jsmplayer/js/**.js',
+        playerCSS: 'src/jsmplayer/**/**.css',
         vendor: 'src/jsmplayer/vendor/*.js',
         libSrc: 'src/lib/**/*.js',
         modelSrc: 'src/lib/models/*.js',
         allTestSrc: 'test/**/*.js',
-        unitTestCases: 'test/unit/cases/**/**/.js'
+        unitTestCases: 'test/unit/cases/**/**/.js',
+        publishableSrc : ['src/lib/models/*.js', 'src/lib/core/SPAudioParam.js','src/lib/core/BaseSound.js','src/lib/core/Envelope.js']
     },
     dirs: {
-        build: 'build',
-        dist: 'dist',
-        release: 'dist/release',
-        src: 'src',
-        player: 'src/jsmplayer',
-        lib: 'src/lib',
-        core: 'src/lib/core',
-        models: 'src/lib/models',
-        temp: 'src/lib/temp',
-        docs: 'docs/yuidocs',
-        themedir: 'docs/yuitheme',
-        unittest: 'test/unit',
+        build: 'build/',
+        dist: 'dist/',
+        release: 'dist/release/',
+        src: 'src/',
+        player: 'src/jsmplayer/',
+        lib: 'src/lib/',
+        core: 'src/lib/core/',
+        models: 'src/lib/models/',
+        docs: 'docs/yuidocs/',
+        themedir: 'docs/yuitheme/',
+        test : 'test/',
+        unittest: 'test/unit/',
         integration: 'test/integration/',
-        manualtest: 'test/manual'
+        manualtest: 'test/manual/'
     },
 };
 
@@ -65,20 +71,10 @@ gulp.task('makedoc', function() {
         linkNatives: "true"
     };
 
-    gulp.src(paths.files.libSrc)
+    return gulp.src(paths.files.libSrc)
     .pipe(yuidoc.parser(yuiParserOpts))
     .pipe(yuidoc.generator(generatorOpt))
     .pipe(gulp.dest(paths.dirs.docs));
-});
-
-var removeYUIDocFiles =  through.obj(function(file, enc, callback) {
-    if (file.isBuffer()) {
-        var data = JSON.parse(file.contents.toString('utf-8'));
-        data.files = [];
-        file.contents = new Buffer(JSON.stringify(data), 'utf-8');
-    }
-    this.push(file);
-    return callback();
 });
 
 
@@ -89,79 +85,122 @@ gulp.task('publishdocs', function() {
         nocode: "true"
     };
 
-    gulp.src(paths.files.modelSrc)
+    var fileFilter = gulpFilter(['**', '!**/files/**']);
+
+     return gulp.src(paths.files.publishableSrc)
     .pipe(yuidoc.parser(yuiParserOpts))
-    .pipe(removeYUIDocFiles)
     .pipe(yuidoc.generator(generatorOpt))
-    .pipe(gulp.dest(paths.dirs.release + "/docs"));
+    .pipe(fileFilter)
+    .pipe(gulp.dest(paths.dirs.release + "docs/"));
 });
 
-gulp.task('jshint', function(){
+gulp.task('jshint:src', function(){
     var hintFiler = gulpFilter(['**', '!**/AudioContextMonkeyPatch.js', '!**/vendor/*.js']);
 
-    gulp.src([paths.files.jsSrc, 'package.json', 'Gulpfile.js'])
+    return gulp.src([paths.files.jsSrc, 'package.json', 'Gulpfile.js'])
     .pipe(hintFiler)
-    //.pipe(debug())
+    .pipe(cached('jshint:src'))
     .pipe(jshint('.jshintrc'))
     .pipe(jshint.reporter('jshint-stylish'))
     .pipe(jshint.reporter('fail'));
 });
 
-gulp.task('jsbeautify', ['jshint'], function(){
-    gulp.src(paths.files.libSrc)
+gulp.task('jsbeautify:src', ['jshint:src'], function(){
+    return gulp.src(paths.files.libSrc)
+    .pipe(cached('beautify:src'))
     .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
     .pipe(gulp.dest(paths.dirs.lib));
 });
 
 
-var rjs = function (opts){
-    return through.obj(function(file, enc, callback) {
-        if (file.isBuffer()) {
-            console.log("bufffer ", file.content);
-        }
-        if (file.isStream()) {
-            console.log("stream ", file.content);
-        }
-        this.push(file);
-        return callback();
+gulp.task('devbuild', ['jsbeautify:src'], function(cb) {
+
+    var config  = JSON.parse(JSON.stringify(rjsconfig.main));
+    config.optimize = "none";
+
+    requirejs.optimize(config, null, function(err) {
+        throw err;
     });
-};
-
-gulp.task('devbuild', /*['jshint', 'jsbeautify'],*/ function() {
-    var rjsOptions = {
-        optimize: "none",
-        baseUrl: paths.dirs.lib,
-        out: paths.dirs.build,
-    };
-
-    gulp.src(paths.files.modelSrc)
-    .pipe(rjs(rjsOptions))
-    .pipe(gulp.dest(paths.dirs.build));
-
+    return cb();
 });
 
 
+gulp.task('releasebuild', ['jsbeautify:src'], function(cb) {
 
-// Runnable Tasks
-// gulp.task( 'dev-build', [ 'jsbeautifier', 'jshint', 'requirejs:debug' ] );
-// gulp.task( 'make-doc', [ 'jsbeautifier', 'jshint', 'yuidoc:dev' ] );
+    var config  = JSON.parse(JSON.stringify(rjsconfig.main));
+    config.optimize = "uglify2";
+    config.uglify2 = rjsconfig.uglify;
 
-// gulp.task( 'release', [ 'jshint', 'requirejs:release', 'copy:temp', 'yuidoc:release', 'clean:temp', 'copy:dist', 'usebanner' ] );
+    requirejs.optimize(config, null, function(err) {
+        throw err;
+    });
+    cb();
+});
 
-// // Player css related, probably not necessary to run this unless there is a change in design.
-// gulp.task( 'player-build', [ 'compass', 'jsbeautifier', 'jshint', 'connect:player', 'watch:player' ] );
+gulp.task('release', ['releasebuild', 'publishdocs'], function(){
+    return gulp.src(paths.dirs.build + 'models/*.js')
+    .pipe(header(banner, {pkg: pkg}))
+    .pipe(gulp.dest(paths.dirs.release + 'models/'));
+});
 
+gulp.task('player:compass', function (){
+    return gulp.src(paths.dirs.player + "sass/*.scss")
+    .pipe(compass({
+        css: paths.dirs.player+'css/',
+        sass: paths.dirs.player+'sass/',
+        require: ['susy', 'breakpoint']
+      }));
+});
 
+gulp.task('watch:lib', function(){
+     gulp.watch(paths.files.libSrc, ['devbuild']);
+});
 
-// // Testing
-// // Manual Testing
-// gulp.task( 'test', [ 'dev-build', 'connect:test', 'concurrent:watchTests' ] );
+gulp.task('watch:player', ['watch:lib'], function(){
+    gulp.watch(paths.files.playerCSS, ['player:compass']);
+});
 
-// // Jasmine Unit Tests
-// gulp.task( 'unittest', [ 'dev-build', 'connect:unittest', 'concurrent:watchTests' ] );
+gulp.task('playerbuild', ['player:compass', 'devbuild']);
 
-// // Run Player
-// gulp.task( 'player', [ 'dev-build', 'connect:player', 'concurrent:watchPlayer' ] );
+gulp.task('player', ['player:compass', 'devbuild', 'watch:player'], function(){
+    return gulp.src([paths.dirs.player, paths.dirs.build])
+    .pipe(webserver({
+      livereload: true,
+      port: 8000
+    }));
+});
 
-// // Jasmine Integration Tests
-// gulp.task( 'integration', [ 'dev-build', 'connect:integration', 'concurrent:watchTests' ] );
+gulp.task('jsbeautify:test', function(){
+    return gulp.src(paths.files.allTestSrc)
+    .pipe(cached('beautify:test'))
+    .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
+    .pipe(gulp.dest(paths.dirs.test));
+});
+
+gulp.task('watch:test', ['watch:lib'], function(){
+     gulp.watch(paths.files.allTestSrc, ['jsbeautify:test']);
+});
+
+gulp.task('test', ['devbuild', 'watch:test'], function(){
+    return gulp.src([paths.dirs.manualtest, paths.dirs.build])
+    .pipe(webserver({
+      livereload: true,
+      port: 8000
+    }));
+});
+
+gulp.task('unittest', ['devbuild', 'watch:test'], function(){
+    return gulp.src([paths.dirs.unittest, paths.dirs.build])
+    .pipe(webserver({
+      livereload: true,
+      port: 8000
+    }));
+});
+
+gulp.task('integration', ['devbuild', 'watch:test'], function(){
+    return gulp.src([paths.dirs.integration, paths.dirs.build])
+    .pipe(webserver({
+      livereload: true,
+      port: 8000
+    }));
+});
