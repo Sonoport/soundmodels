@@ -43,6 +43,10 @@
             
                 <li><a href="../classes/Activity.html">Activity</a></li>
             
+                <li><a href="../classes/BaseSound.html">BaseSound</a></li>
+            
+                <li><a href="../classes/Envelope.html">Envelope</a></li>
+            
                 <li><a href="../classes/Extender.html">Extender</a></li>
             
                 <li><a href="../classes/Looper.html">Looper</a></li>
@@ -51,11 +55,15 @@
             
                 <li><a href="../classes/Scrubber.html">Scrubber</a></li>
             
+                <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
+            
                 <li><a href="../classes/Trigger.html">Trigger</a></li>
             
             </ul>
 
             <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/Core.html">Core</a></li>
             
                 <li><a href="../modules/Models.html">Models</a></li>
             
@@ -100,7 +108,7 @@
 
     
         <div class="extends">
-            Extends BaseSound
+            Extends <a href="../classes/BaseSound.html" class="crosslink">BaseSound</a>
         </div>
     
 
@@ -374,35 +382,63 @@
 
                     <ul class="index-list methods extends">
                         
-                            <li class="index-item method">
+                            <li class="index-item method inherited">
+                                <a href="#method_connect">connect</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_disconnect">disconnect</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_listParams">listParams</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
                                 <a href="#method_pause">pause</a>
 
                                 
                                 
                             </li>
                         
-                            <li class="index-item method">
+                            <li class="index-item method inherited">
                                 <a href="#method_play">play</a>
 
                                 
                                 
                             </li>
                         
-                            <li class="index-item method">
+                            <li class="index-item method inherited">
+                                <a href="#method_release">release</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
                                 <a href="#method_setSources">setSources</a>
 
                                 
                                 
                             </li>
                         
-                            <li class="index-item method">
+                            <li class="index-item method inherited">
                                 <a href="#method_start">start</a>
 
                                 
                                 
                             </li>
                         
-                            <li class="index-item method">
+                            <li class="index-item method inherited">
                                 <a href="#method_stop">stop</a>
 
                                 
@@ -419,8 +455,36 @@
 
                     <ul class="index-list properties extends">
                         
+                            <li class="index-item property inherited">
+                                <a href="#property_audioContext">audioContext</a>
+
+                                
+                                
+                            </li>
+                        
                             <li class="index-item property">
                                 <a href="#property_decayTime">decayTime</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_inputNode">inputNode</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_isInitialized">isInitialized</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_isPlaying">isPlaying</a>
 
                                 
                                 
@@ -433,8 +497,71 @@
                                 
                             </li>
                         
+                            <li class="index-item property inherited">
+                                <a href="#property_maxSources">maxSources</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_minSources">minSources</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_modelName">modelName</a>
+
+                                
+                                
+                            </li>
+                        
                             <li class="index-item property">
                                 <a href="#property_multiTrackGain">multiTrackGain</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_numberOfInputs">numberOfInputs</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_numberOfOutputs">numberOfOutputs</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onAudioEnd">onAudioEnd</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onAudioStart">onAudioStart</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onLoadComplete">onLoadComplete</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onLoadProgress">onLoadProgress</a>
 
                                 
                                 
@@ -449,6 +576,13 @@
                         
                             <li class="index-item property">
                                 <a href="#property_playSpeed">playSpeed</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_releaseGainNode">releaseGainNode</a>
 
                                 
                                 
@@ -482,6 +616,307 @@
                 <h2 class="off-left">Methods</h2>
 
                 
+                    <div id="method_connect" class="method item inherited">
+    <h3 class="name"><code>connect</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>destination</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[output]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[input]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_connect">BaseSound</a>:
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>If the parameter <code>output</code> is an AudioNode, it connects to the releaseGainNode.
+If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to the output&#39;s inputNode.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">destination</code>
+                        <span class="type">AudioNode</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>AudioNode to connect to.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[output]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Index describing which output of the AudioNode from which to connect.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[input]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Index describing which input of the destination AudioNode to connect to.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_disconnect" class="method item inherited">
+    <h3 class="name"><code>disconnect</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[outputIndex]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_disconnect">BaseSound</a>:
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Disconnects the Sound from the AudioNode Chain.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[outputIndex]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Index describing which output of the AudioNode to disconnect.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_listParams" class="method item inherited">
+    <h3 class="name"><code>listParams</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[paramArray]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_listParams">BaseSound</a>:
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>List all SPAudioParams this Sound exposes</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[paramArray]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Array of all the SPAudioParams this Sound exposes.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="method_pause" class="method item">
     <h3 class="name"><code>pause</code></h3>
 
@@ -505,10 +940,10 @@
 
     <div class="meta">
         
-            
-                
-                <p>
-                
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_pause">
+                BaseSound
+            </a>
             
         
         
@@ -556,10 +991,10 @@
 
     <div class="meta">
         
-            
-                
-                <p>
-                
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_play">
+                BaseSound
+            </a>
             
         
         
@@ -576,6 +1011,137 @@
 
     </div>
 
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_release" class="method item inherited">
+    <h3 class="name"><code>release</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[when]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[fadeTime]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[stopOnRelease]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_release">BaseSound</a>:
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Linearly ramp down the gain of the audio in time (seconds) to 0.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[when]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Time (in seconds) at which the Envelope will release.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[fadeTime]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Amount of time (seconds) it takes for linear ramp down to happen.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[stopOnRelease]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Boolean to define if release stops (resets) the playback or just pauses it.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
     
 
     
@@ -629,10 +1195,10 @@
 
     <div class="meta">
         
-            
-                
-                <p>
-                
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_setSources">
+                BaseSound
+            </a>
             
         
         
@@ -766,10 +1332,10 @@
 
     <div class="meta">
         
-            
-                
-                <p>
-                
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_start">
+                BaseSound
+            </a>
             
         
         
@@ -903,10 +1469,10 @@ the value of startPoint property is used.</p>
 
     <div class="meta">
         
-            
-                
-                <p>
-                
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_stop">
+                BaseSound
+            </a>
             
         
         
@@ -963,9 +1529,53 @@ the value of startPoint property is used.</p>
                 <h2 class="off-left">Properties</h2>
 
                 
+                    <div id="property_audioContext" class="property item inherited">
+    <h3 class="name"><code>audioContext</code></h3>
+    <span class="type">AudioContext</span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_audioContext">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Web Audio API&#39;s AudioContext. If the context passed to the constructor is an AudioContext, a new one is created here.</p>
+
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="property_decayTime" class="property item">
     <h3 class="name"><code>decayTime</code></h3>
-    <span class="type">SPAudioParam</span>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
 
@@ -1014,9 +1624,148 @@ the value of startPoint property is used.</p>
 </div>
 
                 
+                    <div id="property_inputNode" class="property item inherited">
+    <h3 class="name"><code>inputNode</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_inputNode">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>The input node that the output node will be connected to. <br />
+Set this value to null if no connection can be made on the input node</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_isInitialized" class="property item inherited">
+    <h3 class="name"><code>isInitialized</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_isInitialized">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>If Sound is currently initialized.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> false</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_isPlaying" class="property item inherited">
+    <h3 class="name"><code>isPlaying</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_isPlaying">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>If Sound is currently playing.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> false</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="property_maxLoops" class="property item">
     <h3 class="name"><code>maxLoops</code></h3>
-    <span class="type">SPAudioParam</span>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
 
@@ -1057,6 +1806,144 @@ the value of startPoint property is used.</p>
 
     
            <p><strong>Maximum Value:</strong> 1</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_maxSources" class="property item inherited">
+    <h3 class="name"><code>maxSources</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_maxSources">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Maximum number of sources that can be given to this Sound</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_minSources" class="property item inherited">
+    <h3 class="name"><code>minSources</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_minSources">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Minimum number of sources that can be given to this Sound</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_modelName" class="property item inherited">
+    <h3 class="name"><code>modelName</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_modelName">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>String name of the model.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> &quot;Model&quot;</p>
+    
+
+    
+
     
 
     
@@ -1116,6 +2003,282 @@ the value of startPoint property is used.</p>
 </div>
 
                 
+                    <div id="property_numberOfInputs" class="property item inherited">
+    <h3 class="name"><code>numberOfInputs</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_numberOfInputs">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Number of inputs</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_numberOfOutputs" class="property item inherited">
+    <h3 class="name"><code>numberOfOutputs</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_numberOfOutputs">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Number of outputs</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onAudioEnd" class="property item inherited">
+    <h3 class="name"><code>onAudioEnd</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onAudioEnd">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for the audio is about to stop playing.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onAudioStart" class="property item inherited">
+    <h3 class="name"><code>onAudioStart</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onAudioStart">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for when the audio is about to start playing.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onLoadComplete" class="property item inherited">
+    <h3 class="name"><code>onLoadComplete</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onLoadComplete">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for when loading of audio files is done and the the model is initalized.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onLoadProgress" class="property item inherited">
+    <h3 class="name"><code>onLoadProgress</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onLoadProgress">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for handling progress events thrown during loading of audio files.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="property_onTrackEnd" class="property item">
     <h3 class="name"><code>onTrackEnd</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
@@ -1165,7 +2328,7 @@ the value of startPoint property is used.</p>
                 
                     <div id="property_playSpeed" class="property item">
     <h3 class="name"><code>playSpeed</code></h3>
-    <span class="type">SPAudioParam</span>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
 
@@ -1214,9 +2377,57 @@ the value of startPoint property is used.</p>
 </div>
 
                 
+                    <div id="property_releaseGainNode" class="property item inherited">
+    <h3 class="name"><code>releaseGainNode</code></h3>
+    <span class="type">GainNode</span>
+
+    
+
+    
+
+    
+        <span class="flag final">final</span>
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_releaseGainNode">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Release Gain Node</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> Internal GainNode</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="property_riseTime" class="property item">
     <h3 class="name"><code>riseTime</code></h3>
-    <span class="type">SPAudioParam</span>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
 
@@ -1267,7 +2478,7 @@ the value of startPoint property is used.</p>
                 
                     <div id="property_startPoint" class="property item">
     <h3 class="name"><code>startPoint</code></h3>
-    <span class="type">SPAudioParam</span>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
 

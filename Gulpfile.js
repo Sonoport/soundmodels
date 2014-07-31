@@ -180,6 +180,7 @@ gulp.task('player', ['player:compass', 'devbuild', 'watch:player'], function(){
         port: 8000
     }));
 });
+});
 
 gulp.task('jsbeautify:test', function(){
     return gulp.src(paths.files.allTestSrc)
