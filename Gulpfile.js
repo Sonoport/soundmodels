@@ -185,7 +185,7 @@ gulp.task('test', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.manualtest, paths.dirs.build])
     .pipe(webserver({
       livereload: true,
-      port: 8000
+      port: 8080
     }));
 });
 
@@ -193,7 +193,7 @@ gulp.task('unittest', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.unittest, paths.dirs.build])
     .pipe(webserver({
       livereload: true,
-      port: 8000
+      port: 8081
     }));
 });
 
@@ -201,6 +201,6 @@ gulp.task('integration', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.integration, paths.dirs.build])
     .pipe(webserver({
       livereload: true,
-      port: 8000
+      port: 8082
     }));
 });
