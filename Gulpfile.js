@@ -87,7 +87,7 @@ gulp.task('publishdocs', function() {
 
     var fileFilter = gulpFilter(['**', '!**/files/**']);
 
-     return gulp.src(paths.files.publishableSrc)
+    return gulp.src(paths.files.publishableSrc)
     .pipe(yuidoc.parser(yuiParserOpts))
     .pipe(yuidoc.generator(generatorOpt))
     .pipe(fileFilter)
@@ -149,11 +149,11 @@ gulp.task('player:compass', function (){
         css: paths.dirs.player+'css/',
         sass: paths.dirs.player+'sass/',
         require: ['susy', 'breakpoint']
-      }));
+    }));
 });
 
 gulp.task('watch:lib', function(){
-     gulp.watch(paths.files.libSrc, ['devbuild']);
+    gulp.watch(paths.files.libSrc, ['devbuild']);
 });
 
 gulp.task('watch:player', ['watch:lib'], function(){
@@ -165,8 +165,7 @@ gulp.task('playerbuild', ['player:compass', 'devbuild']);
 gulp.task('player', ['player:compass', 'devbuild', 'watch:player'], function(){
     return gulp.src([paths.dirs.player, paths.dirs.build])
     .pipe(webserver({
-      livereload: true,
-      port: 8000
+        port: 8000
     }));
 });
 
@@ -178,29 +177,26 @@ gulp.task('jsbeautify:test', function(){
 });
 
 gulp.task('watch:test', ['watch:lib'], function(){
-     gulp.watch(paths.files.allTestSrc, ['jsbeautify:test']);
+    gulp.watch(paths.files.allTestSrc, ['jsbeautify:test']);
 });
 
 gulp.task('test', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.manualtest, paths.dirs.build])
     .pipe(webserver({
-      livereload: true,
-      port: 8080
+        port: 8080
     }));
 });
 
 gulp.task('unittest', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.unittest, paths.dirs.build])
     .pipe(webserver({
-      livereload: true,
-      port: 8081
+        port: 8081
     }));
 });
 
 gulp.task('integration', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.integration, paths.dirs.build])
     .pipe(webserver({
-      livereload: true,
-      port: 8082
+        port: 8082
     }));
 });
