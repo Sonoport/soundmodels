@@ -52,6 +52,7 @@
         "define" : true,
         "AudioContext" : true,
         "AudioParam" : true,
-        "AudioNode" : true
+        "AudioNode" : true,
+        "expect" : true
     }        // additional predefined global variables
 }

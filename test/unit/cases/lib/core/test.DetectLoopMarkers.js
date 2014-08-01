@@ -2,12 +2,14 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
     "use strict";
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
-    var mp3File = "audio/bullet.mp3";
-    var markedWavFile = "audio/sineloopstereomarked.wav";
-    var markedStereoMp3File = "audio/sineloopstereomarked.mp3";
-    var markedMonoMp3File = "audio/sineloopmonomarked.mp3";
-    var unmarkedMonoWavFile = "audio/sineloopmono.wav";
-    var unmarkedStereoWavFile = "audio/sineloopstereo.wav";
+    var rampMarkedMp3 = 'audio/ramp_marked.mp3';
+    var rampMarkedWav = 'audio/ramp_marked.wav';
+    var mp3File = 'audio/bullet.mp3';
+    var markedWavFile = 'audio/sineloopstereomarked.wav';
+    var markedStereoMp3File = 'audio/sineloopstereomarked.mp3';
+    var markedMonoMp3File = 'audio/sineloopmonomarked.mp3';
+    var unmarkedMonoWavFile = 'audio/sineloopmono.wav';
+    var unmarkedStereoWavFile = 'audio/sineloopstereo.wav';
 
     describe( 'DetectLoopMarkers.js', function () {
 
@@ -19,6 +21,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
 
             request.onload = function () {
                 context.decodeAudioData( request.response, function ( buffer ) {
+                    //console.log( URL, " : ", buffer.length, buffer.sampleRate );
                     ondecode( buffer );
                 } );
             };
@@ -30,7 +33,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
                 return {
                     compare: function ( actual, expected ) {
                         var result = {};
-                        result.pass = Math.abs( Number( actual ) - Number( expected ) ) < 0.001;
+                        result.pass = Math.abs( Number( actual ) - Number( expected ) ) < 0.01;
                         if ( result.pass ) {
                             result.message = 'Expected ' + actual + ' to be approximately equal to ' + expected;
                         } else {
@@ -43,9 +46,10 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
         };
 
         function printNFrom( name, data, start, num ) {
-            console.log( "--------------Data for ", name, " ---------------" );
+            console.log( "--------------Data for ", name, "from ", start, " ---------------" );
             for ( var i = 0; i < num; ++i ) {
-                console.log( start + i, ":", data[ start + i ].toFixed( 6 ) );
+                console.log( start + i, ":", ( data[ start + i ] )
+                    .toFixed( 6 ) );
             }
         }
 
@@ -77,22 +81,49 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
                     .not.toThrowError();
             } );
 
-            it( "should not have problem loading MP3 files", function () {
+            it( "should not have problem loading MP3 files", function ( done ) {
                 loadAndDecode( mp3File, function ( buffer ) {
                     expect( function () {
                         detectLoopMarkers( buffer );
                     } )
                         .not.toThrowError();
+                    done();
                 } );
             } );
         } );
 
         describe( '#marked sound - start', function () {
+            it( "should detect start marker on a marked ramp file", function ( done ) {
+                loadAndDecode( rampMarkedWav, function ( buffer ) {
+                    var markers = detectLoopMarkers( buffer );
+                    var lCh = buffer.getChannelData( 0 );
+                    //printNFrom( rampMarkedWav, lCh, markers.start - 5, 10 );
+                    expect( markers.marked )
+                        .toEqual( true );
+                    expect( lCh[ markers.start ] )
+                        .toBeApproximatelyEqualTo( 0.22049623727798462 );
+                    done();
+                } );
+            } );
+
+            it( "should detect start marker on a marked ramp MP3 file", function ( done ) {
+                loadAndDecode( rampMarkedMp3, function ( buffer ) {
+                    var markers = detectLoopMarkers( buffer );
+                    var lCh = buffer.getChannelData( 0 );
+                    //printNFrom( rampMarkedMp3, lCh, markers.start - 5, 10 );
+                    expect( markers.marked )
+                        .toEqual( true );
+                    expect( lCh[ markers.start ] )
+                        .toBeApproximatelyEqualTo( 0.22049623727798462 );
+                    done();
+                } );
+            } );
+
             it( "should detect start marker if available", function ( done ) {
                 loadAndDecode( markedWavFile, function ( buffer ) {
                     var markers = detectLoopMarkers( buffer );
                     var lCh = buffer.getChannelData( 0 );
-                    printNFrom( markedWavFile, lCh, markers.start - 5, 10 );
+                    //printNFrom( markedWavFile, lCh, markers.start - 5, 10 );
                     expect( markers.marked )
                         .toEqual( true );
                     expect( lCh[ markers.start ] )
@@ -105,11 +136,11 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
                 loadAndDecode( markedMonoMp3File, function ( buffer ) {
                     var markers = detectLoopMarkers( buffer );
                     var lCh = buffer.getChannelData( 0 );
-                    printNFrom( markedMonoMp3File, lCh, markers.start - 5, 10 );
+                    //printNFrom( markedMonoMp3File, lCh, markers.start - 5, 10 );
                     expect( markers.marked )
                         .toEqual( true );
                     expect( lCh[ markers.start ] )
-                        .toBeApproximatelyEqualTo( 0.0009218155755661428 );
+                        .toBeApproximatelyEqualTo( 0 );
                     done();
                 } );
             } );
@@ -118,7 +149,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
                 loadAndDecode( markedStereoMp3File, function ( buffer ) {
                     var markers = detectLoopMarkers( buffer );
                     var lCh = buffer.getChannelData( 0 );
-                    printNFrom( markedStereoMp3File, lCh, markers.start - 5, 10 );
+                    //printNFrom( markedStereoMp3File, lCh, markers.start - 5, 10 );
                     expect( markers.marked )
                         .toEqual( true );
                     expect( lCh[ markers.start ] )
@@ -133,7 +164,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
                 loadAndDecode( unmarkedStereoWavFile, function ( buffer ) {
                     var markers = detectLoopMarkers( buffer );
                     var lCh = buffer.getChannelData( 0 );
-                    printNFrom( unmarkedStereoWavFile, lCh, markers.start, 10 );
+                    //printNFrom( unmarkedStereoWavFile, lCh, markers.start, 10 );
                     expect( markers.marked )
                         .toEqual( false );
                     expect( lCh[ markers.start ] )
@@ -141,11 +172,11 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
                     done();
                 } );
             } );
+
             it( "should detect start of sound if marker is not available", function ( done ) {
                 loadAndDecode( unmarkedMonoWavFile, function ( buffer ) {
                     var markers = detectLoopMarkers( buffer );
-                    var lCh = buffer.getChannelData( 0 );
-                    printNFrom( unmarkedMonoWavFile, lCh, markers.start, 10 );
+                    //printNFrom( unmarkedMonoWavFile, lCh, markers.start, 10 );
                     var lCh = buffer.getChannelData( 0 );
                     expect( markers.marked )
                         .toEqual( false );
@@ -157,6 +188,32 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
         } );
 
         describe( '#marked sound - end', function () {
+            it( "should detect end marker on a marked ramp file", function ( done ) {
+                loadAndDecode( rampMarkedWav, function ( buffer ) {
+                    var markers = detectLoopMarkers( buffer );
+                    var lCh = buffer.getChannelData( 0 );
+                    //printNFrom( rampMarkedWav, lCh, markers.start - 5, 10 );
+                    expect( markers.marked )
+                        .toEqual( true );
+                    expect( lCh[ markers.end ] )
+                        .toBeApproximatelyEqualTo( 0.22049623727798462 );
+                    done();
+                } );
+            } );
+
+            it( "should detect end marker on a marked ramp MP3 file", function ( done ) {
+                loadAndDecode( rampMarkedMp3, function ( buffer ) {
+                    var markers = detectLoopMarkers( buffer );
+                    var lCh = buffer.getChannelData( 0 );
+                    //printNFrom( rampMarkedMp3, lCh, markers.start - 5, 10 );
+                    expect( markers.marked )
+                        .toEqual( true );
+                    expect( lCh[ markers.end ] )
+                        .toBeApproximatelyEqualTo( 0.22049623727798462 );
+                    done();
+                } );
+            } );
+
             it( "should detect end marker if available", function ( done ) {
                 loadAndDecode( markedWavFile, function ( buffer ) {
                     var markers = detectLoopMarkers( buffer );

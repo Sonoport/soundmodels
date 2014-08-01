@@ -29,6 +29,11 @@ define( function () {
         var PREPOSTFIX_LEN = 5000;
 
         /*
+         * Length of PRE and POSTFIX Silence used in Loop Marking
+         */
+        var DEFAULT_SAMPLING_RATE = 44100;
+
+        /*
          * Threshold for Spike Detection in Loop Marking
          */
         var SPIKE_THRESH = 0.5;
@@ -142,11 +147,13 @@ define( function () {
                 }
             }
             // If both markers found
-            if ( startSpikePos !== null && endSpikePos !== null && endSpikePos > startSpikePos + PREPOSTFIX_LEN ) {
+            var correctedPostfixLen = parseInt( PREPOSTFIX_LEN * buffer.sampleRate / DEFAULT_SAMPLING_RATE );
+            if ( startSpikePos !== null && endSpikePos !== null && endSpikePos > startSpikePos + correctedPostfixLen ) {
                 // Compute loop start and length
-                nLoopStart_ = startSpikePos + PREPOSTFIX_LEN / 2;
-                nLoopEnd_ = endSpikePos - PREPOSTFIX_LEN / 2;
+                nLoopStart_ = startSpikePos + correctedPostfixLen / 2;
+                nLoopEnd_ = endSpikePos - correctedPostfixLen / 2;
                 //console.log( "Found loop between " + nLoopStart_ + " - " + nLoopEnd_ );
+                //console.log( "Spikes at  " + startSpikePos + " - " + endSpikePos );
                 return true;
             } else {
                 // Spikes not found!

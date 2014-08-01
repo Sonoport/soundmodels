@@ -130,9 +130,9 @@ require( [ 'core/SPAudioBufferSourceNode', 'core/SPPlaybackRateParam' ], functio
                     sourceNode.resetBufferSource( 0, context.destination );
                     sourceNode.start( context.currentTime + 1.5 );
                     sourceNode.stop( context.currentTime + 2 );
-                    done();
                 } )
                     .not.toThrowError();
+                done();
             } );
         } );
     } );
