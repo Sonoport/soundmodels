@@ -33,7 +33,7 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
                 return {
                     compare: function ( actual, expected ) {
                         var result = {};
-                        result.pass = Math.abs( Number( actual ) - Number( expected ) ) < 0.01;
+                        result.pass = Math.abs( Number( actual ) - Number( expected ) ) < 0.03;
                         if ( result.pass ) {
                             result.message = 'Expected ' + actual + ' to be approximately equal to ' + expected;
                         } else {

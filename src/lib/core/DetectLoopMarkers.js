@@ -147,11 +147,11 @@ define( function () {
                 }
             }
             // If both markers found
-            var correctedPostfixLen = parseInt( PREPOSTFIX_LEN * buffer.sampleRate / DEFAULT_SAMPLING_RATE );
+            var correctedPostfixLen = Math.round( ( PREPOSTFIX_LEN / 2 ) * buffer.sampleRate / DEFAULT_SAMPLING_RATE );
             if ( startSpikePos !== null && endSpikePos !== null && endSpikePos > startSpikePos + correctedPostfixLen ) {
                 // Compute loop start and length
-                nLoopStart_ = startSpikePos + correctedPostfixLen / 2;
-                nLoopEnd_ = endSpikePos - correctedPostfixLen / 2;
+                nLoopStart_ = startSpikePos + correctedPostfixLen;
+                nLoopEnd_ = endSpikePos - correctedPostfixLen;
                 //console.log( "Found loop between " + nLoopStart_ + " - " + nLoopEnd_ );
                 //console.log( "Spikes at  " + startSpikePos + " - " + endSpikePos );
                 return true;

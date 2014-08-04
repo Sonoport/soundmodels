@@ -199,7 +199,7 @@
     };
 
     //
-    window.onload = function () {
+    window.onload = window.setTimeout( function () {
 
         // Restore original require functionality
         window.require = oldRequire;
@@ -232,6 +232,6 @@
             currentWindowOnload();
         }
 
-    };
+    }, 1000 );
 
 }() );
