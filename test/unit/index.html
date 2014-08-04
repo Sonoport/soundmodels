@@ -4,20 +4,23 @@
       <meta charset="UTF-8">
       <title>JavaScript Sound Models Core Unit Testing</title>
 
-      <link rel="shortcut icon" type="image/png" href="//cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine_favicon.png">
-      <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine.css">
+      <link rel="shortcut icon" type="image/png" href="vendor/jasmine/2.0.1/jasmine_favicon.png">
+      <link rel="stylesheet" type="text/css" href="vendor/jasmine/2.0.1/jasmine.css">
 
-      <script src="require.min.js"></script>
+      <script src="vendor/requirejs/require.min.js"></script>
 
-      <script src="//cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine.js" defer></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/jasmine-html.js" defer></script>
-      <script src="//cdnjs.cloudflare.com/ajax/libs/jasmine/2.0.0/boot.js" defer></script>
+      <script src="vendor/jasmine/2.0.1/jasmine.js"></script>
+      <script src="vendor/jasmine/2.0.1/jasmine-html.js"></script>
+      <script src="vendor/jasmine/2.0.1/boot.js"></script>
 
       <script src="testUtils.js"></script>
 
+
+      <!-- <script data-main="amdSpecRunner" src="vendor/requirejs/require.min.js"></script> -->
+
+      <script src="cases/lib/core/test.BaseSound.js"></script>
       <script src="cases/lib/core/test.Config.js"></script>
       <script src="cases/lib/core/test.Converter.js"></script>
-      <script src="cases/lib/core/test.BaseSound.js"></script>
       <script src="cases/lib/core/test.FileLoader.js"></script>
       <script src="cases/lib/core/test.MultiFileLoader.js"></script>
       <script src="cases/lib/core/test.DetectLoopMarkers.js"></script>
