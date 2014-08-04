@@ -324,7 +324,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
 
         // this.stop = function ( when ) {
         describe( '#pause/stop ', function () {
-            it( ' should be able to pause the queue without errors', function ( done ) {
+            it( ' should be able to pause an empty queue', function ( done ) {
                 expect( function () {
                     queue.pause();
                 } )
@@ -332,43 +332,74 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 done();
             } );
 
-            it( ' should be able to stop the queue without errors', function ( done ) {
+            it( ' should be able to pause a running queue', function ( done ) {
                 var time = ( Math.random() - 0.1 ) * 0.2 + context.currentTime;
                 var eventID = parseInt( Math.random() * 10000 );
                 var offset = Math.random() * 100;
                 var attackDuration = Math.random() * 10;
                 expect( function () {
                     queue.queueStart( time, eventID, offset, attackDuration );
-                    queue.queueStart( time + 0.3, eventID, offset, attackDuration );
-                    queue.queueStart( time + 0.5, eventID, offset, attackDuration );
-                    queue.queueSetParameter( time + 0.4, eventID, "riseTime ", attackDuration );
+                    queue.queueStart( time, eventID, offset, attackDuration );
+                    queue.queueSetParameter( time, eventID, "riseTime ", attackDuration );
                 } )
                     .not.toThrowError();
-                done();
+
+                window.setTimeout( function () {
+                    expect( function () {
+                        queue.pause();
+                        //spies.start.calls.reset();
+                    } )
+                        .not.toThrowError();
+                }, 400 );
+
+                window.setTimeout( function () {
+                    expect( spies.release )
+                        .toHaveBeenCalled();
+
+                    expect( spies.start )
+                        .toHaveBeenCalled();
+                    expect( spies.riseTimeObj.setValueAtTime )
+                        .toHaveBeenCalled();
+                    done();
+                }, 1000 );
+
+            } );
+
+            it( ' should be able to gracefully not stop the queue if had been already started', function ( done ) {
+                var time = ( Math.random() - 0.1 ) * 0.2 + context.currentTime;
+                var eventID = parseInt( Math.random() * 10000 );
+                var offset = Math.random() * 100;
+                var attackDuration = Math.random() * 10;
+                expect( function () {
+                    queue.queueStart( time, eventID, offset, attackDuration );
+                    queue.queueStart( time + 0.5, eventID, offset, attackDuration );
+                    queue.queueSetParameter( time + 0.5, eventID, "riseTime ", attackDuration );
+                } )
+                    .not.toThrowError();
 
                 window.setTimeout( function () {
                     expect( function () {
                         queue.pause();
                         spies.start.calls.reset();
+                        spies.riseTimeObj.setValueAtTime.calls.reset();
                     } )
                         .not.toThrowError();
                 }, 200 );
 
                 window.setTimeout( function () {
-                    expect( spies.start )
-                        .not.toHaveBeenCalled();
-                    expect( spies.setSources )
-                        .not.toHaveBeenCalled();
-                    expect( spies.connect )
-                        .not.toHaveBeenCalled();
                     expect( spies.release )
                         .toHaveBeenCalled();
+
+                    expect( spies.start )
+                        .not.toHaveBeenCalled();
                     expect( spies.riseTimeObj.setValueAtTime )
                         .not.toHaveBeenCalled();
+
                     done();
-                }, 400 );
+                }, 1000 );
 
             } );
+
         } );
 
         // this.connect = function ( destination, output, input ) {
