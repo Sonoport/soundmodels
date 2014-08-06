@@ -183,20 +183,23 @@ gulp.task('watch:test', ['watch:lib'], function(){
 gulp.task('test', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.manualtest, paths.dirs.build])
     .pipe(webserver({
-        port: 8080
+        port: 8080,
+        host : "192.168.11.50"
     }));
 });
 
 gulp.task('unittest', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.unittest, paths.dirs.build])
     .pipe(webserver({
-        port: 8081
+        port: 8081,
+        host : "192.168.11.50"
     }));
 });
 
 gulp.task('integration', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.integration, paths.dirs.build])
     .pipe(webserver({
-        port: 8082
+        port: 8082,
+        host : "192.168.11.50"
     }));
 });
