@@ -1,4 +1,3 @@
-/*javascript-sound-models - v1.1.0 - 2014-07-29 */ 
 YUI.add('api-filter', function (Y) {
 
 Y.APIFilter = Y.Base.create('apiFilter', Y.Base, [Y.AutoCompleteBase], {
