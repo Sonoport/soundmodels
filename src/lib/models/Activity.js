@@ -53,7 +53,6 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
             var MAX_OVERSHOOT = 1.2;
             var MAX_TIME_OUT = 0.1;
             var MIN_DIFF = 0.001;
-            var t60multiplier = 6.90776;
 
             // Private Functions
 

@@ -18,7 +18,7 @@ function stubbedRequire( stubs ) {
     /**
      * create a new context with the new dependency paths
      **/
-    var context = require.config( {
+    var context = requirejs.config( {
         context: Math.floor( Math.random() * 1000000 ),
         map: {
             "*": map
@@ -42,7 +42,6 @@ function stubbedRequire( stubs ) {
     }
 
     return context;
-
 }
 
 function makeContextRun( context ) {

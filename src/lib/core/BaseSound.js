@@ -1,5 +1,4 @@
 /**
-/**
  * @module Core
  */
 define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( webAudioDispatch ) {
@@ -26,6 +25,8 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         } else {
             this.audioContext = context;
         }
+
+        bootAudioContext( this.audioContext );
 
         /**
          * Number of inputs
@@ -179,6 +180,34 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         this.onAudioEnd = null;
 
         this.releaseGainNode.connect( this.audioContext.destination );
+
+        function bootAudioContext( context ) {
+
+            var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
+
+            function createDummyOsc() {
+                //console.log( "Booting ", context );
+                bootOsc.start( 0 );
+                bootOsc.stop( context.currentTime + 0.0001 );
+                window.liveAudioContexts.push( context );
+                window.removeEventListener( 'touchstart', createDummyOsc );
+            }
+
+            if ( iOS ) {
+                if ( !window.liveAudioContexts ) {
+                    window.liveAudioContexts = [];
+                }
+                if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
+                    var bootOsc = context.createOscillator();
+                    var bootGain = context.createGain();
+                    bootGain.gain.value = 0;
+                    bootOsc.connect( bootGain );
+                    bootGain.connect( context.destination );
+                    window.addEventListener( 'touchstart', createDummyOsc );
+                }
+            }
+
+        }
     }
 
     /**
@@ -344,10 +373,12 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         var paramList = [];
 
         for ( var paramName in this ) {
-            var param = this[ paramName ];
-            // Get properties that are of SPAudioParam
-            if ( param && param.hasOwnProperty( "value" ) && param.hasOwnProperty( "minValue" ) && param.hasOwnProperty( "maxValue" ) ) {
-                paramList.push( param );
+            if ( this.hasOwnProperty( paramName ) ) {
+                var param = this[ paramName ];
+                // Get properties that are of SPAudioParam
+                if ( param && param.hasOwnProperty( "value" ) && param.hasOwnProperty( "minValue" ) && param.hasOwnProperty( "maxValue" ) ) {
+                    paramList.push( param );
+                }
             }
         }
         return paramList;

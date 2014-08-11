@@ -26,11 +26,13 @@ define( [ 'core/DetectLoopMarkers' ],
             var isSoundLoaded_ = false;
 
             // Private functions
+
             /**
              * Check if a value is an integer.
+             * @method isInt_
              * @private
              * @param {Object} value
-             * @returns {Boolean} Result of test.
+             * @return {Boolean} Result of test.
              */
             var isInt_ = function ( value ) {
                 var er = /^[0-9]+$/;
@@ -46,7 +48,7 @@ define( [ 'core/DetectLoopMarkers' ],
              * @method sliceBuffer
              * @param {Number} start The start of the buffer to load.
              * @param {Number} end The end of the buffer to load.
-             * @returns {AudioBuffer} The requested sliced buffer.
+             * @return {AudioBuffer} The requested sliced buffer.
              */
             var sliceBuffer_ = function ( start, end ) {
 
@@ -56,11 +58,11 @@ define( [ 'core/DetectLoopMarkers' ],
                 }
                 // Verify parameters
                 if ( !isInt_( start ) ) {
-                    start = isNan( start ) ? 0 : Math.round( Number( start ) );
+                    start = Number.isNan( start ) ? 0 : Math.round( Number( start ) );
                     console.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer. Coercing it to an Integer - start" );
                 } else if ( !isInt_( end ) ) {
                     console.warn( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" );
-                    end = isNan( end ) ? 0 : Math.round( Number( end ) );
+                    end = Number.isNan( end ) ? 0 : Math.round( Number( end ) );
                 }
                 // Check if start is smaller than end
                 if ( start > end ) {
@@ -154,7 +156,7 @@ define( [ 'core/DetectLoopMarkers' ],
              * @method getBuffer
              * @param {Number} start The start index
              * @param {Number} end The end index
-             * @returns {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
+             * @return {AudioBuffer} The AudioBuffer that was marked then trimmed if it is not a wav file.
              */
             this.getBuffer = function ( start, end ) {
                 // Set start if it is missing
@@ -172,7 +174,7 @@ define( [ 'core/DetectLoopMarkers' ],
             /**
              * Get the original buffer.
              * @method getRawBuffer
-             * @returns {AudioBuffer} The original AudioBuffer.
+             * @return {AudioBuffer} The original AudioBuffer.
              */
             this.getRawBuffer = function () {
                 if ( !isSoundLoaded_ ) {
@@ -185,7 +187,7 @@ define( [ 'core/DetectLoopMarkers' ],
             /**
              * Check if sound is already loaded.
              * @method isLoaded
-             * @returns {Boolean} True if file is loaded. Flase if file is not yeat loaded.
+             * @return {Boolean} True if file is loaded. Flase if file is not yeat loaded.
              */
             this.isLoaded = function () {
                 return isSoundLoaded_;

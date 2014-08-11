@@ -200,7 +200,7 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
         this.initADSR();
     }
 
-    Envelope.prototype = Object.create( Envelope.prototype );
+    Envelope.prototype = Object.create( BaseSound.prototype );
     // Return constructor function
     return Envelope;
 } );

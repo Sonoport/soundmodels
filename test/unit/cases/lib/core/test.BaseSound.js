@@ -104,7 +104,7 @@ require( [ 'core/BaseSound' ], function ( BaseSound ) {
                 expect( function () {
                     baseSound.connect( null, null, null );
                 } )
-                    .toThrowError();
+                    .toThrow();
             } );
 
             it( "should throw an error if input or output exceeds number of inputs or outputs", function () {
@@ -114,17 +114,17 @@ require( [ 'core/BaseSound' ], function ( BaseSound ) {
                 expect( function () {
                     baseSound.connect( gainNode, 0, -100 );
                 } )
-                    .toThrowError();
+                    .toThrow();
 
                 expect( function () {
                     baseSound.connect( gainNode, 100, 100 );
                 } )
-                    .toThrowError();
+                    .toThrow();
 
                 expect( function () {
                     baseSound.connect( gainNode, -100, 0 );
                 } )
-                    .toThrowError();
+                    .toThrow();
 
             } );
 

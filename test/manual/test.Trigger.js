@@ -15,7 +15,7 @@
 
         // Single test
         trigger = new Trigger( null, [ tap1, tap2, tap3, tap4 ], function ( progressEvent, sound ) {
-            console.log( "Loading.. ", sound, ( progressEvent.loaded / progressEvent.total ) );
+            console.log( "Loading. ", sound, ( progressEvent.loaded / progressEvent.total ) );
         }, function () {
             var trigButton = document.getElementById( 'trigger' );
             trigButton.disabled = false;

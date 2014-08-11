@@ -61,29 +61,23 @@
             baseUrl: "./"
         } );
 
-        var Model = mc;
-
         require( [ url ], function ( Model ) {
 
             var surfURL = "https://dl.dropboxusercontent.com/u/2117088/ocean_edge.mp3";
             var runURL = "https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3";
-            var alienURL = "https://dl.dropboxusercontent.com/u/2117088/spaceship_11.mp3";
+            //var alienURL = "https://dl.dropboxusercontent.com/u/2117088/spaceship_11.mp3";
             var voiceURL = "https://dl.dropboxusercontent.com/u/77191118/sounds/gettysburg_address.mp3";
 
-            var bongoURL1 = "https://dl.dropboxusercontent.com/u/2117088/bongo1.wav";
-            var bongoURL2 = "https://dl.dropboxusercontent.com/u/2117088/bongo2.wav";
-            var bongoURL3 = "https://dl.dropboxusercontent.com/u/2117088/bongo3.wav";
-            var bongoURL4 = "https://dl.dropboxusercontent.com/u/2117088/bongo4.wav";
+            // var bongoURL1 = "https://dl.dropboxusercontent.com/u/2117088/bongo1.wav";
+            // var bongoURL2 = "https://dl.dropboxusercontent.com/u/2117088/bongo2.wav";
+            // var bongoURL3 = "https://dl.dropboxusercontent.com/u/2117088/bongo3.wav";
+            // var bongoURL4 = "https://dl.dropboxusercontent.com/u/2117088/bongo4.wav";
 
             // Buffer error with these files!!!
             var drumURL1 = "https://dl.dropboxusercontent.com/u/2117088/drum-2-1.mp3";
             var drumURL2 = "https://dl.dropboxusercontent.com/u/2117088/drum-2-2.mp3";
             var drumURL3 = "https://dl.dropboxusercontent.com/u/2117088/drum-2-3.mp3";
             var drumURL4 = "https://dl.dropboxusercontent.com/u/2117088/drum-2-4.mp3";
-
-            var drumurl = "";
-            var keyurl = "";
-            var guitar = "";
 
             var files = null;
 
@@ -139,7 +133,6 @@
                 // FileList object
                 var files = evt.target.files;
                 // files is a FileList of File objects.
-                var output = [];
                 for ( var i = 0; i < files.length; i++ ) {
                     var f = files[ i ];
                     localSources.push( f );
@@ -239,7 +232,6 @@
 
             function generateParam( snd ) {
                 // Loop through all the properties in Sound Model
-                var parambox = "";
                 var allParams = snd.listParams();
                 for ( var pIndex = 0; pIndex < allParams.length; pIndex++ ) {
                     var param = allParams[ pIndex ];
@@ -293,7 +285,7 @@
                     } );
             }
 
-            function makeSwitch( snd, id, val, min, max ) {
+            function makeSwitch( snd, id, val ) {
 
                 // Make switch
                 $( "." + id )
@@ -307,7 +299,7 @@
                         .bootstrapSwitch( "status" ) );
 
                 $( "#" + id + "val" )
-                    .change( function ( event, ui ) {
+                    .change( function ( event ) {
                         //console.log( "change", event.target.value );
                         if ( event.target.value === "false" ) {
                             $( "." + id )

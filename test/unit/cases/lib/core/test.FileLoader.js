@@ -34,35 +34,39 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
 
         describe( '#new FileLoader( URL, context, onloadCallback )', function () {
 
-            it( "should return true on callback function if url supplied is valid", function () {
+            it( "should return true on callback function if url supplied is valid", function ( done ) {
                 var fileLoader = new FileLoader( 'audio/sineloopstereo.wav', context, function ( response ) {
                     expect( response )
                         .toEqual( true );
+                    done();
                 } );
             } );
 
-            it( "should return false on callback function if url supplied is blank", function () {
+            it( "should return false on callback function if url supplied is blank", function ( done ) {
                 var fileLoader = new FileLoader( '', context, function ( response ) {
                     expect( response )
                         .toEqual( false );
+                    done();
                 } );
             } );
 
-            it( "should return false on callback function if url supplied is not a url", function () {
+            it( "should return false on callback function if url supplied is not a url", function ( done ) {
                 var fileLoader = new FileLoader( 'abcdef', context, function ( response ) {
                     expect( response )
                         .toEqual( false );
+                    done();
                 } );
             } );
 
-            it( "should return false on callback function if url supplied is broken", function () {
+            it( "should return false on callback function if url supplied is broken", function ( done ) {
                 var fileLoader = new FileLoader( 'audio/doesnotexist.wav', context, function ( response ) {
                     expect( response )
                         .toEqual( false );
+                    done()
                 } );
             } );
 
-            it( "should be able to accept a file/blob object", function () {
+            it( "should be able to accept a file/blob object", function ( done ) {
 
                 var context = new AudioContext();
                 var request = new XMLHttpRequest();
@@ -74,6 +78,7 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
                     var fileloader = new FileLoader( request.response, context, function ( response ) {
                         expect( response )
                             .toEqual( true );
+                        done();
                     } );
                 };
                 request.send();

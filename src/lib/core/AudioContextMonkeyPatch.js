@@ -1,12 +1,18 @@
 /**
- * MonkeyPatch for AudioContext. Normalizes AudioContext across browsers and implementations.
+ *
  *
  * @module Core
- * @class AudioContextMonkeyPatch
+ *
  */
 define(
     function () {
         'use strict';
+
+        /*
+         *  MonkeyPatch for AudioContext. Normalizes AudioContext across browsers and implementations.
+         *
+         * @class AudioContextMonkeyPatch
+         */
 
         function fixSetTarget( param ) {
             if ( !param ) { // if NYI, just return

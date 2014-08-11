@@ -4,7 +4,7 @@
     var AudioContext = webkitAudioContext || AudioContext;
     var context = new AudioContext();
 
-    require( [ "core/Envelope", "models/Looper" ], function ( Envelope, Looper ) {
+    require( [ "models/Looper" ], function ( Looper ) {
 
         var workout = "https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3";
 
