@@ -4,6 +4,7 @@ var pkg = require('./package.json');
 var rjsconfig = require('./rjsconfig.js');
 
 var gulp = require('gulp');
+var bump = require("gulp-bump");
 var yuidoc = require("gulp-yuidoc");
 var prettify = require('gulp-jsbeautifier');
 var jshint = require('gulp-jshint');
@@ -50,10 +51,42 @@ var paths = {
     },
 };
 
+/**
+ * Removes a module from the cache
+ */
+require.uncache = function (moduleName) {
+    // Run over the cache looking for the files
+    // loaded by the specified module name
+    require.searchCache(moduleName, function (mod) {
+        delete require.cache[mod.id];
+    });
+};
 
-gulp.task('default', function() {
-  // place code for your default task here
-});
+/**
+ * Runs over the cache to search for all the cached
+ * files
+ */
+require.searchCache = function (moduleName, callback) {
+    // Resolve the module identified by the specified name
+    var mod = require.resolve(moduleName);
+
+    // Check if the module has been resolved and found within
+    // the cache
+    if (mod && ((mod = require.cache[mod]) !== undefined)) {
+        // Recursively go over the results
+        (function run(mod) {
+            // Go over each of the module's children and
+            // run over it
+            mod.children.forEach(function (child) {
+                run(child);
+            });
+
+            // Call the specified callback providing the
+            // found module
+            callback(mod);
+        })(mod);
+    }
+};
 
 var yuiParserOpts = {
     project: {
@@ -118,10 +151,11 @@ gulp.task('devbuild', ['jsbeautify:src'], function(cb) {
     var config  = JSON.parse(JSON.stringify(rjsconfig.main));
     config.optimize = "none";
 
-    requirejs.optimize(config, null, function(err) {
-        throw err;
+    requirejs.optimize(config, function(){
+        return cb();
+    }, function(err) {
+        return cb(err);
     });
-    return cb();
 });
 
 
@@ -131,13 +165,24 @@ gulp.task('releasebuild', ['jsbeautify:src'], function(cb) {
     config.optimize = "uglify2";
     config.uglify2 = rjsconfig.uglify;
 
-    requirejs.optimize(config, null, function(err) {
-        throw err;
+    requirejs.optimize(config, function(){
+        return cb();
+    }, function(err) {
+        return cb(err);
     });
-    cb();
 });
 
-gulp.task('release', ['releasebuild', 'publishdocs'], function(){
+gulp.task('bump', function(){
+  return gulp.src('./package.json')
+  .pipe(bump())
+  .pipe(gulp.dest('./'));
+});
+
+gulp.task('release', ['bump'], function(){
+    require.uncache('./package.json');
+    pkg = require('./package.json');
+    console.log(pkg.version);
+
     return gulp.src(paths.dirs.build + 'models/*.js')
     .pipe(header(banner, {pkg: pkg}))
     .pipe(gulp.dest(paths.dirs.release + 'models/'));
