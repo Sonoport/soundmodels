@@ -139,7 +139,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue -60.0
              * @maxvalue 60.0
              */
-            this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext ) );
 
             /**
              * The length (in seconds) of each window used to overlap the source.
@@ -150,7 +150,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue 0.1
              * @maxvalue 10.0
              */
-            this.eventPeriod = SPAudioParam.createPsuedoParam( "eventPeriod", 0.1, 10.0, 2.0, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "eventPeriod", 0.1, 10.0, 2.0, this.audioContext ) );
 
             /**
              * Fraction of each window of the source that is overlapped with the succeding window of the source.
@@ -161,7 +161,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue 0.1
              * @maxvalue 0.99
              */
-            this.crossFadeDuration = SPAudioParam.createPsuedoParam( "crossFadeDuration", 0.1, 0.99, 0.5, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "crossFadeDuration", 0.1, 0.99, 0.5, this.audioContext ) );
 
             // Public Functions
 

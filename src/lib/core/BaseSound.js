@@ -206,9 +206,27 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
                     window.addEventListener( 'touchstart', createDummyOsc );
                 }
             }
-
         }
     }
+
+    /**
+     * Registers a Parameter to the model. This ensures that the Parameter is unwritable and allows
+     * to lock in the configurability of the object.
+     *
+     * @param  {SPAudioParam} audioParam
+     */
+    BaseSound.prototype.registerParameter = function ( audioParam, configurable ) {
+
+        if ( configurable === undefined || configurable === null ) {
+            configurable = false;
+        }
+
+        Object.defineProperty( this, audioParam.name, {
+            enumerable: true,
+            configurable: configurable,
+            value: audioParam
+        } );
+    };
 
     /**
      * If the parameter `output` is an AudioNode, it connects to the releaseGainNode.

@@ -49,7 +49,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 } );
 
                 if ( rateArray && rateArray.length > 0 ) {
-                    self.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext );
+                    self.registerParameter( new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext ), true );
                 }
 
                 if ( status ) {
@@ -168,7 +168,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue 0.0
              * @maxvalue 10.0
              */
-            this.playSpeed = new SPAudioParam( "playSpeed", 0.0, 10, 1, null, null, playSpeedSetter_, self.audioContext );
+            this.registerParameter( new SPAudioParam( "playSpeed", 0.0, 10, 1, null, null, playSpeedSetter_, self.audioContext ), true );
 
             /**
              * Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
@@ -179,7 +179,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue 0.05
              * @maxvalue 10.0
              */
-            this.riseTime = SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 0.05, this.audioContext );
+
+            this.registerParameter( SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 0.05, this.audioContext ) );
 
             /**
              * Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
@@ -190,7 +191,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue 0.05
              * @maxvalue 10.0
              */
-            this.decayTime = SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 0.05, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 0.05, this.audioContext ) );
 
             /**
              * Start point (as a factor of the length of the entire track) where the Looping should start from.
@@ -201,7 +202,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue 0.0
              * @maxvalue 0.99
              */
-            this.startPoint = new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext );
+            this.registerParameter( new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext ) );
 
             /**
              * The volume (loudness) for each individual track if multiple sources are used. Works even if a single source is used.
@@ -213,7 +214,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue 0.0
              * @maxvalue 1.0
              */
-            this.multiTrackGain = [];
+            Object.defineProperty( this, "multiTrackGain", {
+                enumerable: true,
+                configurable: false,
+                value: []
+            } );
 
             /**
              * The maximum number time the source will be looped before stopping. Currently only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).
@@ -224,7 +229,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue -1 (Infinite)
              * @maxvalue 1
              */
-            this.maxLoops = SPAudioParam.createPsuedoParam( "maxLoops", -1, 1, -1, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "maxLoops", -1, 1, -1, this.audioContext ) );
 
             /**
              * Reinitializes a Looper and sets it's sources.

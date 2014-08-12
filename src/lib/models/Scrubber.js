@@ -306,7 +306,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @minvalue 0.0
              * @maxvalue 1.0
              */
-            this.playPosition = SPAudioParam.createPsuedoParam( "playPosition", 0, 1.0, 0, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "playPosition", 0, 1.0, 0, this.audioContext ) );
 
             /**
              * Sets if the audio should fade out when playPosition has not changed for a while.
@@ -317,7 +317,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @minvalue true
              * @maxvalue false
              */
-            this.noMotionFade = SPAudioParam.createPsuedoParam( "noMotionFade", true, false, true, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "noMotionFade", true, false, true, this.audioContext ) );
 
             /**
              * Sets if moving playPosition to backwards should mute the model.
@@ -328,7 +328,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @minvalue true
              * @maxvalue false
              */
-            this.muteOnReverse = SPAudioParam.createPsuedoParam( "muteOnReverse", true, false, true, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "muteOnReverse", true, false, true, this.audioContext ) );
 
             // Initialize the sources.
             window.setTimeout( function () {
