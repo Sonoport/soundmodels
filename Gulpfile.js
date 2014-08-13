@@ -4,6 +4,7 @@ var pkg = require('./package.json');
 var rjsconfig = require('./rjsconfig.js');
 
 var gulp = require('gulp');
+var gutil = require('gulp-util');
 var bump = require("gulp-bump");
 var yuidoc = require("gulp-yuidoc");
 var prettify = require('gulp-jsbeautifier');
@@ -181,7 +182,23 @@ gulp.task('bump', function(){
 gulp.task('release', ['bump'], function(){
     require.uncache('./package.json');
     pkg = require('./package.json');
-    console.log(pkg.version);
+    gutil.log("Creating the ", pkg.version, " release.");
+
+    return gulp.src(paths.dirs.build + 'models/*.js')
+    .pipe(header(banner, {pkg: pkg}))
+    .pipe(gulp.dest(paths.dirs.release + 'models/'));
+});
+
+gulp.task('bump-pre', function(){
+  return gulp.src('./package.json')
+  .pipe(bump({type: 'prerelease'}))
+  .pipe(gulp.dest('./'));
+});
+
+gulp.task('test-release', ['bump-pre'], function(){
+    require.uncache('./package.json');
+    pkg = require('./package.json');
+    gutil.log("Creating the ", pkg.version, " test release.");
 
     return gulp.src(paths.dirs.build + 'models/*.js')
     .pipe(header(banner, {pkg: pkg}))
