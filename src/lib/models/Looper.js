@@ -91,6 +91,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     onSourceEnd( event, trackIndex, source );
                 };
 
+                console.log( "inserting ", audioBuffer, " at ", trackIndex );
+
                 var gainNode;
                 if ( multiTrackGainNodes_[ trackIndex ] ) {
                     gainNode = multiTrackGainNodes_[ trackIndex ];
@@ -99,7 +101,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     multiTrackGainNodes_[ trackIndex ] = gainNode;
 
                     var multiChannelGainParam = new SPAudioParam( "gain", 0.0, 1, 1, gainNode.gain, null, null, self.audioContext );
-                    self.multiTrackGain.push[ trackIndex ] = multiChannelGainParam;
+                    self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
                 }
 
                 source.connect( gainNode );
