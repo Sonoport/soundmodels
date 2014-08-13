@@ -250,7 +250,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.setSources = function ( source, onLoadProgress, onLoadComplete ) {
                 BaseSound.prototype.setSources.call( this, source, onLoadProgress, onLoadComplete );
-                internalLooper_.setSources( source, onLoadProgress, onLoadComplete );
+                internalLooper_.setSources( source, onLoadProgress, onLoadAll );
             };
 
             /**

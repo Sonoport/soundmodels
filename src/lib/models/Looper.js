@@ -91,8 +91,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     onSourceEnd( event, trackIndex, source );
                 };
 
-                console.log( "inserting ", audioBuffer, " at ", trackIndex );
-
                 var gainNode;
                 if ( multiTrackGainNodes_[ trackIndex ] ) {
                     gainNode = multiTrackGainNodes_[ trackIndex ];
