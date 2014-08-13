@@ -179,7 +179,7 @@ gulp.task('bump', function(){
   .pipe(gulp.dest('./'));
 });
 
-gulp.task('release', ['bump'], function(){
+gulp.task('release', ['bump', 'releasebuild'], function(){
     require.uncache('./package.json');
     pkg = require('./package.json');
     gutil.log("Creating the ", pkg.version, " release.");
@@ -189,13 +189,13 @@ gulp.task('release', ['bump'], function(){
     .pipe(gulp.dest(paths.dirs.release + 'models/'));
 });
 
-gulp.task('bump-pre', function(){
+gulp.task('bump:pre', function(){
   return gulp.src('./package.json')
   .pipe(bump({type: 'prerelease'}))
   .pipe(gulp.dest('./'));
 });
 
-gulp.task('test-release', ['bump-pre'], function(){
+gulp.task('test-release', ['bump:pre', 'releasebuild'], function(){
     require.uncache('./package.json');
     pkg = require('./package.json');
     gutil.log("Creating the ", pkg.version, " test release.");
