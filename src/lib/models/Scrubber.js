@@ -68,28 +68,29 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             var zeroArray;
 
             var onLoadAll = function ( status, audioBufferArray ) {
-                var sourceBuffer_ = audioBufferArray[ 0 ];
-
-                // store audiosource attributes
-                numSamples_ = sourceBuffer_.length;
-                numChannels_ = sourceBuffer_.numberOfChannels;
-                sampleRate_ = sourceBuffer_.sampleRate;
-
-                for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
-                    sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
-                }
-
-                scriptNode_ = self.audioContext.createScriptProcessor( Config.CHUNK_LENGTH, 0, numChannels_ );
-                scriptNode_.onaudioprocess = scriptNodeCallback;
-                scriptNode_.connect( self.releaseGainNode );
-
-                // create buffers
-                synthBuf_ = newBuffer( winLen_, numChannels_ );
-                srcBuf_ = newBuffer( winLen_, numChannels_ );
-
                 if ( status ) {
+                    var sourceBuffer_ = audioBufferArray[ 0 ];
+
+                    // store audiosource attributes
+                    numSamples_ = sourceBuffer_.length;
+                    numChannels_ = sourceBuffer_.numberOfChannels;
+                    sampleRate_ = sourceBuffer_.sampleRate;
+
+                    for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
+                        sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
+                    }
+
+                    scriptNode_ = self.audioContext.createScriptProcessor( Config.CHUNK_LENGTH, 0, numChannels_ );
+                    scriptNode_.onaudioprocess = scriptNodeCallback;
+                    scriptNode_.connect( self.releaseGainNode );
+
+                    // create buffers
+                    synthBuf_ = newBuffer( winLen_, numChannels_ );
+                    srcBuf_ = newBuffer( winLen_, numChannels_ );
+
                     self.isInitialized = true;
                 }
+
                 if ( typeof self.onLoadComplete === 'function' ) {
                     self.onLoadComplete( status );
                 }
