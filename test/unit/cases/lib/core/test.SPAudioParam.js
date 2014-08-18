@@ -1,5 +1,6 @@
 require( [ 'core/SPAudioParam' ], function ( SPAudioParam ) {
     "use strict";
+    console.log( "Running SPAudioParam Test... " );
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
 

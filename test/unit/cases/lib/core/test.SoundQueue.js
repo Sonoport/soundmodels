@@ -1,4 +1,4 @@
-var spies = {
+var looperSpies = {
     start: jasmine.createSpy( 'start' ),
     stop: jasmine.createSpy( 'stop' ),
     play: jasmine.createSpy( 'play' ),
@@ -26,20 +26,20 @@ var looperStub = {
         "use strict";
         return {
             isInitialized: true,
-            playSpeed: spies.playSpeedObj,
-            riseTime: spies.riseTimeObj,
-            decayTime: spies.decayTimeObj,
-            startPoint: spies.startPointObj,
-            maxLoops: spies.maxLoopsObj,
-            start: spies.start,
-            stop: spies.stop,
-            play: spies.play,
-            pause: spies.pause,
-            release: spies.release,
-            setSources: spies.setSources,
-            connect: spies.connect,
-            disconnect: spies.disconnect,
-            listParams: spies.listParams
+            playSpeed: looperSpies.playSpeedObj,
+            riseTime: looperSpies.riseTimeObj,
+            decayTime: looperSpies.decayTimeObj,
+            startPoint: looperSpies.startPointObj,
+            maxLoops: looperSpies.maxLoopsObj,
+            start: looperSpies.start,
+            stop: looperSpies.stop,
+            play: looperSpies.play,
+            pause: looperSpies.pause,
+            release: looperSpies.release,
+            setSources: looperSpies.setSources,
+            connect: looperSpies.connect,
+            disconnect: looperSpies.disconnect,
+            listParams: looperSpies.listParams
         };
     }
 };
@@ -48,6 +48,7 @@ var requireWithStubbedLooper = stubbedRequire( looperStub );
 
 requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
     "use strict";
+    console.log( "Running SoundQueue Test... " );
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
     makeContextRun( context );
@@ -86,10 +87,10 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
             request.send();
         }
 
-        function resetAllSpies() {
-            for ( var key in spies ) {
-                if ( spies.hasOwnProperty( key ) && spies[ key ].calls ) {
-                    spies[ key ].calls.reset();
+        function resetAlllooperSpies() {
+            for ( var key in looperSpies ) {
+                if ( looperSpies.hasOwnProperty( key ) && looperSpies[ key ].calls ) {
+                    looperSpies[ key ].calls.reset();
                 }
             }
         }
@@ -98,7 +99,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
             jasmine.addMatchers( customMatchers );
             queue = new SoundQueue( context );
             queue.connect( context.destination );
-            resetAllSpies();
+            resetAlllooperSpies();
             done();
         } );
 
@@ -132,7 +133,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                     .not.toThrowError();
 
                 window.setTimeout( function () {
-                    expect( spies.start )
+                    expect( looperSpies.start )
                         .toHaveBeenCalledWith( jasmine.any( Number ), offset, jasmine.any( Object ), attackDuration );
                     done();
                 }, 400 );
@@ -152,7 +153,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 } )
                     .not.toThrowError();
                 window.setTimeout( function () {
-                    expect( spies.pause )
+                    expect( looperSpies.pause )
                         .toHaveBeenCalled();
                     done();
                 }, 400 );
@@ -168,7 +169,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 } )
                     .not.toThrowError();
                 window.setTimeout( function () {
-                    expect( spies.pause )
+                    expect( looperSpies.pause )
                         .not.toHaveBeenCalled();
                     done();
                 }, 400 );
@@ -188,7 +189,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 } )
                     .not.toThrowError();
                 window.setTimeout( function () {
-                    expect( spies.release )
+                    expect( looperSpies.release )
                         .toHaveBeenCalledWith( jasmine.any( Number ), attackDuration );
                     done();
                 }, 400 );
@@ -204,7 +205,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 } )
                     .not.toThrowError();
                 window.setTimeout( function () {
-                    expect( spies.release )
+                    expect( looperSpies.release )
                         .not.toHaveBeenCalled();
                     done();
                 }, 400 );
@@ -223,7 +224,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 } )
                     .not.toThrowError();
                 window.setTimeout( function () {
-                    expect( spies.playSpeedObj.setValueAtTime )
+                    expect( looperSpies.playSpeedObj.setValueAtTime )
                         .toHaveBeenCalled();
                     done();
                 }, 400 );
@@ -239,7 +240,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 } )
                     .not.toThrowError();
                 window.setTimeout( function () {
-                    expect( spies.decayTimeObj.setValueAtTime )
+                    expect( looperSpies.decayTimeObj.setValueAtTime )
                         .toHaveBeenCalled();
                     done();
                 }, 400 );
@@ -271,7 +272,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                         .not.toThrowError();
 
                     window.setTimeout( function () {
-                        expect( spies.setSources )
+                        expect( looperSpies.setSources )
                             .toHaveBeenCalled();
                         done();
                     }, 400 );
@@ -289,7 +290,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                     .not.toThrowError();
 
                 window.setTimeout( function () {
-                    expect( spies.setSources )
+                    expect( looperSpies.setSources )
                         .not.toHaveBeenCalled();
                     done();
                 }, 400 );
@@ -315,7 +316,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                     .not.toThrowError();
 
                 window.setTimeout( function () {
-                    expect( spies.riseTimeObj.setValueAtTime )
+                    expect( looperSpies.riseTimeObj.setValueAtTime )
                         .toHaveBeenCalledWith( attackDuration + 1, time + 0.2 );
                     done();
                 }, 600 );
@@ -347,18 +348,18 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 window.setTimeout( function () {
                     expect( function () {
                         queue.pause();
-                        //spies.start.calls.reset();
+                        //looperSpies.start.calls.reset();
                     } )
                         .not.toThrowError();
                 }, 400 );
 
                 window.setTimeout( function () {
-                    expect( spies.release )
+                    expect( looperSpies.release )
                         .toHaveBeenCalled();
 
-                    expect( spies.start )
+                    expect( looperSpies.start )
                         .toHaveBeenCalled();
-                    expect( spies.riseTimeObj.setValueAtTime )
+                    expect( looperSpies.riseTimeObj.setValueAtTime )
                         .toHaveBeenCalled();
                     done();
                 }, 1000 );
@@ -380,19 +381,19 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 window.setTimeout( function () {
                     expect( function () {
                         queue.pause();
-                        spies.start.calls.reset();
-                        spies.riseTimeObj.setValueAtTime.calls.reset();
+                        looperSpies.start.calls.reset();
+                        looperSpies.riseTimeObj.setValueAtTime.calls.reset();
                     } )
                         .not.toThrowError();
                 }, 200 );
 
                 window.setTimeout( function () {
-                    expect( spies.release )
+                    expect( looperSpies.release )
                         .toHaveBeenCalled();
 
-                    expect( spies.start )
+                    expect( looperSpies.start )
                         .not.toHaveBeenCalled();
-                    expect( spies.riseTimeObj.setValueAtTime )
+                    expect( looperSpies.riseTimeObj.setValueAtTime )
                         .not.toHaveBeenCalled();
 
                     done();

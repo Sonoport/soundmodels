@@ -1,5 +1,6 @@
 require( [ 'core/Config' ], function ( Config ) {
     "use strict";
+    console.log( "Running Config Test... " );
     describe( 'Config.js', function () {
         describe( '#Class{}', function () {
             it( "should have maximum number of voices supported default to 8", function () {
