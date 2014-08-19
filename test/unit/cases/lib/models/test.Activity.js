@@ -59,8 +59,8 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( sound.maxSpeed ).toBeInstanceOf( SPAudioParam );
                 expect( sound.maxSpeed.name ).toBe( "maxSpeed" );
                 expect( sound.maxSpeed.value ).toBe( 1.0 );
-                expect( sound.maxSpeed.minValue ).toBe( 0.0 );
-                expect( sound.maxSpeed.maxValue ).toBe( 10.0 );
+                expect( sound.maxSpeed.minValue ).toBe( 0.05 );
+                expect( sound.maxSpeed.maxValue ).toBe( 8 );
 
             } );
 
@@ -77,7 +77,7 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 } ).toThrowError();
 
                 expect( sound.riseTime.name ).toBe( "riseTime" );
-                expect( sound.riseTime.value ).toBe( 0.05 );
+                expect( sound.riseTime.value ).toBe( 1 );
                 expect( sound.riseTime.minValue ).toBe( 0.05 );
                 expect( sound.riseTime.maxValue ).toBe( 10.0 );
 
@@ -94,26 +94,26 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 } ).toThrowError();
 
                 expect( sound.decayTime.name ).toBe( "decayTime" );
-                expect( sound.decayTime.value ).toBe( 0.05 );
+                expect( sound.decayTime.value ).toBe( 1 );
                 expect( sound.decayTime.minValue ).toBe( 0.05 );
                 expect( sound.decayTime.maxValue ).toBe( 10.0 );
 
             } );
 
             it( "should have a valid parameter activity", function () {
-                expect( sound.activity ).toBeInstanceOf( SPAudioParam );
+                expect( sound.action ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.activity = 0;
+                    sound.action = 0;
                 } ).toThrowError();
                 expect( function () {
-                    delete sound.activity;
+                    delete sound.action;
                 } ).toThrowError();
 
-                expect( sound.activity.name ).toBe( "activity" );
-                expect( sound.activity.value ).toBe( -1 );
-                expect( sound.activity.minValue ).toBe( -1 );
-                expect( sound.activity.maxValue ).toBe( 1 );
+                expect( sound.action.name ).toBe( "action" );
+                expect( sound.action.value ).toBe( 0 );
+                expect( sound.action.minValue ).toBe( 0 );
+                expect( sound.action.maxValue ).toBe( 1 );
 
             } );
 
@@ -128,8 +128,8 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 } ).toThrowError();
 
                 expect( sound.sensitivity.name ).toBe( "sensitivity" );
-                expect( sound.sensitivity.value ).toBe( -1 );
-                expect( sound.sensitivity.minValue ).toBe( -1 );
+                expect( sound.sensitivity.value ).toBe( 0.5 );
+                expect( sound.sensitivity.minValue ).toBe( 0 );
                 expect( sound.sensitivity.maxValue ).toBe( 1 );
 
             } );
@@ -148,25 +148,6 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( sound.startPoint.value ).toBe( 0 );
                 expect( sound.startPoint.minValue ).toBe( 0 );
                 expect( sound.startPoint.maxValue ).toBe( 0.99 );
-
-            } );
-
-            it( "should have a valid parameter multiTrackGain", function () {
-                expect( sound.multiTrackGain ).toBeInstanceOf( Array );
-                expect( sound.multiTrackGain.length ).toBe( listofSounds.length );
-                expect( sound.multiTrackGain[ 0 ] ).toBeInstanceOf( SPAudioParam );
-
-                expect( function () {
-                    sound.multiTrackGain = 0;
-                } ).toThrowError();
-                expect( function () {
-                    delete sound.multiTrackGain;
-                } ).toThrowError();
-
-                expect( sound.multiTrackGain[ 0 ].name ).toBe( "gain" );
-                expect( sound.multiTrackGain[ 0 ].value ).toBe( 1 );
-                expect( sound.multiTrackGain[ 0 ].minValue ).toBe( 0 );
-                expect( sound.multiTrackGain[ 0 ].maxValue ).toBe( 1 );
 
             } );
         } );

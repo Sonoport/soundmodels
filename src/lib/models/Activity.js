@@ -1,8 +1,8 @@
 /**
  * @module Models
  */
-define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' ],
-    function ( Config, BaseSound, Looper, SPAudioParam ) {
+define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam', 'core/webAudioDispatch' ],
+    function ( Config, BaseSound, Looper, SPAudioParam, webAudioDispatch ) {
         "use strict";
 
         /**
@@ -317,6 +317,10 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.release = function ( when, fadeTime ) {
                 internalLooper_.release( when, fadeTime );
+                var self = this;
+                webAudioDispatch( function () {
+                    self.isPlaying = false;
+                }, when + fadeTime, this.audioContext );
                 //BaseSound.prototype.release.call( this, when, fadeTime );
             };
 
