@@ -4,6 +4,8 @@ require( [ 'models/Looper' ], function ( Looper ) {
     var context = new AudioContext();
     var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
 
+    var sound;
+
     describe( 'Looper.js', function () {
 
         var customMatchers = {
@@ -25,16 +27,14 @@ require( [ 'models/Looper' ], function ( Looper ) {
 
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
-            var numSounds = parseInt( Math.random() * listofSounds.length );
-            var sounds = listofSounds;
-            var baseSound = new Looper( sounds, context );
+            sound = new Looper( listofSounds, context );
             done();
         } );
 
         describe( '#new Looper( context )', function () {
 
             it( "should have audioContext available", function () {
-                expect( baseSound.audioContext )
+                expect( sound.audioContext )
                     .toBeInstanceOf( AudioContext );
             } );
         } );
@@ -42,7 +42,7 @@ require( [ 'models/Looper' ], function ( Looper ) {
         describe( '#properties', function () {
 
             it( "should have audioContext available", function () {
-                expect( baseSound.audioContext )
+                expect( sound.audioContext )
                     .toBeInstanceOf( AudioContext );
             } );
         } );
@@ -50,7 +50,7 @@ require( [ 'models/Looper' ], function ( Looper ) {
         describe( '#connect/disconnect', function () {
 
             it( "should have audioContext available", function () {
-                expect( baseSound.audioContext )
+                expect( sound.audioContext )
                     .toBeInstanceOf( AudioContext );
             } );
         } );
@@ -58,7 +58,7 @@ require( [ 'models/Looper' ], function ( Looper ) {
         describe( '#actions', function () {
 
             it( "should have audioContext available", function () {
-                expect( baseSound.audioContext )
+                expect( sound.audioContext )
                     .toBeInstanceOf( AudioContext );
             } );
         } );
@@ -66,7 +66,7 @@ require( [ 'models/Looper' ], function ( Looper ) {
         describe( '#parameter', function () {
 
             it( "should have audioContext available", function () {
-                expect( baseSound.audioContext )
+                expect( sound.audioContext )
                     .toBeInstanceOf( AudioContext );
             } );
         } );
