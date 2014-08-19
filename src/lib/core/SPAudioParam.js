@@ -131,6 +131,8 @@ define(
                         } else if ( aParams instanceof Array ) {
                             // use a nominal Parameter to populate
                             return aParams[ 0 ].value;
+                        } else {
+                            return value_;
                         }
                     }
                     return value_;

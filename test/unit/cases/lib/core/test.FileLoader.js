@@ -1,13 +1,9 @@
 require( [ 'core/FileLoader' ], function ( FileLoader ) {
     "use strict";
+    console.log( "Running FileLoader Test... " );
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
     var mp3File = "audio/bullet.mp3";
-    var markedWavFile = "audio/sineloopstereomarked.wav";
-    var markedStereoMp3File = "audio/sineloopstereomarked.mp3";
-    var markedMonoMp3File = "audio/sineloopmonomarked.mp3";
-    var unmarkedMonoWavFile = "audio/sineloopmono.wav";
-    var unmarkedStereoWavFile = "audio/sineloopstereo.wav";
 
     describe( 'FileLoader.js', function () {
 

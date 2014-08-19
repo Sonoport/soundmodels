@@ -1,5 +1,6 @@
 require( [ 'core/SPAudioBufferSourceNode', 'core/SPPlaybackRateParam' ], function ( SPAudioBufferSourceNode, SPPlaybackRateParam ) {
     "use strict";
+    console.log( "Running SPAudioBufferSourceNode Test... " );
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
     var context = new AudioContext();
 

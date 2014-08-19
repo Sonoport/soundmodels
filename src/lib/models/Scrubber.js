@@ -68,28 +68,29 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             var zeroArray;
 
             var onLoadAll = function ( status, audioBufferArray ) {
-                var sourceBuffer_ = audioBufferArray[ 0 ];
-
-                // store audiosource attributes
-                numSamples_ = sourceBuffer_.length;
-                numChannels_ = sourceBuffer_.numberOfChannels;
-                sampleRate_ = sourceBuffer_.sampleRate;
-
-                for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
-                    sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
-                }
-
-                scriptNode_ = self.audioContext.createScriptProcessor( Config.CHUNK_LENGTH, 0, numChannels_ );
-                scriptNode_.onaudioprocess = scriptNodeCallback;
-                scriptNode_.connect( self.releaseGainNode );
-
-                // create buffers
-                synthBuf_ = newBuffer( winLen_, numChannels_ );
-                srcBuf_ = newBuffer( winLen_, numChannels_ );
-
                 if ( status ) {
+                    var sourceBuffer_ = audioBufferArray[ 0 ];
+
+                    // store audiosource attributes
+                    numSamples_ = sourceBuffer_.length;
+                    numChannels_ = sourceBuffer_.numberOfChannels;
+                    sampleRate_ = sourceBuffer_.sampleRate;
+
+                    for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
+                        sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
+                    }
+
+                    scriptNode_ = self.audioContext.createScriptProcessor( Config.CHUNK_LENGTH, 0, numChannels_ );
+                    scriptNode_.onaudioprocess = scriptNodeCallback;
+                    scriptNode_.connect( self.releaseGainNode );
+
+                    // create buffers
+                    synthBuf_ = newBuffer( winLen_, numChannels_ );
+                    srcBuf_ = newBuffer( winLen_, numChannels_ );
+
                     self.isInitialized = true;
                 }
+
                 if ( typeof self.onLoadComplete === 'function' ) {
                     self.onLoadComplete( status );
                 }
@@ -306,7 +307,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @minvalue 0.0
              * @maxvalue 1.0
              */
-            this.playPosition = SPAudioParam.createPsuedoParam( "playPosition", 0, 1.0, 0, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "playPosition", 0, 1.0, 0, this.audioContext ) );
 
             /**
              * Sets if the audio should fade out when playPosition has not changed for a while.
@@ -317,7 +318,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @minvalue true
              * @maxvalue false
              */
-            this.noMotionFade = SPAudioParam.createPsuedoParam( "noMotionFade", true, false, true, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "noMotionFade", true, false, true, this.audioContext ) );
 
             /**
              * Sets if moving playPosition to backwards should mute the model.
@@ -328,7 +329,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @minvalue true
              * @maxvalue false
              */
-            this.muteOnReverse = SPAudioParam.createPsuedoParam( "muteOnReverse", true, false, true, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "muteOnReverse", true, false, true, this.audioContext ) );
 
             // Initialize the sources.
             window.setTimeout( function () {

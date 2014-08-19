@@ -165,7 +165,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue -60.0
              * @maxvalue 60.0
              */
-            this.pitchShift = SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "pitchShift", -60.0, 60.0, 0, this.audioContext ) );
 
             /**
              * Maximum value for random pitch shift of the triggered voices in semitones.
@@ -176,7 +176,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue 0.0
              * @maxvalue 24.0
              */
-            this.pitchRand = SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 24.0, 0.0, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "pitchRand", 0.0, 24.0, 0.0, this.audioContext ) );
 
             /**
              * Enable randomness in the order of sources which are triggered.
@@ -187,7 +187,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue true
              * @maxvalue false
              */
-            this.eventRand = SPAudioParam.createPsuedoParam( "eventRand", true, false, false, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "eventRand", true, false, false, this.audioContext ) );
 
             /**
              * Trigger rate for playing the model in Hz.
@@ -198,7 +198,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue 0.0
              * @maxvalue 60.0
              */
-            this.eventRate = new SPAudioParam( "eventRate", 0, 60.0, 10.0, null, null, eventRateSetter_, this.audioContext );
+            this.registerParameter( new SPAudioParam( "eventRate", 0, 60.0, 10.0, null, null, eventRateSetter_, this.audioContext ) );
             /**
              * Maximum deviation from the regular trigger interval (as a factor of 1).
              *
@@ -208,7 +208,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue 0.0
              * @maxvalue 0.99
              */
-            this.eventJitter = SPAudioParam.createPsuedoParam( "eventJitter", 0, 0.99, 0, this.audioContext );
+            this.registerParameter( SPAudioParam.createPsuedoParam( "eventJitter", 0, 0.99, 0, this.audioContext ) );
 
             // Public Functions
 
