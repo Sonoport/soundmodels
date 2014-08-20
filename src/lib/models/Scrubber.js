@@ -76,6 +76,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                     numChannels_ = sourceBuffer_.numberOfChannels;
                     sampleRate_ = sourceBuffer_.sampleRate;
 
+                    sampleData_ = [];
                     for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
                         sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
                     }
@@ -97,6 +98,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             };
 
             function init( source ) {
+                if ( scriptNode_ ) {
+                    scriptNode_.disconnect();
+                    scriptNode_ = null;
+                }
+
                 multiFileLoader.call( self, source, self.audioContext, self.onLoadProgress, onLoadAll );
 
                 winLen_ = Config.WINDOW_LENGTH;
