@@ -257,12 +257,17 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
 
                         if ( audioPlaying && ( ( muteOnReverse && scale_ < AUDIOEVENT_TRESHOLD ) || Math.abs( scale_ ) < AUDIOEVENT_TRESHOLD ) ) {
                             audioPlaying = false;
-                            self.onAudioEnd();
+                            if ( typeof self.onAudioEnd === 'function' ) {
+                                self.onAudioEnd();
+                            }
+
                         }
 
                         if ( scale_ > AUDIOEVENT_TRESHOLD && !audioPlaying ) {
                             audioPlaying = true;
-                            self.onAudioStart();
+                            if ( typeof self.onAudioStart === 'function' ) {
+                                self.onAudioStart();
+                            }
                         }
 
                         // Add the new frame into the output summing buffer
