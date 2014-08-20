@@ -100,7 +100,7 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
 
             } );
 
-            it( "should have a valid parameter activity", function () {
+            it( "should have a valid parameter action", function () {
                 expect( sound.action ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
@@ -245,7 +245,8 @@ var sourceStub = {
         return {
             playbackRate: {
                 value: 1.0,
-                defaultValue: 0
+                defaultValue: 0,
+                setValueAtTime: function () {}
             },
             connect: sourceSpies.connect,
             disconnect: sourceSpies.disconnect,
@@ -258,162 +259,163 @@ var sourceStub = {
         };
     }
 };
-// var requireWithStubbedSource = stubbedRequire( sourceStub );
-// requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function ( Activity, BaseSound, SPAudioParam ) {
-//     window.AudioContext = window.AudioContext || window.webkitAudioContext;
-//     var context = new AudioContext();
-//     var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
-//     describe( 'Activity.js with stubbed Source', function () {
-//         var sound;
-//         var customMatchers = {
-//             toBeInstanceOf: function () {
-//                 return {
-//                     compare: function ( actual, expected ) {
-//                         var result = {};
-//                         result.pass = actual instanceof expected;
-//                         if ( result.pass ) {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
-//                         } else {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
-//                         }
-//                         return result;
-//                     }
-//                 };
-//             }
-//         };
-//         beforeEach( function ( done ) {
-//             jasmine.addMatchers( customMatchers );
-//             resetAllSourceSpies();
-//             sound = new Activity( context, listofSounds, null, function () {
-//                 done();
-//             } );
-//         } );
 
-//         function resetAllSourceSpies() {
-//             for ( var key in sourceSpies ) {
-//                 if ( sourceSpies.hasOwnProperty( key ) && sourceSpies[ key ].calls ) {
-//                     sourceSpies[ key ].calls.reset();
-//                 }
-//             }
-//         }
-//         describe( '#new Activity( context ) ', function () {
-//             it( "should have audioContext available", function () {
-//                 expect( sound.audioContext ).toBeInstanceOf( AudioContext );
-//             } );
-//         } );
-//         describe( '#actions', function () {
-//             it( "should have start/stop/play/pause/release defined", function () {
-//                 expect( sound.start ).toBeInstanceOf( Function );
-//                 expect( sound.stop ).toBeInstanceOf( Function );
-//                 expect( sound.play ).toBeInstanceOf( Function );
-//                 expect( sound.pause ).toBeInstanceOf( Function );
-//                 expect( sound.release ).toBeInstanceOf( Function );
-//             } );
+var requireWithStubbedSource = stubbedRequire( sourceStub );
+requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function ( Activity, BaseSound, SPAudioParam ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    var context = new AudioContext();
+    var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
+    describe( 'Activity.js with stubbed Source', function () {
+        var sound;
+        var customMatchers = {
+            toBeInstanceOf: function () {
+                return {
+                    compare: function ( actual, expected ) {
+                        var result = {};
+                        result.pass = actual instanceof expected;
+                        if ( result.pass ) {
+                            result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
+                        } else {
+                            result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
+                        }
+                        return result;
+                    }
+                };
+            }
+        };
+        beforeEach( function ( done ) {
+            jasmine.addMatchers( customMatchers );
+            resetAllSourceSpies();
+            sound = new Activity( context, listofSounds, null, function () {
+                done();
+            } );
+        } );
 
-//             it( "should be start/stop audio", function ( done ) {
-//                 expect( function () {
-//                     sound.start();
-//                 } ).not.toThrowError();
+        function resetAllSourceSpies() {
+            for ( var key in sourceSpies ) {
+                if ( sourceSpies.hasOwnProperty( key ) && sourceSpies[ key ].calls ) {
+                    sourceSpies[ key ].calls.reset();
+                }
+            }
+        }
+        describe( '#new Activity( context ) ', function () {
+            it( "should have audioContext available", function () {
+                expect( sound.audioContext ).toBeInstanceOf( AudioContext );
+            } );
+        } );
+        describe( '#actions', function () {
+            it( "should have start/stop/play/pause/release defined", function () {
+                expect( sound.start ).toBeInstanceOf( Function );
+                expect( sound.stop ).toBeInstanceOf( Function );
+                expect( sound.play ).toBeInstanceOf( Function );
+                expect( sound.pause ).toBeInstanceOf( Function );
+                expect( sound.release ).toBeInstanceOf( Function );
+            } );
 
-//                 expect( sound.isPlaying ).toBe( true );
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
+            it( "should be start/stop audio", function ( done ) {
+                expect( function () {
+                    sound.start();
+                } ).not.toThrowError();
 
-//                 expect( function () {
-//                     sound.stop();
-//                 } ).not.toThrowError();
+                expect( sound.isPlaying ).toBe( true );
+                expect( sourceSpies.start ).toHaveBeenCalled();
 
-//                 expect( sound.isPlaying ).toBe( false );
-//                 expect( sourceSpies.stop ).toHaveBeenCalled();
-//                 done();
-//             } );
+                expect( function () {
+                    sound.stop();
+                } ).not.toThrowError();
 
-//             it( "should be play/pause audio", function ( done ) {
-//                 expect( function () {
-//                     sound.play();
-//                 } ).not.toThrowError();
+                expect( sound.isPlaying ).toBe( false );
+                expect( sourceSpies.stop ).toHaveBeenCalled();
+                done();
+            } );
 
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
-//                 expect( sound.isPlaying ).toBe( true );
+            it( "should be play/pause audio", function ( done ) {
+                expect( function () {
+                    sound.play();
+                } ).not.toThrowError();
 
-//                 expect( function () {
-//                     sound.pause();
-//                 } ).not.toThrowError();
+                expect( sourceSpies.start ).toHaveBeenCalled();
+                expect( sound.isPlaying ).toBe( true );
 
-//                 expect( sound.isPlaying ).toBe( false );
-//                 expect( sourceSpies.stop ).toHaveBeenCalled();
-//                 setTimeout( function () {
-//                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
-//                 }, 1000 );
+                expect( function () {
+                    sound.pause();
+                } ).not.toThrowError();
 
-//                 sourceSpies.start.calls.reset();
-//                 sourceSpies.stop.calls.reset();
-//                 sourceSpies.resetBufferSource.calls.reset();
+                expect( sound.isPlaying ).toBe( false );
+                expect( sourceSpies.stop ).toHaveBeenCalled();
+                setTimeout( function () {
+                    expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
+                }, 1000 );
 
-//                 expect( function () {
-//                     sound.play();
-//                 } ).not.toThrowError();
+                sourceSpies.start.calls.reset();
+                sourceSpies.stop.calls.reset();
+                sourceSpies.resetBufferSource.calls.reset();
 
-//                 expect( sound.isPlaying ).toBe( true );
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
+                expect( function () {
+                    sound.play();
+                } ).not.toThrowError();
 
-//                 expect( function () {
-//                     sound.pause();
-//                 } ).not.toThrowError();
+                expect( sound.isPlaying ).toBe( true );
+                expect( sourceSpies.start ).toHaveBeenCalled();
 
-//                 expect( sound.isPlaying ).toBe( false );
-//                 expect( sourceSpies.stop ).toHaveBeenCalled();
-//                 setTimeout( function () {
-//                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
-//                     done();
-//                 }, 1000 );
+                expect( function () {
+                    sound.pause();
+                } ).not.toThrowError();
 
-//             } );
+                expect( sound.isPlaying ).toBe( false );
+                expect( sourceSpies.stop ).toHaveBeenCalled();
+                setTimeout( function () {
+                    expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
+                    done();
+                }, 1000 );
 
-//             it( "should be play/release audio", function ( done ) {
-//                 expect( function () {
-//                     sound.play();
-//                 } ).not.toThrowError();
+            } );
 
-//                 expect( sound.isPlaying ).toBe( true );
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
+            it( "should be play/release audio", function ( done ) {
+                expect( function () {
+                    sound.play();
+                } ).not.toThrowError();
 
-//                 expect( function () {
-//                     sound.release();
-//                 } ).not.toThrowError();
+                expect( sound.isPlaying ).toBe( true );
+                expect( sourceSpies.start ).toHaveBeenCalled();
 
-//                 setTimeout( function () {
-//                     expect( sound.isPlaying ).toBe( false );
-//                     expect( sourceSpies.stop ).toHaveBeenCalled();
-//                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
-//                     done();
-//                 }, 1000 );
-//             } );
+                expect( function () {
+                    sound.release();
+                } ).not.toThrowError();
 
-//             it( "should be pass parameters from start to source", function ( done ) {
-//                 var when = Math.random();
-//                 var offset = Math.random() / 2;
-//                 var duration = Math.random() * 2;
-//                 expect( function () {
-//                     sound.start( when, offset, duration, 0.5 );
-//                 } ).not.toThrowError();
+                setTimeout( function () {
+                    expect( sound.isPlaying ).toBe( false );
+                    expect( sourceSpies.stop ).toHaveBeenCalled();
+                    expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
+                    done();
+                }, 1000 );
+            } );
 
-//                 expect( sourceSpies.start ).toHaveBeenCalledWith( when, offset, duration );
-//                 done();
-//             } );
+            it( "should be pass parameters from start to source", function ( done ) {
+                var when = Math.random();
+                var offset = Math.random() / 2;
+                var duration = Math.random() * 2;
+                expect( function () {
+                    sound.start( when, offset, duration, 0.5 );
+                } ).not.toThrowError();
 
-//             it( "should be pass parameters from stop to source", function ( done ) {
-//                 var duration = Math.random() * 2;
-//                 expect( function () {
-//                     sound.start();
-//                 } ).not.toThrowError();
+                expect( sourceSpies.start ).toHaveBeenCalledWith( when, offset, duration );
+                done();
+            } );
 
-//                 expect( function () {
-//                     sound.stop( duration );
-//                 } ).not.toThrowError();
+            it( "should be pass parameters from stop to source", function ( done ) {
+                var duration = Math.random() * 2;
+                expect( function () {
+                    sound.start();
+                } ).not.toThrowError();
 
-//                 expect( sourceSpies.stop ).toHaveBeenCalledWith( duration );
-//                 done();
-//             } );
-//         } );
-//     } );
-// } );
+                expect( function () {
+                    sound.stop( duration );
+                } ).not.toThrowError();
+
+                expect( sourceSpies.stop ).toHaveBeenCalledWith( duration );
+                done();
+            } );
+        } );
+    } );
+} );

@@ -133,6 +133,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              */
             this.pause = function () {
                 soundQueue_.pause();
+                BaseSound.prototype.pause.call( this );
             };
 
             /**
