@@ -201,6 +201,10 @@
     //
     window.onload = window.setTimeout( function () {
 
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+        var context = new AudioContext();
+
         // Restore original require functionality
         window.require = oldRequire;
         // Keep a ref to Jasmine context for when we execute later

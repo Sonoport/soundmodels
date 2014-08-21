@@ -49,8 +49,9 @@ var requireWithStubbedLooper = stubbedRequire( looperStub );
 requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
     "use strict";
     console.log( "Running SoundQueue Test... " );
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
     makeContextRun( context );
     var queue;
 

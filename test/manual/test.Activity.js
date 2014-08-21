@@ -1,8 +1,9 @@
 ( function () {
     "use strict";
 
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
 
     var activity;
 

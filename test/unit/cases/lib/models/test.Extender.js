@@ -1,7 +1,8 @@
 "use strict";
 require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function ( Extender, BaseSound, SPAudioParam ) {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
     var listofSounds = [ 'audio/surf.mp3' ];
     describe( 'Extender.js', function () {
         var sound;
@@ -219,8 +220,9 @@ var queueStub = {
 
 var requireWithStubbedSource = stubbedRequire( queueStub );
 requireWithStubbedSource( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function ( Extender, BaseSound, SPAudioParam ) {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
     var listofSounds = [ 'audio/surf.mp3' ];
 
     describe( 'Extender.js with stubbed Queue', function () {

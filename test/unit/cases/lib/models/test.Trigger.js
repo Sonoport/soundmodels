@@ -1,7 +1,8 @@
 "use strict";
 require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function ( Trigger, BaseSound, SPAudioParam ) {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
     var listofSounds = [ 'audio/Hit5.mp3', 'audio/Hit6.mp3', 'audio/Hit7.mp3', 'audio/Hit8.mp3' ];
     describe( 'Trigger.js', function () {
         var sound;
@@ -219,8 +220,9 @@ var queueStub = {
 
 var requireWithStubbedSource = stubbedRequire( queueStub );
 requireWithStubbedSource( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function ( Trigger, BaseSound, SPAudioParam ) {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
     var listofSounds = [ 'audio/surf.mp3' ];
 
     describe( 'Trigger.js with stubbed Queue', function () {

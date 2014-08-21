@@ -1,8 +1,9 @@
 require( [ 'core/FileLoader' ], function ( FileLoader ) {
     "use strict";
     console.log( "Running FileLoader Test... " );
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
     var mp3File = "audio/bullet.mp3";
 
     describe( 'FileLoader.js', function () {
