@@ -3,6 +3,12 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
     if ( !window.context ) {
         window.context = new AudioContext();
     }
+    var internalSpies = {
+        onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
+        onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
+        onSoundStarted: jasmine.createSpy( "onSoundStarted" ),
+        onSoundEnded: jasmine.createSpy( "onSoundEnded" )
+    };
     var listofSounds = [ 'audio/surf.mp3' ];
 
     describe( 'Scrubber.js', function () {
@@ -23,12 +29,24 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 };
             }
         };
+
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
-            sound = new Scrubber( context, listofSounds, null, function () {
+            resetAllInternalSpies();
+            sound = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                internalSpies.onLoadComplete();
                 done();
-            } );
+            }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
         } );
+
+        function resetAllInternalSpies() {
+            for ( var key in internalSpies ) {
+                if ( internalSpies.hasOwnProperty( key ) && internalSpies[ key ].calls ) {
+                    internalSpies[ key ].calls.reset();
+                }
+            }
+        }
+
         describe( '#new Scrubber( context )', function () {
 
             it( "should have audioContext available", function () {
@@ -54,6 +72,15 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
             it( "should be have been initialized", function () {
                 expect( sound.isInitialized ).toBe( true );
             } );
+
+            it( "should have called progress events", function () {
+                expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
+            } );
+
+            it( "should have called load events", function () {
+                expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
+            } );
+
         } );
         describe( '#properties', function () {
 
@@ -134,59 +161,88 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
                     sound.start();
+                    sound.playPosition.value = 0.1;
                 } ).not.toThrowError();
 
                 expect( sound.isPlaying ).toBe( true );
+                setTimeout( function () {
+                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( function () {
+                        sound.stop();
+                    } ).not.toThrowError();
 
-                expect( function () {
-                    sound.stop();
-                } ).not.toThrowError();
-
-                expect( sound.isPlaying ).toBe( false );
-                done();
+                    expect( sound.isPlaying ).toBe( false );
+                    setTimeout( function () {
+                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        done();
+                    }, 1000 );
+                }, 1000 );
             } );
 
             it( "should be play/pause audio", function ( done ) {
                 expect( function () {
                     sound.play();
+                    sound.playPosition.value = 0.1;
                 } ).not.toThrowError();
 
                 expect( sound.isPlaying ).toBe( true );
+                setTimeout( function () {
+                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
 
-                expect( function () {
-                    sound.pause();
-                } ).not.toThrowError();
+                    expect( function () {
+                        sound.pause();
+                    } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( false );
+                    expect( sound.isPlaying ).toBe( false );
+                    setTimeout( function () {
+                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
 
-                expect( function () {
-                    sound.play();
-                } ).not.toThrowError();
+                        internalSpies.onSoundStarted.calls.reset();
+                        internalSpies.onSoundEnded.calls.reset();
 
-                expect( sound.isPlaying ).toBe( true );
+                        expect( function () {
+                            sound.play();
+                            sound.playPosition.value = 0.2;
+                        } ).not.toThrowError();
 
-                expect( function () {
-                    sound.pause();
-                } ).not.toThrowError();
+                        expect( sound.isPlaying ).toBe( true );
 
-                expect( sound.isPlaying ).toBe( false );
-                done();
+                        setTimeout( function () {
+                            expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                            expect( function () {
+                                sound.pause();
+                            } ).not.toThrowError();
+
+                            expect( sound.isPlaying ).toBe( false );
+                            setTimeout( function () {
+                                expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                                done();
+                            }, 1000 );
+                        }, 1000 );
+                    }, 1000 );
+                }, 1000 );
+
             } );
 
             it( "should be play/release audio", function ( done ) {
                 expect( function () {
                     sound.play();
+                    sound.playPosition.value = 0.1;
                 } ).not.toThrowError();
 
                 expect( sound.isPlaying ).toBe( true );
-
-                expect( function () {
-                    sound.release();
-                } ).not.toThrowError();
-
                 setTimeout( function () {
-                    expect( sound.isPlaying ).toBe( false );
-                    done();
+                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+
+                    expect( function () {
+                        sound.release();
+                    } ).not.toThrowError();
+
+                    setTimeout( function () {
+                        expect( sound.isPlaying ).toBe( false );
+                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        done();
+                    }, 1500 );
                 }, 1000 );
             } );
         } );

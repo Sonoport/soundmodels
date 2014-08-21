@@ -6,6 +6,12 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
     var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
     describe( 'Activity.js', function () {
         var sound;
+        var internalSpies = {
+            onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
+            onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
+            onSoundStarted: jasmine.createSpy( "onSoundStarted" ),
+            onSoundEnded: jasmine.createSpy( "onSoundEnded" )
+        };
         var customMatchers = {
             toBeInstanceOf: function () {
                 return {
@@ -24,10 +30,21 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
         };
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
-            sound = new Activity( context, listofSounds, null, function () {
+            resetAllInternalSpies();
+            sound = new Activity( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                internalSpies.onLoadComplete();
                 done();
-            } );
+            }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
         } );
+
+        function resetAllInternalSpies() {
+            for ( var key in internalSpies ) {
+                if ( internalSpies.hasOwnProperty( key ) && internalSpies[ key ].calls ) {
+                    internalSpies[ key ].calls.reset();
+                }
+            }
+        }
+
         describe( '#new Activity( context )', function () {
 
             it( "should have audioContext available", function () {
@@ -52,6 +69,14 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
 
             it( "should be have been initialized", function () {
                 expect( sound.isInitialized ).toBe( true );
+            } );
+
+            it( "should have called progress events", function () {
+                expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
+            } );
+
+            it( "should have called load events", function () {
+                expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
             } );
         } );
         describe( '#properties', function () {
@@ -179,13 +204,18 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 } ).not.toThrowError();
 
                 expect( sound.isPlaying ).toBe( true );
+                setTimeout( function () {
+                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( function () {
+                        sound.stop();
+                    } ).not.toThrowError();
 
-                expect( function () {
-                    sound.stop();
-                } ).not.toThrowError();
-
-                expect( sound.isPlaying ).toBe( false );
-                done();
+                    expect( sound.isPlaying ).toBe( false );
+                    setTimeout( function () {
+                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        done();
+                    }, 1000 );
+                }, 1000 );
             } );
 
             it( "should be play/pause audio", function ( done ) {
@@ -194,25 +224,41 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 } ).not.toThrowError();
 
                 expect( sound.isPlaying ).toBe( true );
+                setTimeout( function () {
+                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
 
-                expect( function () {
-                    sound.pause();
-                } ).not.toThrowError();
+                    expect( function () {
+                        sound.pause();
+                    } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( false );
+                    expect( sound.isPlaying ).toBe( false );
+                    setTimeout( function () {
+                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
 
-                expect( function () {
-                    sound.play();
-                } ).not.toThrowError();
+                        internalSpies.onSoundStarted.calls.reset();
+                        internalSpies.onSoundEnded.calls.reset();
 
-                expect( sound.isPlaying ).toBe( true );
+                        expect( function () {
+                            sound.play();
+                        } ).not.toThrowError();
 
-                expect( function () {
-                    sound.pause();
-                } ).not.toThrowError();
+                        expect( sound.isPlaying ).toBe( true );
 
-                expect( sound.isPlaying ).toBe( false );
-                done();
+                        setTimeout( function () {
+                            expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                            expect( function () {
+                                sound.pause();
+                            } ).not.toThrowError();
+
+                            expect( sound.isPlaying ).toBe( false );
+                            setTimeout( function () {
+                                expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                                done();
+                            }, 1000 );
+                        }, 1000 );
+                    }, 1000 );
+                }, 1000 );
+
             } );
 
             it( "should be play/release audio", function ( done ) {
@@ -221,14 +267,18 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 } ).not.toThrowError();
 
                 expect( sound.isPlaying ).toBe( true );
-
-                expect( function () {
-                    sound.release();
-                } ).not.toThrowError();
-
                 setTimeout( function () {
-                    expect( sound.isPlaying ).toBe( false );
-                    done();
+                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+
+                    expect( function () {
+                        sound.release();
+                    } ).not.toThrowError();
+
+                    setTimeout( function () {
+                        expect( sound.isPlaying ).toBe( false );
+                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        done();
+                    }, 1500 );
                 }, 1000 );
             } );
         } );

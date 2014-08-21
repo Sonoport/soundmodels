@@ -6,6 +6,12 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
     var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
     describe( 'Looper.js', function () {
         var sound;
+        var internalSpies = {
+            onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
+            onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
+            onSoundStarted: jasmine.createSpy( "onSoundStarted" ),
+            onSoundEnded: jasmine.createSpy( "onSoundEnded" )
+        };
         var customMatchers = {
             toBeInstanceOf: function () {
                 return {
@@ -22,12 +28,24 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                 };
             }
         };
+
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
-            sound = new Looper( context, listofSounds, null, function () {
+            resetAllInternalSpies();
+            sound = new Looper( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                internalSpies.onLoadComplete();
                 done();
-            } );
+            }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
         } );
+
+        function resetAllInternalSpies() {
+            for ( var key in internalSpies ) {
+                if ( internalSpies.hasOwnProperty( key ) && internalSpies[ key ].calls ) {
+                    internalSpies[ key ].calls.reset();
+                }
+            }
+        }
+
         describe( '#new Looper( context )', function () {
 
             it( "should have audioContext available", function () {
@@ -53,6 +71,15 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
             it( "should be have been initialized", function () {
                 expect( sound.isInitialized ).toBe( true );
             } );
+
+            it( "should have called progress events", function () {
+                expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
+            } );
+
+            it( "should have called load events", function () {
+                expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
+            } );
+
         } );
         describe( '#properties', function () {
             it( "should have a valid parameter playspeed", function () {
@@ -180,6 +207,9 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                     sound.start();
                 } ).not.toThrowError();
 
+                setTimeout( function () {
+                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                }, 1000 );
                 expect( sound.isPlaying ).toBe( true );
 
                 expect( function () {
@@ -187,7 +217,11 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                 } ).not.toThrowError();
 
                 expect( sound.isPlaying ).toBe( false );
-                done();
+                setTimeout( function () {
+                    expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                    done();
+                }, 1000 );
+
             } );
 
             it( "should be play/pause audio", function ( done ) {
@@ -196,17 +230,29 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                 } ).not.toThrowError();
 
                 expect( sound.isPlaying ).toBe( true );
+                setTimeout( function () {
+                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                }, 1000 );
 
                 expect( function () {
                     sound.pause();
                 } ).not.toThrowError();
 
+                setTimeout( function () {
+                    expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                }, 1000 );
                 expect( sound.isPlaying ).toBe( false );
+
+                internalSpies.onSoundStarted.calls.reset();
+                internalSpies.onSoundEnded.calls.reset();
 
                 expect( function () {
                     sound.play();
                 } ).not.toThrowError();
 
+                setTimeout( function () {
+                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                }, 1000 );
                 expect( sound.isPlaying ).toBe( true );
 
                 expect( function () {
@@ -214,7 +260,10 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                 } ).not.toThrowError();
 
                 expect( sound.isPlaying ).toBe( false );
-                done();
+                setTimeout( function () {
+                    expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                    done();
+                }, 1000 );
             } );
 
             it( "should be play/release audio", function ( done ) {
@@ -223,6 +272,9 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                 } ).not.toThrowError();
 
                 expect( sound.isPlaying ).toBe( true );
+                setTimeout( function () {
+                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                }, 1000 );
 
                 expect( function () {
                     sound.release();
@@ -230,12 +282,14 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
 
                 setTimeout( function () {
                     expect( sound.isPlaying ).toBe( false );
+                    expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
                     done();
                 }, 1000 );
             } );
         } );
     } );
 } );
+
 var sourceSpies = {
     start: jasmine.createSpy( 'start' ),
     stop: jasmine.createSpy( 'stop' ),
@@ -243,6 +297,7 @@ var sourceSpies = {
     disconnect: jasmine.createSpy( 'disconnect' ),
     resetBufferSource: jasmine.createSpy( 'resetBuffer' )
 };
+
 var sourceStub = {
     "core/SPAudioBufferSourceNode": function () {
         return {
