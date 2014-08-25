@@ -5,12 +5,12 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
     }
     var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
     describe( 'Activity.js', function () {
-        var sound;
+        var activity;
         var internalSpies = {
             onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
             onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
-            onSoundStarted: jasmine.createSpy( "onSoundStarted" ),
-            onSoundEnded: jasmine.createSpy( "onSoundEnded" )
+            onAudioStart: jasmine.createSpy( "onAudioStart" ),
+            onAudioEnd: jasmine.createSpy( "onAudioEnd" )
         };
         var customMatchers = {
             toBeInstanceOf: function () {
@@ -31,12 +31,12 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
             resetAllInternalSpies();
-            if ( !sound ) {
+            if ( !activity ) {
                 console.log( "Initing Stubbed Activity.." );
-                sound = new Activity( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                activity = new Activity( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
             } else {
                 done();
             }
@@ -53,140 +53,171 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
         describe( '#new Activity( context )', function () {
 
             it( "should have audioContext available", function () {
-                expect( sound.audioContext ).toBeInstanceOf( AudioContext );
+                expect( activity.audioContext ).toBeInstanceOf( AudioContext );
             } );
 
             it( "should have a minimum number of sources as 1", function () {
-                expect( sound.minSources ).toBe( 1 );
+                expect( activity.minSources ).toBe( 1 );
             } );
 
             it( "should have a maximum number of sources as 1", function () {
-                expect( sound.maxSources ).toBeGreaterThan( 1 );
+                expect( activity.maxSources ).toBeGreaterThan( 1 );
             } );
 
             it( "should have a model name as Activity", function () {
-                expect( sound.modelName ).toBe( "Activity" );
+                expect( activity.modelName ).toBe( "Activity" );
             } );
 
             it( "should be a BaseSound", function () {
-                expect( sound ).toBeInstanceOf( BaseSound );
+                expect( activity ).toBeInstanceOf( BaseSound );
             } );
 
             it( "should be have been initialized", function () {
-                expect( sound.isInitialized ).toBe( true );
+                expect( activity.isInitialized ).toBe( true );
             } );
 
             it( "should have called progress events", function ( done ) {
-                sound = new Activity( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                activity = new Activity( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
             } );
 
             it( "should have called load events", function ( done ) {
-                sound = new Activity( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                activity = new Activity( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
             } );
         } );
+
+        describe( '#setSources()', function () {
+            it( "should have method setSources defined", function () {
+                expect( activity.setSources ).toBeInstanceOf( Function );
+            } );
+
+            // it( "should be able to change sources", function ( done ) {
+            //     activity.setSources( listofSounds[ 0 ], null, function () {
+            //         expect( activity.multiTrackGain.length ).toBe( 1 );
+            //         done();
+            //     } );
+            // } );
+
+            it( "should call onprogress events", function ( done ) {
+                var progressSpy = jasmine.createSpy( "progressSpy" );
+                activity.setSources( listofSounds[ 0 ], progressSpy, function () {
+                    expect( progressSpy ).toHaveBeenCalled();
+                    done();
+                } );
+            } );
+
+            it( "should call onload event", function ( done ) {
+                var loadSpy = jasmine.createSpy( "loadSpy" );
+                activity.setSources( listofSounds, null, loadSpy );
+                window.setTimeout( function () {
+                    expect( loadSpy ).toHaveBeenCalled();
+                    done();
+                }, 1000 );
+            } );
+        } );
+
         describe( '#properties', function () {
             it( "should have a valid parameter maxSpeed", function () {
 
-                expect( sound.maxSpeed ).toBeInstanceOf( SPAudioParam );
-                expect( sound.maxSpeed.name ).toBe( "maxSpeed" );
-                expect( sound.maxSpeed.value ).toBe( 1.0 );
-                expect( sound.maxSpeed.minValue ).toBe( 0.05 );
-                expect( sound.maxSpeed.maxValue ).toBe( 8 );
+                expect( activity.maxSpeed ).toBeInstanceOf( SPAudioParam );
+                expect( activity.maxSpeed.name ).toBe( "maxSpeed" );
+                expect( activity.maxSpeed.value ).toBe( 1.0 );
+                expect( activity.maxSpeed.minValue ).toBe( 0.05 );
+                expect( activity.maxSpeed.maxValue ).toBe( 8 );
 
             } );
 
             it( "should have a valid parameter riseTime", function () {
 
-                expect( sound.riseTime ).toBeInstanceOf( SPAudioParam );
+                expect( activity.riseTime ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.riseTime = 0;
+                    activity.riseTime = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete sound.riseTime;
+                    delete activity.riseTime;
                 } ).toThrowError();
 
-                expect( sound.riseTime.name ).toBe( "riseTime" );
-                expect( sound.riseTime.value ).toBe( 1 );
-                expect( sound.riseTime.minValue ).toBe( 0.05 );
-                expect( sound.riseTime.maxValue ).toBe( 10.0 );
+                expect( activity.riseTime.name ).toBe( "riseTime" );
+                expect( activity.riseTime.value ).toBe( 1 );
+                expect( activity.riseTime.minValue ).toBe( 0.05 );
+                expect( activity.riseTime.maxValue ).toBe( 10.0 );
 
             } );
 
             it( "should have a valid parameter decayTime", function () {
-                expect( sound.decayTime ).toBeInstanceOf( SPAudioParam );
+                expect( activity.decayTime ).toBeInstanceOf( SPAudioParam );
                 expect( function () {
-                    sound.decayTime = 0;
+                    activity.decayTime = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete sound.decayTime;
+                    delete activity.decayTime;
                 } ).toThrowError();
 
-                expect( sound.decayTime.name ).toBe( "decayTime" );
-                expect( sound.decayTime.value ).toBe( 1 );
-                expect( sound.decayTime.minValue ).toBe( 0.05 );
-                expect( sound.decayTime.maxValue ).toBe( 10.0 );
+                expect( activity.decayTime.name ).toBe( "decayTime" );
+                expect( activity.decayTime.value ).toBe( 1 );
+                expect( activity.decayTime.minValue ).toBe( 0.05 );
+                expect( activity.decayTime.maxValue ).toBe( 10.0 );
 
             } );
 
             it( "should have a valid parameter action", function () {
-                expect( sound.action ).toBeInstanceOf( SPAudioParam );
+                expect( activity.action ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.action = 0;
+                    activity.action = 0;
                 } ).toThrowError();
                 expect( function () {
-                    delete sound.action;
+                    delete activity.action;
                 } ).toThrowError();
 
-                expect( sound.action.name ).toBe( "action" );
-                expect( sound.action.value ).toBe( 0 );
-                expect( sound.action.minValue ).toBe( 0 );
-                expect( sound.action.maxValue ).toBe( 1 );
+                expect( activity.action.name ).toBe( "action" );
+                expect( activity.action.value ).toBe( 0 );
+                expect( activity.action.minValue ).toBe( 0 );
+                expect( activity.action.maxValue ).toBe( 1 );
 
             } );
 
             it( "should have a valid parameter sensitivity", function () {
-                expect( sound.sensitivity ).toBeInstanceOf( SPAudioParam );
+                expect( activity.sensitivity ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.sensitivity = 0;
+                    activity.sensitivity = 0;
                 } ).toThrowError();
                 expect( function () {
-                    delete sound.sensitivity;
+                    delete activity.sensitivity;
                 } ).toThrowError();
 
-                expect( sound.sensitivity.name ).toBe( "sensitivity" );
-                expect( sound.sensitivity.value ).toBe( 0.5 );
-                expect( sound.sensitivity.minValue ).toBe( 0 );
-                expect( sound.sensitivity.maxValue ).toBe( 1 );
+                expect( activity.sensitivity.name ).toBe( "sensitivity" );
+                expect( activity.sensitivity.value ).toBe( 0.5 );
+                expect( activity.sensitivity.minValue ).toBe( 0 );
+                expect( activity.sensitivity.maxValue ).toBe( 1 );
 
             } );
 
             it( "should have a valid parameter startPoint", function () {
-                expect( sound.startPoint ).toBeInstanceOf( SPAudioParam );
+                expect( activity.startPoint ).toBeInstanceOf( SPAudioParam );
                 expect( function () {
-                    sound.startPoint = 0;
+                    activity.startPoint = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete sound.startPoint;
+                    delete activity.startPoint;
                 } ).toThrowError();
 
-                expect( sound.startPoint.name ).toBe( "startPoint" );
-                expect( sound.startPoint.value ).toBe( 0 );
-                expect( sound.startPoint.minValue ).toBe( 0 );
-                expect( sound.startPoint.maxValue ).toBe( 0.99 );
+                expect( activity.startPoint.name ).toBe( "startPoint" );
+                expect( activity.startPoint.value ).toBe( 0 );
+                expect( activity.startPoint.minValue ).toBe( 0 );
+                expect( activity.startPoint.maxValue ).toBe( 0.99 );
 
             } );
         } );
@@ -194,38 +225,38 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
         describe( '#connect/disconnect', function () {
 
             it( "have connect function defined", function () {
-                expect( sound.connect ).toBeInstanceOf( Function );
+                expect( activity.connect ).toBeInstanceOf( Function );
             } );
             it( "have disconnect function defined", function () {
-                expect( sound.connect ).toBeInstanceOf( Function );
+                expect( activity.connect ).toBeInstanceOf( Function );
             } );
 
         } );
 
         describe( '#actions', function () {
             it( "should have start/stop/play/pause/release defined", function () {
-                expect( sound.start ).toBeInstanceOf( Function );
-                expect( sound.stop ).toBeInstanceOf( Function );
-                expect( sound.play ).toBeInstanceOf( Function );
-                expect( sound.pause ).toBeInstanceOf( Function );
-                expect( sound.release ).toBeInstanceOf( Function );
+                expect( activity.start ).toBeInstanceOf( Function );
+                expect( activity.stop ).toBeInstanceOf( Function );
+                expect( activity.play ).toBeInstanceOf( Function );
+                expect( activity.pause ).toBeInstanceOf( Function );
+                expect( activity.release ).toBeInstanceOf( Function );
             } );
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    sound.start();
+                    activity.start();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( activity.isPlaying ).toBe( true );
                 setTimeout( function () {
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
                     expect( function () {
-                        sound.stop();
+                        activity.stop();
                     } ).not.toThrowError();
 
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( activity.isPlaying ).toBe( false );
                     setTimeout( function () {
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                         done();
                     }, 1000 );
                 }, 1000 );
@@ -233,39 +264,41 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
 
             it( "should be play/pause audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    activity.play();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( activity.isPlaying ).toBe( true );
                 setTimeout( function () {
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
 
                     expect( function () {
-                        sound.pause();
+                        activity.pause();
                     } ).not.toThrowError();
 
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( activity.isPlaying ).toBe( false );
                     setTimeout( function () {
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
 
-                        internalSpies.onSoundStarted.calls.reset();
-                        internalSpies.onSoundEnded.calls.reset();
+                        internalSpies.onAudioStart = jasmine.createSpy( "onAudioStart2" );
+                        internalSpies.onAudioEnd = jasmine.createSpy( "onAudioEnd2" );
+                        activity.onAudioStart = internalSpies.onAudioStart;
+                        activity.onAudioEnd = internalSpies.onAudioEnd;
 
                         expect( function () {
-                            sound.play();
+                            activity.play();
                         } ).not.toThrowError();
 
-                        expect( sound.isPlaying ).toBe( true );
+                        expect( activity.isPlaying ).toBe( true );
 
                         setTimeout( function () {
-                            expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                            expect( internalSpies.onAudioStart ).toHaveBeenCalled();
                             expect( function () {
-                                sound.pause();
+                                activity.pause();
                             } ).not.toThrowError();
 
-                            expect( sound.isPlaying ).toBe( false );
+                            expect( activity.isPlaying ).toBe( false );
                             setTimeout( function () {
-                                expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                                expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                                 done();
                             }, 1000 );
                         }, 1000 );
@@ -276,20 +309,20 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
 
             it( "should be play/release audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    activity.play();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( activity.isPlaying ).toBe( true );
                 setTimeout( function () {
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
 
                     expect( function () {
-                        sound.release();
+                        activity.release();
                     } ).not.toThrowError();
 
                     setTimeout( function () {
-                        expect( sound.isPlaying ).toBe( false );
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( activity.isPlaying ).toBe( false );
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                         done();
                     }, 1500 );
                 }, 1000 );
@@ -331,7 +364,7 @@ requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioPa
     }
     var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
     describe( 'Activity.js with stubbed Source', function () {
-        var sound;
+        var activity;
         var customMatchers = {
             toBeInstanceOf: function () {
                 return {
@@ -351,9 +384,9 @@ requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioPa
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
             resetAllSourceSpies();
-            if ( !sound ) {
+            if ( !activity ) {
                 console.log( "Initing Activity.." );
-                sound = new Activity( window.context, listofSounds, null, function () {
+                activity = new Activity( window.context, listofSounds, null, function () {
                     done();
                 } );
             } else {
@@ -370,48 +403,48 @@ requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioPa
         }
         describe( '#new Activity( context ) ', function () {
             it( "should have audioContext available", function () {
-                expect( sound.audioContext ).toBeInstanceOf( AudioContext );
+                expect( activity.audioContext ).toBeInstanceOf( AudioContext );
             } );
         } );
         describe( '#actions', function () {
             it( "should have start/stop/play/pause/release defined", function () {
-                expect( sound.start ).toBeInstanceOf( Function );
-                expect( sound.stop ).toBeInstanceOf( Function );
-                expect( sound.play ).toBeInstanceOf( Function );
-                expect( sound.pause ).toBeInstanceOf( Function );
-                expect( sound.release ).toBeInstanceOf( Function );
+                expect( activity.start ).toBeInstanceOf( Function );
+                expect( activity.stop ).toBeInstanceOf( Function );
+                expect( activity.play ).toBeInstanceOf( Function );
+                expect( activity.pause ).toBeInstanceOf( Function );
+                expect( activity.release ).toBeInstanceOf( Function );
             } );
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    sound.start();
+                    activity.start();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( activity.isPlaying ).toBe( true );
                 expect( sourceSpies.start ).toHaveBeenCalled();
 
                 expect( function () {
-                    sound.stop();
+                    activity.stop();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( false );
+                expect( activity.isPlaying ).toBe( false );
                 expect( sourceSpies.stop ).toHaveBeenCalled();
                 done();
             } );
 
             it( "should be play/pause audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    activity.play();
                 } ).not.toThrowError();
 
                 expect( sourceSpies.start ).toHaveBeenCalled();
-                expect( sound.isPlaying ).toBe( true );
+                expect( activity.isPlaying ).toBe( true );
 
                 expect( function () {
-                    sound.pause();
+                    activity.pause();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( false );
+                expect( activity.isPlaying ).toBe( false );
                 expect( sourceSpies.stop ).toHaveBeenCalled();
                 setTimeout( function () {
                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
@@ -422,17 +455,17 @@ requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioPa
                 sourceSpies.resetBufferSource.calls.reset();
 
                 expect( function () {
-                    sound.play();
+                    activity.play();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( activity.isPlaying ).toBe( true );
                 expect( sourceSpies.start ).toHaveBeenCalled();
 
                 expect( function () {
-                    sound.pause();
+                    activity.pause();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( false );
+                expect( activity.isPlaying ).toBe( false );
                 expect( sourceSpies.stop ).toHaveBeenCalled();
                 setTimeout( function () {
                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
@@ -443,18 +476,18 @@ requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioPa
 
             it( "should be play/release audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    activity.play();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( activity.isPlaying ).toBe( true );
                 expect( sourceSpies.start ).toHaveBeenCalled();
 
                 expect( function () {
-                    sound.release();
+                    activity.release();
                 } ).not.toThrowError();
 
                 setTimeout( function () {
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( activity.isPlaying ).toBe( false );
                     expect( sourceSpies.stop ).toHaveBeenCalled();
                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
                     done();
@@ -466,7 +499,7 @@ requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioPa
                 var offset = Math.random() / 2;
                 var duration = Math.random() * 2;
                 expect( function () {
-                    sound.start( when, offset, duration, 0.5 );
+                    activity.start( when, offset, duration, 0.5 );
                 } ).not.toThrowError();
 
                 expect( sourceSpies.start ).toHaveBeenCalledWith( when, offset, duration );
@@ -476,11 +509,11 @@ requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioPa
             it( "should be pass parameters from stop to source", function ( done ) {
                 var duration = Math.random() * 2;
                 expect( function () {
-                    sound.start();
+                    activity.start();
                 } ).not.toThrowError();
 
                 expect( function () {
-                    sound.stop( duration );
+                    activity.stop( duration );
                 } ).not.toThrowError();
 
                 expect( sourceSpies.stop ).toHaveBeenCalledWith( duration );

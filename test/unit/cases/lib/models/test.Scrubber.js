@@ -6,13 +6,13 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
     var internalSpies = {
         onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
         onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
-        onSoundStarted: jasmine.createSpy( "onSoundStarted" ),
-        onSoundEnded: jasmine.createSpy( "onSoundEnded" )
+        onAudioStart: jasmine.createSpy( "onAudioStart" ),
+        onAudioEnd: jasmine.createSpy( "onAudioEnd" )
     };
     var listofSounds = [ 'audio/surf.mp3' ];
 
     describe( 'Scrubber.js', function () {
-        var sound;
+        var scrubber;
         var customMatchers = {
             toBeInstanceOf: function () {
                 return {
@@ -33,14 +33,14 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
             resetAllInternalSpies();
-            if ( !sound ) {
+            if ( !scrubber ) {
                 console.log( "Initing Scrubber.." );
-                sound = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                scrubber = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
             } else {
-                sound.stop();
+                scrubber.stop();
                 done();
             }
         } );
@@ -56,138 +56,167 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
         describe( '#new Scrubber( context )', function () {
 
             it( "should have audioContext available", function () {
-                expect( sound.audioContext ).toBeInstanceOf( AudioContext );
+                expect( scrubber.audioContext ).toBeInstanceOf( AudioContext );
             } );
 
             it( "should have a minimum number of sources as 1", function () {
-                expect( sound.minSources ).toBe( 1 );
+                expect( scrubber.minSources ).toBe( 1 );
             } );
 
             it( "should have a maximum number of sources as 1", function () {
-                expect( sound.maxSources ).toBe( 1 );
+                expect( scrubber.maxSources ).toBe( 1 );
             } );
 
             it( "should have a model name as Scrubber", function () {
-                expect( sound.modelName ).toBe( "Scrubber" );
+                expect( scrubber.modelName ).toBe( "Scrubber" );
             } );
 
             it( "should be a BaseSound", function () {
-                expect( sound ).toBeInstanceOf( BaseSound );
+                expect( scrubber ).toBeInstanceOf( BaseSound );
             } );
 
             it( "should be have been initialized", function () {
-                expect( sound.isInitialized ).toBe( true );
+                expect( scrubber.isInitialized ).toBe( true );
             } );
 
             it( "should have called progress events", function ( done ) {
-                sound = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                scrubber = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
             } );
 
             it( "should have called load events", function ( done ) {
-                sound = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                scrubber = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
+            } );
+        } );
+
+        describe( '#setSources()', function () {
+            it( "should have method setSources defined", function () {
+                expect( scrubber.setSources ).toBeInstanceOf( Function );
             } );
 
+            // it( "should be able to change sources", function ( done ) {
+            //     scrubber.setSources( listofSounds[ 0 ], null, function () {
+            //         expect( scrubber.multiTrackGain.length ).toBe( 1 );
+            //         done();
+            //     } );
+            // } );
+
+            it( "should call onprogress events", function ( done ) {
+                var progressSpy = jasmine.createSpy( "progressSpy" );
+                scrubber.setSources( listofSounds[ 0 ], progressSpy, function () {
+                    expect( progressSpy ).toHaveBeenCalled();
+                    done();
+                } );
+            } );
+
+            it( "should call onload event", function ( done ) {
+                var loadSpy = jasmine.createSpy( "loadSpy" );
+                scrubber.setSources( listofSounds, null, loadSpy );
+                window.setTimeout( function () {
+                    expect( loadSpy ).toHaveBeenCalled();
+                    done();
+                }, 1000 );
+            } );
         } );
+
         describe( '#properties', function () {
 
             it( "should have a valid parameter playPosition", function () {
 
-                expect( sound.playPosition ).toBeInstanceOf( SPAudioParam );
+                expect( scrubber.playPosition ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.playPosition = 0;
+                    scrubber.playPosition = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete sound.playPosition;
+                    delete scrubber.playPosition;
                 } ).toThrowError();
 
-                expect( sound.playPosition.name ).toBe( "playPosition" );
-                expect( sound.playPosition.value ).toBe( 0.0 );
-                expect( sound.playPosition.minValue ).toBe( 0.0 );
-                expect( sound.playPosition.maxValue ).toBe( 1.0 );
+                expect( scrubber.playPosition.name ).toBe( "playPosition" );
+                expect( scrubber.playPosition.value ).toBe( 0.0 );
+                expect( scrubber.playPosition.minValue ).toBe( 0.0 );
+                expect( scrubber.playPosition.maxValue ).toBe( 1.0 );
 
             } );
 
             it( "should have a valid parameter noMotionFade", function () {
-                expect( sound.noMotionFade ).toBeInstanceOf( SPAudioParam );
+                expect( scrubber.noMotionFade ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.noMotionFade = 0;
+                    scrubber.noMotionFade = 0;
                 } ).toThrowError();
                 expect( function () {
-                    delete sound.noMotionFade;
+                    delete scrubber.noMotionFade;
                 } ).toThrowError();
 
-                expect( sound.noMotionFade.name ).toBe( "noMotionFade" );
-                expect( sound.noMotionFade.value ).toBe( true );
-                expect( sound.noMotionFade.minValue ).toBe( true );
-                expect( sound.noMotionFade.maxValue ).toBe( false );
+                expect( scrubber.noMotionFade.name ).toBe( "noMotionFade" );
+                expect( scrubber.noMotionFade.value ).toBe( true );
+                expect( scrubber.noMotionFade.minValue ).toBe( true );
+                expect( scrubber.noMotionFade.maxValue ).toBe( false );
 
             } );
 
             it( "should have a valid parameter muteOnReverse", function () {
-                expect( sound.muteOnReverse ).toBeInstanceOf( SPAudioParam );
+                expect( scrubber.muteOnReverse ).toBeInstanceOf( SPAudioParam );
                 expect( function () {
-                    sound.muteOnReverse = 0;
+                    scrubber.muteOnReverse = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete sound.muteOnReverse;
+                    delete scrubber.muteOnReverse;
                 } ).toThrowError();
 
-                expect( sound.muteOnReverse.name ).toBe( "muteOnReverse" );
-                expect( sound.muteOnReverse.value ).toBe( true );
-                expect( sound.muteOnReverse.minValue ).toBe( true );
-                expect( sound.muteOnReverse.maxValue ).toBe( false );
-
+                expect( scrubber.muteOnReverse.name ).toBe( "muteOnReverse" );
+                expect( scrubber.muteOnReverse.value ).toBe( true );
+                expect( scrubber.muteOnReverse.minValue ).toBe( true );
+                expect( scrubber.muteOnReverse.maxValue ).toBe( false );
             } );
         } );
 
         describe( '#connect/disconnect', function () {
 
             it( "have connect function defined", function () {
-                expect( sound.connect ).toBeInstanceOf( Function );
+                expect( scrubber.connect ).toBeInstanceOf( Function );
             } );
             it( "have disconnect function defined", function () {
-                expect( sound.connect ).toBeInstanceOf( Function );
+                expect( scrubber.connect ).toBeInstanceOf( Function );
             } );
 
         } );
 
         describe( '#actions', function () {
             it( "should have start/stop/play/pause/release defined", function () {
-                expect( sound.start ).toBeInstanceOf( Function );
-                expect( sound.stop ).toBeInstanceOf( Function );
-                expect( sound.play ).toBeInstanceOf( Function );
-                expect( sound.pause ).toBeInstanceOf( Function );
-                expect( sound.release ).toBeInstanceOf( Function );
+                expect( scrubber.start ).toBeInstanceOf( Function );
+                expect( scrubber.stop ).toBeInstanceOf( Function );
+                expect( scrubber.play ).toBeInstanceOf( Function );
+                expect( scrubber.pause ).toBeInstanceOf( Function );
+                expect( scrubber.release ).toBeInstanceOf( Function );
             } );
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    sound.start();
-                    sound.playPosition.value = 0.1;
+                    scrubber.start();
+                    scrubber.playPosition.value = 0.1;
                 } ).not.toThrowError();
 
                 setTimeout( function () {
-                    expect( sound.isPlaying ).toBe( true );
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( scrubber.isPlaying ).toBe( true );
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
                     expect( function () {
-                        sound.stop();
+                        scrubber.stop();
                     } ).not.toThrowError();
 
                     setTimeout( function () {
-                        expect( sound.isPlaying ).toBe( false );
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( scrubber.isPlaying ).toBe( false );
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                         done();
                     }, 1000 );
                 }, 1000 );
@@ -196,48 +225,50 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
             it( "should be play/pause audio", function ( done ) {
                 var randomPlay;
                 expect( function () {
-                    sound.play();
-                    sound.playPosition.value = 0;
+                    scrubber.play();
+                    scrubber.playPosition.value = 0;
                     randomPlay = window.setInterval( function () {
-                        sound.playPosition.value += Math.random() / 10;
+                        scrubber.playPosition.value += Math.random() / 10;
                     }, 100 );
                 } ).not.toThrowError();
 
                 setTimeout( function () {
-                    expect( sound.isPlaying ).toBe( true );
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( scrubber.isPlaying ).toBe( true );
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
                     expect( function () {
                         window.clearInterval( randomPlay );
-                        sound.pause();
+                        scrubber.pause();
                     } ).not.toThrowError();
 
                     setTimeout( function () {
-                        expect( sound.isPlaying ).toBe( false );
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( scrubber.isPlaying ).toBe( false );
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
 
-                        internalSpies.onSoundStarted.calls.reset();
-                        internalSpies.onSoundEnded.calls.reset();
+                        internalSpies.onAudioStart = jasmine.createSpy( "onAudioStart2" );
+                        internalSpies.onAudioEnd = jasmine.createSpy( "onAudioEnd2" );
+                        scrubber.onAudioStart = internalSpies.onAudioStart;
+                        scrubber.onAudioEnd = internalSpies.onAudioEnd;
 
                         expect( function () {
-                            sound.play();
-                            sound.playPosition.value = 0;
+                            scrubber.play();
+                            scrubber.playPosition.value = 0;
                             randomPlay = window.setInterval( function () {
-                                sound.playPosition.value += Math.random() / 10;
+                                scrubber.playPosition.value += Math.random() / 10;
                             }, 100 );
                         } ).not.toThrowError();
 
                         setTimeout( function () {
-                            expect( sound.isPlaying ).toBe( true );
-                            expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                            expect( scrubber.isPlaying ).toBe( true );
+                            expect( internalSpies.onAudioStart ).toHaveBeenCalled();
 
                             expect( function () {
                                 window.clearInterval( randomPlay );
-                                sound.pause();
+                                scrubber.pause();
                             } ).not.toThrowError();
 
                             setTimeout( function () {
-                                expect( sound.isPlaying ).toBe( false );
-                                expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                                expect( scrubber.isPlaying ).toBe( false );
+                                expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                                 done();
                             }, 1000 );
                         }, 1000 );
@@ -250,25 +281,25 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 var randomPlay;
 
                 expect( function () {
-                    sound.play();
-                    sound.playPosition.value = 0;
+                    scrubber.play();
+                    scrubber.playPosition.value = 0;
                     randomPlay = window.setInterval( function () {
-                        sound.playPosition.value += Math.random() / 10;
+                        scrubber.playPosition.value += Math.random() / 10;
                     }, 100 );
                 } ).not.toThrowError();
 
                 setTimeout( function () {
-                    expect( sound.isPlaying ).toBe( true );
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( scrubber.isPlaying ).toBe( true );
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
 
                     expect( function () {
                         window.clearInterval( randomPlay );
-                        sound.release();
+                        scrubber.release();
                     } ).not.toThrowError();
 
                     setTimeout( function () {
-                        expect( sound.isPlaying ).toBe( false );
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( scrubber.isPlaying ).toBe( false );
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                         done();
                     }, 1000 );
                 }, 1000 );

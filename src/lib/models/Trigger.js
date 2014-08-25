@@ -33,8 +33,34 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
-            this.onAudioStart = onAudioStart;
-            this.onAudioEnd = onAudioEnd;
+
+            Object.defineProperty( this, "onAudioStart", {
+                enumerable: true,
+                configurable: false,
+                set: function ( startCallback ) {
+                    if ( soundQueue_ ) {
+                        onAudioStart = startCallback;
+                        soundQueue_.onAudioStart = startCallback;
+                    }
+                },
+                get: function () {
+                    return onAudioStart;
+                }
+            } );
+
+            Object.defineProperty( this, "onAudioEnd", {
+                enumerable: true,
+                configurable: false,
+                set: function ( endCallback ) {
+                    onAudioEnd = endCallback;
+                    if ( soundQueue_ ) {
+                        soundQueue_.onAudioEnd = endCallback;
+                    }
+                },
+                get: function () {
+                    return onAudioEnd;
+                }
+            } );
 
             // Private vars
             var self = this;

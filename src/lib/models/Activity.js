@@ -32,8 +32,34 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
 
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
-            this.onAudioStart = onAudioStart;
-            this.onAudioEnd = onAudioEnd;
+
+            Object.defineProperty( this, "onAudioStart", {
+                enumerable: true,
+                configurable: false,
+                set: function ( startCallback ) {
+                    if ( internalLooper_ ) {
+                        onAudioStart = startCallback;
+                        internalLooper_.onAudioStart = startCallback;
+                    }
+                },
+                get: function () {
+                    return onAudioStart;
+                }
+            } );
+
+            Object.defineProperty( this, "onAudioEnd", {
+                enumerable: true,
+                configurable: false,
+                set: function ( endCallback ) {
+                    onAudioEnd = endCallback;
+                    if ( internalLooper_ ) {
+                        internalLooper_.onAudioEnd = endCallback;
+                    }
+                },
+                get: function () {
+                    return onAudioEnd;
+                }
+            } );
 
             // Private vars
             var self = this;

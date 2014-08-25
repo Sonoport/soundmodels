@@ -6,12 +6,12 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
     var internalSpies = {
         onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
         onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
-        onSoundStarted: jasmine.createSpy( "onSoundStarted" ),
-        onSoundEnded: jasmine.createSpy( "onSoundEnded" )
+        onAudioStart: jasmine.createSpy( "onAudioStart" ),
+        onAudioEnd: jasmine.createSpy( "onAudioEnd" )
     };
     var listofSounds = [ 'audio/surf.mp3' ];
     describe( 'Extender.js', function () {
-        var sound;
+        var extender;
         var customMatchers = {
             toBeInstanceOf: function () {
                 return {
@@ -32,12 +32,12 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
             resetAllInternalSpies();
-            if ( !sound ) {
+            if ( !extender ) {
                 console.log( "Initing Extender.." );
-                sound = new Extender( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                extender = new Extender( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
             } else {
                 done();
             }
@@ -54,43 +54,73 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
         describe( '#new Extender( context )', function () {
 
             it( "should have audioContext available", function () {
-                expect( sound.audioContext ).toBeInstanceOf( AudioContext );
+                expect( extender.audioContext ).toBeInstanceOf( AudioContext );
             } );
 
             it( "should have a minimum number of sources as 1", function () {
-                expect( sound.minSources ).toBe( 1 );
+                expect( extender.minSources ).toBe( 1 );
             } );
 
             it( "should have a maximum number of sources as 1", function () {
-                expect( sound.maxSources ).toBe( 1 );
+                expect( extender.maxSources ).toBe( 1 );
             } );
 
             it( "should have a model name as Extender", function () {
-                expect( sound.modelName ).toBe( "Extender" );
+                expect( extender.modelName ).toBe( "Extender" );
             } );
 
             it( "should be a BaseSound", function () {
-                expect( sound ).toBeInstanceOf( BaseSound );
+                expect( extender ).toBeInstanceOf( BaseSound );
             } );
 
             it( "should be have been initialized", function () {
-                expect( sound.isInitialized ).toBe( true );
+                expect( extender.isInitialized ).toBe( true );
             } );
 
             it( "should have called progress events", function ( done ) {
-                sound = new Extender( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                extender = new Extender( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
             } );
 
             it( "should have called load events", function ( done ) {
-                sound = new Extender( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                extender = new Extender( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
+            } );
+        } );
+
+        describe( '#setSources()', function () {
+            it( "should have method setSources defined", function () {
+                expect( extender.setSources ).toBeInstanceOf( Function );
+            } );
+
+            // it( "should be able to change sources", function ( done ) {
+            //     extender.setSources( listofSounds[ 0 ], null, function () {
+            //         expect( extender.multiTrackGain.length ).toBe( 1 );
+            //         done();
+            //     } );
+            // } );
+
+            it( "should call onprogress events", function ( done ) {
+                var progressSpy = jasmine.createSpy( "progressSpy" );
+                extender.setSources( listofSounds[ 0 ], progressSpy, function () {
+                    expect( progressSpy ).toHaveBeenCalled();
+                    done();
+                } );
+            } );
+
+            it( "should call onload event", function ( done ) {
+                var loadSpy = jasmine.createSpy( "loadSpy" );
+                extender.setSources( listofSounds, null, loadSpy );
+                window.setTimeout( function () {
+                    expect( loadSpy ).toHaveBeenCalled();
+                    done();
+                }, 1000 );
             } );
         } );
 
@@ -98,54 +128,54 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
 
             it( "should have a valid parameter pitchShift", function () {
 
-                expect( sound.pitchShift ).toBeInstanceOf( SPAudioParam );
+                expect( extender.pitchShift ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.pitchShift = 0;
+                    extender.pitchShift = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete sound.pitchShift;
+                    delete extender.pitchShift;
                 } ).toThrowError();
 
-                expect( sound.pitchShift.name ).toBe( "pitchShift" );
-                expect( sound.pitchShift.value ).toBe( 0 );
-                expect( sound.pitchShift.minValue ).toBe( -60 );
-                expect( sound.pitchShift.maxValue ).toBe( 60 );
+                expect( extender.pitchShift.name ).toBe( "pitchShift" );
+                expect( extender.pitchShift.value ).toBe( 0 );
+                expect( extender.pitchShift.minValue ).toBe( -60 );
+                expect( extender.pitchShift.maxValue ).toBe( 60 );
 
             } );
 
             it( "should have a valid parameter eventPeriod", function () {
-                expect( sound.eventPeriod ).toBeInstanceOf( SPAudioParam );
+                expect( extender.eventPeriod ).toBeInstanceOf( SPAudioParam );
                 expect( function () {
-                    sound.eventPeriod = 0;
+                    extender.eventPeriod = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete sound.eventPeriod;
+                    delete extender.eventPeriod;
                 } ).toThrowError();
 
-                expect( sound.eventPeriod.name ).toBe( "eventPeriod" );
-                expect( sound.eventPeriod.value ).toBe( 2.0 );
-                expect( sound.eventPeriod.minValue ).toBe( 0.1 );
-                expect( sound.eventPeriod.maxValue ).toBe( 10 );
+                expect( extender.eventPeriod.name ).toBe( "eventPeriod" );
+                expect( extender.eventPeriod.value ).toBe( 2.0 );
+                expect( extender.eventPeriod.minValue ).toBe( 0.1 );
+                expect( extender.eventPeriod.maxValue ).toBe( 10 );
 
             } );
 
             it( "should have a valid parameter crossFadeDuration", function () {
-                expect( sound.crossFadeDuration ).toBeInstanceOf( SPAudioParam );
+                expect( extender.crossFadeDuration ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.crossFadeDuration = 0;
+                    extender.crossFadeDuration = 0;
                 } ).toThrowError();
                 expect( function () {
-                    delete sound.crossFadeDuration;
+                    delete extender.crossFadeDuration;
                 } ).toThrowError();
 
-                expect( sound.crossFadeDuration.name ).toBe( "crossFadeDuration" );
-                expect( sound.crossFadeDuration.value ).toBe( 0.5 );
-                expect( sound.crossFadeDuration.minValue ).toBe( 0.1 );
-                expect( sound.crossFadeDuration.maxValue ).toBe( 0.99 );
+                expect( extender.crossFadeDuration.name ).toBe( "crossFadeDuration" );
+                expect( extender.crossFadeDuration.value ).toBe( 0.5 );
+                expect( extender.crossFadeDuration.minValue ).toBe( 0.1 );
+                expect( extender.crossFadeDuration.maxValue ).toBe( 0.99 );
 
             } );
         } );
@@ -153,38 +183,38 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
         describe( '#connect/disconnect', function () {
 
             it( "have connect function defined", function () {
-                expect( sound.connect ).toBeInstanceOf( Function );
+                expect( extender.connect ).toBeInstanceOf( Function );
             } );
             it( "have disconnect function defined", function () {
-                expect( sound.connect ).toBeInstanceOf( Function );
+                expect( extender.connect ).toBeInstanceOf( Function );
             } );
 
         } );
 
         describe( '#actions', function () {
             it( "should have start/stop/play/pause/release defined", function () {
-                expect( sound.start ).toBeInstanceOf( Function );
-                expect( sound.stop ).toBeInstanceOf( Function );
-                expect( sound.play ).toBeInstanceOf( Function );
-                expect( sound.pause ).toBeInstanceOf( Function );
-                expect( sound.release ).toBeInstanceOf( Function );
+                expect( extender.start ).toBeInstanceOf( Function );
+                expect( extender.stop ).toBeInstanceOf( Function );
+                expect( extender.play ).toBeInstanceOf( Function );
+                expect( extender.pause ).toBeInstanceOf( Function );
+                expect( extender.release ).toBeInstanceOf( Function );
             } );
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    sound.start();
+                    extender.start();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( extender.isPlaying ).toBe( true );
                 setTimeout( function () {
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
                     expect( function () {
-                        sound.stop();
+                        extender.stop();
                     } ).not.toThrowError();
 
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( extender.isPlaying ).toBe( false );
                     setTimeout( function () {
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                         done();
                     }, 1000 );
                 }, 1000 );
@@ -192,39 +222,41 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
 
             it( "should be play/pause audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    extender.play();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( extender.isPlaying ).toBe( true );
                 setTimeout( function () {
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
 
                     expect( function () {
-                        sound.pause();
+                        extender.pause();
                     } ).not.toThrowError();
 
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( extender.isPlaying ).toBe( false );
                     setTimeout( function () {
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
 
-                        internalSpies.onSoundStarted.calls.reset();
-                        internalSpies.onSoundEnded.calls.reset();
+                        internalSpies.onAudioStart = jasmine.createSpy( "onAudioStart2" );
+                        internalSpies.onAudioEnd = jasmine.createSpy( "onAudioEnd2" );
+                        extender.onAudioStart = internalSpies.onAudioStart;
+                        extender.onAudioEnd = internalSpies.onAudioEnd;
 
                         expect( function () {
-                            sound.play();
+                            extender.play();
                         } ).not.toThrowError();
 
-                        expect( sound.isPlaying ).toBe( true );
+                        expect( extender.isPlaying ).toBe( true );
 
                         setTimeout( function () {
-                            expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                            expect( internalSpies.onAudioStart ).toHaveBeenCalled();
                             expect( function () {
-                                sound.pause();
+                                extender.pause();
                             } ).not.toThrowError();
 
-                            expect( sound.isPlaying ).toBe( false );
+                            expect( extender.isPlaying ).toBe( false );
                             setTimeout( function () {
-                                expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                                expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                                 done();
                             }, 1000 );
                         }, 1000 );
@@ -235,20 +267,20 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
 
             it( "should be play/release audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    extender.play();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( extender.isPlaying ).toBe( true );
                 setTimeout( function () {
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
 
                     expect( function () {
-                        sound.release();
+                        extender.release();
                     } ).not.toThrowError();
 
                     setTimeout( function () {
-                        expect( sound.isPlaying ).toBe( false );
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( extender.isPlaying ).toBe( false );
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                         done();
                     }, 1500 );
                 }, 1000 );
@@ -291,7 +323,7 @@ requireWithStubbedSource( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioPa
     var listofSounds = [ 'audio/surf.mp3' ];
 
     describe( 'Extender.js with stubbed Queue', function () {
-        var sound;
+        var extender;
         var customMatchers = {
             toBeInstanceOf: function () {
                 return {
@@ -312,9 +344,9 @@ requireWithStubbedSource( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioPa
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
             resetAllSourceSpies();
-            if ( !sound ) {
+            if ( !extender ) {
                 console.log( "Initing Stubbed Extender.." );
-                sound = new Extender( window.context, listofSounds, null, function () {
+                extender = new Extender( window.context, listofSounds, null, function () {
                     done();
                 } );
             } else {
@@ -331,24 +363,24 @@ requireWithStubbedSource( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioPa
         }
         describe( '#new Extender( context ) ', function () {
             it( "should have audioContext available", function () {
-                expect( sound.audioContext ).toBeInstanceOf( AudioContext );
+                expect( extender.audioContext ).toBeInstanceOf( AudioContext );
             } );
         } );
         describe( '#actions', function () {
             it( "should have start/stop/play/pause/release defined", function () {
-                expect( sound.start ).toBeInstanceOf( Function );
-                expect( sound.stop ).toBeInstanceOf( Function );
-                expect( sound.play ).toBeInstanceOf( Function );
-                expect( sound.pause ).toBeInstanceOf( Function );
-                expect( sound.release ).toBeInstanceOf( Function );
+                expect( extender.start ).toBeInstanceOf( Function );
+                expect( extender.stop ).toBeInstanceOf( Function );
+                expect( extender.play ).toBeInstanceOf( Function );
+                expect( extender.pause ).toBeInstanceOf( Function );
+                expect( extender.release ).toBeInstanceOf( Function );
             } );
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    sound.start();
+                    extender.start();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( extender.isPlaying ).toBe( true );
                 setTimeout( function () {
                     expect( queueSpies.queueSetSource ).toHaveBeenCalled();
                     expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
@@ -356,10 +388,10 @@ requireWithStubbedSource( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioPa
                 }, 2000 );
 
                 expect( function () {
-                    sound.stop();
+                    extender.stop();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( false );
+                expect( extender.isPlaying ).toBe( false );
                 setTimeout( function () {
                     expect( queueSpies.pause ).toHaveBeenCalled();
                 }, 2000 );
@@ -368,20 +400,20 @@ requireWithStubbedSource( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioPa
 
             it( "should be play/pause audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    extender.play();
                 } ).not.toThrowError();
 
                 setTimeout( function () {
                     expect( queueSpies.queueSetSource ).toHaveBeenCalled();
                     expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
                     expect( queueSpies.queueStart ).toHaveBeenCalled();
-                    expect( sound.isPlaying ).toBe( true );
+                    expect( extender.isPlaying ).toBe( true );
 
                     expect( function () {
-                        sound.pause();
+                        extender.pause();
                     } ).not.toThrowError();
 
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( extender.isPlaying ).toBe( false );
 
                     setTimeout( function () {
                         expect( queueSpies.pause ).toHaveBeenCalled();
@@ -392,20 +424,20 @@ requireWithStubbedSource( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioPa
                         queueSpies.pause.calls.reset();
 
                         expect( function () {
-                            sound.play();
+                            extender.play();
                         } ).not.toThrowError();
 
                         setTimeout( function () {
                             expect( queueSpies.queueSetSource ).toHaveBeenCalled();
                             expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
                             expect( queueSpies.queueStart ).toHaveBeenCalled();
-                            expect( sound.isPlaying ).toBe( true );
+                            expect( extender.isPlaying ).toBe( true );
 
                             expect( function () {
-                                sound.pause();
+                                extender.pause();
                             } ).not.toThrowError();
 
-                            expect( sound.isPlaying ).toBe( false );
+                            expect( extender.isPlaying ).toBe( false );
                             setTimeout( function () {
                                 expect( queueSpies.pause ).toHaveBeenCalled();
                                 done();
@@ -418,20 +450,20 @@ requireWithStubbedSource( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioPa
 
             it( "should be play/release audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    extender.play();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( extender.isPlaying ).toBe( true );
                 expect( queueSpies.queueSetSource ).toHaveBeenCalled();
                 expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
                 expect( queueSpies.queueStart ).toHaveBeenCalled();
 
                 expect( function () {
-                    sound.release();
+                    extender.release();
                 } ).not.toThrowError();
 
                 setTimeout( function () {
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( extender.isPlaying ).toBe( false );
                     expect( queueSpies.pause ).toHaveBeenCalled();
                     done();
                 }, 1000 );

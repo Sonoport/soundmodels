@@ -6,12 +6,12 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
     var internalSpies = {
         onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
         onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
-        onSoundStarted: jasmine.createSpy( "onSoundStarted" ),
-        onSoundEnded: jasmine.createSpy( "onSoundEnded" )
+        onAudioStart: jasmine.createSpy( "onAudioStart" ),
+        onAudioEnd: jasmine.createSpy( "onAudioEnd" )
     };
     var listofSounds = [ 'audio/Hit5.mp3', 'audio/Hit6.mp3', 'audio/Hit7.mp3', 'audio/Hit8.mp3' ];
     describe( 'MultiTrigger.js', function () {
-        var sound;
+        var multiTrigger;
         var customMatchers = {
             toBeInstanceOf: function () {
                 return {
@@ -32,12 +32,12 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
             resetAllInternalSpies();
-            if ( !sound ) {
+            if ( !multiTrigger ) {
                 console.log( "Initing MultiTrigger.." );
-                sound = new MultiTrigger( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                multiTrigger = new MultiTrigger( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
             } else {
                 done();
             }
@@ -54,131 +54,162 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
         describe( '#new MultiTrigger( context )', function () {
 
             it( "should have audioContext available", function () {
-                expect( sound.audioContext ).toBeInstanceOf( AudioContext );
+                expect( multiTrigger.audioContext ).toBeInstanceOf( AudioContext );
             } );
 
             it( "should have a minimum number of sources as 1", function () {
-                expect( sound.minSources ).toBe( 1 );
+                expect( multiTrigger.minSources ).toBe( 1 );
             } );
 
             it( "should have a maximum number of sources as 1", function () {
-                expect( sound.maxSources ).toBe( 8 );
+                expect( multiTrigger.maxSources ).toBe( 8 );
             } );
 
             it( "should have a model name as MultiTrigger", function () {
-                expect( sound.modelName ).toBe( "MultiTrigger" );
+                expect( multiTrigger.modelName ).toBe( "MultiTrigger" );
             } );
 
             it( "should be a BaseSound", function () {
-                expect( sound ).toBeInstanceOf( BaseSound );
+                expect( multiTrigger ).toBeInstanceOf( BaseSound );
             } );
 
             it( "should be have been initialized", function () {
-                expect( sound.isInitialized ).toBe( true );
+                expect( multiTrigger.isInitialized ).toBe( true );
             } );
 
             it( "should have called progress events", function ( done ) {
-                sound = new MultiTrigger( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                multiTrigger = new MultiTrigger( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
             } );
 
             it( "should have called load events", function ( done ) {
-                sound = new MultiTrigger( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                multiTrigger = new MultiTrigger( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                     internalSpies.onLoadComplete();
                     expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
                     done();
-                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+                }, internalSpies.onAudioStart, internalSpies.onAudioEnd );
             } );
         } );
+
+        describe( '#setSources()', function () {
+            it( "should have method setSources defined", function () {
+                expect( multiTrigger.setSources ).toBeInstanceOf( Function );
+            } );
+
+            // it( "should be able to change sources", function ( done ) {
+            //     multiTrigger.setSources( listofSounds[ 0 ], null, function () {
+            //         expect( multiTrigger.multiTrackGain.length ).toBe( 1 );
+            //         done();
+            //     } );
+            // } );
+
+            it( "should call onprogress events", function ( done ) {
+                var progressSpy = jasmine.createSpy( "progressSpy" );
+                multiTrigger.setSources( listofSounds[ 0 ], progressSpy, function () {
+                    expect( progressSpy ).toHaveBeenCalled();
+                    done();
+                } );
+            } );
+
+            it( "should call onload event", function ( done ) {
+                var loadSpy = jasmine.createSpy( "loadSpy" );
+                multiTrigger.setSources( listofSounds, null, loadSpy );
+                window.setTimeout( function () {
+                    expect( loadSpy ).toHaveBeenCalled();
+                    done();
+                }, 1000 );
+            } );
+        } );
+
         describe( '#properties', function () {
 
             it( "should have a valid parameter pitchShift", function () {
 
-                expect( sound.pitchShift ).toBeInstanceOf( SPAudioParam );
+                expect( multiTrigger.pitchShift ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.pitchShift = 0;
+                    multiTrigger.pitchShift = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete sound.pitchShift;
+                    delete multiTrigger.pitchShift;
                 } ).toThrowError();
 
-                expect( sound.pitchShift.name ).toBe( "pitchShift" );
-                expect( sound.pitchShift.value ).toBe( 0 );
-                expect( sound.pitchShift.minValue ).toBe( -60 );
-                expect( sound.pitchShift.maxValue ).toBe( 60 );
+                expect( multiTrigger.pitchShift.name ).toBe( "pitchShift" );
+                expect( multiTrigger.pitchShift.value ).toBe( 0 );
+                expect( multiTrigger.pitchShift.minValue ).toBe( -60 );
+                expect( multiTrigger.pitchShift.maxValue ).toBe( 60 );
 
             } );
 
             it( "should have a valid parameter pitchRand", function () {
-                expect( sound.pitchRand ).toBeInstanceOf( SPAudioParam );
+                expect( multiTrigger.pitchRand ).toBeInstanceOf( SPAudioParam );
                 expect( function () {
-                    sound.pitchRand = 0;
+                    multiTrigger.pitchRand = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete sound.pitchRand;
+                    delete multiTrigger.pitchRand;
                 } ).toThrowError();
 
-                expect( sound.pitchRand.name ).toBe( "pitchRand" );
-                expect( sound.pitchRand.value ).toBe( 0 );
-                expect( sound.pitchRand.minValue ).toBe( 0 );
-                expect( sound.pitchRand.maxValue ).toBe( 24 );
+                expect( multiTrigger.pitchRand.name ).toBe( "pitchRand" );
+                expect( multiTrigger.pitchRand.value ).toBe( 0 );
+                expect( multiTrigger.pitchRand.minValue ).toBe( 0 );
+                expect( multiTrigger.pitchRand.maxValue ).toBe( 24 );
 
             } );
 
             it( "should have a valid parameter eventRand", function () {
-                expect( sound.eventRand ).toBeInstanceOf( SPAudioParam );
+                expect( multiTrigger.eventRand ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.eventRand = 0;
+                    multiTrigger.eventRand = 0;
                 } ).toThrowError();
                 expect( function () {
-                    delete sound.eventRand;
+                    delete multiTrigger.eventRand;
                 } ).toThrowError();
 
-                expect( sound.eventRand.name ).toBe( "eventRand" );
-                expect( sound.eventRand.value ).toBe( false );
-                expect( sound.eventRand.minValue ).toBe( true );
-                expect( sound.eventRand.maxValue ).toBe( false );
+                expect( multiTrigger.eventRand.name ).toBe( "eventRand" );
+                expect( multiTrigger.eventRand.value ).toBe( false );
+                expect( multiTrigger.eventRand.minValue ).toBe( true );
+                expect( multiTrigger.eventRand.maxValue ).toBe( false );
 
             } );
 
             it( "should have a valid parameter eventRate", function () {
-                expect( sound.eventRate ).toBeInstanceOf( SPAudioParam );
+                expect( multiTrigger.eventRate ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.eventRate = 0;
+                    multiTrigger.eventRate = 0;
                 } ).toThrowError();
                 expect( function () {
-                    delete sound.eventRate;
+                    delete multiTrigger.eventRate;
                 } ).toThrowError();
 
-                expect( sound.eventRate.name ).toBe( "eventRate" );
-                expect( sound.eventRate.value ).toBe( 10.0 );
-                expect( sound.eventRate.minValue ).toBe( 0.0 );
-                expect( sound.eventRate.maxValue ).toBe( 60.0 );
+                expect( multiTrigger.eventRate.name ).toBe( "eventRate" );
+                expect( multiTrigger.eventRate.value ).toBe( 10.0 );
+                expect( multiTrigger.eventRate.minValue ).toBe( 0.0 );
+                expect( multiTrigger.eventRate.maxValue ).toBe( 60.0 );
 
             } );
 
             it( "should have a valid parameter eventJitter", function () {
-                expect( sound.eventJitter ).toBeInstanceOf( SPAudioParam );
+                expect( multiTrigger.eventJitter ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    sound.eventJitter = 0;
+                    multiTrigger.eventJitter = 0;
                 } ).toThrowError();
                 expect( function () {
-                    delete sound.eventJitter;
+                    delete multiTrigger.eventJitter;
                 } ).toThrowError();
 
-                expect( sound.eventJitter.name ).toBe( "eventJitter" );
-                expect( sound.eventJitter.value ).toBe( 0.0 );
-                expect( sound.eventJitter.minValue ).toBe( 0.0 );
-                expect( sound.eventJitter.maxValue ).toBe( 0.99 );
+                expect( multiTrigger.eventJitter.name ).toBe( "eventJitter" );
+                expect( multiTrigger.eventJitter.value ).toBe( 0.0 );
+                expect( multiTrigger.eventJitter.minValue ).toBe( 0.0 );
+                expect( multiTrigger.eventJitter.maxValue ).toBe( 0.99 );
 
             } );
         } );
@@ -186,38 +217,38 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
         describe( '#connect/disconnect', function () {
 
             it( "have connect function defined", function () {
-                expect( sound.connect ).toBeInstanceOf( Function );
+                expect( multiTrigger.connect ).toBeInstanceOf( Function );
             } );
             it( "have disconnect function defined", function () {
-                expect( sound.connect ).toBeInstanceOf( Function );
+                expect( multiTrigger.connect ).toBeInstanceOf( Function );
             } );
 
         } );
 
         describe( '#actions', function () {
             it( "should have start/stop/play/pause/release defined", function () {
-                expect( sound.start ).toBeInstanceOf( Function );
-                expect( sound.stop ).toBeInstanceOf( Function );
-                expect( sound.play ).toBeInstanceOf( Function );
-                expect( sound.pause ).toBeInstanceOf( Function );
-                expect( sound.release ).toBeInstanceOf( Function );
+                expect( multiTrigger.start ).toBeInstanceOf( Function );
+                expect( multiTrigger.stop ).toBeInstanceOf( Function );
+                expect( multiTrigger.play ).toBeInstanceOf( Function );
+                expect( multiTrigger.pause ).toBeInstanceOf( Function );
+                expect( multiTrigger.release ).toBeInstanceOf( Function );
             } );
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    sound.start();
+                    multiTrigger.start();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( multiTrigger.isPlaying ).toBe( true );
                 setTimeout( function () {
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
                     expect( function () {
-                        sound.stop();
+                        multiTrigger.stop();
                     } ).not.toThrowError();
 
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( multiTrigger.isPlaying ).toBe( false );
                     setTimeout( function () {
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                         done();
                     }, 1000 );
                 }, 1000 );
@@ -225,39 +256,41 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
 
             it( "should be play/pause audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    multiTrigger.play();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( multiTrigger.isPlaying ).toBe( true );
                 setTimeout( function () {
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
 
                     expect( function () {
-                        sound.pause();
+                        multiTrigger.pause();
                     } ).not.toThrowError();
 
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( multiTrigger.isPlaying ).toBe( false );
                     setTimeout( function () {
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
 
-                        internalSpies.onSoundStarted.calls.reset();
-                        internalSpies.onSoundEnded.calls.reset();
+                        internalSpies.onAudioStart = jasmine.createSpy( "onAudioStart2" );
+                        internalSpies.onAudioEnd = jasmine.createSpy( "onAudioEnd2" );
+                        multiTrigger.onAudioStart = internalSpies.onAudioStart;
+                        multiTrigger.onAudioEnd = internalSpies.onAudioEnd;
 
                         expect( function () {
-                            sound.play();
+                            multiTrigger.play();
                         } ).not.toThrowError();
 
-                        expect( sound.isPlaying ).toBe( true );
+                        expect( multiTrigger.isPlaying ).toBe( true );
 
                         setTimeout( function () {
-                            expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                            expect( internalSpies.onAudioStart ).toHaveBeenCalled();
                             expect( function () {
-                                sound.pause();
+                                multiTrigger.pause();
                             } ).not.toThrowError();
 
-                            expect( sound.isPlaying ).toBe( false );
+                            expect( multiTrigger.isPlaying ).toBe( false );
                             setTimeout( function () {
-                                expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                                expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                                 done();
                             }, 1000 );
                         }, 1000 );
@@ -268,20 +301,20 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
 
             it( "should be play/release audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    multiTrigger.play();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( multiTrigger.isPlaying ).toBe( true );
                 setTimeout( function () {
-                    expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
 
                     expect( function () {
-                        sound.release();
+                        multiTrigger.release();
                     } ).not.toThrowError();
 
                     setTimeout( function () {
-                        expect( sound.isPlaying ).toBe( false );
-                        expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
+                        expect( multiTrigger.isPlaying ).toBe( false );
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                         done();
                     }, 1500 );
                 }, 1000 );
@@ -326,7 +359,7 @@ requireWithStubbedSource( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAud
     var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
 
     describe( 'MultiTrigger.js with stubbed Queue', function () {
-        var sound;
+        var multiTrigger;
         var customMatchers = {
             toBeInstanceOf: function () {
                 return {
@@ -347,8 +380,8 @@ requireWithStubbedSource( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAud
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
             resetAllSourceSpies();
-            if ( !sound ) {
-                sound = new MultiTrigger( window.context, listofSounds, null, function () {
+            if ( !multiTrigger ) {
+                multiTrigger = new MultiTrigger( window.context, listofSounds, null, function () {
                     done();
                 } );
             } else {
@@ -365,24 +398,24 @@ requireWithStubbedSource( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAud
         }
         describe( '#new MultiTrigger( context ) ', function () {
             it( "should have audioContext available", function () {
-                expect( sound.audioContext ).toBeInstanceOf( AudioContext );
+                expect( multiTrigger.audioContext ).toBeInstanceOf( AudioContext );
             } );
         } );
         describe( '#actions', function () {
             it( "should have start/stop/play/pause/release defined", function () {
-                expect( sound.start ).toBeInstanceOf( Function );
-                expect( sound.stop ).toBeInstanceOf( Function );
-                expect( sound.play ).toBeInstanceOf( Function );
-                expect( sound.pause ).toBeInstanceOf( Function );
-                expect( sound.release ).toBeInstanceOf( Function );
+                expect( multiTrigger.start ).toBeInstanceOf( Function );
+                expect( multiTrigger.stop ).toBeInstanceOf( Function );
+                expect( multiTrigger.play ).toBeInstanceOf( Function );
+                expect( multiTrigger.pause ).toBeInstanceOf( Function );
+                expect( multiTrigger.release ).toBeInstanceOf( Function );
             } );
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    sound.start();
+                    multiTrigger.start();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( multiTrigger.isPlaying ).toBe( true );
                 setTimeout( function () {
                     expect( queueSpies.queueSetSource ).toHaveBeenCalled();
                     expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
@@ -390,10 +423,10 @@ requireWithStubbedSource( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAud
                 }, 2000 );
 
                 expect( function () {
-                    sound.stop();
+                    multiTrigger.stop();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( false );
+                expect( multiTrigger.isPlaying ).toBe( false );
                 setTimeout( function () {
                     expect( queueSpies.pause ).toHaveBeenCalled();
                 }, 2000 );
@@ -402,20 +435,20 @@ requireWithStubbedSource( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAud
 
             it( "should be play/pause audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    multiTrigger.play();
                 } ).not.toThrowError();
 
                 setTimeout( function () {
                     expect( queueSpies.queueSetSource ).toHaveBeenCalled();
                     expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
                     expect( queueSpies.queueStart ).toHaveBeenCalled();
-                    expect( sound.isPlaying ).toBe( true );
+                    expect( multiTrigger.isPlaying ).toBe( true );
 
                     expect( function () {
-                        sound.pause();
+                        multiTrigger.pause();
                     } ).not.toThrowError();
 
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( multiTrigger.isPlaying ).toBe( false );
 
                     setTimeout( function () {
                         expect( queueSpies.pause ).toHaveBeenCalled();
@@ -426,20 +459,20 @@ requireWithStubbedSource( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAud
                         queueSpies.pause.calls.reset();
 
                         expect( function () {
-                            sound.play();
+                            multiTrigger.play();
                         } ).not.toThrowError();
 
                         setTimeout( function () {
                             expect( queueSpies.queueSetSource ).toHaveBeenCalled();
                             expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
                             expect( queueSpies.queueStart ).toHaveBeenCalled();
-                            expect( sound.isPlaying ).toBe( true );
+                            expect( multiTrigger.isPlaying ).toBe( true );
 
                             expect( function () {
-                                sound.pause();
+                                multiTrigger.pause();
                             } ).not.toThrowError();
 
-                            expect( sound.isPlaying ).toBe( false );
+                            expect( multiTrigger.isPlaying ).toBe( false );
                             setTimeout( function () {
                                 expect( queueSpies.pause ).toHaveBeenCalled();
                                 done();
@@ -452,20 +485,20 @@ requireWithStubbedSource( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAud
 
             it( "should be play/release audio", function ( done ) {
                 expect( function () {
-                    sound.play();
+                    multiTrigger.play();
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
+                expect( multiTrigger.isPlaying ).toBe( true );
                 expect( queueSpies.queueSetSource ).toHaveBeenCalled();
                 expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
                 expect( queueSpies.queueStart ).toHaveBeenCalled();
 
                 expect( function () {
-                    sound.release();
+                    multiTrigger.release();
                 } ).not.toThrowError();
 
                 setTimeout( function () {
-                    expect( sound.isPlaying ).toBe( false );
+                    expect( multiTrigger.isPlaying ).toBe( false );
                     expect( queueSpies.pause ).toHaveBeenCalled();
                     done();
                 }, 1000 );
