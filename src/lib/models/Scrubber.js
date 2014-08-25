@@ -123,6 +123,14 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                         processingEvent.outputBuffer.getChannelData( cIndex )
                             .set( zeroArray );
                     }
+                    scale_ = 0;
+                    targetScale_ = 0;
+                    if ( audioPlaying ) {
+                        if ( typeof self.onAudioEnd === 'function' ) {
+                            self.onAudioEnd();
+                        }
+                        audioPlaying = false;
+                    }
                     return;
                 }
 
@@ -256,6 +264,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                         }
 
                         if ( audioPlaying && ( ( muteOnReverse && scale_ < AUDIOEVENT_TRESHOLD ) || Math.abs( scale_ ) < AUDIOEVENT_TRESHOLD ) ) {
+                            //console.log( "stopping..." );
                             audioPlaying = false;
                             if ( typeof self.onAudioEnd === 'function' ) {
                                 self.onAudioEnd();
@@ -264,6 +273,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                         }
 
                         if ( scale_ > AUDIOEVENT_TRESHOLD && !audioPlaying ) {
+                            //console.log( "playing..." );
                             audioPlaying = true;
                             if ( typeof self.onAudioStart === 'function' ) {
                                 self.onAudioStart();

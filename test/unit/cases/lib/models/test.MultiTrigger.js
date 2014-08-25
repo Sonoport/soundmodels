@@ -28,14 +28,19 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                 };
             }
         };
+
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
             resetAllInternalSpies();
-
-            sound = new MultiTrigger( window.context, listofSounds, internalSpies.onLoadProgress, function () {
-                internalSpies.onLoadComplete();
+            if ( !sound ) {
+                console.log( "Initing MultiTrigger.." );
+                sound = new MultiTrigger( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                    internalSpies.onLoadComplete();
+                    done();
+                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+            } else {
                 done();
-            }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+            }
         } );
 
         function resetAllInternalSpies() {
@@ -72,12 +77,20 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                 expect( sound.isInitialized ).toBe( true );
             } );
 
-            it( "should have called progress events", function () {
-                expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
+            it( "should have called progress events", function ( done ) {
+                sound = new MultiTrigger( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                    internalSpies.onLoadComplete();
+                    expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
+                    done();
+                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
             } );
 
-            it( "should have called load events", function () {
-                expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
+            it( "should have called load events", function ( done ) {
+                sound = new MultiTrigger( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                    internalSpies.onLoadComplete();
+                    expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
+                    done();
+                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
             } );
         } );
         describe( '#properties', function () {
@@ -330,12 +343,17 @@ requireWithStubbedSource( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAud
                 };
             }
         };
+
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
             resetAllSourceSpies();
-            sound = new MultiTrigger( context, listofSounds, null, function () {
+            if ( !sound ) {
+                sound = new MultiTrigger( window.context, listofSounds, null, function () {
+                    done();
+                } );
+            } else {
                 done();
-            } );
+            }
         } );
 
         function resetAllSourceSpies() {

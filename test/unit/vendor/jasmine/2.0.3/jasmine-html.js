@@ -81,8 +81,7 @@ jasmineRequire.HtmlReporter = function ( j$ ) {
                     } )
                 )
             );
-            getContainer()
-                .appendChild( htmlReporterMain );
+            getContainer().appendChild( htmlReporterMain );
 
             symbols = find( '.symbol-summary' );
         };
@@ -300,13 +299,11 @@ jasmineRequire.HtmlReporter = function ( j$ ) {
                         }, 'Spec List' ),
                         createDom( 'span', {}, ' | Failures ' ) ) );
 
-                find( '.failures-menu' )
-                    .onclick = function () {
-                        setMenuModeTo( 'failure-list' );
+                find( '.failures-menu' ).onclick = function () {
+                    setMenuModeTo( 'failure-list' );
                 };
-                find( '.spec-list-menu' )
-                    .onclick = function () {
-                        setMenuModeTo( 'spec-list' );
+                find( '.spec-list-menu' ).onclick = function () {
+                    setMenuModeTo( 'spec-list' );
                 };
 
                 setMenuModeTo( 'failure-list' );
@@ -321,8 +318,7 @@ jasmineRequire.HtmlReporter = function ( j$ ) {
         return this;
 
         function find( selector ) {
-            return getContainer()
-                .querySelector( '.jasmine_html-reporter ' + selector );
+            return getContainer().querySelector( '.jasmine_html-reporter ' + selector );
         }
 
         function clearPrior() {
@@ -330,8 +326,7 @@ jasmineRequire.HtmlReporter = function ( j$ ) {
             var oldReporter = find( '' );
 
             if ( oldReporter ) {
-                getContainer()
-                    .removeChild( oldReporter );
+                getContainer().removeChild( oldReporter );
             }
         }
 
@@ -386,8 +381,7 @@ jasmineRequire.HtmlReporter = function ( j$ ) {
 
 jasmineRequire.HtmlSpecFilter = function () {
     function HtmlSpecFilter( options ) {
-        var filterString = options && options.filterString() && options.filterString()
-            .replace( /[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&' );
+        var filterString = options && options.filterString() && options.filterString().replace( /[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&' );
         var filterPattern = new RegExp( filterString );
 
         this.matches = function ( specName ) {
@@ -424,8 +418,7 @@ jasmineRequire.QueryString = function () {
         this.setParam = function ( key, value ) {
             var paramMap = queryStringToParamMap();
             paramMap[ key ] = value;
-            options.getWindowLocation()
-                .search = toQueryString( paramMap );
+            options.getWindowLocation().search = toQueryString( paramMap );
         };
 
         this.getParam = function ( key ) {
@@ -443,8 +436,7 @@ jasmineRequire.QueryString = function () {
         }
 
         function queryStringToParamMap() {
-            var paramStr = options.getWindowLocation()
-                .search.substring( 1 ),
+            var paramStr = options.getWindowLocation().search.substring( 1 ),
                 params = [],
                 paramMap = {};
 

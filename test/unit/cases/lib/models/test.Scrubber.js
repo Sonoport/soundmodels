@@ -33,10 +33,16 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
         beforeEach( function ( done ) {
             jasmine.addMatchers( customMatchers );
             resetAllInternalSpies();
-            sound = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
-                internalSpies.onLoadComplete();
+            if ( !sound ) {
+                console.log( "Initing Scrubber.." );
+                sound = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                    internalSpies.onLoadComplete();
+                    done();
+                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+            } else {
+                sound.stop();
                 done();
-            }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
+            }
         } );
 
         function resetAllInternalSpies() {
@@ -73,12 +79,20 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( sound.isInitialized ).toBe( true );
             } );
 
-            it( "should have called progress events", function () {
-                expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
+            it( "should have called progress events", function ( done ) {
+                sound = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                    internalSpies.onLoadComplete();
+                    expect( internalSpies.onLoadProgress ).toHaveBeenCalled();
+                    done();
+                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
             } );
 
-            it( "should have called load events", function () {
-                expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
+            it( "should have called load events", function ( done ) {
+                sound = new Scrubber( window.context, listofSounds, internalSpies.onLoadProgress, function () {
+                    internalSpies.onLoadComplete();
+                    expect( internalSpies.onLoadComplete ).toHaveBeenCalled();
+                    done();
+                }, internalSpies.onSoundStarted, internalSpies.onSoundEnded );
             } );
 
         } );
@@ -164,15 +178,15 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                     sound.playPosition.value = 0.1;
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
                 setTimeout( function () {
+                    expect( sound.isPlaying ).toBe( true );
                     expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
                     expect( function () {
                         sound.stop();
                     } ).not.toThrowError();
 
-                    expect( sound.isPlaying ).toBe( false );
                     setTimeout( function () {
+                        expect( sound.isPlaying ).toBe( false );
                         expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
                         done();
                     }, 1000 );
@@ -180,21 +194,25 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
             } );
 
             it( "should be play/pause audio", function ( done ) {
+                var randomPlay;
                 expect( function () {
                     sound.play();
-                    sound.playPosition.value = 0.1;
+                    sound.playPosition.value = 0;
+                    randomPlay = window.setInterval( function () {
+                        sound.playPosition.value += Math.random() / 10;
+                    }, 100 );
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
                 setTimeout( function () {
+                    expect( sound.isPlaying ).toBe( true );
                     expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
-
                     expect( function () {
+                        window.clearInterval( randomPlay );
                         sound.pause();
                     } ).not.toThrowError();
 
-                    expect( sound.isPlaying ).toBe( false );
                     setTimeout( function () {
+                        expect( sound.isPlaying ).toBe( false );
                         expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
 
                         internalSpies.onSoundStarted.calls.reset();
@@ -202,19 +220,23 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
 
                         expect( function () {
                             sound.play();
-                            sound.playPosition.value = 0.2;
+                            sound.playPosition.value = 0;
+                            randomPlay = window.setInterval( function () {
+                                sound.playPosition.value += Math.random() / 10;
+                            }, 100 );
                         } ).not.toThrowError();
 
-                        expect( sound.isPlaying ).toBe( true );
-
                         setTimeout( function () {
+                            expect( sound.isPlaying ).toBe( true );
                             expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
+
                             expect( function () {
+                                window.clearInterval( randomPlay );
                                 sound.pause();
                             } ).not.toThrowError();
 
-                            expect( sound.isPlaying ).toBe( false );
                             setTimeout( function () {
+                                expect( sound.isPlaying ).toBe( false );
                                 expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
                                 done();
                             }, 1000 );
@@ -225,16 +247,22 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
             } );
 
             it( "should be play/release audio", function ( done ) {
+                var randomPlay;
+
                 expect( function () {
                     sound.play();
-                    sound.playPosition.value = 0.1;
+                    sound.playPosition.value = 0;
+                    randomPlay = window.setInterval( function () {
+                        sound.playPosition.value += Math.random() / 10;
+                    }, 100 );
                 } ).not.toThrowError();
 
-                expect( sound.isPlaying ).toBe( true );
                 setTimeout( function () {
+                    expect( sound.isPlaying ).toBe( true );
                     expect( internalSpies.onSoundStarted ).toHaveBeenCalled();
 
                     expect( function () {
+                        window.clearInterval( randomPlay );
                         sound.release();
                     } ).not.toThrowError();
 
@@ -242,7 +270,7 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                         expect( sound.isPlaying ).toBe( false );
                         expect( internalSpies.onSoundEnded ).toHaveBeenCalled();
                         done();
-                    }, 1500 );
+                    }, 1000 );
                 }, 1000 );
             } );
         } );
