@@ -38,6 +38,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.onLoadComplete = onLoadComplete;
 
             var onAudioStart_ = onAudioStart;
+            var onAudioEnd_ = onAudioEnd;
+
             Object.defineProperty( this, "onAudioStart", {
                 enumerable: true,
                 configurable: false,
@@ -52,7 +54,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 }
             } );
 
-            var onAudioEnd_ = onAudioEnd;
             Object.defineProperty( this, "onAudioEnd", {
                 enumerable: true,
                 configurable: false,

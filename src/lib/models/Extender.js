@@ -34,17 +34,20 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
 
+            var onAudioStart_ = onAudioStart;
+            var onAudioEnd_ = onAudioEnd;
+
             Object.defineProperty( this, "onAudioStart", {
                 enumerable: true,
                 configurable: false,
                 set: function ( startCallback ) {
                     if ( soundQueue_ ) {
-                        onAudioStart = startCallback;
+                        onAudioStart_ = startCallback;
                         soundQueue_.onAudioStart = startCallback;
                     }
                 },
                 get: function () {
-                    return onAudioStart;
+                    return onAudioStart_;
                 }
             } );
 
@@ -52,13 +55,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 enumerable: true,
                 configurable: false,
                 set: function ( endCallback ) {
-                    onAudioEnd = endCallback;
+                    onAudioEnd_ = endCallback;
                     if ( soundQueue_ ) {
                         soundQueue_.onAudioEnd = endCallback;
                     }
                 },
                 get: function () {
-                    return onAudioEnd;
+                    return onAudioEnd_;
                 }
             } );
 
