@@ -136,8 +136,8 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
                     webaudioDispatch( function () {
                         if ( !self.isPlaying ) {
                             self.isPlaying = true;
-                            if ( typeof onAudioStart === 'function' ) {
-                                onAudioStart();
+                            if ( typeof self.onAudioStart === 'function' ) {
+                                self.onAudioStart();
                             }
                         }
                     }, thisEvent.time, context );

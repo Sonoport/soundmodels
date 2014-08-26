@@ -101,8 +101,8 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
             } );
 
             it( "should be able to change sources", function ( done ) {
-                looper.setSources( listofSounds[ 0 ], null, function () {
-                    expect( looper.multiTrackGain.length ).toBe( 1 );
+                looper.setSources( listofSounds[ 0 ], null, function ( status, audioBufferArray ) {
+                    expect( audioBufferArray.length ).toBe( 1 );
                     done();
                 } );
             } );
@@ -303,7 +303,6 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                             expect( looper.isPlaying ).toBe( false );
                             setTimeout( function () {
                                 expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
-                                console.log( "Done play/pause" );
                                 done();
                             }, 1000 );
                         }, 1000 );
@@ -326,7 +325,6 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                     setTimeout( function () {
                         expect( looper.isPlaying ).toBe( false );
                         expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
-                        console.log( "Done play/release" );
                         done();
                     }, 1000 );
                 }, 1000 );

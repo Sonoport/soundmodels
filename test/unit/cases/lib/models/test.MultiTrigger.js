@@ -99,16 +99,16 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                 expect( multiTrigger.setSources ).toBeInstanceOf( Function );
             } );
 
-            // it( "should be able to change sources", function ( done ) {
-            //     multiTrigger.setSources( listofSounds[ 0 ], null, function () {
-            //         expect( multiTrigger.multiTrackGain.length ).toBe( 1 );
-            //         done();
-            //     } );
-            // } );
+            it( "should be able to change sources", function ( done ) {
+                multiTrigger.setSources( listofSounds[ 0 ], null, function ( status, audioBufferArray ) {
+                    expect( audioBufferArray.length ).toBe( 1 );
+                    done();
+                } );
+            } );
 
             it( "should call onprogress events", function ( done ) {
                 var progressSpy = jasmine.createSpy( "progressSpy" );
-                multiTrigger.setSources( listofSounds[ 0 ], progressSpy, function () {
+                multiTrigger.setSources( "audio/bullet.mp3", progressSpy, function () {
                     expect( progressSpy ).toHaveBeenCalled();
                     done();
                 } );

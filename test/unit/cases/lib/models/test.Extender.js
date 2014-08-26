@@ -99,12 +99,12 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( extender.setSources ).toBeInstanceOf( Function );
             } );
 
-            // it( "should be able to change sources", function ( done ) {
-            //     extender.setSources( listofSounds[ 0 ], null, function () {
-            //         expect( extender.multiTrackGain.length ).toBe( 1 );
-            //         done();
-            //     } );
-            // } );
+            it( "should be able to change sources", function ( done ) {
+                extender.setSources( listofSounds[ 0 ], null, function ( status, audioBufferArray ) {
+                    expect( audioBufferArray.length ).toBe( 1 );
+                    done();
+                } );
+            } );
 
             it( "should call onprogress events", function ( done ) {
                 var progressSpy = jasmine.createSpy( "progressSpy" );

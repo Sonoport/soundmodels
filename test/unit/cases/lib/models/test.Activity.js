@@ -98,12 +98,12 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( activity.setSources ).toBeInstanceOf( Function );
             } );
 
-            // it( "should be able to change sources", function ( done ) {
-            //     activity.setSources( listofSounds[ 0 ], null, function () {
-            //         expect( activity.multiTrackGain.length ).toBe( 1 );
-            //         done();
-            //     } );
-            // } );
+            it( "should be able to change sources", function ( done ) {
+                activity.setSources( listofSounds[ 0 ], null, function ( status, audioBufferArray ) {
+                    expect( audioBufferArray.length ).toBe( 1 );
+                    done();
+                } );
+            } );
 
             it( "should call onprogress events", function ( done ) {
                 var progressSpy = jasmine.createSpy( "progressSpy" );

@@ -82,7 +82,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
 
             // Private Functions
 
-            function onLoadAll( status ) {
+            function onLoadAll( status, audioBufferArray ) {
                 internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
                 if ( status ) {
                     self.isInitialized = true;
@@ -92,7 +92,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
                 smoothDeltaTime_ = 0;
 
                 if ( typeof self.onLoadComplete === 'function' ) {
-                    self.onLoadComplete( status );
+                    self.onLoadComplete( status, audioBufferArray );
                 }
             }
 
