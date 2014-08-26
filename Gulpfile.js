@@ -189,6 +189,16 @@ gulp.task('release', ['bump', 'releasebuild'], function(){
     .pipe(gulp.dest(paths.dirs.release + 'models/'));
 });
 
+gulp.task('release-nobump', ['releasebuild'], function(){
+    require.uncache('./package.json');
+    pkg = require('./package.json');
+    gutil.log("Creating the ", pkg.version, " release.");
+
+    return gulp.src(paths.dirs.build + 'models/*.js')
+    .pipe(header(banner, {pkg: pkg}))
+    .pipe(gulp.dest(paths.dirs.release + 'models/'));
+});
+
 gulp.task('bump:pre', function(){
   return gulp.src('./package.json')
   .pipe(bump({type: 'prerelease'}))
