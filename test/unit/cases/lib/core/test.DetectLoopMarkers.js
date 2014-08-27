@@ -1,8 +1,9 @@
 require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
     "use strict";
     console.log( "Running DetectLoopMarker Test... " );
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
     var rampMarkedMp3 = 'audio/ramp_marked.mp3';
     var rampMarkedWav = 'audio/ramp_marked.wav';
     var mp3File = 'audio/bullet.mp3';

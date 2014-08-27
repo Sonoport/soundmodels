@@ -43,6 +43,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             var rateArray = [];
 
             var onLoadAll = function ( status, arrayOfBuffers ) {
+                self.multiTrackGain.length = arrayOfBuffers.length;
                 arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
                     lastStopPosition_.push( 0 );
                     insertBufferSource( thisBuffer, trackIndex );
@@ -57,7 +58,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 }
 
                 if ( typeof self.onLoadComplete === 'function' ) {
-                    self.onLoadComplete( status );
+                    self.onLoadComplete( status, arrayOfBuffers );
                 }
             };
 

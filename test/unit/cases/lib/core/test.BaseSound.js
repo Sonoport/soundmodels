@@ -1,8 +1,9 @@
 require( [ 'core/BaseSound' ], function ( BaseSound ) {
     "use strict";
     console.log( "Running BaseSound Test... " );
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
 
     describe( 'BaseSound.js', function () {
         var baseSound;

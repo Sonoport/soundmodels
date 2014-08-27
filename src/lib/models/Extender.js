@@ -33,8 +33,37 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
-            this.onAudioStart = onAudioStart;
-            this.onAudioEnd = onAudioEnd;
+
+            var onAudioStart_ = onAudioStart;
+            var onAudioEnd_ = onAudioEnd;
+
+            Object.defineProperty( this, "onAudioStart", {
+                enumerable: true,
+                configurable: false,
+                set: function ( startCallback ) {
+                    if ( soundQueue_ ) {
+                        onAudioStart_ = startCallback;
+                        soundQueue_.onAudioStart = startCallback;
+                    }
+                },
+                get: function () {
+                    return onAudioStart_;
+                }
+            } );
+
+            Object.defineProperty( this, "onAudioEnd", {
+                enumerable: true,
+                configurable: false,
+                set: function ( endCallback ) {
+                    onAudioEnd_ = endCallback;
+                    if ( soundQueue_ ) {
+                        soundQueue_.onAudioEnd = endCallback;
+                    }
+                },
+                get: function () {
+                    return onAudioEnd_;
+                }
+            } );
 
             // Private Variables
             var self = this;
@@ -61,7 +90,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     self.isInitialized = true;
                 }
                 if ( typeof self.onLoadComplete === 'function' ) {
-                    self.onLoadComplete( status );
+                    self.onLoadComplete( status, audioBufferArray );
                 }
             };
 

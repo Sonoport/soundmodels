@@ -36,8 +36,37 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
-            this.onAudioStart = onAudioStart;
-            this.onAudioEnd = onAudioEnd;
+
+            var onAudioStart_ = onAudioStart;
+            var onAudioEnd_ = onAudioEnd;
+
+            Object.defineProperty( this, "onAudioStart", {
+                enumerable: true,
+                configurable: false,
+                set: function ( startCallback ) {
+                    if ( soundQueue_ ) {
+                        onAudioStart_ = startCallback;
+                        soundQueue_.onAudioStart = startCallback;
+                    }
+                },
+                get: function () {
+                    return onAudioStart_;
+                }
+            } );
+
+            Object.defineProperty( this, "onAudioEnd", {
+                enumerable: true,
+                configurable: false,
+                set: function ( endCallback ) {
+                    onAudioEnd_ = endCallback;
+                    if ( soundQueue_ ) {
+                        soundQueue_.onAudioEnd = endCallback;
+                    }
+                },
+                get: function () {
+                    return onAudioEnd_;
+                }
+            } );
 
             var lastEventTime_ = 0;
             var timeToNextEvent_ = 0;
@@ -51,7 +80,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var wasPlaying_ = false;
             // Private Functions
             function init( sources ) {
-                multiFileLoader.call( self, sources, self.audioContext, onLoadProgress, onLoadAll );
+                multiFileLoader.call( self, sources, self.audioContext, self.onLoadProgress, onLoadAll );
             }
 
             var onLoadAll = function ( status, audioBufferArray ) {
@@ -63,7 +92,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     self.isInitialized = true;
                 }
                 if ( typeof self.onLoadComplete === 'function' ) {
-                    self.onLoadComplete( status );
+                    self.onLoadComplete( status, audioBufferArray );
                 }
             };
 
@@ -278,7 +307,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 init( sources );
             };
             // SoundQueue based model.
-            soundQueue_ = new SoundQueue( this.audioContext, onAudioStart, onAudioEnd );
+            soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
 
             window.setTimeout( function () {
                 init( sources );

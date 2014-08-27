@@ -76,6 +76,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                     numChannels_ = sourceBuffer_.numberOfChannels;
                     sampleRate_ = sourceBuffer_.sampleRate;
 
+                    sampleData_ = [];
                     for ( var cIndex = 0; cIndex < numChannels_; cIndex++ ) {
                         sampleData_.push( sourceBuffer_.getChannelData( cIndex ) );
                     }
@@ -92,11 +93,16 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                 }
 
                 if ( typeof self.onLoadComplete === 'function' ) {
-                    self.onLoadComplete( status );
+                    self.onLoadComplete( status, audioBufferArray );
                 }
             };
 
             function init( source ) {
+                if ( scriptNode_ ) {
+                    scriptNode_.disconnect();
+                    scriptNode_ = null;
+                }
+
                 multiFileLoader.call( self, source, self.audioContext, self.onLoadProgress, onLoadAll );
 
                 winLen_ = Config.WINDOW_LENGTH;
@@ -116,6 +122,14 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                     for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
                         processingEvent.outputBuffer.getChannelData( cIndex )
                             .set( zeroArray );
+                    }
+                    scale_ = 0;
+                    targetScale_ = 0;
+                    if ( audioPlaying ) {
+                        if ( typeof self.onAudioEnd === 'function' ) {
+                            self.onAudioEnd();
+                        }
+                        audioPlaying = false;
                     }
                     return;
                 }
@@ -250,13 +264,20 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
                         }
 
                         if ( audioPlaying && ( ( muteOnReverse && scale_ < AUDIOEVENT_TRESHOLD ) || Math.abs( scale_ ) < AUDIOEVENT_TRESHOLD ) ) {
+                            //console.log( "stopping..." );
                             audioPlaying = false;
-                            self.onAudioEnd();
+                            if ( typeof self.onAudioEnd === 'function' ) {
+                                self.onAudioEnd();
+                            }
+
                         }
 
                         if ( scale_ > AUDIOEVENT_TRESHOLD && !audioPlaying ) {
+                            //console.log( "playing..." );
                             audioPlaying = true;
-                            self.onAudioStart();
+                            if ( typeof self.onAudioStart === 'function' ) {
+                                self.onAudioStart();
+                            }
                         }
 
                         // Add the new frame into the output summing buffer

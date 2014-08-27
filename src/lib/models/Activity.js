@@ -1,8 +1,8 @@
 /**
  * @module Models
  */
-define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' ],
-    function ( Config, BaseSound, Looper, SPAudioParam ) {
+define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam', 'core/webAudioDispatch' ],
+    function ( Config, BaseSound, Looper, SPAudioParam, webAudioDispatch ) {
         "use strict";
 
         /**
@@ -32,8 +32,36 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
 
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
-            this.onAudioStart = onAudioStart;
-            this.onAudioEnd = onAudioEnd;
+            var onAudioStart_ = onAudioStart;
+            var onAudioEnd_ = onAudioEnd;
+
+            Object.defineProperty( this, "onAudioStart", {
+                enumerable: true,
+                configurable: false,
+                set: function ( startCallback ) {
+                    if ( internalLooper_ ) {
+                        onAudioStart_ = startCallback;
+                        internalLooper_.onAudioStart = startCallback;
+                    }
+                },
+                get: function () {
+                    return onAudioStart_;
+                }
+            } );
+
+            Object.defineProperty( this, "onAudioEnd", {
+                enumerable: true,
+                configurable: false,
+                set: function ( endCallback ) {
+                    onAudioEnd_ = endCallback;
+                    if ( internalLooper_ ) {
+                        internalLooper_.onAudioEnd = endCallback;
+                    }
+                },
+                get: function () {
+                    return onAudioEnd_;
+                }
+            } );
 
             // Private vars
             var self = this;
@@ -56,7 +84,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
 
             // Private Functions
 
-            function onLoadAll( status ) {
+            function onLoadAll( status, audioBufferArray ) {
                 internalLooper_.playSpeed.setValueAtTime( Config.ZERO, self.audioContext.currentTime );
                 if ( status ) {
                     self.isInitialized = true;
@@ -66,7 +94,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
                 smoothDeltaTime_ = 0;
 
                 if ( typeof self.onLoadComplete === 'function' ) {
-                    self.onLoadComplete( status );
+                    self.onLoadComplete( status, audioBufferArray );
                 }
             }
 
@@ -317,6 +345,10 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam' 
              */
             this.release = function ( when, fadeTime ) {
                 internalLooper_.release( when, fadeTime );
+                var self = this;
+                webAudioDispatch( function () {
+                    self.isPlaying = false;
+                }, when + fadeTime, this.audioContext );
                 //BaseSound.prototype.release.call( this, when, fadeTime );
             };
 

@@ -1,8 +1,9 @@
 require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
     "use strict";
     console.log( "Running MultiFileLoader Test... " );
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
-    var context = new AudioContext();
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
     var validSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav' ];
     var invalidSounds = [ 'doesnotexist.wav', 'fakefile.mp3' ];
     describe( 'MultiFileLoader.js', function () {
