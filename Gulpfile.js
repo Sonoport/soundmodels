@@ -160,7 +160,7 @@ gulp.task('devbuild', ['jsbeautify:src'], function(cb) {
 });
 
 
-gulp.task('releasebuild', ['jsbeautify:src'], function(cb) {
+gulp.task('releasebuild', ['jsbeautify:src', 'publishdocs'], function(cb) {
 
     var config  = JSON.parse(JSON.stringify(rjsconfig.main));
     config.optimize = "uglify2";
