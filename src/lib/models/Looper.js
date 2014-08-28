@@ -85,7 +85,14 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             var insertBufferSource = function ( audioBuffer, trackIndex ) {
-                var source = new SPAudioBufferSourceNode( self.audioContext );
+                var source;
+                if ( !sourceBufferNodes_[ trackIndex ] ) {
+                    console.log( "creating new buffer" );
+                    source = new SPAudioBufferSourceNode( self.audioContext );
+                } else {
+                    source = sourceBufferNodes_[ trackIndex ];
+                }
+
                 source.buffer = audioBuffer;
                 source.loopEnd = audioBuffer.duration;
                 source.onended = function ( event ) {
@@ -106,7 +113,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 source.connect( gainNode );
                 gainNode.connect( self.releaseGainNode );
 
-                sourceBufferNodes_.push( source );
+                sourceBufferNodes_.splice( trackIndex, 1, source );
                 rateArray.push( source.playbackRate );
             };
 
@@ -145,7 +152,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 sourceBufferNodes_.forEach( function ( thisSource ) {
                     thisSource.disconnect();
                 } );
-                sourceBufferNodes_ = [];
                 multiFileLoader.call( self, sources, self.audioContext, self.onLoadProgress, onLoadAll );
             }
 
