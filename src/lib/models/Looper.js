@@ -106,7 +106,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     gainNode = self.audioContext.createGain();
                     multiTrackGainNodes_[ trackIndex ] = gainNode;
 
-                    var multiChannelGainParam = new SPAudioParam( "gain", 0.0, 1, 1, gainNode.gain, null, null, self.audioContext );
+                    var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, gainNode.gain, null, null, self.audioContext );
                     self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
                 }
 

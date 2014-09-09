@@ -245,79 +245,97 @@
                     if ( typeof param.value === 'number' ) { // The rest of SPAudioParam
                         $playerParams
                             .append( "<div class='param-box'>" + labelnode + slider + outputVal + "</div>" );
-                        makeSlider( snd, paramName, param.value, param.minValue, param.maxValue );
+                        makeSlider( param);
                     } else if ( typeof param.value === 'boolean' ) {
                         $playerParams
                             .append( "<div class='param-box'>" + labelnode + switchBtn + outputVal + "</div>" );
-                        makeSwitch( snd, paramName, param.value, param.minValue, param.maxValue );
+                        makeSwitch( param );
+                    }else if (param instanceof Array){
+                        param.forEach(function(thisArrayParam){
+
+                            paramName = thisArrayParam.name;
+                            var labelnode = "<div class='param-name'><label class='label label-info param-name'>" + paramName + "</label></div>";
+                            var slider = "<div class='pull-left param-slider'><div id='" + paramName + "' class='ui-slider'></div></div>";
+                            var switchBtn = "<div class='switch " + paramName + "'><input type='checkbox' checked data-toggle='switch' on-label='true' off-label='false' /></div>";
+                            var outputVal = "<div class='amount'><input type='text' id='" + paramName + "val' class='form-control input-sm' /></div>";
+                            if ( typeof thisArrayParam.value === 'number' ) { // The rest of SPAudioParam
+                                $playerParams
+                                    .append( "<div class='param-box'>" + labelnode + slider + outputVal + "</div>" );
+                                makeSlider(thisArrayParam );
+                            } else if ( typeof thisArrayParam.value === 'boolean' ) {
+                                $playerParams
+                                    .append( "<div class='param-box'>" + labelnode + switchBtn + outputVal + "</div>" );
+                                makeSwitch(thisArrayParam );
+                            }
+                        });
                     }
                 }
             }
 
-            function makeSlider( snd, id, val, min, max ) {
+            function makeSlider( param) {
                 // Make sliders
-                $( "#" + id )
+                $( "#" + param.name )
                     .tickslider( {
                         step: 0.001,
-                        min: min,
-                        max: max,
-                        value: snd[ id ].value,
+                        min: param.minValue,
+                        max: param.maxValue,
+                        value: param.value,
                         slide: function ( event, ui ) {
                             // Update input label box
-                            $( "#" + id + "val" )
+                            $( "#" + param.name + "val" )
                                 .val( ui.value );
-                            snd[ id ].value = ui.value;
+                            param.value = ui.value;
                         },
                         change: function ( event, ui ) {
-                            snd[ id ].value = ui.value;
+                            param.value = ui.value;
                             //console.log( ui.value, snd[ id ].value );
                         }
                     } );
                 // Update text input when slider is sliding
-                $( "#" + id + "val" )
-                    .val( $( "#" + id )
+                $( "#" + param.name + "val" )
+                    .val( $( "#" + param.name )
                         .tickslider( "value" ) );
                 // Update Slider thumb with text input
-                $( "#" + id + "val" )
+                $( "#" + param.name + "val" )
                     .change( function () {
-                        $( "#" + id )
+                        $( "#" + param.name )
                             .tickslider( "value", this.value );
                     } );
             }
 
-            function makeSwitch( snd, id, val ) {
+            function makeSwitch( param ) {
 
                 // Make switch
-                $( "." + id )
+                $( "." + param.name )
                     .bootstrapSwitch();
 
-                $( "." + id )
-                    .bootstrapSwitch( "setState", val, true );
+                $( "." + param.name )
+                    .bootstrapSwitch( "setState", param.value, true );
 
-                $( "#" + id + "val" )
-                    .val( $( "." + id )
+                $( "#" + param.name + "val" )
+                    .val( $( "." + param.name )
                         .bootstrapSwitch( "status" ) );
 
-                $( "#" + id + "val" )
+                $( "#" + param.name + "val" )
                     .change( function ( event ) {
                         //console.log( "change", event.target.value );
                         if ( event.target.value === "false" ) {
-                            $( "." + id )
+                            $( "." + param.name )
                                 .bootstrapSwitch( "setState", false, true );
-                            snd[ id ].value = false;
+                            param.value = false;
                         } else if ( event.target.value === "true" ) {
-                            $( "." + id )
+                            $( "." + param.name )
                                 .bootstrapSwitch( "setState", true, true );
-                            snd[ id ].value = true;
+                            param.value = true;
                         }
 
                     } );
-                $( "." + id )
+                $( "." + param.name )
                     .on( "switch-change", function ( event, data ) {
-                        $( "#" + id + "val" )
+                        $( "#" + param.name + "val" )
                             .val( data.value );
-                        snd[ id ].value = data.value;
-                        //console.log( "data ", data.value, snd[ id ].value );
+                        param.value = data.value;
+                        //console.log( "data ", data.value, snd[ param.name ].value );
                     } );
 
             }
