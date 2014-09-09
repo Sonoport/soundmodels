@@ -87,7 +87,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             var insertBufferSource = function ( audioBuffer, trackIndex ) {
                 var source;
                 if ( !sourceBufferNodes_[ trackIndex ] ) {
-                    console.log( "creating new buffer" );
+                    //console.log( "creating new buffer" );
                     source = new SPAudioBufferSourceNode( self.audioContext );
                 } else {
                     source = sourceBufferNodes_[ trackIndex ];
