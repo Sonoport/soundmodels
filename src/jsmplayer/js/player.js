@@ -206,7 +206,7 @@
 
                         $( "#releasebtn" )
                             .click( function () {
-                                //console.log( "stop" );
+                                //console.log( "release" );
                                 snd.release();
                             } );
 

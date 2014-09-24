@@ -312,13 +312,13 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * @method release
      * @param {Number} [when] Time (in seconds) at which the Envelope will release.
      * @param {Number} [fadeTime] Amount of time (seconds) it takes for linear ramp down to happen.
-     * @param {Boolean} [stopOnRelease] Boolean to define if release stops (resets) the playback or just pauses it.
+     * @param {Boolean} [resetOnRelease] Boolean to define if release stops (resets) the playback or just pauses it.
      */
-    BaseSound.prototype.release = function ( when, fadeTime, stopOnRelease ) {
+    BaseSound.prototype.release = function ( when, fadeTime, resetOnRelease ) {
 
         if ( this.isPlaying ) {
             var FADE_TIME = 0.5;
-            var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
+            //var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
 
             if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
                 when = this.audioContext.currentTime;
@@ -332,9 +332,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             this.releaseGainNode.gain.linearRampToValueAtTime( 0, when + fadeTime );
 
             // Pause the sound after currentTime + fadeTime + FADE_TIME_PAD
-            if ( stopOnRelease ) {
-                this.stop( when + FADE_TIME + FADE_TIME_PAD );
-            } else {
+            if ( !resetOnRelease ) {
                 var self = this;
                 webAudioDispatch( function () {
                     self.pause();

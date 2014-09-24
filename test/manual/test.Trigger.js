@@ -14,7 +14,7 @@
         var tap4 = "https://dl.dropboxusercontent.com/u/77191118/sounds/Hit8.mp3";
 
         // Single test
-        trigger = new Trigger( null, [ tap1, tap2, tap3, tap4 ], function ( progressEvent, sound ) {
+        trigger = new Trigger( context, [ tap1, tap2, tap3, tap4 ], function ( progressEvent, sound ) {
             console.log( "Loading. ", sound, ( progressEvent.loaded / progressEvent.total ) );
         }, function () {
             var trigButton = document.getElementById( 'trigger' );
@@ -24,7 +24,7 @@
             trigger.eventRand.value = true;
 
             trigButton.addEventListener( 'click', function () {
-                trigger.play();
+                trigger.start( context.currentTime + 0.5 );
             } );
         }, function () {
             console.log( "Starting...", context.currentTime );

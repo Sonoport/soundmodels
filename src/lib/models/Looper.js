@@ -40,7 +40,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             var sourceBufferNodes_ = [];
             var multiTrackGainNodes_ = [];
             var lastStopPosition_ = [];
-            var rateArray = [];
+            var rateArray_ = [];
 
             var onLoadAll = function ( status, arrayOfBuffers ) {
                 self.multiTrackGain.length = arrayOfBuffers.length;
@@ -49,8 +49,8 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     insertBufferSource( thisBuffer, trackIndex );
                 } );
 
-                if ( rateArray && rateArray.length > 0 ) {
-                    self.registerParameter( new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray, null, playSpeedSetter_, self.audioContext ), true );
+                if ( rateArray_ && rateArray_.length > 0 ) {
+                    self.registerParameter( new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray_, null, playSpeedSetter_, self.audioContext ), true );
                 }
 
                 if ( status ) {
@@ -59,28 +59,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
                 if ( typeof self.onLoadComplete === 'function' ) {
                     self.onLoadComplete( status, arrayOfBuffers );
-                }
-            };
-
-            var onSourceEnd = function ( event, trackIndex, source ) {
-                var cTime = self.audioContext.currentTime;
-                // Create a new source since SourceNodes can't play again.
-                source.resetBufferSource( cTime, multiTrackGainNodes_[ trackIndex ] );
-
-                if ( typeof self.onTrackEnd === 'function' ) {
-                    onTrackEnd( self, trackIndex );
-                }
-
-                var allSourcesEnded = sourceBufferNodes_.reduce( function ( prevState, thisSource ) {
-                    return prevState && ( thisSource.playbackState === thisSource.FINISHED_STATE ||
-                        thisSource.playbackState === thisSource.UNSCHEDULED_STATE );
-                }, true );
-
-                if ( allSourcesEnded && self.isPlaying ) {
-                    self.isPlaying = false;
-                    if ( typeof self.onAudioEnd === 'function' ) {
-                        self.onAudioEnd();
-                    }
                 }
             };
 
@@ -114,7 +92,29 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 gainNode.connect( self.releaseGainNode );
 
                 sourceBufferNodes_.splice( trackIndex, 1, source );
-                rateArray.push( source.playbackRate );
+                rateArray_.push( source.playbackRate );
+            };
+
+            var onSourceEnd = function ( event, trackIndex, source ) {
+                var cTime = self.audioContext.currentTime;
+                // Create a new source since SourceNodes can't play again.
+                source.resetBufferSource( cTime, multiTrackGainNodes_[ trackIndex ] );
+
+                if ( typeof self.onTrackEnd === 'function' ) {
+                    onTrackEnd( self, trackIndex );
+                }
+
+                var allSourcesEnded = sourceBufferNodes_.reduce( function ( prevState, thisSource ) {
+                    return prevState && ( thisSource.playbackState === thisSource.FINISHED_STATE ||
+                        thisSource.playbackState === thisSource.UNSCHEDULED_STATE );
+                }, true );
+
+                if ( allSourcesEnded && self.isPlaying ) {
+                    self.isPlaying = false;
+                    if ( typeof self.onAudioEnd === 'function' ) {
+                        self.onAudioEnd();
+                    }
+                }
             };
 
             var playSpeedSetter_ = function ( aParam, value, audioContext ) {
@@ -148,7 +148,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             function init( sources ) {
-                rateArray = [];
+                rateArray_ = [];
                 sourceBufferNodes_.forEach( function ( thisSource ) {
                     thisSource.disconnect();
                 } );
@@ -331,7 +331,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
                     BaseSound.prototype.stop.call( this, when );
                     webAudioDispatch( function () {
-                        if ( typeof self.onAudioEnd === 'function' ) {
+                        if ( typeof self.onAudioEnd === 'function' && self.isPlaying === false ) {
                             self.onAudioEnd();
                         }
                     }, when, this.audioContext );
@@ -357,6 +357,46 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                             self.onAudioEnd();
                         }
                     }, 0, this.audioContext );
+                }
+            };
+
+            /**
+             * Linearly ramp down the gain of the audio in time (seconds) to 0.
+             *
+             * @method release
+             * @param {Number} [when] Time (in seconds) at which the Envelope will release.
+             * @param {Number} [fadeTime] Amount of time (seconds) it takes for linear ramp down to happen.
+             * @param {Boolean} [resetOnRelease] Boolean to define if release resets (stops) the playback or just pauses it.
+             */
+            this.release = function ( when, fadeTime, resetOnRelease ) {
+                BaseSound.prototype.release.call( this, when, fadeTime, resetOnRelease );
+                // Pause the sound after currentTime + fadeTime + FADE_TIME_PAD
+
+                if ( resetOnRelease ) {
+                    // Create new releaseGain Node
+                    this.releaseGainNode = this.audioContext.createGain();
+                    this.releaseGainNode.connect( this.audioContext.destination );
+
+                    // Disconnect and rewire each source
+                    sourceBufferNodes_.forEach( function ( thisSource, trackIndex ) {
+                        thisSource.stop( when + fadeTime );
+                        lastStopPosition_[ trackIndex ] = 0;
+                        var gainNode = self.audioContext.createGain();
+                        var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, gainNode.gain, null, null, self.audioContext );
+                        self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
+                        thisSource.resetBufferSource( when, gainNode );
+                        multiTrackGainNodes_[ trackIndex ] = gainNode;
+                        thisSource.connect( gainNode );
+                        gainNode.connect( self.releaseGainNode );
+                    } );
+
+                    // Set playing to false and end audio after given time.
+                    this.isPlaying = false;
+                    webAudioDispatch( function () {
+                        if ( typeof self.onAudioEnd === 'function' && self.isPlaying === false ) {
+                            self.onAudioEnd();
+                        }
+                    }, when + fadeTime, this.audioContext );
                 }
             };
 

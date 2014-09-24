@@ -1,7 +1,7 @@
 /***
  main
 **/
-/* line 5, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.0.alpha.21/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -23,45 +23,45 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.0.alpha.21/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.0.alpha.21/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.0.alpha.21/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.0.alpha.21/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.0.alpha.21/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.0.alpha.21/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.0.alpha.21/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.0.alpha.21/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../.rvm/gems/ruby-2.1.1/gems/compass-core-1.0.1/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block;
 }
@@ -296,6 +296,7 @@ h6, .h6 {
   padding: 10px 15px;
   -webkit-font-smoothing: subpixel-antialiased;
   -moz-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
+  -o-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
   -webkit-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
   transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
 }
@@ -737,6 +738,7 @@ h6, .h6 {
 .btn-group:focus .dropdown-toggle {
   outline: none;
   -moz-transition: 0.25s;
+  -o-transition: 0.25s;
   -webkit-transition: 0.25s;
   transition: 0.25s;
 }
@@ -775,6 +777,7 @@ h6, .h6 {
   border-style: solid;
   border-bottom-style: none;
   -moz-transition: 0.25s;
+  -o-transition: 0.25s;
   -webkit-transition: 0.25s;
   transition: 0.25s;
   -webkit-transform: scale(1.001);
@@ -867,6 +870,7 @@ label {
   -webkit-box-shadow: none;
   box-shadow: none;
   -moz-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
+  -o-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
   -webkit-transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
   transition: border 0.25s linear, color 0.25s linear, background-color 0.25s linear;
 }
@@ -1327,6 +1331,7 @@ select[multiple].input-hg {
   -webkit-box-shadow: none;
   box-shadow: none;
   -moz-transition: 0.25s;
+  -o-transition: 0.25s;
   -webkit-transition: 0.25s;
   transition: 0.25s;
   background-clip: padding-box;
@@ -1383,6 +1388,7 @@ select[multiple].input-hg {
   padding: 6px 15px 8px;
   text-decoration: none;
   -moz-transition: background-color 0.25s;
+  -o-transition: background-color 0.25s;
   -webkit-transition: background-color 0.25s;
   transition: background-color 0.25s;
 }
@@ -1500,6 +1506,7 @@ select[multiple].input-hg {
   z-index: 10;
   -webkit-transform: rotate(360deg);
   -moz-transition: 0.25s;
+  -o-transition: 0.25s;
   -webkit-transition: 0.25s;
   transition: 0.25s;
 }
@@ -1766,6 +1773,7 @@ a.label:hover, a.label:focus {
   width: 18px;
   z-index: 2;
   -moz-transition: background 0.25s;
+  -o-transition: background 0.25s;
   -webkit-transition: background 0.25s;
   transition: background 0.25s;
 }
@@ -1894,6 +1902,7 @@ a.label:hover, a.label:focus {
 /* line 36, ../sass/modules/_switch.scss */
 .has-switch > div.switch-animate {
   -moz-transition: left 0.25s ease-out;
+  -o-transition: left 0.25s ease-out;
   -webkit-transition: left 0.25s ease-out;
   transition: left 0.25s ease-out;
 }
@@ -1937,6 +1946,7 @@ a.label:hover, a.label:focus {
   width: 50%;
   z-index: 1;
   -moz-transition: ease-out 0.25s;
+  -o-transition: ease-out 0.25s;
   -webkit-transition: ease-out 0.25s;
   transition: ease-out 0.25s;
 }
@@ -1971,6 +1981,7 @@ a.label:hover, a.label:focus {
   width: 29px;
   z-index: 100;
   -moz-transition: ease-out 0.25s;
+  -o-transition: ease-out 0.25s;
   -webkit-transition: ease-out 0.25s;
   transition: ease-out 0.25s;
 }
@@ -2007,3 +2018,5 @@ a.label:hover, a.label:focus {
   border-radius: 0 6px 6px 0;
   border-color: #1abc9c;
 }
+
+/*# sourceMappingURL=main.css.map */
