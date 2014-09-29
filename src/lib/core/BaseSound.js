@@ -135,6 +135,15 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         this.inputNode = null;
 
         /**
+         * Set of nodes the output of this sound is currently connected to.
+         *
+         * @property destinations
+         * @type Array
+         * @default
+         **/
+        this.destinations = [];
+
+        /**
          * String name of the model.
          *
          * @property modelName
@@ -240,8 +249,18 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
     BaseSound.prototype.connect = function ( destination, output, input ) {
         if ( destination instanceof AudioNode ) {
             this.releaseGainNode.connect( destination, output, input );
+            this.destinations.push( {
+                "destination": destination,
+                "output": output,
+                "input": input
+            } );
         } else if ( destination.inputNode instanceof AudioNode ) {
             this.releaseGainNode.connect( destination.inputNode, output, input );
+            this.destinations.push( {
+                "destination": destination.inputNode,
+                "output": output,
+                "input": input
+            } );
         } else {
             console.error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) );
         }
@@ -255,6 +274,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      **/
     BaseSound.prototype.disconnect = function ( outputIndex ) {
         this.releaseGainNode.disconnect( outputIndex );
+        this.destinations = [];
     };
 
     /**

@@ -38,7 +38,6 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             var self = this;
 
             var sourceBufferNodes_ = [];
-            var multiTrackGainNodes_ = [];
             var lastStopPosition_ = [];
             var rateArray_ = [];
 
@@ -77,19 +76,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     onSourceEnd( event, trackIndex, source );
                 };
 
-                var gainNode;
-                if ( multiTrackGainNodes_[ trackIndex ] ) {
-                    gainNode = multiTrackGainNodes_[ trackIndex ];
-                } else {
-                    gainNode = self.audioContext.createGain();
-                    multiTrackGainNodes_[ trackIndex ] = gainNode;
+                var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, source.gain, null, null, self.audioContext );
+                self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
 
-                    var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, gainNode.gain, null, null, self.audioContext );
-                    self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
-                }
-
-                source.connect( gainNode );
-                gainNode.connect( self.releaseGainNode );
+                source.connect( self.releaseGainNode );
 
                 sourceBufferNodes_.splice( trackIndex, 1, source );
                 rateArray_.push( source.playbackRate );
@@ -98,7 +88,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             var onSourceEnd = function ( event, trackIndex, source ) {
                 var cTime = self.audioContext.currentTime;
                 // Create a new source since SourceNodes can't play again.
-                source.resetBufferSource( cTime, multiTrackGainNodes_[ trackIndex ] );
+                source.resetBufferSource( cTime, self.releaseGainNode );
+                var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, source.gain, null, null, self.audioContext );
+                self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
 
                 if ( typeof self.onTrackEnd === 'function' ) {
                     onTrackEnd( self, trackIndex );
@@ -375,19 +367,18 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 if ( resetOnRelease ) {
                     // Create new releaseGain Node
                     this.releaseGainNode = this.audioContext.createGain();
-                    this.releaseGainNode.connect( this.audioContext.destination );
+                    this.destinations.forEach( function ( dest ) {
+                        this.releaseGainNode.connect( dest.destination, dest.output, dest.input );
+                    } );
 
                     // Disconnect and rewire each source
                     sourceBufferNodes_.forEach( function ( thisSource, trackIndex ) {
                         thisSource.stop( when + fadeTime );
                         lastStopPosition_[ trackIndex ] = 0;
-                        var gainNode = self.audioContext.createGain();
-                        var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, gainNode.gain, null, null, self.audioContext );
+
+                        thisSource.resetBufferSource( when, this.releaseGainNode );
+                        var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, thisSource.gain, null, null, self.audioContext );
                         self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
-                        thisSource.resetBufferSource( when, gainNode );
-                        multiTrackGainNodes_[ trackIndex ] = gainNode;
-                        thisSource.connect( gainNode );
-                        gainNode.connect( self.releaseGainNode );
                     } );
 
                     // Set playing to false and end audio after given time.

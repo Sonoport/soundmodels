@@ -16,7 +16,8 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
             var bufferSourceNode_ = audioContext.createBufferSource();
             var counterNode_ = audioContext.createBufferSource();
 
-            var scopeNode = audioContext.createScriptProcessor( 256, 1, 1 );
+            var scopeNode_ = audioContext.createScriptProcessor( 256, 1, 1 );
+            var trackGainNode_ = audioContext.createGain();
             var lastPos = 0;
 
             this.audioContext = audioContext;
@@ -189,6 +190,22 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
             } );
 
             /**
+             * Track gain for this specific buffer.
+             *
+             * @property buffer
+             * @type AudioBuffer
+             * @default null
+             *
+             */
+            Object.defineProperty( this, 'gain', {
+                enumerable: true,
+                configurable: false,
+                get: function () {
+                    return trackGainNode_.gain;
+                }
+            } );
+
+            /**
              * Connects the AudioNode to the input of another AudioNode.
              *
              * @method connect
@@ -198,8 +215,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              *
              */
             this.connect = function ( destination, output, input ) {
-                bufferSourceNode_.connect( destination, output, input );
-                scopeNode.connect( destination, output, input );
+                trackGainNode_.connect( destination, output, input );
             };
 
             /**
@@ -210,8 +226,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              *
              */
             this.disconnect = function ( output ) {
-                bufferSourceNode_.disconnect( output );
-                scopeNode.disconnect( output );
+                trackGainNode_.disconnect( output );
             };
 
             /**
@@ -269,7 +284,13 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                     //console.log( 'resetting' );
                     // Disconnect source(s) from output.
                     // self.disconnect( );
-                    scopeNode.disconnect();
+
+                    // Disconnect scope node from trackGain
+                    scopeNode_.disconnect();
+
+                    var newTrackGain = self.audioContext.createGain();
+                    newTrackGain.gain.value = trackGainNode_.gain.value;
+                    trackGainNode_ = newTrackGain;
 
                     // Create new sources and copy all the parameters over.
                     var newSource = self.audioContext.createBufferSource();
@@ -281,9 +302,11 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                     // Remove onended callback from old buffer
                     bufferSourceNode_.onended = null;
 
+                    // Throw away the counter node;
+                    counterNode_.disconnect();
+
                     var newCounterNode = audioContext.createBufferSource();
                     newCounterNode.buffer = counterNode_.buffer;
-                    newCounterNode.connect( scopeNode );
 
                     // Assign the new local variables to new sources
                     bufferSourceNode_ = newSource;
@@ -295,6 +318,9 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                     self.playbackRate.setValueAtTime( playBackRateVal, 0 );
 
                     // Reconnect to output.
+                    counterNode_.connect( scopeNode_ );
+                    bufferSourceNode_.connect( trackGainNode_ );
+                    scopeNode_.connect( trackGainNode_ );
                     self.connect( output );
                     self.playbackState = self.UNSCHEDULED_STATE;
                 }, when, this.audioContext );
@@ -316,8 +342,10 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
             }
 
             function init() {
-                counterNode_.connect( scopeNode );
-                scopeNode.onaudioprocess = savePosition;
+                counterNode_.connect( scopeNode_ );
+                bufferSourceNode_.connect( trackGainNode_ );
+                scopeNode_.connect( trackGainNode_ );
+                scopeNode_.onaudioprocess = savePosition;
             }
 
             function savePosition( processEvent ) {
