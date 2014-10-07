@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.2.0</em>
+            <em>API Docs for: 1.2.1-0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -464,6 +464,13 @@
                         
                             <li class="index-item property">
                                 <a href="#property_decayTime">decayTime</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_destinations">destinations</a>
 
                                 
                                 
@@ -1019,7 +1026,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_release" class="method item inherited">
+                    <div id="method_release" class="method item">
     <h3 class="name"><code>release</code></h3>
 
     
@@ -1040,7 +1047,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code class="optional">[stopOnRelease]</code>
+                        <code class="optional">[resetOnRelease]</code>
                     
                 </li>
             
@@ -1064,9 +1071,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#method_release">BaseSound</a>:
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_release">
+                BaseSound
+            </a>
             
         
         
@@ -1125,7 +1133,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name optional">[stopOnRelease]</code>
+                        <code class="param-name optional">[resetOnRelease]</code>
                         <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -1133,7 +1141,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>Boolean to define if release stops (resets) the playback or just pauses it.</p>
+                        <p>Boolean to define if release resets (stops) the playback or just pauses it.</p>
 
                     </div>
 
@@ -1616,6 +1624,50 @@ the value of startPoint property is used.</p>
 
     
            <p><strong>Maximum Value:</strong> 10.0</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_destinations" class="property item inherited">
+    <h3 class="name"><code>destinations</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_destinations">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Set of nodes the output of this sound is currently connected to.</p>
+
+    </div>
+
+    
+
+    
+
     
 
     

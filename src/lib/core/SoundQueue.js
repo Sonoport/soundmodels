@@ -105,7 +105,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
                     newVoice = busyVoices_.shift();
                     dequeueEventsHavingID( newVoice.eventID );
                     newVoice.eventID = eventID;
-                    newVoice.release( context.currentTime, eventTime - context.currentTime );
+                    newVoice.release( context.currentTime, eventTime - context.currentTime, true );
                     busyVoices_.push( newVoice );
                 } else {
                     newVoice = freeVoices_.shift();
@@ -146,9 +146,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
                         selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
                     }
                 } else if ( thisEvent.type == "QESETSRC" ) {
-                    webaudioDispatch( function () {
-                        selectedVoice.setSources( thisEvent.sourceBuffer );
-                    }, thisEvent.time, context );
+                    selectedVoice.setSources( thisEvent.sourceBuffer );
                 } else if ( thisEvent.type == "QERELEASE" ) {
                     //console.log( "releasing " + selectedVoice.voiceIndex );
                     selectedVoice.release( thisEvent.time, thisEvent.releaseDuration );

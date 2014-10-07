@@ -1,6 +1,7 @@
 ( function () {
     "use strict";
 
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     if ( !window.context ) {
         window.context = new AudioContext();
     }

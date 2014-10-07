@@ -13,18 +13,19 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
          * @param {AudioContext} AudioContext to be used in timing the parameter automation events
          */
         function SPAudioBufferSourceNode( audioContext ) {
-            var bufferSourceNode = audioContext.createBufferSource();
-            var counterNode = audioContext.createBufferSource();
+            var bufferSourceNode_ = audioContext.createBufferSource();
+            var counterNode_ = audioContext.createBufferSource();
 
-            var scopeNode = audioContext.createScriptProcessor( 256, 1, 1 );
+            var scopeNode_ = audioContext.createScriptProcessor( 256, 1, 1 );
+            var trackGainNode_ = audioContext.createGain();
             var lastPos = 0;
 
             this.audioContext = audioContext;
-            this.channelCount = bufferSourceNode.channelCount;
-            this.channelCountMode = bufferSourceNode.channelCountMode;
-            this.channelInterpretation = bufferSourceNode.channelInterpretation;
-            this.numberOfInputs = bufferSourceNode.numberOfInputs;
-            this.numberOfOutputs = bufferSourceNode.numberOfOutputs;
+            this.channelCount = bufferSourceNode_.channelCount;
+            this.channelCountMode = bufferSourceNode_.channelCountMode;
+            this.channelInterpretation = bufferSourceNode_.channelInterpretation;
+            this.numberOfInputs = bufferSourceNode_.numberOfInputs;
+            this.numberOfOutputs = bufferSourceNode_.numberOfOutputs;
             this.playbackState = 0;
 
             /**
@@ -71,7 +72,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              * @default 1
              *
              */
-            this.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
+            this.playbackRate = new SPPlaybackRateParam( bufferSourceNode_.playbackRate, counterNode_.playbackRate );
 
             /**
              * An optional value in seconds where looping should end if the loop attribute is true.
@@ -85,11 +86,11 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                 enumerable: true,
                 configurable: false,
                 set: function ( loopEnd ) {
-                    bufferSourceNode.loopEnd = loopEnd;
-                    counterNode.loopEnd = loopEnd;
+                    bufferSourceNode_.loopEnd = loopEnd;
+                    counterNode_.loopEnd = loopEnd;
                 },
                 get: function () {
-                    return bufferSourceNode.loopEnd;
+                    return bufferSourceNode_.loopEnd;
                 }
             } );
 
@@ -105,11 +106,11 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                 enumerable: true,
                 configurable: false,
                 set: function ( loopStart ) {
-                    bufferSourceNode.loopStart = loopStart;
-                    counterNode.loopStart = loopStart;
+                    bufferSourceNode_.loopStart = loopStart;
+                    counterNode_.loopStart = loopStart;
                 },
                 get: function () {
-                    return bufferSourceNode.loopStart;
+                    return bufferSourceNode_.loopStart;
                 }
             } );
 
@@ -125,10 +126,10 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                 enumerable: true,
                 configurable: false,
                 set: function ( onended ) {
-                    bufferSourceNode.onended = wrapAroundOnEnded( this, onended );
+                    bufferSourceNode_.onended = wrapAroundOnEnded( this, onended );
                 },
                 get: function () {
-                    return bufferSourceNode.onended;
+                    return bufferSourceNode_.onended;
                 }
             } );
 
@@ -144,11 +145,11 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                 enumerable: true,
                 configurable: false,
                 set: function ( loop ) {
-                    bufferSourceNode.loop = loop;
-                    counterNode.loop = loop;
+                    bufferSourceNode_.loop = loop;
+                    counterNode_.loop = loop;
                 },
                 get: function () {
-                    return bufferSourceNode.loop;
+                    return bufferSourceNode_.loop;
                 }
             } );
 
@@ -180,11 +181,27 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                 enumerable: true,
                 configurable: false,
                 set: function ( buffer ) {
-                    bufferSourceNode.buffer = buffer;
-                    counterNode.buffer = createCounterBuffer( buffer );
+                    bufferSourceNode_.buffer = buffer;
+                    counterNode_.buffer = createCounterBuffer( buffer );
                 },
                 get: function () {
-                    return bufferSourceNode.buffer;
+                    return bufferSourceNode_.buffer;
+                }
+            } );
+
+            /**
+             * Track gain for this specific buffer.
+             *
+             * @property buffer
+             * @type AudioBuffer
+             * @default null
+             *
+             */
+            Object.defineProperty( this, 'gain', {
+                enumerable: true,
+                configurable: false,
+                get: function () {
+                    return trackGainNode_.gain;
                 }
             } );
 
@@ -198,8 +215,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              *
              */
             this.connect = function ( destination, output, input ) {
-                bufferSourceNode.connect( destination, output, input );
-                scopeNode.connect( destination, output, input );
+                trackGainNode_.connect( destination, output, input );
             };
 
             /**
@@ -210,8 +226,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              *
              */
             this.disconnect = function ( output ) {
-                bufferSourceNode.disconnect( output );
-                scopeNode.disconnect( output );
+                trackGainNode_.disconnect( output );
             };
 
             /**
@@ -225,12 +240,12 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              */
             this.start = function ( when, offset, duration ) {
                 if ( typeof duration == 'undefined' ) {
-                    duration = bufferSourceNode.buffer.duration;
+                    duration = bufferSourceNode_.buffer.duration;
                 }
 
                 if ( this.playbackState === this.UNSCHEDULED_STATE ) {
-                    bufferSourceNode.start( when, offset, duration );
-                    counterNode.start( when, offset, duration );
+                    bufferSourceNode_.start( when, offset, duration );
+                    counterNode_.start( when, offset, duration );
                     this.playbackState = this.SCHEDULED_STATE;
                 }
 
@@ -249,8 +264,8 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              */
             this.stop = function ( when ) {
                 if ( this.playbackState === this.PLAYING_STATE || this.playbackState === this.SCHEDULED_STATE ) {
-                    bufferSourceNode.stop( when );
-                    counterNode.stop( when );
+                    bufferSourceNode_.stop( when );
+                    counterNode_.stop( when );
                 }
             };
 
@@ -266,21 +281,46 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
 
                 var self = this;
                 webAudioDispatch( function () {
-                    self.disconnect( output );
-                    var newSource = self.audioContext.createBufferSource();
-                    newSource.buffer = bufferSourceNode.buffer;
-                    newSource.loopStart = bufferSourceNode.loopStart;
-                    newSource.loopEnd = bufferSourceNode.loopEnd;
-                    newSource.onended = wrapAroundOnEnded( self, bufferSourceNode.onended );
-                    bufferSourceNode = newSource;
-                    var newCounterNode = audioContext.createBufferSource();
-                    newCounterNode.buffer = counterNode.buffer;
-                    newCounterNode.connect( scopeNode );
-                    counterNode = newCounterNode;
+                    //console.log( 'resetting' );
+                    // Disconnect source(s) from output.
+                    // self.disconnect( );
 
+                    // Disconnect scope node from trackGain
+                    scopeNode_.disconnect();
+
+                    var newTrackGain = self.audioContext.createGain();
+                    newTrackGain.gain.value = trackGainNode_.gain.value;
+                    trackGainNode_ = newTrackGain;
+
+                    // Create new sources and copy all the parameters over.
+                    var newSource = self.audioContext.createBufferSource();
+                    newSource.buffer = bufferSourceNode_.buffer;
+                    newSource.loopStart = bufferSourceNode_.loopStart;
+                    newSource.loopEnd = bufferSourceNode_.loopEnd;
+                    newSource.onended = wrapAroundOnEnded( self, bufferSourceNode_.onended );
+
+                    // Remove onended callback from old buffer
+                    bufferSourceNode_.onended = null;
+
+                    // Throw away the counter node;
+                    counterNode_.disconnect();
+
+                    var newCounterNode = audioContext.createBufferSource();
+                    newCounterNode.buffer = counterNode_.buffer;
+
+                    // Assign the new local variables to new sources
+                    bufferSourceNode_ = newSource;
+                    counterNode_ = newCounterNode;
+
+                    // Create new parameters for rate parameter
                     var playBackRateVal = self.playbackRate.value;
-                    self.playbackRate = new SPPlaybackRateParam( bufferSourceNode.playbackRate, counterNode.playbackRate );
+                    self.playbackRate = new SPPlaybackRateParam( bufferSourceNode_.playbackRate, counterNode_.playbackRate );
                     self.playbackRate.setValueAtTime( playBackRateVal, 0 );
+
+                    // Reconnect to output.
+                    counterNode_.connect( scopeNode_ );
+                    bufferSourceNode_.connect( trackGainNode_ );
+                    scopeNode_.connect( trackGainNode_ );
                     self.connect( output );
                     self.playbackState = self.UNSCHEDULED_STATE;
                 }, when, this.audioContext );
@@ -302,8 +342,10 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
             }
 
             function init() {
-                counterNode.connect( scopeNode );
-                scopeNode.onaudioprocess = savePosition;
+                counterNode_.connect( scopeNode_ );
+                bufferSourceNode_.connect( trackGainNode_ );
+                scopeNode_.connect( trackGainNode_ );
+                scopeNode_.onaudioprocess = savePosition;
             }
 
             function savePosition( processEvent ) {

@@ -218,7 +218,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                     delete looper.multiTrackGain;
                 } ).toThrowError();
 
-                expect( looper.multiTrackGain[ 0 ].name ).toBe( "gain" );
+                expect( looper.multiTrackGain[ 0 ].name ).toBe( "gain-0" );
                 expect( looper.multiTrackGain[ 0 ].value ).toBe( 1 );
                 expect( looper.multiTrackGain[ 0 ].minValue ).toBe( 0 );
                 expect( looper.multiTrackGain[ 0 ].maxValue ).toBe( 1 );
@@ -246,7 +246,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                 expect( looper.release ).toBeInstanceOf( Function );
             } );
 
-            it( "should be start/stop audio", function ( done ) {
+            it( "should be able to start/stop audio", function ( done ) {
                 expect( function () {
                     looper.start();
                 } ).not.toThrowError();
@@ -267,7 +267,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                 }, 1000 );
             } );
 
-            it( "should be play/pause audio", function ( done ) {
+            it( "should able to be play/pause audio", function ( done ) {
                 expect( function () {
                     looper.play();
                 } ).not.toThrowError();
@@ -310,7 +310,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                 }, 1000 );
             } );
 
-            it( "should be play/release audio", function ( done ) {
+            it( "should be able to play/release audio", function ( done ) {
                 expect( function () {
                     looper.play();
                 } ).not.toThrowError();

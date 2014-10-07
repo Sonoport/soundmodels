@@ -1,8 +1,10 @@
 ( function () {
     "use strict";
 
-    var AudioContext = webkitAudioContext || AudioContext;
-    var context = new AudioContext();
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    if ( !window.context ) {
+        window.context = new AudioContext();
+    }
 
     var scrubber;
 

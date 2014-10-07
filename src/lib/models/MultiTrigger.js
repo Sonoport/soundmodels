@@ -170,10 +170,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 if ( value === 0 ) {
                     if ( self.isPlaying ) {
                         wasPlaying_ = true;
-                        self.pause();
+                        soundQueue_.pause();
+                        BaseSound.prototype.pause.call( self );
                     }
                 } else {
-                    if ( !self.isPlaying && self.isInitialized && wasPlaying_ ) {
+                    if ( self.isInitialized && !self.isPlaying && wasPlaying_ ) {
                         self.play();
                     }
                     if ( self.isInitialized ) {
