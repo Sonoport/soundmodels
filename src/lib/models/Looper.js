@@ -361,6 +361,13 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @param {Boolean} [resetOnRelease] Boolean to define if release resets (stops) the playback or just pauses it.
              */
             this.release = function ( when, fadeTime, resetOnRelease ) {
+                if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+                    when = this.audioContext.currentTime;
+                }
+
+                var FADE_TIME = 0.5;
+                fadeTime = fadeTime || FADE_TIME;
+
                 BaseSound.prototype.release.call( this, when, fadeTime, resetOnRelease );
                 // Pause the sound after currentTime + fadeTime + FADE_TIME_PAD
 
@@ -368,7 +375,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     // Create new releaseGain Node
                     this.releaseGainNode = this.audioContext.createGain();
                     this.destinations.forEach( function ( dest ) {
-                        this.releaseGainNode.connect( dest.destination, dest.output, dest.input );
+                        self.releaseGainNode.connect( dest.destination, dest.output, dest.input );
                     } );
 
                     // Disconnect and rewire each source
@@ -376,7 +383,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                         thisSource.stop( when + fadeTime );
                         lastStopPosition_[ trackIndex ] = 0;
 
-                        thisSource.resetBufferSource( when, this.releaseGainNode );
+                        thisSource.resetBufferSource( when, self.releaseGainNode );
                         var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, thisSource.gain, null, null, self.audioContext );
                         self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
                     } );
