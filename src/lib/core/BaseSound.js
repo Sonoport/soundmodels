@@ -188,7 +188,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
          */
         this.onAudioEnd = null;
 
-        this.releaseGainNode.connect( this.audioContext.destination );
+        this.connect( this.audioContext.destination );
 
         function bootAudioContext( context ) {
 
@@ -412,7 +412,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             if ( this.hasOwnProperty( paramName ) ) {
                 var param = this[ paramName ];
                 // Get properties that are of SPAudioParam
-                if ( param && ( param.hasOwnProperty( "value" ) && param.hasOwnProperty( "minValue" ) && param.hasOwnProperty( "maxValue" ) ) || ( param instanceof Array && param[ 0 ].hasOwnProperty( "value" ) && param[ 0 ].hasOwnProperty( "minValue" ) && param[ 0 ].hasOwnProperty( "maxValue" ) ) ) {
+                if ( param && ( param.hasOwnProperty( "value" ) && param.hasOwnProperty( "minValue" ) && param.hasOwnProperty( "maxValue" ) ) || ( param instanceof Array && param.length > 0 && param[ 0 ].hasOwnProperty( "value" ) && param[ 0 ].hasOwnProperty( "minValue" ) && param[ 0 ].hasOwnProperty( "maxValue" ) ) ) {
                     paramList.push( param );
                 }
             }

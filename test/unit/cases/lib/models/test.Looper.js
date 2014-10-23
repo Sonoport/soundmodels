@@ -329,6 +329,40 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                     }, 1000 );
                 }, 1000 );
             } );
+
+            it( "should be able to play/release audio with reset", function ( done ) {
+                expect( function () {
+                    looper.play();
+                } ).not.toThrowError();
+
+                expect( looper.isPlaying ).toBe( true );
+                setTimeout( function () {
+                    expect( internalSpies.onAudioStart ).toHaveBeenCalled();
+                    expect( function () {
+                        looper.release( null, null, true );
+                    } ).not.toThrowError();
+
+                    setTimeout( function () {
+                        expect( looper.isPlaying ).toBe( false );
+                        expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
+
+                        setTimeout( function () {
+                            expect( function () {
+                                looper.start();
+                            } ).not.toThrowError();
+                            setTimeout( function () {
+                                expect( function () {
+                                    looper.release();
+                                } ).not.toThrowError();
+                                setTimeout( function () {
+                                    expect( looper.isPlaying ).toBe( false );
+                                    done();
+                                }, 1000 );
+                            }, 1000 );
+                        }, 1000 );
+                    }, 1000 );
+                }, 1000 );
+            } );
         } );
     } );
 } );
