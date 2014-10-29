@@ -100,8 +100,8 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
 
             function init( source ) {
                 internalLooper_ = new Looper( self.audioContext, source, self.onLoadProgress, onLoadAll, self.onAudioStart, self.onAudioEnd );
-                internalLooper_.riseTime.value = self.riseTime.value;
-                internalLooper_.decayTime.value = self.decayTime.value;
+                internalLooper_.easeIn.value = self.easeIn.value;
+                internalLooper_.easeOut.value = self.easeOut.value;
             }
 
             function actionSetter_( aParam, value, audioContext ) {
@@ -172,7 +172,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
                                 audioPlaying = false;
                                 self.release();
                             }
-                        }, 1000 * internalLooper_.decayTime.value );
+                        }, 1000 * internalLooper_.easeOut.value );
                     }
 
                     lastPosition_ = newPosition;
@@ -180,15 +180,15 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
                 }
             }
 
-            function riseTimeSetter_( aParam, value ) {
+            function easeInSetter_( aParam, value ) {
                 if ( self.isInitialized ) {
-                    internalLooper_.riseTime.value = value;
+                    internalLooper_.easeIn.value = value;
                 }
             }
 
-            function decayTimeSetter_( aParam, value ) {
+            function easeOutSetter_( aParam, value ) {
                 if ( self.isInitialized ) {
-                    internalLooper_.decayTime.value = value;
+                    internalLooper_.easeOut.value = value;
                 }
             }
 
@@ -209,7 +209,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              * @minvalue 0.05
              * @maxvalue 8.0
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( "maxSpeed", 0.05, 8.0, 1, this.audioContext ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, "maxSpeed", 0.05, 8.0, 1 ) );
 
             /**
              * Controls the playback of the source. The more this parameter is moved, the higher the speed of playback.
@@ -220,7 +220,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              * @minvalue 0.0
              * @maxvalue 1.0
              */
-            this.registerParameter( new SPAudioParam( "action", 0, 1.0, 0.0, null, null, actionSetter_, this.audioContext ) );
+            this.registerParameter( new SPAudioParam( this, "action", 0, 1.0, 0.0, null, null, actionSetter_ ) );
 
             /**
              * Maximum value for random pitch shift of the triggered voices in semitones.
@@ -231,29 +231,29 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              * @minvalue 0.0
              * @maxvalue 1.0
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( "sensitivity", 0.0, 1.0, 0.5, this.audioContext ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, "sensitivity", 0.0, 1.0, 0.5 ) );
 
             /**
              * Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
              *
-             * @property riseTime
+             * @property easeIn
              * @type SPAudioParam
              * @default 1
              * @minvalue 0.05
              * @maxvalue 10.0
              */
-            this.registerParameter( new SPAudioParam( "riseTime", 0.05, 10.0, 1, null, null, riseTimeSetter_, this.audioContext ) );
+            this.registerParameter( new SPAudioParam( this, "easeIn", 0.05, 10.0, 1, null, null, easeInSetter_ ) );
 
             /**
              *  Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
              *
-             * @property decayTime
+             * @property easeOut
              * @type SPAudioParam
              * @default 1
              * @minvalue 0.05
              * @maxvalue 10.0
              */
-            this.registerParameter( new SPAudioParam( "decayTime", 0.05, 10.0, 1, null, null, decayTimeSetter_, this.audioContext ) );
+            this.registerParameter( new SPAudioParam( this, "easeOut", 0.05, 10.0, 1, null, null, easeOutSetter_ ) );
 
             /**
              * Start point (as a factor of the length of the entire track) where the Looping should start from.
@@ -264,7 +264,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              * @minvalue 0.0
              * @maxvalue 0.99
              */
-            this.registerParameter( new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext ) );
+            this.registerParameter( new SPAudioParam( this, "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_ ) );
 
             // Public Functions
 

@@ -134,39 +134,39 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
 
             } );
 
-            it( "should have a valid parameter riseTime", function () {
+            it( "should have a valid parameter easeIn", function () {
 
-                expect( activity.riseTime ).toBeInstanceOf( SPAudioParam );
+                expect( activity.easeIn ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    activity.riseTime = 0;
+                    activity.easeIn = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete activity.riseTime;
+                    delete activity.easeIn;
                 } ).toThrowError();
 
-                expect( activity.riseTime.name ).toBe( "riseTime" );
-                expect( activity.riseTime.value ).toBe( 1 );
-                expect( activity.riseTime.minValue ).toBe( 0.05 );
-                expect( activity.riseTime.maxValue ).toBe( 10.0 );
+                expect( activity.easeIn.name ).toBe( "easeIn" );
+                expect( activity.easeIn.value ).toBe( 1 );
+                expect( activity.easeIn.minValue ).toBe( 0.05 );
+                expect( activity.easeIn.maxValue ).toBe( 10.0 );
 
             } );
 
-            it( "should have a valid parameter decayTime", function () {
-                expect( activity.decayTime ).toBeInstanceOf( SPAudioParam );
+            it( "should have a valid parameter easeOut", function () {
+                expect( activity.easeOut ).toBeInstanceOf( SPAudioParam );
                 expect( function () {
-                    activity.decayTime = 0;
+                    activity.easeOut = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete activity.decayTime;
+                    delete activity.easeOut;
                 } ).toThrowError();
 
-                expect( activity.decayTime.name ).toBe( "decayTime" );
-                expect( activity.decayTime.value ).toBe( 1 );
-                expect( activity.decayTime.minValue ).toBe( 0.05 );
-                expect( activity.decayTime.maxValue ).toBe( 10.0 );
+                expect( activity.easeOut.name ).toBe( "easeOut" );
+                expect( activity.easeOut.value ).toBe( 1 );
+                expect( activity.easeOut.minValue ).toBe( 0.05 );
+                expect( activity.easeOut.maxValue ).toBe( 10.0 );
 
             } );
 

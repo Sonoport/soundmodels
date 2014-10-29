@@ -72,7 +72,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              * @default 1
              *
              */
-            this.playbackRate = new SPPlaybackRateParam( bufferSourceNode_.playbackRate, counterNode_.playbackRate );
+            this.playbackRate = new SPPlaybackRateParam( this, bufferSourceNode_.playbackRate, counterNode_.playbackRate );
 
             /**
              * An optional value in seconds where looping should end if the loop attribute is true.
@@ -314,7 +314,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
 
                     // Create new parameters for rate parameter
                     var playBackRateVal = self.playbackRate.value;
-                    self.playbackRate = new SPPlaybackRateParam( bufferSourceNode_.playbackRate, counterNode_.playbackRate );
+                    self.playbackRate = new SPPlaybackRateParam( self, bufferSourceNode_.playbackRate, counterNode_.playbackRate );
                     self.playbackRate.setValueAtTime( playBackRateVal, 0 );
 
                     // Reconnect to output.

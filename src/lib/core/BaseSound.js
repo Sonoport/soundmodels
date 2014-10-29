@@ -188,6 +188,8 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
          */
         this.onAudioEnd = null;
 
+        this.parameterList_ = [];
+
         this.connect( this.audioContext.destination );
 
         function bootAudioContext( context ) {
@@ -217,25 +219,6 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             }
         }
     }
-
-    /**
-     * Registers a Parameter to the model. This ensures that the Parameter is unwritable and allows
-     * to lock in the configurability of the object.
-     *
-     * @param  {SPAudioParam} audioParam
-     */
-    BaseSound.prototype.registerParameter = function ( audioParam, configurable ) {
-
-        if ( configurable === undefined || configurable === null ) {
-            configurable = false;
-        }
-
-        Object.defineProperty( this, audioParam.name, {
-            enumerable: true,
-            configurable: configurable,
-            value: audioParam
-        } );
-    };
 
     /**
      * If the parameter `output` is an AudioNode, it connects to the releaseGainNode.
@@ -400,24 +383,38 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
     };
 
     /**
+     * Registers a Parameter to the model. This ensures that the Parameter is unwritable and allows
+     * to lock in the configurability of the object.
+     *
+     * @param  {SPAudioParam} audioParam
+     */
+    BaseSound.prototype.registerParameter = function ( audioParam, configurable ) {
+
+        if ( configurable === undefined || configurable === null ) {
+            configurable = false;
+        }
+
+        Object.defineProperty( this, audioParam.name, {
+            enumerable: true,
+            configurable: configurable,
+            value: audioParam
+        } );
+
+        if ( this.parameterList_.filter( function ( thisParam ) {
+            return thisParam.name === audioParam.name;
+        } ).length === 0 ) {
+            this.parameterList_.push( audioParam );
+        }
+    };
+
+    /**
      * List all SPAudioParams this Sound exposes
      *
      * @method listParams
      * @param {Array} [paramArray] Array of all the SPAudioParams this Sound exposes.
      */
     BaseSound.prototype.listParams = function () {
-        var paramList = [];
-
-        for ( var paramName in this ) {
-            if ( this.hasOwnProperty( paramName ) ) {
-                var param = this[ paramName ];
-                // Get properties that are of SPAudioParam
-                if ( param && ( param.hasOwnProperty( "value" ) && param.hasOwnProperty( "minValue" ) && param.hasOwnProperty( "maxValue" ) ) || ( param instanceof Array && param.length > 0 && param[ 0 ].hasOwnProperty( "value" ) && param[ 0 ].hasOwnProperty( "minValue" ) && param[ 0 ].hasOwnProperty( "maxValue" ) ) ) {
-                    paramList.push( param );
-                }
-            }
-        }
-        return paramList;
+        return this.parameterList_;
     };
 
     // Return constructor function

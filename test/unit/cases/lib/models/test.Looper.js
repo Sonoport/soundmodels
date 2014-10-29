@@ -136,39 +136,39 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
 
             } );
 
-            it( "should have a valid parameter riseTime", function () {
+            it( "should have a valid parameter easeIn", function () {
 
-                expect( looper.riseTime ).toBeInstanceOf( SPAudioParam );
+                expect( looper.easeIn ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    looper.riseTime = 0;
+                    looper.easeIn = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete looper.riseTime;
+                    delete looper.easeIn;
                 } ).toThrowError();
 
-                expect( looper.riseTime.name ).toBe( "riseTime" );
-                expect( looper.riseTime.value ).toBe( 0.05 );
-                expect( looper.riseTime.minValue ).toBe( 0.05 );
-                expect( looper.riseTime.maxValue ).toBe( 10.0 );
+                expect( looper.easeIn.name ).toBe( "easeIn" );
+                expect( looper.easeIn.value ).toBe( 0.05 );
+                expect( looper.easeIn.minValue ).toBe( 0.05 );
+                expect( looper.easeIn.maxValue ).toBe( 10.0 );
 
             } );
 
-            it( "should have a valid parameter decayTime", function () {
-                expect( looper.decayTime ).toBeInstanceOf( SPAudioParam );
+            it( "should have a valid parameter easeOut", function () {
+                expect( looper.easeOut ).toBeInstanceOf( SPAudioParam );
                 expect( function () {
-                    looper.decayTime = 0;
+                    looper.easeOut = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete looper.decayTime;
+                    delete looper.easeOut;
                 } ).toThrowError();
 
-                expect( looper.decayTime.name ).toBe( "decayTime" );
-                expect( looper.decayTime.value ).toBe( 0.05 );
-                expect( looper.decayTime.minValue ).toBe( 0.05 );
-                expect( looper.decayTime.maxValue ).toBe( 10.0 );
+                expect( looper.easeOut.name ).toBe( "easeOut" );
+                expect( looper.easeOut.value ).toBe( 0.05 );
+                expect( looper.easeOut.minValue ).toBe( 0.05 );
+                expect( looper.easeOut.maxValue ).toBe( 10.0 );
 
             } );
 
