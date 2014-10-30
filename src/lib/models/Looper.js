@@ -149,6 +149,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 sourceBufferNodes_.forEach( function ( thisSource ) {
                     thisSource.disconnect();
                 } );
+                self.multiTrackGain.length = 0;
                 multiFileLoader.call( self, sources, self.audioContext, self.onLoadProgress, onLoadAll );
             }
 

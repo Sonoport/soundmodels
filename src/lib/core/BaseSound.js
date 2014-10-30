@@ -400,9 +400,16 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             value: audioParam
         } );
 
-        if ( this.parameterList_.filter( function ( thisParam ) {
-            return thisParam.name === audioParam.name;
-        } ).length === 0 ) {
+        var self = this;
+        var replaced = false;
+        this.parameterList_.forEach( function ( thisParam, paramIndex ) {
+            if ( thisParam.name === audioParam.name ) {
+                self.parameterList_.splice( paramIndex, 1, audioParam );
+                replaced = true;
+            }
+        } );
+
+        if ( !replaced ) {
             this.parameterList_.push( audioParam );
         }
     };
