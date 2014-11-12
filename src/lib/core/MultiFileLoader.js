@@ -4,30 +4,31 @@
  * @class MuliFileLoader
  * @static
  */
-define( [ 'core/FileLoader', 'core/SPAudioBuffer' ],
-    function ( FileLoader, SPAudioBuffer ) {
-        "use strict";
 
-        /**
+"use strict";
+
+var FileLoader = require( 'core/FileLoader' );
+
+/**
          * Helper class to loader multiple sources from URL String, File or AudioBuffer or SPAudioBuffer Objects.
-         *
-         *
-         * @method MuliFileLoader
+ *
+ *
+ * @method MuliFileLoader
          * @param {Array/String/File} sources Array of or Individual String, AudioBuffer or File Objects which define the sounds to be loaded
-         * @param {String} audioContext AudioContext to be used in decoding the file
-         * @param {String} [onLoadProgress] Callback function to access the progress of the file loading.
+ * @param {String} audioContext AudioContext to be used in decoding the file
+ * @param {String} [onLoadProgress] Callback function to access the progress of the file loading.
          * @param {String} [onLoadComplete] Callback function to be called when all sources are loaded
-         */
+ */
         function MultiFileLoader( sources, audioContext, onLoadProgress, onLoadComplete ) {
 
-            //Private variables
-            var self = this;
-            this.audioContext = audioContext;
-            var sourcesToLoad_ = 0;
-            var loadedAudioBuffers_ = [];
+    //Private variables
+    var self = this;
+    this.audioContext = audioContext;
+    var sourcesToLoad_ = 0;
+    var loadedAudioBuffers_ = [];
 
-            //Private functions
-            function init() {
+    //Private functions
+    function init() {
 
                 // If not defined, set empty sources.
                 if ( !sources ) {
@@ -80,44 +81,43 @@ define( [ 'core/FileLoader', 'core/SPAudioBuffer' ],
                     }
 
                     var fileLoader = new FileLoader( sourceURL, self.audioContext, function ( status ) {
-                        if ( status ) {
+                if ( status ) {
                             audioBuffer.buffer = fileLoader.getBuffer();
                             onSingleLoad( status, audioBuffer );
-                        } else {
-                            onSingleLoad( status );
-                        }
-                    }, function ( progressEvent ) {
+                } else {
+                    onSingleLoad( status );
+                }
+            }, function ( progressEvent ) {
                         if ( onLoadProgress && typeof onLoadProgress === 'function' ) {
                             onLoadProgress( progressEvent, audioBuffer );
-                        }
-                    } );
-                } else {
-                    console.error( "Incorrect Parameter Type - Source is not a URL, File or AudioBuffer or doesn't have sourceURL or buffer" );
-                    onSingleLoad( false, {} );
                 }
-            }
+            } );
+        } else {
+                    console.error( "Incorrect Parameter Type - Source is not a URL, File or AudioBuffer or doesn't have sourceURL or buffer" );
+            onSingleLoad( false, {} );
+        }
+    }
 
-            function onSingleLoadAt( index ) {
+    function onSingleLoadAt( index ) {
                 return function ( status, loadedSound ) {
-                    if ( status ) {
+            if ( status ) {
                         //console.log( "Loaded ", index, "successfully" );
                         loadedAudioBuffers_[ index ] = loadedSound;
-                    }
-                    sourcesToLoad_--;
-                    if ( sourcesToLoad_ === 0 ) {
-                        var allStatus = true;
-                        for ( var bIndex = 0; bIndex < loadedAudioBuffers_.length; ++bIndex ) {
-                            if ( !loadedAudioBuffers_[ bIndex ] ) {
-                                allStatus = false;
-                                break;
-                            }
-                        }
-                        onLoadComplete( allStatus, loadedAudioBuffers_ );
-                    }
-                };
             }
-            init();
-        }
+            sourcesToLoad_--;
+            if ( sourcesToLoad_ === 0 ) {
+                var allStatus = true;
+                for ( var bIndex = 0; bIndex < loadedAudioBuffers_.length; ++bIndex ) {
+                    if ( !loadedAudioBuffers_[ bIndex ] ) {
+                        allStatus = false;
+                        break;
+                    }
+                }
+                onLoadComplete( allStatus, loadedAudioBuffers_ );
+            }
+        };
+    }
+    init();
+}
 
-        return MultiFileLoader;
-    } );
+module.exports = MultiFileLoader;

@@ -56,7 +56,7 @@ var paths = {
 /**
  * Removes a module from the cache
  */
-require.uncache = function (moduleName) {
+ require.uncache = function (moduleName) {
     // Run over the cache looking for the files
     // loaded by the specified module name
     require.searchCache(moduleName, function (mod) {
@@ -68,7 +68,7 @@ require.uncache = function (moduleName) {
  * Runs over the cache to search for all the cached
  * files
  */
-require.searchCache = function (moduleName, callback) {
+ require.searchCache = function (moduleName, callback) {
     // Resolve the module identified by the specified name
     var mod = require.resolve(moduleName);
 
@@ -287,4 +287,13 @@ gulp.task('integration', ['devbuild', 'watch:test'], function(){
         port: 8082,
         host : "localhost"
     }));
+});
+
+gulp.task('browserifybuild', function(){
+    return gulp.src('src/lib/models/Looper.js')
+    .pipe(browserify({
+      paths : ['src/lib'],
+      standalone : "Looper"
+  }))
+    .pipe(gulp.dest('./build/models/'));
 });
