@@ -3,6 +3,8 @@
 var pkg = require('./package.json');
 var rjsconfig = require('./rjsconfig.js');
 
+var fs = require('fs');
+var path = require('path');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var bump = require("gulp-bump");
@@ -289,11 +291,20 @@ gulp.task('integration', ['devbuild', 'watch:test'], function(){
     }));
 });
 
+function getModels(dir) {
+    return fs.readdirSync(dir).filter(function(file) {
+        return !fs.statSync(path.join(dir, file)).isDirectory();
+      });
+}
+
+
 gulp.task('browserifybuild', function(){
-    return gulp.src('src/lib/models/Looper.js')
-    .pipe(browserify({
-      paths : ['src/lib'],
-      standalone : "Looper"
-  }))
-    .pipe(gulp.dest('./build/models/'));
+    getModels('src/lib/models/').map(function(thisModel) {
+           gulp.src('src/lib/models/' + thisModel)
+          .pipe(browserify({
+            paths : ['src/lib'],
+            standalone : thisModel.slice(0,-3)
+        }))
+          .pipe(gulp.dest('./build/models/'));
+    });
 });

@@ -1,30 +1,28 @@
 /**
  * @module Core
  */
-define( [],
-    function () {
-        "use strict";
+"use strict";
 
-        /**
-         * Helper class to convert between various ratios and musical values.
-         *
-         * @class Converter
-         * @static
-         */
-        function Converter() {}
+/**
+ * Helper class to convert between various ratios and musical values.
+ *
+ * @class Converter
+ * @static
+ */
+function Converter() {}
 
-        /**
-         * Helper method to convert a value in semitones to a value in ratio.
-         *
-         *
-         * @method semitonesToRatio
-         * @static
-         * @param {Number} semiTones Value in semitones to be converted to ratio.
-         *
-         */
-        Converter.semitonesToRatio = function ( semiTones ) {
-            return Math.pow( 2.0, semiTones / 12.0 );
-        };
+/**
+ * Helper method to convert a value in semitones to a value in ratio.
+ *
+ *
+ * @method semitonesToRatio
+ * @static
+ * @param {Number} semiTones Value in semitones to be converted to ratio.
+ *
+ */
+Converter.semitonesToRatio = function ( semiTones ) {
+    return Math.pow( 2.0, semiTones / 12.0 );
+};
 
         /**
          * Helper method to convert a value in ratio to a value in decibel full scale dBFS.
@@ -52,6 +50,3 @@ define( [],
             return Math.pow( 10.0, dBFS / 20 );
         };
 
-        return Converter;
-
-    } );
