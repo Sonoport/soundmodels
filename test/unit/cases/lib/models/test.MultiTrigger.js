@@ -4,10 +4,10 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
         window.context = new AudioContext();
     }
     var internalSpies = {
-        onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
-        onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
-        onAudioStart: jasmine.createSpy( "onAudioStart" ),
-        onAudioEnd: jasmine.createSpy( "onAudioEnd" )
+        onLoadProgress: jasmine.createSpy( 'onLoadProgress' ),
+        onLoadComplete: jasmine.createSpy( 'onLoadComplete' ),
+        onAudioStart: jasmine.createSpy( 'onAudioStart' ),
+        onAudioEnd: jasmine.createSpy( 'onAudioEnd' )
     };
     var listofSounds = [ 'audio/Hit5.mp3', 'audio/Hit6.mp3', 'audio/Hit7.mp3', 'audio/Hit8.mp3' ];
     describe( 'MultiTrigger.js', function () {
@@ -66,7 +66,7 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
             } );
 
             it( "should have a model name as MultiTrigger", function () {
-                expect( multiTrigger.modelName ).toBe( "MultiTrigger" );
+                expect( multiTrigger.modelName ).toBe( 'MultiTrigger' );
             } );
 
             it( "should be a BaseSound", function () {
@@ -107,15 +107,15 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
             } );
 
             it( "should call onprogress events", function ( done ) {
-                var progressSpy = jasmine.createSpy( "progressSpy" );
-                multiTrigger.setSources( "audio/bullet.mp3", progressSpy, function () {
+                var progressSpy = jasmine.createSpy( 'progressSpy' );
+                multiTrigger.setSources( 'audio/bullet.mp3', progressSpy, function () {
                     expect( progressSpy ).toHaveBeenCalled();
                     done();
                 } );
             } );
 
             it( "should call onload event", function ( done ) {
-                var loadSpy = jasmine.createSpy( "loadSpy" );
+                var loadSpy = jasmine.createSpy( 'loadSpy' );
                 multiTrigger.setSources( listofSounds, null, loadSpy );
                 window.setTimeout( function () {
                     expect( loadSpy ).toHaveBeenCalled();
@@ -138,7 +138,7 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                     delete multiTrigger.pitchShift;
                 } ).toThrowError();
 
-                expect( multiTrigger.pitchShift.name ).toBe( "pitchShift" );
+                expect( multiTrigger.pitchShift.name ).toBe( 'pitchShift' );
                 expect( multiTrigger.pitchShift.value ).toBe( 0 );
                 expect( multiTrigger.pitchShift.minValue ).toBe( -60 );
                 expect( multiTrigger.pitchShift.maxValue ).toBe( 60 );
@@ -155,7 +155,7 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                     delete multiTrigger.pitchRand;
                 } ).toThrowError();
 
-                expect( multiTrigger.pitchRand.name ).toBe( "pitchRand" );
+                expect( multiTrigger.pitchRand.name ).toBe( 'pitchRand' );
                 expect( multiTrigger.pitchRand.value ).toBe( 0 );
                 expect( multiTrigger.pitchRand.minValue ).toBe( 0 );
                 expect( multiTrigger.pitchRand.maxValue ).toBe( 24 );
@@ -172,7 +172,7 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                     delete multiTrigger.eventRand;
                 } ).toThrowError();
 
-                expect( multiTrigger.eventRand.name ).toBe( "eventRand" );
+                expect( multiTrigger.eventRand.name ).toBe( 'eventRand' );
                 expect( multiTrigger.eventRand.value ).toBe( false );
                 expect( multiTrigger.eventRand.minValue ).toBe( true );
                 expect( multiTrigger.eventRand.maxValue ).toBe( false );
@@ -189,7 +189,7 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                     delete multiTrigger.eventRate;
                 } ).toThrowError();
 
-                expect( multiTrigger.eventRate.name ).toBe( "eventRate" );
+                expect( multiTrigger.eventRate.name ).toBe( 'eventRate' );
                 expect( multiTrigger.eventRate.value ).toBe( 10.0 );
                 expect( multiTrigger.eventRate.minValue ).toBe( 0.0 );
                 expect( multiTrigger.eventRate.maxValue ).toBe( 60.0 );
@@ -206,7 +206,7 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                     delete multiTrigger.eventJitter;
                 } ).toThrowError();
 
-                expect( multiTrigger.eventJitter.name ).toBe( "eventJitter" );
+                expect( multiTrigger.eventJitter.name ).toBe( 'eventJitter' );
                 expect( multiTrigger.eventJitter.value ).toBe( 0.0 );
                 expect( multiTrigger.eventJitter.minValue ).toBe( 0.0 );
                 expect( multiTrigger.eventJitter.maxValue ).toBe( 0.99 );
@@ -271,8 +271,8 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                     setTimeout( function () {
                         expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
 
-                        internalSpies.onAudioStart = jasmine.createSpy( "onAudioStart2" );
-                        internalSpies.onAudioEnd = jasmine.createSpy( "onAudioEnd2" );
+                        internalSpies.onAudioStart = jasmine.createSpy( 'onAudioStart2' );
+                        internalSpies.onAudioEnd = jasmine.createSpy( 'onAudioEnd2' );
                         multiTrigger.onAudioStart = internalSpies.onAudioStart;
                         multiTrigger.onAudioEnd = internalSpies.onAudioEnd;
 

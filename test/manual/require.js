@@ -105,7 +105,7 @@ var requirejs, require, define;
                     if ( I )
                         for ( c = I.length; 0 < c; c -= 1 )
                             if ( b = j( m, I.slice( 0, c )
-                                .join( "/" ) ) )
+                                    .join( "/" ) ) )
                                 if ( b = j( b, d ) ) {
                                     f = b;
                                     g = e;
@@ -181,8 +181,8 @@ var requirejs, require, define;
                 f = !1;
             if ( e ) e( a );
             else if ( v( b, function ( e ) {
-                if ( e = j( k, e ) ) e.error = a, e.events.error && ( f = !0, e.emit( "error", a ) )
-            } ), !f ) h.onError( a )
+                    if ( e = j( k, e ) ) e.error = a, e.events.error && ( f = !0, e.emit( "error", a ) )
+                } ), !f ) h.onError( a )
         }
 
         function x() {
@@ -393,15 +393,15 @@ var requirejs, require, define;
                         } );
                     if ( this.map.unnormalized ) {
                         if ( f.normalize && ( J = f.normalize( J, function ( a ) {
-                            return c( a, u, !0 )
-                        } ) || "" ), f = m( a.prefix + "!" + J, this.map.parentMap ), r( f, "defined", t( this, function ( a ) {
-                            this.init( [], function () {
-                                return a
-                            }, null, {
-                                enabled: !0,
-                                ignore: !0
-                            } )
-                        } ) ), g = j( k, f.id ) ) {
+                                return c( a, u, !0 )
+                            } ) || "" ), f = m( a.prefix + "!" + J, this.map.parentMap ), r( f, "defined", t( this, function ( a ) {
+                                this.init( [], function () {
+                                    return a
+                                }, null, {
+                                    enabled: !0,
+                                    ignore: !0
+                                } )
+                            } ) ), g = j( k, f.id ) ) {
                             this.depMaps.push( f );
                             if ( this.events.error ) g.on( "error", t( this, function ( a ) {
                                 this.emit( "error", a )
@@ -659,7 +659,7 @@ var requirejs, require, define;
             },
             onScriptLoad: function ( a ) {
                 if ( "load" === a.type || ka.test( ( a.currentTarget || a.srcElement )
-                    .readyState ) ) P = null, a = L( a ), i.completeLoad( a.id )
+                        .readyState ) ) P = null, a = L( a ), i.completeLoad( a.id )
             },
             onScriptError: function ( a ) {
                 var b = L( a );
@@ -767,7 +767,7 @@ var requirejs, require, define;
                 g && ( b ||
                     ( b = g.getAttribute( "data-requiremodule" ) ), h = F[ g.getAttribute( "data-requirecontext" ) ] )
             }( h ? h.defQueue : S )
-                .push( [ b, c, d ] )
+            .push( [ b, c, d ] )
         };
         define.amd = {
             jQuery: !0

@@ -29,7 +29,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
             this.minSources = 1;
-            this.modelName = "Trigger";
+            this.modelName = 'Trigger';
 
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
@@ -37,7 +37,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var onAudioStart_ = onAudioStart;
             var onAudioEnd_ = onAudioEnd;
 
-            Object.defineProperty( this, "onAudioStart", {
+            Object.defineProperty( this, 'onAudioStart', {
                 enumerable: true,
                 configurable: false,
                 set: function ( startCallback ) {
@@ -51,7 +51,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 }
             } );
 
-            Object.defineProperty( this, "onAudioEnd", {
+            Object.defineProperty( this, 'onAudioEnd', {
                 enumerable: true,
                 configurable: false,
                 set: function ( endCallback ) {
@@ -104,7 +104,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue -60
              * @maxvalue 60
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "pitchShift", -60.0, 60.0, 0 ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchShift', -60.0, 60.0, 0 ) );
 
             /**
              * Maximum value for random pitch shift of the triggered voices in semitones.
@@ -115,7 +115,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue 0.0
              * @maxvalue 24
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "pitchRand", 0.0, 24.0, 0 ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchRand', 0.0, 24.0, 0 ) );
 
             /**
              * Enable randomness in the order of sources which are triggered.
@@ -126,7 +126,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue true
              * @maxvalue false
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "eventRand", true, false, false ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventRand', true, false, false ) );
 
             // Public Functions
 
@@ -191,7 +191,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                     return;
                 }
 
-                if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+                if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
                     when = this.audioContext.currentTime;
                 }
 
@@ -214,7 +214,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 var playSpeed = Converter.semitonesToRatio( this.pitchShift.value + Math.random() * this.pitchRand.value );
 
                 soundQueue_.queueSetSource( timeStamp, currentEventID_, sourceBuffers_[ currentSourceID_ ] );
-                soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
+                soundQueue_.queueSetParameter( timeStamp, currentEventID_, 'playSpeed', playSpeed );
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
                 currentEventID_++;
                 currentSourceID_++;

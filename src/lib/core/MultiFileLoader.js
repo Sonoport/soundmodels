@@ -53,7 +53,7 @@ define( [ 'core/FileLoader' ],
 
             function loadSingleSound( sound, onSingleLoad ) {
                 var parameterType = Object.prototype.toString.call( sound );
-                if ( parameterType === "[object String]" || parameterType === "[object File]" ) {
+                if ( parameterType === '[object String]' || parameterType === '[object File]' ) {
                     var fileLoader = new FileLoader( sound, self.audioContext, function ( status ) {
                         if ( status ) {
                             onSingleLoad( status, fileLoader.getBuffer() );
@@ -61,11 +61,11 @@ define( [ 'core/FileLoader' ],
                             onSingleLoad( status );
                         }
                     }, function ( progressEvent ) {
-                        if ( onLoadProgress && typeof onLoadProgress === "function" ) {
+                        if ( onLoadProgress && typeof onLoadProgress === 'function' ) {
                             onLoadProgress( progressEvent, sound );
                         }
                     } );
-                } else if ( parameterType === "[object AudioBuffer]" ) {
+                } else if ( parameterType === '[object AudioBuffer]' ) {
                     onSingleLoad( true, sound );
                 } else {
                     console.error( "Incorrect Parameter Type - Source is not a URL, File or AudioBuffer" );

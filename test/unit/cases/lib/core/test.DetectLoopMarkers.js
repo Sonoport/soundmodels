@@ -63,31 +63,31 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
 
             it( "should throw an error if buffer is null", function () {
                 expect( function () {
-                    var a = detectLoopMarkers();
-                } )
+                        var a = detectLoopMarkers();
+                    } )
                     .toThrowError();
             } );
 
             it( "should not throw an error if loading from a buffer programatically created", function () {
 
                 expect( function () {
-                    var audio = context.createBuffer( 1, 2048, 44100 );
-                    detectLoopMarkers( audio );
-                } )
+                        var audio = context.createBuffer( 1, 2048, 44100 );
+                        detectLoopMarkers( audio );
+                    } )
                     .not.toThrowError();
 
                 expect( function () {
-                    var audio = context.createBuffer( 2, 1024, 44100 );
-                    detectLoopMarkers( audio );
-                } )
+                        var audio = context.createBuffer( 2, 1024, 44100 );
+                        detectLoopMarkers( audio );
+                    } )
                     .not.toThrowError();
             } );
 
             it( "should not have problem loading MP3 files", function ( done ) {
                 loadAndDecode( mp3File, function ( buffer ) {
                     expect( function () {
-                        detectLoopMarkers( buffer );
-                    } )
+                            detectLoopMarkers( buffer );
+                        } )
                         .not.toThrowError();
                     done();
                 } );

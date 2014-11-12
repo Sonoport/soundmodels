@@ -20,7 +20,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
          * @type AudioContext
          */
         if ( context === undefined || context === null ) {
-            console.log( "Making a new AudioContext" );
+            console.log( 'Making a new AudioContext' );
             this.audioContext = new AudioContext();
         } else {
             this.audioContext = context;
@@ -150,7 +150,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
          * @type String
          * @default "Model"
          **/
-        this.modelName = "Model";
+        this.modelName = 'Model';
 
         /**
          * Callback for handling progress events thrown during loading of audio files.
@@ -233,16 +233,16 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         if ( destination instanceof AudioNode ) {
             this.releaseGainNode.connect( destination, output, input );
             this.destinations.push( {
-                "destination": destination,
-                "output": output,
-                "input": input
+                'destination': destination,
+                'output': output,
+                'input': input
             } );
         } else if ( destination.inputNode instanceof AudioNode ) {
             this.releaseGainNode.connect( destination.inputNode, output, input );
             this.destinations.push( {
-                "destination": destination.inputNode,
-                "output": output,
-                "input": input
+                'destination': destination.inputNode,
+                'output': output,
+                'input': input
             } );
         } else {
             console.error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) );
@@ -270,7 +270,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
      */
     BaseSound.prototype.start = function ( when, offset, duration, attackDuration ) {
-        if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+        if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
             when = this.audioContext.currentTime;
         }
 
@@ -296,7 +296,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * @param {Number} [when] Time (in seconds) the sound should stop playing
      */
     BaseSound.prototype.stop = function ( when ) {
-        if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+        if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
             when = this.audioContext.currentTime;
         }
 
@@ -323,7 +323,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             var FADE_TIME = 0.5;
             //var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
 
-            if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+            if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
                 when = this.audioContext.currentTime;
             }
 

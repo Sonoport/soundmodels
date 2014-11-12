@@ -32,7 +32,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var self = this;
             this.maxSources = Config.MAX_VOICES;
             this.minSources = 1;
-            this.modelName = "MultiTrigger";
+            this.modelName = 'MultiTrigger';
 
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
@@ -40,7 +40,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
             var onAudioStart_ = onAudioStart;
             var onAudioEnd_ = onAudioEnd;
 
-            Object.defineProperty( this, "onAudioStart", {
+            Object.defineProperty( this, 'onAudioStart', {
                 enumerable: true,
                 configurable: false,
                 set: function ( startCallback ) {
@@ -54,7 +54,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 }
             } );
 
-            Object.defineProperty( this, "onAudioEnd", {
+            Object.defineProperty( this, 'onAudioEnd', {
                 enumerable: true,
                 configurable: false,
                 set: function ( endCallback ) {
@@ -122,7 +122,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 var playSpeed = Converter.semitonesToRatio( self.pitchShift.value + Math.random() * self.pitchRand.value );
 
                 soundQueue_.queueSetSource( timeStamp, currentEventID_, sourceBuffers_[ currentSourceID_ ] );
-                soundQueue_.queueSetParameter( timeStamp, currentEventID_, "playSpeed", playSpeed );
+                soundQueue_.queueSetParameter( timeStamp, currentEventID_, 'playSpeed', playSpeed );
                 soundQueue_.queueStart( timeStamp, currentEventID_ );
                 currentEventID_++;
                 currentSourceID_++;
@@ -157,7 +157,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
                 if ( isFinite( updateTime ) ) {
                     //Update releaseDur of Loopers being released
                     var releaseDur = Math.max( 0.99 * period * ( 1 - self.eventJitter.value ), 0.01 );
-                    soundQueue_.queueUpdate( "QERELEASE", null, "releaseDuration", releaseDur );
+                    soundQueue_.queueUpdate( 'QERELEASE', null, 'releaseDuration', releaseDur );
                 } else {
                     // 1  year in seconds.
                     updateTime = 365 * 24 * 3600;
@@ -195,7 +195,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue -60.0
              * @maxvalue 60.0
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "pitchShift", -60.0, 60.0, 0 ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchShift', -60.0, 60.0, 0 ) );
 
             /**
              * Maximum value for random pitch shift of the triggered voices in semitones.
@@ -206,7 +206,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue 0.0
              * @maxvalue 24.0
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "pitchRand", 0.0, 24.0, 0.0 ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchRand', 0.0, 24.0, 0.0 ) );
 
             /**
              * Enable randomness in the order of sources which are triggered.
@@ -217,7 +217,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue true
              * @maxvalue false
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "eventRand", true, false, false ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventRand', true, false, false ) );
 
             /**
              * Trigger rate for playing the model in Hz.
@@ -228,7 +228,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue 0.0
              * @maxvalue 60.0
              */
-            this.registerParameter( new SPAudioParam( this, "eventRate", 0, 60.0, 10.0, null, null, eventRateSetter_ ) );
+            this.registerParameter( new SPAudioParam( this, 'eventRate', 0, 60.0, 10.0, null, null, eventRateSetter_ ) );
             /**
              * Maximum deviation from the regular trigger interval (as a factor of 1).
              *
@@ -238,7 +238,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
              * @minvalue 0.0
              * @maxvalue 0.99
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "eventJitter", 0, 0.99, 0 ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventJitter', 0, 0.99, 0 ) );
 
             // Public Functions
 

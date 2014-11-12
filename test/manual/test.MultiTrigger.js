@@ -8,12 +8,12 @@
 
     var trigger;
 
-    require( [ "models/MultiTrigger" ], function ( MultiTrigger ) {
+    require( [ 'models/MultiTrigger' ], function ( MultiTrigger ) {
 
-        var tap1 = "https://dl.dropboxusercontent.com/u/77191118/sounds/Hit5.mp3";
-        var tap2 = "https://dl.dropboxusercontent.com/u/77191118/sounds/Hit6.mp3";
-        var tap3 = "https://dl.dropboxusercontent.com/u/77191118/sounds/Hit7.mp3";
-        var tap4 = "https://dl.dropboxusercontent.com/u/77191118/sounds/Hit8.mp3";
+        var tap1 = 'https://dl.dropboxusercontent.com/u/77191118/sounds/Hit5.mp3';
+        var tap2 = 'https://dl.dropboxusercontent.com/u/77191118/sounds/Hit6.mp3';
+        var tap3 = 'https://dl.dropboxusercontent.com/u/77191118/sounds/Hit7.mp3';
+        var tap4 = 'https://dl.dropboxusercontent.com/u/77191118/sounds/Hit8.mp3';
 
         // Single test
         trigger = new MultiTrigger( context, [ tap1, tap2, tap3, tap4 ], function ( progressEvent, sound ) {

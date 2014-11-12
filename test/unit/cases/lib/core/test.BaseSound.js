@@ -65,8 +65,8 @@ require( [ 'core/BaseSound' ], function ( BaseSound ) {
 
             it( "should not throw an error if context is undefined", function () {
                 expect( function () {
-                    var a = new BaseSound();
-                } )
+                        var a = new BaseSound();
+                    } )
                     .not.toThrowError();
             } );
 
@@ -104,8 +104,8 @@ require( [ 'core/BaseSound' ], function ( BaseSound ) {
 
             it( "should throw an error if destination is null", function () {
                 expect( function () {
-                    baseSound.connect( null, null, null );
-                } )
+                        baseSound.connect( null, null, null );
+                    } )
                     .toThrow();
             } );
 
@@ -114,18 +114,18 @@ require( [ 'core/BaseSound' ], function ( BaseSound ) {
                 var gainNode = context.createGain();
 
                 expect( function () {
-                    baseSound.connect( gainNode, 0, -100 );
-                } )
+                        baseSound.connect( gainNode, 0, -100 );
+                    } )
                     .toThrow();
 
                 expect( function () {
-                    baseSound.connect( gainNode, 100, 100 );
-                } )
+                        baseSound.connect( gainNode, 100, 100 );
+                    } )
                     .toThrow();
 
                 expect( function () {
-                    baseSound.connect( gainNode, -100, 0 );
-                } )
+                        baseSound.connect( gainNode, -100, 0 );
+                    } )
                     .toThrow();
 
             } );

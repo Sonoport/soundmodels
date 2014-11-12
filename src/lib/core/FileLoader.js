@@ -53,7 +53,7 @@ define( [ 'core/DetectLoopMarkers' ],
             var sliceBuffer_ = function ( start, end ) {
 
                 // Set end if it is missing
-                if ( typeof end == "undefined" ) {
+                if ( typeof end == 'undefined' ) {
                     end = rawBuffer_.length;
                 }
                 // Verify parameters
@@ -108,14 +108,14 @@ define( [ 'core/DetectLoopMarkers' ],
                     var request = new XMLHttpRequest();
                     request.open( 'GET', URL, true );
                     request.responseType = 'arraybuffer';
-                    request.addEventListener( "progress", onProgressCallback, false );
+                    request.addEventListener( 'progress', onProgressCallback, false );
                     request.onload = function () {
                         decodeAudio( request.response, fileExtension );
                     };
                     request.send();
                 } else if ( parameterType === '[object File]' || parameterType === '[object Blob]' ) {
                     var reader = new FileReader();
-                    reader.addEventListener( "progress", onProgressCallback, false );
+                    reader.addEventListener( 'progress', onProgressCallback, false );
                     reader.onload = function () {
                         decodeAudio( reader.result, fileExtension );
                     };
@@ -131,7 +131,7 @@ define( [ 'core/DetectLoopMarkers' ],
                     // Do trimming if it is not a wave file
                     loopStart_ = 0;
                     loopEnd_ = rawBuffer_.length;
-                    if ( fileExt[ 0 ] !== "wav" ) {
+                    if ( fileExt[ 0 ] !== 'wav' ) {
                         // Trim Buffer based on Markers
                         var markers = detectLoopMarkers( rawBuffer_ );
                         if ( markers ) {
@@ -139,12 +139,12 @@ define( [ 'core/DetectLoopMarkers' ],
                             loopEnd_ = markers.end;
                         }
                     }
-                    if ( onloadCallback && typeof onloadCallback === "function" ) {
+                    if ( onloadCallback && typeof onloadCallback === 'function' ) {
                         onloadCallback( true );
                     }
                 }, function () {
                     console.warn( "Error Decoding " + URL );
-                    if ( onloadCallback && typeof onloadCallback === "function" ) {
+                    if ( onloadCallback && typeof onloadCallback === 'function' ) {
                         onloadCallback( false );
                     }
                 } );
@@ -160,11 +160,11 @@ define( [ 'core/DetectLoopMarkers' ],
              */
             this.getBuffer = function ( start, end ) {
                 // Set start if it is missing
-                if ( typeof start == "undefined" ) {
+                if ( typeof start == 'undefined' ) {
                     start = 0;
                 }
                 // Set end if it is missing
-                if ( typeof end == "undefined" ) {
+                if ( typeof end == 'undefined' ) {
                     end = loopEnd_ - loopStart_;
                 }
 

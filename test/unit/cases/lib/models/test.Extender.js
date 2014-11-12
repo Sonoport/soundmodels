@@ -4,10 +4,10 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
         window.context = new AudioContext();
     }
     var internalSpies = {
-        onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
-        onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
-        onAudioStart: jasmine.createSpy( "onAudioStart" ),
-        onAudioEnd: jasmine.createSpy( "onAudioEnd" )
+        onLoadProgress: jasmine.createSpy( 'onLoadProgress' ),
+        onLoadComplete: jasmine.createSpy( 'onLoadComplete' ),
+        onAudioStart: jasmine.createSpy( 'onAudioStart' ),
+        onAudioEnd: jasmine.createSpy( 'onAudioEnd' )
     };
     var listofSounds = [ 'audio/surf.mp3' ];
     describe( 'Extender.js', function () {
@@ -107,7 +107,7 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
             } );
 
             it( "should call onprogress events", function ( done ) {
-                var progressSpy = jasmine.createSpy( "progressSpy" );
+                var progressSpy = jasmine.createSpy( 'progressSpy' );
                 extender.setSources( listofSounds[ 0 ], progressSpy, function () {
                     expect( progressSpy ).toHaveBeenCalled();
                     done();
@@ -115,7 +115,7 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
             } );
 
             it( "should call onload event", function ( done ) {
-                var loadSpy = jasmine.createSpy( "loadSpy" );
+                var loadSpy = jasmine.createSpy( 'loadSpy' );
                 extender.setSources( listofSounds, null, loadSpy );
                 window.setTimeout( function () {
                     expect( loadSpy ).toHaveBeenCalled();
@@ -138,7 +138,7 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
                     delete extender.pitchShift;
                 } ).toThrowError();
 
-                expect( extender.pitchShift.name ).toBe( "pitchShift" );
+                expect( extender.pitchShift.name ).toBe( 'pitchShift' );
                 expect( extender.pitchShift.value ).toBe( 0 );
                 expect( extender.pitchShift.minValue ).toBe( -60 );
                 expect( extender.pitchShift.maxValue ).toBe( 60 );
@@ -155,7 +155,7 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
                     delete extender.eventPeriod;
                 } ).toThrowError();
 
-                expect( extender.eventPeriod.name ).toBe( "eventPeriod" );
+                expect( extender.eventPeriod.name ).toBe( 'eventPeriod' );
                 expect( extender.eventPeriod.value ).toBe( 2.0 );
                 expect( extender.eventPeriod.minValue ).toBe( 0.1 );
                 expect( extender.eventPeriod.maxValue ).toBe( 10 );
@@ -172,7 +172,7 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
                     delete extender.crossFadeDuration;
                 } ).toThrowError();
 
-                expect( extender.crossFadeDuration.name ).toBe( "crossFadeDuration" );
+                expect( extender.crossFadeDuration.name ).toBe( 'crossFadeDuration' );
                 expect( extender.crossFadeDuration.value ).toBe( 0.5 );
                 expect( extender.crossFadeDuration.minValue ).toBe( 0.1 );
                 expect( extender.crossFadeDuration.maxValue ).toBe( 0.99 );
@@ -237,8 +237,8 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
                     setTimeout( function () {
                         expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
 
-                        internalSpies.onAudioStart = jasmine.createSpy( "onAudioStart2" );
-                        internalSpies.onAudioEnd = jasmine.createSpy( "onAudioEnd2" );
+                        internalSpies.onAudioStart = jasmine.createSpy( 'onAudioStart2' );
+                        internalSpies.onAudioEnd = jasmine.createSpy( 'onAudioEnd2' );
                         extender.onAudioStart = internalSpies.onAudioStart;
                         extender.onAudioEnd = internalSpies.onAudioEnd;
 

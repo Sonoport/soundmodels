@@ -46,8 +46,8 @@ require( [ 'core/SPAudioBufferSourceNode', 'core/SPPlaybackRateParam' ], functio
         describe( '#new ', function () {
             it( "should be able to create a new SPAudioBufferSourceNode", function () {
                 expect( function () {
-                    var sourceNode = new SPAudioBufferSourceNode( context );
-                } )
+                        var sourceNode = new SPAudioBufferSourceNode( context );
+                    } )
                     .not.toThrowError();
             } );
         } );
@@ -94,12 +94,12 @@ require( [ 'core/SPAudioBufferSourceNode', 'core/SPPlaybackRateParam' ], functio
             it( "should be able to connect to and disconnect from destination", function () {
                 var sourceNode = new SPAudioBufferSourceNode( context );
                 expect( function () {
-                    sourceNode.connect( context.destination );
-                } )
+                        sourceNode.connect( context.destination );
+                    } )
                     .not.toThrowError();
                 expect( function () {
-                    sourceNode.disconnect();
-                } )
+                        sourceNode.disconnect();
+                    } )
                     .not.toThrowError();
             } );
         } );
@@ -111,12 +111,12 @@ require( [ 'core/SPAudioBufferSourceNode', 'core/SPPlaybackRateParam' ], functio
                 sourceNode.buffer = toneBuffer;
                 sourceNode.loop = true;
                 expect( function () {
-                    sourceNode.start( 0 );
-                    setTimeout( function () {
-                        sourceNode.stop( 0 );
-                        done();
-                    }, 500 );
-                } )
+                        sourceNode.start( 0 );
+                        setTimeout( function () {
+                            sourceNode.stop( 0 );
+                            done();
+                        }, 500 );
+                    } )
                     .not.toThrowError();
             } );
         } );
@@ -127,12 +127,12 @@ require( [ 'core/SPAudioBufferSourceNode', 'core/SPPlaybackRateParam' ], functio
                 sourceNode.connect( context.destination );
                 sourceNode.buffer = toneBuffer;
                 expect( function () {
-                    sourceNode.start( context.currentTime );
-                    sourceNode.stop( context.currentTime + 1 );
-                    sourceNode.resetBufferSource( 0, context.destination );
-                    sourceNode.start( context.currentTime + 1.5 );
-                    sourceNode.stop( context.currentTime + 2 );
-                } )
+                        sourceNode.start( context.currentTime );
+                        sourceNode.stop( context.currentTime + 1 );
+                        sourceNode.resetBufferSource( 0, context.destination );
+                        sourceNode.start( context.currentTime + 1.5 );
+                        sourceNode.stop( context.currentTime + 2 );
+                    } )
                     .not.toThrowError();
                 done();
             } );

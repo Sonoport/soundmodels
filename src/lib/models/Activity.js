@@ -28,14 +28,14 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
             /*Support upto 8 seperate voices*/
             this.maxSources = Config.MAX_VOICES;
             this.minSources = 1;
-            this.modelName = "Activity";
+            this.modelName = 'Activity';
 
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
             var onAudioStart_ = onAudioStart;
             var onAudioEnd_ = onAudioEnd;
 
-            Object.defineProperty( this, "onAudioStart", {
+            Object.defineProperty( this, 'onAudioStart', {
                 enumerable: true,
                 configurable: false,
                 set: function ( startCallback ) {
@@ -49,7 +49,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
                 }
             } );
 
-            Object.defineProperty( this, "onAudioEnd", {
+            Object.defineProperty( this, 'onAudioEnd', {
                 enumerable: true,
                 configurable: false,
                 set: function ( endCallback ) {
@@ -209,7 +209,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              * @minvalue 0.05
              * @maxvalue 8.0
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "maxSpeed", 0.05, 8.0, 1 ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'maxSpeed', 0.05, 8.0, 1 ) );
 
             /**
              * Controls the playback of the source. The more this parameter is moved, the higher the speed of playback.
@@ -220,7 +220,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              * @minvalue 0.0
              * @maxvalue 1.0
              */
-            this.registerParameter( new SPAudioParam( this, "action", 0, 1.0, 0.0, null, null, actionSetter_ ) );
+            this.registerParameter( new SPAudioParam( this, 'action', 0, 1.0, 0.0, null, null, actionSetter_ ) );
 
             /**
              * Maximum value for random pitch shift of the triggered voices in semitones.
@@ -231,7 +231,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              * @minvalue 0.0
              * @maxvalue 1.0
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "sensitivity", 0.0, 1.0, 0.5 ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'sensitivity', 0.0, 1.0, 0.5 ) );
 
             /**
              * Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
@@ -242,7 +242,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              * @minvalue 0.05
              * @maxvalue 10.0
              */
-            this.registerParameter( new SPAudioParam( this, "easeIn", 0.05, 10.0, 1, null, null, easeInSetter_ ) );
+            this.registerParameter( new SPAudioParam( this, 'easeIn', 0.05, 10.0, 1, null, null, easeInSetter_ ) );
 
             /**
              *  Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
@@ -253,7 +253,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              * @minvalue 0.05
              * @maxvalue 10.0
              */
-            this.registerParameter( new SPAudioParam( this, "easeOut", 0.05, 10.0, 1, null, null, easeOutSetter_ ) );
+            this.registerParameter( new SPAudioParam( this, 'easeOut', 0.05, 10.0, 1, null, null, easeOutSetter_ ) );
 
             /**
              * Start point (as a factor of the length of the entire track) where the Looping should start from.
@@ -264,7 +264,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              * @minvalue 0.0
              * @maxvalue 0.99
              */
-            this.registerParameter( new SPAudioParam( this, "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_ ) );
+            this.registerParameter( new SPAudioParam( this, 'startPoint', 0.0, 0.99, 0.00, null, null, startPointSetter_ ) );
 
             // Public Functions
 

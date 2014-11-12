@@ -26,7 +26,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
             BaseSound.call( this, context );
             this.maxSources = 1;
             this.minSources = 1;
-            this.modelName = "Scrubber";
+            this.modelName = 'Scrubber';
 
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
@@ -328,7 +328,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @minvalue 0.0
              * @maxvalue 1.0
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "playPosition", 0, 1.0, 0 ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'playPosition', 0, 1.0, 0 ) );
 
             /**
              * Sets if the audio should fade out when playPosition has not changed for a while.
@@ -339,7 +339,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @minvalue true
              * @maxvalue false
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "noMotionFade", true, false, true ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'noMotionFade', true, false, true ) );
 
             /**
              * Sets if moving playPosition to backwards should mute the model.
@@ -350,7 +350,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/MultiFileL
              * @minvalue true
              * @maxvalue false
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, "muteOnReverse", true, false, true ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'muteOnReverse', true, false, true ) );
 
             // Initialize the sources.
             window.setTimeout( function () {

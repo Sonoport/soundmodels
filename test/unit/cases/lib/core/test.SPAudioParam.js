@@ -32,8 +32,10 @@ require( [ 'core/SPAudioParam' ], function ( SPAudioParam ) {
             it( "should be able to create a new SPAudioParam", function () {
                 var param;
                 expect( function () {
-                    param = new SPAudioParam( "playSpeed", 0.0, 10, 1, null, null, null, context );
-                } )
+                        param = new SPAudioParam( {
+                            audioContext: window.context
+                        }, 'playSpeed', 0.0, 10, 1, null, null, null, context );
+                    } )
                     .not.toThrowError();
 
                 expect( param.name )
@@ -50,8 +52,10 @@ require( [ 'core/SPAudioParam' ], function ( SPAudioParam ) {
                 var min = 1;
                 var value = ( Math.random() * ( max - min ) ) + min;
                 expect( function () {
-                    param = new SPAudioParam( "playSpeed", min, max, value, null, null, null, context );
-                } )
+                        param = new SPAudioParam( {
+                            audioContext: window.context
+                        }, 'playSpeed', min, max, value, null, null, null, context );
+                    } )
                     .not.toThrowError();
 
                 expect( param.value )
@@ -64,8 +68,10 @@ require( [ 'core/SPAudioParam' ], function ( SPAudioParam ) {
                 var min = 1;
                 var value = min - Math.random() * max;
                 expect( function () {
-                    param = new SPAudioParam( "playSpeed", min, max, value, null, null, null, context );
-                } )
+                        param = new SPAudioParam( {
+                            audioContext: window.context
+                        }, 'playSpeed', min, max, value, null, null, null, context );
+                    } )
                     .not.toThrowError();
 
                 expect( param.value )
@@ -78,8 +84,10 @@ require( [ 'core/SPAudioParam' ], function ( SPAudioParam ) {
                 var min = 1;
                 var value = Math.random() * max + max;
                 expect( function () {
-                    param = new SPAudioParam( "playSpeed", min, max, value, null, null, null, context );
-                } )
+                        param = new SPAudioParam( {
+                            audioContext: window.context
+                        }, 'playSpeed', min, max, value, null, null, null, context );
+                    } )
                     .not.toThrowError();
 
                 expect( param.value )
@@ -94,8 +102,10 @@ require( [ 'core/SPAudioParam' ], function ( SPAudioParam ) {
                 var min = 1;
                 var mappingFunction = jasmine.createSpy( 'mappingFunction' );
                 expect( function () {
-                    param = new SPAudioParam( "playSpeed", min, max, 1, null, mappingFunction, null, context );
-                } )
+                        param = new SPAudioParam( {
+                            audioContext: window.context
+                        }, 'playSpeed', min, max, 1, null, mappingFunction, null, context );
+                    } )
                     .not.toThrowError();
 
                 var value = ( Math.random() * ( max - min ) ) + min;
@@ -112,14 +122,15 @@ require( [ 'core/SPAudioParam' ], function ( SPAudioParam ) {
                 var min = 1;
                 var setter = jasmine.createSpy( 'setter' );
                 expect( function () {
-                    param = new SPAudioParam( "playSpeed", 0.0, 10, 1, null, null, setter, context );
-                } )
+                        param = new SPAudioParam( {
+                            audioContext: window.context
+                        }, 'playSpeed', 0.0, 10, 1, null, null, setter, context );
+                        var value = ( Math.random() * ( max - min ) ) + min;
+                        param.value = value;
+                        expect( setter )
+                            .toHaveBeenCalledWith( null, value, context );
+                    } )
                     .not.toThrowError();
-
-                var value = ( Math.random() * ( max - min ) ) + min;
-                param.value = value;
-                expect( setter )
-                    .toHaveBeenCalledWith( null, value, context );
             } );
         } );
 
@@ -127,8 +138,10 @@ require( [ 'core/SPAudioParam' ], function ( SPAudioParam ) {
             it( " should be defined", function () {
                 var param;
                 expect( function () {
-                    param = new SPAudioParam( "playSpeed", 0.0, 10, 1, null, null, null, context );
-                } )
+                        param = new SPAudioParam( {
+                            audioContext: window.context
+                        }, 'playSpeed', 0.0, 10, 1, null, null, null, context );
+                    } )
                     .not.toThrowError();
 
                 expect( param.setValueAtTime )

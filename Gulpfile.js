@@ -242,7 +242,7 @@ gulp.task('player', ['player:compass', 'devbuild', 'watch:player'], function(){
 });
 
 gulp.task('jsbeautify:test', function(){
-    return gulp.src(paths.files.allTestSrc)
+    return gulp.src([paths.files.allTestSrc, "!test/unit/vendor/*.js"])
     .pipe(cached('beautify:test'))
     .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
     .pipe(gulp.dest(paths.dirs.test));

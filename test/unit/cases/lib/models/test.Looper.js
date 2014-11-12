@@ -7,10 +7,10 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
     describe( 'Looper.js', function () {
         var looper;
         var internalSpies = {
-            onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
-            onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
-            onAudioStart: jasmine.createSpy( "onAudioStart" ),
-            onAudioEnd: jasmine.createSpy( "onAudioEnd" )
+            onLoadProgress: jasmine.createSpy( 'onLoadProgress' ),
+            onLoadComplete: jasmine.createSpy( 'onLoadComplete' ),
+            onAudioStart: jasmine.createSpy( 'onAudioStart' ),
+            onAudioEnd: jasmine.createSpy( 'onAudioEnd' )
         };
         var customMatchers = {
             toBeInstanceOf: function () {
@@ -66,7 +66,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
             } );
 
             it( "should have a model name as Looper", function () {
-                expect( looper.modelName ).toBe( "Looper" );
+                expect( looper.modelName ).toBe( 'Looper' );
             } );
 
             it( "should be a BaseSound", function () {
@@ -108,7 +108,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
             } );
 
             it( "should call onprogress events", function ( done ) {
-                var progressSpy = jasmine.createSpy( "progressSpy" );
+                var progressSpy = jasmine.createSpy( 'progressSpy' );
                 looper.setSources( listofSounds[ 0 ], progressSpy, function () {
                     expect( progressSpy ).toHaveBeenCalled();
                     done();
@@ -116,7 +116,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
             } );
 
             it( "should call onload event", function ( done ) {
-                var loadSpy = jasmine.createSpy( "loadSpy" );
+                var loadSpy = jasmine.createSpy( 'loadSpy' );
                 looper.setSources( listofSounds, null, loadSpy );
                 window.setTimeout( function () {
                     expect( loadSpy ).toHaveBeenCalled();
@@ -129,7 +129,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
             it( "should have a valid parameter playspeed", function () {
 
                 expect( looper.playSpeed ).toBeInstanceOf( SPAudioParam );
-                expect( looper.playSpeed.name ).toBe( "playSpeed" );
+                expect( looper.playSpeed.name ).toBe( 'playSpeed' );
                 expect( looper.playSpeed.value ).toBe( 1.0 );
                 expect( looper.playSpeed.minValue ).toBe( 0.0 );
                 expect( looper.playSpeed.maxValue ).toBe( 10.0 );
@@ -148,7 +148,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                     delete looper.easeIn;
                 } ).toThrowError();
 
-                expect( looper.easeIn.name ).toBe( "easeIn" );
+                expect( looper.easeIn.name ).toBe( 'easeIn' );
                 expect( looper.easeIn.value ).toBe( 0.05 );
                 expect( looper.easeIn.minValue ).toBe( 0.05 );
                 expect( looper.easeIn.maxValue ).toBe( 10.0 );
@@ -199,7 +199,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                     delete looper.startPoint;
                 } ).toThrowError();
 
-                expect( looper.startPoint.name ).toBe( "startPoint" );
+                expect( looper.startPoint.name ).toBe( 'startPoint' );
                 expect( looper.startPoint.value ).toBe( 0 );
                 expect( looper.startPoint.minValue ).toBe( 0 );
                 expect( looper.startPoint.maxValue ).toBe( 0.99 );
@@ -218,7 +218,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                     delete looper.multiTrackGain;
                 } ).toThrowError();
 
-                expect( looper.multiTrackGain[ 0 ].name ).toBe( "gain-0" );
+                expect( looper.multiTrackGain[ 0 ].name ).toBe( 'track-0-gain' );
                 expect( looper.multiTrackGain[ 0 ].value ).toBe( 1 );
                 expect( looper.multiTrackGain[ 0 ].minValue ).toBe( 0 );
                 expect( looper.multiTrackGain[ 0 ].maxValue ).toBe( 1 );
@@ -283,8 +283,8 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                         expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                         expect( looper.isPlaying ).toBe( false );
 
-                        internalSpies.onAudioStart = jasmine.createSpy( "onAudioStart2" );
-                        internalSpies.onAudioEnd = jasmine.createSpy( "onAudioEnd2" );
+                        internalSpies.onAudioStart = jasmine.createSpy( 'onAudioStart2' );
+                        internalSpies.onAudioEnd = jasmine.createSpy( 'onAudioEnd2' );
                         looper.onAudioStart = internalSpies.onAudioStart;
                         looper.onAudioEnd = internalSpies.onAudioEnd;
 
@@ -357,11 +357,11 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                                 setTimeout( function () {
                                     expect( looper.isPlaying ).toBe( false );
                                     done();
-                                }, 1000 );
-                            }, 1000 );
-                        }, 1000 );
-                    }, 1000 );
-                }, 1000 );
+                                }, 800 );
+                            }, 800 );
+                        }, 800 );
+                    }, 800 );
+                }, 800 );
             } );
         } );
     } );
