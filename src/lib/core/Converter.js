@@ -26,6 +26,32 @@ define( [],
             return Math.pow( 2.0, semiTones / 12.0 );
         };
 
+        /**
+         * Helper method to convert a value in ratio to a value in decibel full scale dBFS.
+         *
+         *
+         * @method ratioToDBFS
+         * @static
+         * @param {Number} value in ratio to be converted to dBFS.
+         *
+         */
+        Converter.ratioToDBFS = function ( ratio ) {
+            return 2 * Math.pow( 10.0, ratio );
+        };
+
+        /**
+         * Helper method to convert a value in decibel full scale dBFS to a value in ratio.
+         *
+         *
+         * @method dBFStoRatio
+         * @static
+         * @param {Number} value in dBFS to be converted a ratio.
+         *
+         */
+        Converter.dBFStoRatio = function ( dBFS ) {
+            return Math.log10( dBFS / 2.0 );
+        };
+
         return Converter;
 
     } );
