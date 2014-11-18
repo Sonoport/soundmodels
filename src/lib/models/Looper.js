@@ -144,6 +144,12 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBuf
                 } );
             };
 
+            var endPointSetter_ = function ( aParam, value ) {
+                sourceBufferNodes_.forEach( function ( thisSource ) {
+                    thisSource.loopEnd = value * thisSource.buffer.duration;
+                } );
+            };
+
             function init( sources ) {
                 rateArray_ = [];
                 sourceBufferNodes_.forEach( function ( thisSource ) {
@@ -208,6 +214,17 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBuf
              * @maxvalue 0.99
              */
             this.registerParameter( new SPAudioParam( this, 'startPoint', 0.0, 0.99, 0.00, null, null, startPointSetter_ ) );
+
+            /**
+             * Start point (as a factor of the length of the entire track) where the Looping should start from.
+             *
+             * @property startPoint
+             * @type SPAudioParam
+             * @default 0.0
+             * @minvalue 0.0
+             * @maxvalue 0.99
+             */
+            this.registerParameter( new SPAudioParam( this, 'endPoint', 0.0, 0.99, 0.00, null, null, endPointSetter_ ) );
 
             /**
              * The volume (loudness) for each individual track if multiple sources are used. Works even if a single source is used.
