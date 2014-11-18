@@ -206,6 +206,23 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
 
             } );
 
+            it( "should have a valid parameter endPoint", function () {
+                expect( looper.startPoint ).toBeInstanceOf( SPAudioParam );
+                expect( function () {
+                    looper.endPoint = 0;
+                } ).toThrowError();
+
+                expect( function () {
+                    delete looper.endPoint;
+                } ).toThrowError();
+
+                expect( looper.endPoint.name ).toBe( 'endPoint' );
+                expect( looper.endPoint.value ).toBe( 0 );
+                expect( looper.endPoint.minValue ).toBe( 0 );
+                expect( looper.endPoint.maxValue ).toBe( 0.99 );
+
+            } );
+
             it( "should have a valid parameter multiTrackGain", function () {
                 expect( looper.multiTrackGain ).toBeInstanceOf( Array );
                 expect( looper.multiTrackGain.length ).toBe( listofSounds.length );
