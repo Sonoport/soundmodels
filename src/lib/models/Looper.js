@@ -138,17 +138,17 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBuf
                 }
             };
 
-            var startPointSetter_ = function ( aParam, value ) {
-                sourceBufferNodes_.forEach( function ( thisSource ) {
-                    thisSource.loopStart = value * thisSource.buffer.duration;
-                } );
-            };
+            // var startPointSetter_ = function ( aParam, value ) {
+            //     sourceBufferNodes_.forEach( function ( thisSource ) {
+            //         thisSource.loopStart = value * thisSource.buffer.duration;
+            //     } );
+            // };
 
-            var endPointSetter_ = function ( aParam, value ) {
-                sourceBufferNodes_.forEach( function ( thisSource ) {
-                    thisSource.loopEnd = value * thisSource.buffer.duration;
-                } );
-            };
+            // var endPointSetter_ = function ( aParam, value ) {
+            //     sourceBufferNodes_.forEach( function ( thisSource ) {
+            //         thisSource.loopEnd = value * thisSource.buffer.duration;
+            //     } );
+            // };
 
             function init( sources ) {
                 rateArray_ = [];
@@ -213,7 +213,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBuf
              * @minvalue 0.0
              * @maxvalue 0.99
              */
-            this.registerParameter( new SPAudioParam( this, 'startPoint', 0.0, 0.99, 0.00, null, null, startPointSetter_ ) );
+            // this.registerParameter( new SPAudioParam( this, 'startPoint', 0.0, 0.99, 0.00, null, null, startPointSetter_ ) );
 
             /**
              * Start point (as a factor of the length of the entire track) where the Looping should start from.
@@ -224,7 +224,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBuf
              * @minvalue 0.0
              * @maxvalue 0.99
              */
-            this.registerParameter( new SPAudioParam( this, 'endPoint', 0.0, 0.99, 0.00, null, null, endPointSetter_ ) );
+            // this.registerParameter( new SPAudioParam( this, 'endPoint', 0.0, 0.99, 0.00, null, null, endPointSetter_ ) );
 
             /**
              * The volume (loudness) for each individual track if multiple sources are used. Works even if a single source is used.
