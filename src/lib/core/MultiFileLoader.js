@@ -4,8 +4,8 @@
  * @class MuliFileLoader
  * @static
  */
-define( [ 'core/FileLoader' ],
-    function ( FileLoader ) {
+define( [ 'core/FileLoader', 'core/SPAudioBuffer' ],
+    function ( FileLoader, SPAudioBuffer ) {
         "use strict";
 
         /**
@@ -53,8 +53,9 @@ define( [ 'core/FileLoader' ],
 
             function loadSingleSound( sound, onSingleLoad ) {
                 var parameterType = Object.prototype.toString.call( sound );
+                var fileLoader;
                 if ( parameterType === '[object String]' || parameterType === '[object File]' ) {
-                    var fileLoader = new FileLoader( sound, self.audioContext, function ( status ) {
+                    fileLoader = new FileLoader( sound, self.audioContext, function ( status ) {
                         if ( status ) {
                             onSingleLoad( status, fileLoader.getBuffer() );
                         } else {
@@ -67,6 +68,25 @@ define( [ 'core/FileLoader' ],
                     } );
                 } else if ( parameterType === '[object AudioBuffer]' ) {
                     onSingleLoad( true, sound );
+                } else if ( sound instanceof SPAudioBuffer ) {
+                    if ( sound.buffer ) {
+                        onSingleLoad( true, sound );
+                    } else if ( sound.sourceURL ) {
+                        fileLoader = new FileLoader( sound.sourceURL, self.audioContext, function ( status ) {
+                            if ( status ) {
+                                onSingleLoad( status, fileLoader.getBuffer() );
+                            } else {
+                                onSingleLoad( status );
+                            }
+                        }, function ( progressEvent ) {
+                            if ( onLoadProgress && typeof onLoadProgress === 'function' ) {
+                                onLoadProgress( progressEvent, sound.sourceURL );
+                            }
+                        } );
+                    } else {
+                        console.error( "Incorrect Parameter Type - APAudioBuffer doesn't have a sourceURL or buffer" );
+                        onSingleLoad( false, {} );
+                    }
                 } else {
                     console.error( "Incorrect Parameter Type - Source is not a URL, File or AudioBuffer" );
                     onSingleLoad( false, {} );

@@ -12,7 +12,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBuf
          * @constructor
          * @extends BaseSound
          * @param {AudioContext} [context] AudioContext to be used.
-         * @param {Array/String/AudioBuffer/File} [sources] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
+         * @param {Array/String/AudioBuffer/SPAudioBuffer/File} [sources] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
          * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
          * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
          * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
