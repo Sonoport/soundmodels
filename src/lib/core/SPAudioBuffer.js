@@ -14,10 +14,75 @@ define( [],
             //
 
             this.sourceURL = "";
-            this.length = 0;
-            this.buffer = null;
-            this.startPoint = 0;
-            this.endPoint = 1;
+            this.duration = null;
+
+            var buffer_;
+            Object.defineProperty( this, 'buffer', {
+                set: function ( buffer ) {
+                    buffer_ = buffer;
+                    if ( startPoint_ === null ) {
+                        this.startPoint = 0;
+                    }
+                    if ( endPoint_ === null ) {
+                        this.endPoint = this.buffer.length;
+                    }
+                }.bind( this ),
+                get: function () {
+                    return buffer_;
+                }
+            } );
+
+            var startPoint_;
+            Object.defineProperty( this, 'startPoint', {
+                set: function ( startPoint ) {
+                    startPoint_ = startPoint;
+                    if ( endPoint !== null ) {
+                        this.duration = endPoint_ - startPoint_;
+                    }
+                }.bind( this ),
+                get: function () {
+                    return startPoint_;
+                }
+            } );
+
+            var endPoint_;
+            Object.defineProperty( this, 'endPoint', {
+                set: function ( endPoint ) {
+                    endPoint_ = endPoint;
+                    if ( startPoint_ !== null ) {
+                        this.duration = endPoint_ - startPoint_;
+                    }
+                }.bind( this ),
+                get: function () {
+                    return endPoint_;
+                }
+            } );
+
+            Object.defineProperty( this, 'length', {
+                get: function () {
+                    return this.buffer.length || 0;
+                }
+            } );
+
+            Object.defineProperty( this, 'numberOfChannels', {
+                get: function () {
+                    return this.buffer.numberOfChannels || 0;
+                }
+            } );
+
+            Object.defineProperty( this, 'sampleRate', {
+                get: function () {
+                    return this.buffer.sampleRate || 0;
+                }
+            } );
+
+            this.getChannelData = function ( channel ) {
+                if ( !this.buffer ) {
+                    return null;
+                } else {
+                    return this.buffer.getChannelData( channel );
+                }
+            };
 
             var urlType = Object.prototype.toString.call( URL );
             var optionsType = Object.prototype.toString.call( options );

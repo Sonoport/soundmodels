@@ -1,8 +1,8 @@
 /**
  * @module Core
  */
-define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
-    function ( SPPlaybackRateParam, webAudioDispatch ) {
+define( [ 'core/SPPlaybackRateParam', 'core/SPAudioBuffer', 'core/WebAudioDispatch' ],
+    function ( SPPlaybackRateParam, SPAudioBuffer, webAudioDispatch ) {
         "use strict";
 
         /**
@@ -181,8 +181,16 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                 enumerable: true,
                 configurable: false,
                 set: function ( buffer ) {
-                    bufferSourceNode_.buffer = buffer;
-                    counterNode_.buffer = createCounterBuffer( buffer );
+                    if ( buffer instanceof SPAudioBuffer ) {
+                        bufferSourceNode_.buffer = buffer.buffer;
+                        counterNode_.buffer = createCounterBuffer( buffer.buffer );
+                        this.loopStart = buffer.startPoint || 0;
+                        this.loopEnd = buffer.endPoint || 1;
+                    } else if ( buffer instanceof AudioBuffer ) {
+                        bufferSourceNode_.buffer = buffer;
+                        counterNode_.buffer = createCounterBuffer( buffer );
+                    }
+
                 },
                 get: function () {
                     return bufferSourceNode_.buffer;

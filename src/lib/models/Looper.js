@@ -280,7 +280,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBuf
 
                 if ( !this.isPlaying ) {
                     sourceBufferNodes_.forEach( function ( thisSource, index ) {
-                        var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : self.startPoint.value * thisSource.buffer.duration;
+                        var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : thisSource.loopStart;
                         thisSource.loop = ( self.maxLoops.value !== 1 );
                         thisSource.start( now, offset );
                     } );
@@ -311,9 +311,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBuf
 
                 if ( !this.isPlaying ) {
                     sourceBufferNodes_.forEach( function ( thisSource ) {
-                        if ( typeof offset == 'undefined' || offset === null ) {
-                            offset = self.startPoint.value * thisSource.buffer.duration;
-                        }
+
+                        offset = thisSource.loopStart + parseFloat( offset ) || 0;
+
                         if ( typeof duration == 'undefined' || duration === null ) {
                             duration = thisSource.buffer.duration;
                         }
