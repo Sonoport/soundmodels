@@ -1,4 +1,4 @@
-require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
+require( [ 'core/MultiFileLoader', 'core/SPAudioBuffer' ], function ( multiFileLoader, SPAudioBuffer ) {
     "use strict";
     console.log( "Running MultiFileLoader Test... " );
     if ( !window.context ) {
@@ -43,7 +43,7 @@ require( [ 'core/MultiFileLoader' ], function ( multiFileLoader ) {
                         .toBeGreaterThan( 0 );
                     buffers.forEach( function ( thisBuffer ) {
                         expect( thisBuffer )
-                            .toBeInstanceOf( AudioBuffer );
+                            .toBeInstanceOf( SPAudioBuffer );
                     } );
                     expect( buffers[ 0 ].numberOfChannels )
                         .toBe( 2 );

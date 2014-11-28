@@ -189,40 +189,6 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
 
             } );
 
-            it( "should have a valid parameter startPoint", function () {
-                expect( looper.startPoint ).toBeInstanceOf( SPAudioParam );
-                expect( function () {
-                    looper.startPoint = 0;
-                } ).toThrowError();
-
-                expect( function () {
-                    delete looper.startPoint;
-                } ).toThrowError();
-
-                expect( looper.startPoint.name ).toBe( 'startPoint' );
-                expect( looper.startPoint.value ).toBe( 0 );
-                expect( looper.startPoint.minValue ).toBe( 0 );
-                expect( looper.startPoint.maxValue ).toBe( 0.99 );
-
-            } );
-
-            it( "should have a valid parameter endPoint", function () {
-                expect( looper.startPoint ).toBeInstanceOf( SPAudioParam );
-                expect( function () {
-                    looper.endPoint = 0;
-                } ).toThrowError();
-
-                expect( function () {
-                    delete looper.endPoint;
-                } ).toThrowError();
-
-                expect( looper.endPoint.name ).toBe( 'endPoint' );
-                expect( looper.endPoint.value ).toBe( 0 );
-                expect( looper.endPoint.minValue ).toBe( 0 );
-                expect( looper.endPoint.maxValue ).toBe( 0.99 );
-
-            } );
-
             it( "should have a valid parameter multiTrackGain", function () {
                 expect( looper.multiTrackGain ).toBeInstanceOf( Array );
                 expect( looper.multiTrackGain.length ).toBe( listofSounds.length );
@@ -265,7 +231,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
 
             it( "should be able to start/stop audio", function ( done ) {
                 expect( function () {
-                    looper.start();
+                    looper.start( 0 );
                 } ).not.toThrowError();
 
                 setTimeout( function () {
@@ -273,7 +239,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                     expect( looper.isPlaying ).toBe( true );
 
                     expect( function () {
-                        looper.stop();
+                        looper.stop( 0 );
                     } ).not.toThrowError();
 
                     expect( looper.isPlaying ).toBe( false );
@@ -365,7 +331,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
 
                         setTimeout( function () {
                             expect( function () {
-                                looper.start();
+                                looper.start( 0 );
                             } ).not.toThrowError();
                             setTimeout( function () {
                                 expect( function () {
@@ -402,6 +368,8 @@ var sourceStub = {
             connect: sourceSpies.connect,
             disconnect: sourceSpies.disconnect,
             start: sourceSpies.start,
+            loopStart: 0,
+            loopEnd: 1,
             stop: function ( when ) {
                 this.onended();
                 sourceSpies.stop( when );
@@ -474,14 +442,14 @@ requireWithStubbedSource( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioPara
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    looper.start();
+                    looper.start( 0 );
                 } ).not.toThrowError();
 
                 expect( looper.isPlaying ).toBe( true );
                 expect( sourceSpies.start ).toHaveBeenCalled();
 
                 expect( function () {
-                    looper.stop();
+                    looper.stop( 0 );
                 } ).not.toThrowError();
 
                 expect( looper.isPlaying ).toBe( false );
@@ -566,7 +534,7 @@ requireWithStubbedSource( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioPara
             it( "should be pass parameters from stop to source", function ( done ) {
                 var duration = Math.random() * 2;
                 expect( function () {
-                    looper.start();
+                    looper.start( 0 );
                 } ).not.toThrowError();
 
                 expect( function () {

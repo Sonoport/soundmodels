@@ -9,16 +9,16 @@ define( [ 'core/FileLoader', 'core/SPAudioBuffer' ],
         "use strict";
 
         /**
-         * Helper class to loader multiple sounds from URL String, File or AudioBuffer Objects.
+         * Helper class to loader multiple sources from URL String, File or AudioBuffer or SPAudioBuffer Objects.
          *
          *
          * @method MuliFileLoader
-         * @param {Array/String/File} sounds Array of or Individual String, AudioBuffer or File Objects which define the sounds to be loaded
+         * @param {Array/String/File} sources Array of or Individual String, AudioBuffer or File Objects which define the sounds to be loaded
          * @param {String} audioContext AudioContext to be used in decoding the file
          * @param {String} [onLoadProgress] Callback function to access the progress of the file loading.
-         * @param {String} [onLoadComplete] Callback function to be called when all sounds are loaded
+         * @param {String} [onLoadComplete] Callback function to be called when all sources are loaded
          */
-        function MultiFileLoader( sounds, audioContext, onLoadProgress, onLoadComplete ) {
+        function MultiFileLoader( sources, audioContext, onLoadProgress, onLoadComplete ) {
 
             //Private variables
             var self = this;
@@ -30,57 +30,65 @@ define( [ 'core/FileLoader', 'core/SPAudioBuffer' ],
             function init() {
 
                 // If not defined, set empty sources.
-                if ( !sounds ) {
+                if ( !sources ) {
                     console.log( "Setting empty source. No sound may be heard" );
                     onLoadComplete( false, loadedAudioBuffers_ );
                     return;
                 }
 
                 // Convert to array.
-                if ( !( sounds instanceof Array ) ) {
-                    var soundsArray = [];
-                    soundsArray.push( sounds );
-                    sounds = soundsArray;
+                if ( !( sources instanceof Array ) ) {
+                    var sourceArray = [];
+                    sourceArray.push( sources );
+                    sources = sourceArray;
                 }
 
                 // If beyond size limits, log error and callback with false.
-                if ( sounds.length < self.minSources || sounds.length > self.maxSources ) {
-                    console.error( "Unsupported number of Sources. " + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources. Trying to load " + sounds.length + "." );
+                if ( sources.length < self.minSources || sources.length > self.maxSources ) {
+                    console.error( "Unsupported number of Sources. " + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources. Trying to load " + sources.length + "." );
                     onLoadComplete( false, loadedAudioBuffers_ );
                     return;
                 }
 
-                // Load each of the sounds
-                sourcesToLoad_ = sounds.length;
+                // Load each of the sources
+                sourcesToLoad_ = sources.length;
                 loadedAudioBuffers_ = new Array( sourcesToLoad_ );
-                sounds.forEach( function ( thisSound, index ) {
+                sources.forEach( function ( thisSound, index ) {
                     loadSingleSound( thisSound, onSingleLoadAt( index ) );
                 } );
             }
 
-            function loadSingleSound( sound, onSingleLoad ) {
-                var parameterType = Object.prototype.toString.call( sound );
-                var fileLoader;
-                if ( parameterType === '[object AudioBuffer]' ||
-                    ( sound instanceof SPAudioBuffer && sound.buffer ) ) {
-                    onSingleLoad( true, sound.buffer );
-                } else if ( parameterType === '[object String]' ||
-                    parameterType === '[object File]' ||
-                    ( sound instanceof SPAudioBuffer && sound.sourceURL ) ) {
+            function loadSingleSound( source, onSingleLoad ) {
+                var sourceType = Object.prototype.toString.call( source );
+                var audioBuffer;
+                if ( sourceType === '[object AudioBuffer]' ) {
+                    audioBuffer = new SPAudioBuffer( self.audioContext, source );
+                    onSingleLoad( true, audioBuffer );
+                } else if ( source instanceof SPAudioBuffer && source.buffer ) {
+                    onSingleLoad( true, source );
+                } else if ( sourceType === '[object String]' ||
+                    sourceType === '[object File]' ||
+                    ( source instanceof SPAudioBuffer && source.sourceURL ) ) {
 
-                    if ( sound instanceof SPAudioBuffer && sound.sourceURL ) {
-                        sound = sound.sourceURL;
+                    var sourceURL;
+                    if ( source instanceof SPAudioBuffer && source.sourceURL ) {
+                        sourceURL = source.sourceURL;
+                        audioBuffer = source;
+                    } else {
+                        sourceURL = source;
+                        audioBuffer = new SPAudioBuffer( self.audioContext, sourceURL );
                     }
 
-                    fileLoader = new FileLoader( sound, self.audioContext, function ( status ) {
+                    var fileLoader = new FileLoader( sourceURL, self.audioContext, function ( status ) {
                         if ( status ) {
-                            onSingleLoad( status, fileLoader.getBuffer() );
+                            audioBuffer.buffer = fileLoader.getBuffer();
+                            onSingleLoad( status, audioBuffer );
                         } else {
                             onSingleLoad( status );
                         }
                     }, function ( progressEvent ) {
                         if ( onLoadProgress && typeof onLoadProgress === 'function' ) {
-                            onLoadProgress( progressEvent, sound );
+                            onLoadProgress( progressEvent, audioBuffer );
                         }
                     } );
                 } else {
@@ -90,24 +98,10 @@ define( [ 'core/FileLoader', 'core/SPAudioBuffer' ],
             }
 
             function onSingleLoadAt( index ) {
-                return function ( status, audioBuffer ) {
+                return function ( status, loadedSound ) {
                     if ( status ) {
-                        var source;
-                        if ( sounds instanceof Array ) {
-                            source = sounds[ index ];
-                        } else {
-                            source = sounds;
-                        }
-
-                        if ( source instanceof SPAudioBuffer ) {
-                            source.buffer = audioBuffer;
-                            loadedAudioBuffers_[ index ] = source;
-                        } else {
-                            loadedAudioBuffers_[ index ] = new SPAudioBuffer( audioBuffer, {
-                                sourceURL: source,
-                                length: audioBuffer.length
-                            } );
-                        }
+                        //console.log( "Loaded ", index, "successfully" );
+                        loadedAudioBuffers_[ index ] = loadedSound;
                     }
                     sourcesToLoad_--;
                     if ( sourcesToLoad_ === 0 ) {

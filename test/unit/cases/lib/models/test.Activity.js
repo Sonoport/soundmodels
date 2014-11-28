@@ -203,23 +203,6 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( activity.sensitivity.maxValue ).toBe( 1 );
 
             } );
-
-            it( "should have a valid parameter startPoint", function () {
-                expect( activity.startPoint ).toBeInstanceOf( SPAudioParam );
-                expect( function () {
-                    activity.startPoint = 0;
-                } ).toThrowError();
-
-                expect( function () {
-                    delete activity.startPoint;
-                } ).toThrowError();
-
-                expect( activity.startPoint.name ).toBe( 'startPoint' );
-                expect( activity.startPoint.value ).toBe( 0 );
-                expect( activity.startPoint.minValue ).toBe( 0 );
-                expect( activity.startPoint.maxValue ).toBe( 0.99 );
-
-            } );
         } );
 
         describe( '#connect/disconnect', function () {
@@ -244,14 +227,14 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    activity.start();
+                    activity.start( 0 );
                 } ).not.toThrowError();
 
                 expect( activity.isPlaying ).toBe( true );
                 setTimeout( function () {
                     expect( internalSpies.onAudioStart ).toHaveBeenCalled();
                     expect( function () {
-                        activity.stop();
+                        activity.stop( 0 );
                     } ).not.toThrowError();
 
                     expect( activity.isPlaying ).toBe( false );
@@ -348,6 +331,8 @@ var sourceStub = {
             connect: sourceSpies.connect,
             disconnect: sourceSpies.disconnect,
             start: sourceSpies.start,
+            loopStart: 0,
+            loopEnd: 1,
             stop: function ( when ) {
                 this.onended();
                 sourceSpies.stop( when );
@@ -417,14 +402,14 @@ requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioPa
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    activity.start();
+                    activity.start( 0 );
                 } ).not.toThrowError();
 
                 expect( activity.isPlaying ).toBe( true );
                 expect( sourceSpies.start ).toHaveBeenCalled();
 
                 expect( function () {
-                    activity.stop();
+                    activity.stop( 0 );
                 } ).not.toThrowError();
 
                 expect( activity.isPlaying ).toBe( false );
@@ -509,7 +494,7 @@ requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioPa
             it( "should be pass parameters from stop to source", function ( done ) {
                 var duration = Math.random() * 2;
                 expect( function () {
-                    activity.start();
+                    activity.start( 0 );
                 } ).not.toThrowError();
 
                 expect( function () {

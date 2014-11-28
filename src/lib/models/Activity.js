@@ -1,5 +1,6 @@
 /**
  * @module Models
+ *
  */
 define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam', 'core/webAudioDispatch' ],
     function ( Config, BaseSound, Looper, SPAudioParam, webAudioDispatch ) {
@@ -67,11 +68,12 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
             var self = this;
 
             // Private Variables
-            var internalLooper_;
+            var internalLooper_ = null;
             var lastPosition_ = 0;
-            var lastUpdateTime_;
-            var smoothDeltaTime_;
-            var timeoutID, endEventTimeout;
+            var lastUpdateTime_ = 0;
+            var smoothDeltaTime_ = 0;
+            var timeoutID = null
+            var endEventTimeout = null;
             var audioPlaying = false;
 
             // Constants
@@ -192,12 +194,6 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
                 }
             }
 
-            function startPointSetter_( aParam, value ) {
-                if ( self.isInitialized ) {
-                    internalLooper_.startPoint.value = value;
-                }
-            }
-
             // Public Properties
 
             /**
@@ -255,17 +251,6 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
              */
             this.registerParameter( new SPAudioParam( this, 'easeOut', 0.05, 10.0, 1, null, null, easeOutSetter_ ) );
 
-            /**
-             * Start point (as a factor of the length of the entire track) where the Looping should start from.
-             *
-             * @property startPoint
-             * @type SPAudioParam
-             * @default 0.0
-             * @minvalue 0.0
-             * @maxvalue 0.99
-             */
-            this.registerParameter( new SPAudioParam( this, 'startPoint', 0.0, 0.99, 0.00, null, null, startPointSetter_ ) );
-
             // Public Functions
 
             /**
@@ -298,8 +283,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
             };
 
             /**
-             * Start playing after specific time and from a specific offset. If offset is not defined,
-             * the value of startPoint property is used.
+             * Start playing after specific time and from a specific offset.
              *
              * @method start
              * @param {Number} when The delay in seconds before playing the model

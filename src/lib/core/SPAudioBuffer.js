@@ -5,27 +5,29 @@ define( [],
     function () {
         "use strict";
 
-        function SPAudioBuffer( URL, options, endPoint ) {
+        function SPAudioBuffer( audioContext, URL, options, endPoint ) {
 
             // new SPAudioBuffer("http://example.com", 0.8,1.0)
             // new SPAudioBuffer([object File], 0.8,1.0)
             // new SPAudioBuffer([object AudioBuffer], 0.8,1.0)
             // new SPAudioBuffer([object AudioBuffer], {startPoint, endPoint, url})
             //
-
+            this.audioContext = audioContext;
             this.sourceURL = "";
             this.duration = null;
 
             var buffer_;
+            var rawBuffer_;
             Object.defineProperty( this, 'buffer', {
                 set: function ( buffer ) {
-                    buffer_ = buffer;
+                    rawBuffer_ = buffer;
                     if ( startPoint_ === null ) {
                         this.startPoint = 0;
                     }
                     if ( endPoint_ === null ) {
-                        this.endPoint = this.buffer.length;
+                        this.endPoint = this.rawBuffer_.length;
                     }
+                    this.updateBuffer();
                 }.bind( this ),
                 get: function () {
                     return buffer_;
@@ -36,9 +38,7 @@ define( [],
             Object.defineProperty( this, 'startPoint', {
                 set: function ( startPoint ) {
                     startPoint_ = startPoint;
-                    if ( endPoint !== null ) {
-                        this.duration = endPoint_ - startPoint_;
-                    }
+                    this.updateBuffer();
                 }.bind( this ),
                 get: function () {
                     return startPoint_;
@@ -49,32 +49,60 @@ define( [],
             Object.defineProperty( this, 'endPoint', {
                 set: function ( endPoint ) {
                     endPoint_ = endPoint;
-                    if ( startPoint_ !== null ) {
-                        this.duration = endPoint_ - startPoint_;
-                    }
+                    this.updateBuffer();
                 }.bind( this ),
                 get: function () {
                     return endPoint_;
                 }
             } );
 
-            Object.defineProperty( this, 'length', {
-                get: function () {
-                    return this.buffer.length || 0;
-                }
-            } );
-
             Object.defineProperty( this, 'numberOfChannels', {
                 get: function () {
-                    return this.buffer.numberOfChannels || 0;
+                    return this.buffer ? this.buffer.numberOfChannels : 0;
                 }
             } );
 
             Object.defineProperty( this, 'sampleRate', {
                 get: function () {
-                    return this.buffer.sampleRate || 0;
+                    return this.buffer ? this.buffer.sampleRate : 0;
                 }
             } );
+
+            this.updateBuffer = function () {
+                if ( !rawBuffer_ ) {
+                    this.duration = 0;
+                } else {
+                    if ( startPoint_ === null || startPoint_ === undefined ) {
+                        startPoint_ = 0;
+                    }
+                    if ( endPoint_ === null || endPoint_ === undefined ) {
+                        endPoint_ = rawBuffer_.duration;
+                    }
+
+                    this.duration = endPoint_ - startPoint_;
+                    this.length = rawBuffer_.sampleRate * this.duration;
+
+                    if ( this.length > 0 ) {
+                        // Start trimming
+                        if ( !buffer_ ||
+                            buffer_.length != this.length ||
+                            buffer_.numberOfChannels != rawBuffer_.numberOfChannels ||
+                            buffer_.sampleRate != rawBuffer_.sampleRate
+                        ) {
+                            buffer_ = this.audioContext.createBuffer( rawBuffer_.numberOfChannels, this.length, rawBuffer_.sampleRate );
+                        }
+
+                        var startIndex = Math.floor( startPoint_ * rawBuffer_.sampleRate );
+                        var endIndex = Math.ceil( endPoint_ * rawBuffer_.sampleRate );
+
+                        for ( var i = 0; i < rawBuffer_.numberOfChannels; i++ ) {
+                            var aData = new Float32Array( rawBuffer_.getChannelData( i ) );
+                            buffer_.getChannelData( i )
+                                .set( aData.subarray( startIndex, endIndex ) );
+                        }
+                    }
+                }
+            };
 
             this.getChannelData = function ( channel ) {
                 if ( !this.buffer ) {

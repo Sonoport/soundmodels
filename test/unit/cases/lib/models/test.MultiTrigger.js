@@ -234,7 +234,7 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                 expect( multiTrigger.release ).toBeInstanceOf( Function );
             } );
 
-            it( "should be start/stop audio", function ( done ) {
+            it( "should be able to start/stop audio", function ( done ) {
                 expect( function () {
                     multiTrigger.start();
                 } ).not.toThrowError();
@@ -254,7 +254,7 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                 }, 1000 );
             } );
 
-            it( "should be play/pause audio", function ( done ) {
+            it( "should be able to play/pause audio", function ( done ) {
                 expect( function () {
                     multiTrigger.play();
                 } ).not.toThrowError();

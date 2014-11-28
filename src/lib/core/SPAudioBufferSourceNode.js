@@ -184,8 +184,6 @@ define( [ 'core/SPPlaybackRateParam', 'core/SPAudioBuffer', 'core/WebAudioDispat
                     if ( buffer instanceof SPAudioBuffer ) {
                         bufferSourceNode_.buffer = buffer.buffer;
                         counterNode_.buffer = createCounterBuffer( buffer.buffer );
-                        this.loopStart = buffer.startPoint || 0;
-                        this.loopEnd = buffer.endPoint || 1;
                     } else if ( buffer instanceof AudioBuffer ) {
                         bufferSourceNode_.buffer = buffer;
                         counterNode_.buffer = createCounterBuffer( buffer );
@@ -249,6 +247,10 @@ define( [ 'core/SPPlaybackRateParam', 'core/SPAudioBuffer', 'core/WebAudioDispat
             this.start = function ( when, offset, duration ) {
                 if ( typeof duration == 'undefined' ) {
                     duration = bufferSourceNode_.buffer.duration;
+                }
+
+                if ( typeof offset == 'undefined' ) {
+                    offset = 0;
                 }
 
                 if ( this.playbackState === this.UNSCHEDULED_STATE ) {
