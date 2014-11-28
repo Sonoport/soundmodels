@@ -80,6 +80,7 @@ define(
                 enumerable: true,
                 configurable: false,
                 set: function ( value ) {
+                    //console.log( "setting", name );
                     // Sanitize the value with min/max
                     // bounds first.
                     if ( typeof value !== typeof defaultValue ) {
@@ -110,20 +111,20 @@ define(
                     } else if ( aParams ) {
                         // else if param is defined, set directly
                         if ( aParams instanceof AudioParam ) {
-                            if ( baseSound.isPlaying ) {
-                                aParams.setTargetAtTime( value, baseSound.audioContext.currentTime, Config.DEFAULT_SMOOTHING_CONSTANT );
-                            } else {
-                                aParams.setValueAtTime( value, baseSound.audioContext.currentTime );
-                            }
-                        } else if ( aParams instanceof Array ) {
-                            aParams.forEach( function ( thisParam ) {
-                                if ( baseSound.isPlaying ) {
-                                    thisParam.setTargetAtTime( value, baseSound.audioContext.currentTime, Config.DEFAULT_SMOOTHING_CONSTANT );
-                                } else {
-                                    thisParam.setValueAtTime( value, baseSound.audioContext.currentTime );
-                                }
-                            } );
+                            var array = [];
+                            array.push( aParams );
+                            aParams = array;
                         }
+                        aParams.forEach( function ( thisParam ) {
+                            if ( baseSound.isPlaying ) {
+                                //dezipper if already playing
+                                thisParam.setTargetAtTime( value, baseSound.audioContext.currentTime, Config.DEFAULT_SMOOTHING_CONSTANT );
+                            } else {
+                                //set directly if not playing
+                                //console.log( "setting directly" );
+                                thisParam.setValueAtTime( value, baseSound.audioContext.currentTime );
+                            }
+                        } );
                     } else {
                         // Else if Psuedo param
                         window.clearInterval( intervalID_ );

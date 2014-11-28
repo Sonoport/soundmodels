@@ -123,15 +123,25 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBuf
 
                     var currentSpeed = sourceBufferNodes_[ 0 ] ? sourceBufferNodes_[ 0 ].playbackRate.value : 1;
 
-                    if ( value > currentSpeed ) {
+                    if ( self.isPlaying ) {
+                        // console.log( "easingIn/Out" );
+                        // easeIn/Out
+                        if ( value > currentSpeed ) {
+                            sourceBufferNodes_.forEach( function ( thisSource ) {
+                                thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                                thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.easeIn.value / t60multiplier );
+                            } );
+                        } else if ( value < currentSpeed ) {
+                            sourceBufferNodes_.forEach( function ( thisSource ) {
+                                thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                                thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.easeOut.value / t60multiplier );
+                            } );
+                        }
+                    } else {
+                        // console.log( "changing directly" );
                         sourceBufferNodes_.forEach( function ( thisSource ) {
                             thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                            thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.easeIn.value / t60multiplier );
-                        } );
-                    } else if ( value < currentSpeed ) {
-                        sourceBufferNodes_.forEach( function ( thisSource ) {
-                            thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                            thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.easeOut.value / t60multiplier );
+                            thisSource.playbackRate.setValueAtTime( value, audioContext.currentTime );
                         } );
                     }
                 }
@@ -166,7 +176,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBuf
              * @minvalue 0.0
              * @maxvalue 10.0
              */
-            this.registerParameter( new SPAudioParam( this, 'playSpeed', 0.0, 10, 1, null, null, playSpeedSetter_ ), true );
+            this.registerParameter( new SPAudioParam( this, 'playSpeed', 0.0, 10, 1.005, null, null, playSpeedSetter_ ), true );
 
             /**
              * Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
