@@ -6,9 +6,12 @@
         window.context = new AudioContext();
     }
 
-    require( [ 'models/Looper' ], function ( Looper ) {
+    require( [ 'models/Looper', 'core/SPAudioBuffer' ], function ( Looper, SPAudioBuffer ) {
 
-        var workout = 'https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3';
+        var workout = new SPAudioBuffer( window.context, 'https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3', {
+            startPoint: 1,
+            endPoint: 3
+        } );
 
         var drums = 'https://dl.dropboxusercontent.com/u/77191118/sounds/drum.mp3';
         // var guitar = 'https://dl.dropboxusercontent.com/u/77191118/sounds/guitar.mp3';
@@ -22,7 +25,7 @@
             looper.setSources( [ workout, 'https://dl.dropboxusercontent.com/u/77191118/sounds/Hit5.mp3' ], function ( progressEvent, sound ) {
                 console.log( "Loading Sources.. ", sound, ( progressEvent.loaded / progressEvent.total ) );
             }, function () {
-                looper.maxLoops.value = 1;
+                //looper.maxLoops.value = 1;
                 looper.start( context.currentTime + 2 );
             } );
         }, function () {

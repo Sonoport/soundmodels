@@ -11,7 +11,11 @@ define( [],
             // new SPAudioBuffer([object File], 0.8,1.0)
             // new SPAudioBuffer([object AudioBuffer], 0.8,1.0)
             // new SPAudioBuffer([object AudioBuffer], {startPoint, endPoint, url})
-            //
+
+            if ( !( audioContext instanceof AudioContext ) ) {
+                console.error( 'First argument to SPAudioBuffer must be a valid AudioContext' );
+                return;
+            }
             this.audioContext = audioContext;
             this.sourceURL = "";
             this.duration = null;
