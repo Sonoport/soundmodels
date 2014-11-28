@@ -150,7 +150,6 @@ define(
             if ( aParams && ( aParams instanceof AudioParam || aParams instanceof Array ) ) {
                 // Use a nominal Parameter to populate the values.
                 var aParam = aParams[ 0 ] || aParams;
-                aParam.value = aParam.value;
                 this.defaultValue = aParam.defaultValue;
                 this.minValue = aParam.minValue;
                 this.maxValue = aParam.maxValue;
