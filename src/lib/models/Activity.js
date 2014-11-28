@@ -72,7 +72,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
             var lastPosition_ = 0;
             var lastUpdateTime_ = 0;
             var smoothDeltaTime_ = 0;
-            var timeoutID = null
+            var timeoutID = null;
             var endEventTimeout = null;
             var audioPlaying = false;
 
