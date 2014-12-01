@@ -5,12 +5,12 @@ define( [],
     function () {
         "use strict";
 
-        function SPAudioBuffer( audioContext, URL, options, endPoint ) {
+        function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
 
             // new SPAudioBuffer("http://example.com", 0.8,1.0)
+            // new SPAudioBuffer("http://example.com", 0.8,1.0, [object AudioBuffer])
             // new SPAudioBuffer([object File], 0.8,1.0)
             // new SPAudioBuffer([object AudioBuffer], 0.8,1.0)
-            // new SPAudioBuffer([object AudioBuffer], {startPoint, endPoint, url})
 
             if ( !( audioContext instanceof AudioContext ) ) {
                 console.error( 'First argument to SPAudioBuffer must be a valid AudioContext' );
@@ -117,26 +117,36 @@ define( [],
             };
 
             var urlType = Object.prototype.toString.call( URL );
-            var optionsType = Object.prototype.toString.call( options );
+            var startPointType = Object.prototype.toString.call( startPoint );
             var endPointType = Object.prototype.toString.call( endPoint );
-
-            if ( optionsType === "[object Object]" ) {
-                for ( var prop in options ) {
-                    if ( options.hasOwnProperty( prop ) && this.hasOwnProperty( prop ) ) {
-                        this[ prop ] = options[ prop ];
-                    }
-                }
-            } else if ( optionsType === "[object Number]" ) {
-                this.startPoint = parseFloat( options );
-                if ( endPointType === "[object Number]" ) {
-                    this.endPoint = parseFloat( endPoint );
-                }
-            }
+            var bufferType = Object.prototype.toString.call( audioBuffer );
 
             if ( urlType === "[object String]" || urlType === "[object File]" ) {
                 this.sourceURL = URL;
             } else if ( urlType === "[object AudioBuffer]" ) {
                 this.buffer = URL;
+            } else {
+                console.warn( "Incorrect Parameter Type. url can only be a String, File or an AudioBuffer" );
+            }
+
+            if ( startPointType === "[object Number]" ) {
+                this.startPoint = parseFloat( startPoint );
+            } else {
+                if ( startPoint !== "[object Undefined]" ) {
+                    console.warn( "Incorrect Parameter Type. startPoint should be a Number" );
+                }
+            }
+
+            if ( endPointType === "[object Number]" ) {
+                this.endPoint = parseFloat( endPoint );
+            } else {
+                if ( endPoint !== "[object Undefined]" ) {
+                    console.warn( "Incorrect Parameter Type. endPoint should be a Number" );
+                }
+            }
+
+            if ( bufferType === "[object AudioBuffer]" && !this.buffer ) {
+                this.buffer = audioBuffer;
             }
         }
         return SPAudioBuffer;

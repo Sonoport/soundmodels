@@ -8,10 +8,7 @@
 
     require( [ 'models/Looper', 'core/SPAudioBuffer' ], function ( Looper, SPAudioBuffer ) {
 
-        var workout = new SPAudioBuffer( window.context, 'https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3', {
-            startPoint: 1,
-            endPoint: 3
-        } );
+        var workout = new SPAudioBuffer( window.context, 'https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3', 1, 3 );
 
         var drums = 'https://dl.dropboxusercontent.com/u/77191118/sounds/drum.mp3';
         // var guitar = 'https://dl.dropboxusercontent.com/u/77191118/sounds/guitar.mp3';
