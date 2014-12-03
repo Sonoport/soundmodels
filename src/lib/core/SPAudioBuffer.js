@@ -132,7 +132,7 @@ define( [],
             if ( startPointType === "[object Number]" ) {
                 this.startPoint = parseFloat( startPoint );
             } else {
-                if ( startPoint !== "[object Undefined]" ) {
+                if ( startPointType !== "[object Undefined]" ) {
                     console.warn( "Incorrect Parameter Type. startPoint should be a Number" );
                 }
             }
@@ -140,7 +140,7 @@ define( [],
             if ( endPointType === "[object Number]" ) {
                 this.endPoint = parseFloat( endPoint );
             } else {
-                if ( endPoint !== "[object Undefined]" ) {
+                if ( startPointType !== "[object Undefined]" ) {
                     console.warn( "Incorrect Parameter Type. endPoint should be a Number" );
                 }
             }
