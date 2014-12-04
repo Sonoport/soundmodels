@@ -2,8 +2,8 @@
  ** @module Core
  */
 define(
-    [ 'core/WebAudioDispatch' ],
-    function ( webAudioDispatch ) {
+    [ 'core/WebAudioDispatch', 'core/Config' ],
+    function ( webAudioDispatch, Config ) {
         "use strict";
         /**
          * Mock AudioParam used to create Parameters for Sonoport Sound Models. The SPAudioParam supports either a AudioParam backed parameter, or a completely Javascript mocked up Parameter, which supports a rough version of parameter automation.
@@ -11,6 +11,7 @@ define(
          *
          * @class SPAudioParam
          * @constructor
+         * @param {BaseSound} baseSound A reference to the BaseSound which exposes this parameter.
          * @param {String} [name] The name of the parameter.
          * @param {Number} [minValue] The minimum value of the parameter.
          * @param {Number} [maxValue] The maximum value of the parameter.
@@ -18,9 +19,8 @@ define(
          * @param {AudioParam/Array} [aParams] A WebAudio parameter which will be set/get when this parameter is changed.
          * @param {Function} [mappingFunction] A mapping function to map values between the mapped SPAudioParam and the underlying WebAudio AudioParam.
          * @param {Function} [setter] A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.
-         * @param {AudioContext} [audioContext] A WebAudio AudioContext for timing.
          */
-        function SPAudioParam( name, minValue, maxValue, defaultValue, aParams, mappingFunction, setter, audioContext ) {
+        function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParams, mappingFunction, setter ) {
             // Min diff between set and actual
             // values to stop updates.
             var MIN_DIFF = 0.0001;
@@ -80,6 +80,7 @@ define(
                 enumerable: true,
                 configurable: false,
                 set: function ( value ) {
+                    //console.log( "setting", name );
                     // Sanitize the value with min/max
                     // bounds first.
                     if ( typeof value !== typeof defaultValue ) {
@@ -105,17 +106,25 @@ define(
                     }
 
                     // If setter exists, use that
-                    if ( typeof setter === 'function' && audioContext ) {
-                        setter( aParams, value, audioContext );
+                    if ( typeof setter === 'function' && baseSound.audioContext ) {
+                        setter( aParams, value, baseSound.audioContext );
                     } else if ( aParams ) {
                         // else if param is defined, set directly
                         if ( aParams instanceof AudioParam ) {
-                            aParams.value = value;
-                        } else if ( aParams instanceof Array ) {
-                            aParams.forEach( function ( thisParam ) {
-                                thisParam.value = value;
-                            } );
+                            var array = [];
+                            array.push( aParams );
+                            aParams = array;
                         }
+                        aParams.forEach( function ( thisParam ) {
+                            if ( baseSound.isPlaying ) {
+                                //dezipper if already playing
+                                thisParam.setTargetAtTime( value, baseSound.audioContext.currentTime, Config.DEFAULT_SMOOTHING_CONSTANT );
+                            } else {
+                                //set directly if not playing
+                                //console.log( "setting directly" );
+                                thisParam.setValueAtTime( value, baseSound.audioContext.currentTime );
+                            }
+                        } );
                     } else {
                         // Else if Psuedo param
                         window.clearInterval( intervalID_ );
@@ -192,7 +201,7 @@ define(
                     var self = this;
                     webAudioDispatch( function () {
                         self.value = value;
-                    }, startTime, audioContext );
+                    }, startTime, baseSound.audioContext );
                 }
             };
 
@@ -224,10 +233,10 @@ define(
                     // a real AudioParam.
                     var self = this;
                     var initValue_ = self.value;
-                    var initTime_ = audioContext.currentTime;
+                    var initTime_ = baseSound.audioContext.currentTime;
                     intervalID_ = window.setInterval( function () {
-                        if ( audioContext.currentTime >= startTime ) {
-                            self.value = target + ( initValue_ - target ) * Math.exp( -( audioContext.currentTime - initTime_ ) / timeConstant );
+                        if ( baseSound.audioContext.currentTime >= startTime ) {
+                            self.value = target + ( initValue_ - target ) * Math.exp( -( baseSound.audioContext.currentTime - initTime_ ) / timeConstant );
                             if ( Math.abs( self.value - target ) < MIN_DIFF ) {
                                 window.clearInterval( intervalID_ );
                             }
@@ -263,10 +272,10 @@ define(
                     }
                 } else {
                     var self = this;
-                    var initTime_ = audioContext.currentTime;
+                    var initTime_ = baseSound.audioContext.currentTime;
                     intervalID_ = window.setInterval( function () {
-                        if ( audioContext.currentTime >= startTime ) {
-                            var index = Math.floor( values.length * ( audioContext.currentTime - initTime_ ) / duration );
+                        if ( baseSound.audioContext.currentTime >= startTime ) {
+                            var index = Math.floor( values.length * ( baseSound.audioContext.currentTime - initTime_ ) / duration );
                             if ( index < values.length ) {
                                 self.value = values[ index ];
                             } else {
@@ -301,14 +310,14 @@ define(
                 } else {
                     var self = this;
                     var initValue_ = self.value;
-                    var initTime_ = audioContext.currentTime;
+                    var initTime_ = baseSound.audioContext.currentTime;
                     if ( initValue_ === 0 ) {
                         initValue_ = 0.001;
                     }
                     intervalID_ = window.setInterval( function () {
-                        var timeRatio = ( audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
+                        var timeRatio = ( baseSound.audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
                         self.value = initValue_ * Math.pow( value / initValue_, timeRatio );
-                        if ( audioContext.currentTime >= endTime ) {
+                        if ( baseSound.audioContext.currentTime >= endTime ) {
                             window.clearInterval( intervalID_ );
                         }
                     }, UPDATE_INTERVAL_MS );
@@ -337,11 +346,11 @@ define(
                 } else {
                     var self = this;
                     var initValue_ = self.value;
-                    var initTime_ = audioContext.currentTime;
+                    var initTime_ = baseSound.audioContext.currentTime;
                     intervalID_ = window.setInterval( function () {
-                        var timeRatio = ( audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
+                        var timeRatio = ( baseSound.audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
                         self.value = initValue_ + ( ( value - initValue_ ) * timeRatio );
-                        if ( audioContext.currentTime >= endTime ) {
+                        if ( baseSound.audioContext.currentTime >= endTime ) {
                             window.clearInterval( intervalID_ );
                         }
                     }, UPDATE_INTERVAL_MS );
@@ -376,14 +385,14 @@ define(
          * @method createPsuedoParam
          * @static
          * @return  SPAudioParam
+         * @param {BaseSound} baseSound A reference to the BaseSound which exposes this parameter.
          * @param {String} name The name of the parameter..
          * @param {Number} minValue The minimum value of the parameter.
          * @param {Number} maxValue The maximum value of the parameter.
          * @param {Number} defaultValue The default and starting value of the parameter.
-         * @param {AudioContext} audioContext An audiocontext in which this model exists.
          */
-        SPAudioParam.createPsuedoParam = function ( name, minValue, maxValue, defaultValue, audioContext ) {
-            return new SPAudioParam( name, minValue, maxValue, defaultValue, null, null, null, audioContext );
+        SPAudioParam.createPsuedoParam = function ( baseSound, name, minValue, maxValue, defaultValue ) {
+            return new SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, null, null, null );
         };
 
         return SPAudioParam;

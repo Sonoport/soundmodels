@@ -1,8 +1,8 @@
 /**
  * @module Core
  */
-define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
-    function ( SPPlaybackRateParam, webAudioDispatch ) {
+define( [ 'core/SPPlaybackRateParam', 'core/SPAudioBuffer', 'core/WebAudioDispatch' ],
+    function ( SPPlaybackRateParam, SPAudioBuffer, webAudioDispatch ) {
         "use strict";
 
         /**
@@ -72,7 +72,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
              * @default 1
              *
              */
-            this.playbackRate = new SPPlaybackRateParam( bufferSourceNode_.playbackRate, counterNode_.playbackRate );
+            this.playbackRate = new SPPlaybackRateParam( this, bufferSourceNode_.playbackRate, counterNode_.playbackRate );
 
             /**
              * An optional value in seconds where looping should end if the loop attribute is true.
@@ -181,8 +181,14 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
                 enumerable: true,
                 configurable: false,
                 set: function ( buffer ) {
-                    bufferSourceNode_.buffer = buffer;
-                    counterNode_.buffer = createCounterBuffer( buffer );
+                    if ( buffer instanceof SPAudioBuffer ) {
+                        bufferSourceNode_.buffer = buffer.buffer;
+                        counterNode_.buffer = createCounterBuffer( buffer.buffer );
+                    } else if ( buffer instanceof AudioBuffer ) {
+                        bufferSourceNode_.buffer = buffer;
+                        counterNode_.buffer = createCounterBuffer( buffer );
+                    }
+
                 },
                 get: function () {
                     return bufferSourceNode_.buffer;
@@ -241,6 +247,10 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
             this.start = function ( when, offset, duration ) {
                 if ( typeof duration == 'undefined' ) {
                     duration = bufferSourceNode_.buffer.duration;
+                }
+
+                if ( typeof offset == 'undefined' ) {
+                    offset = 0;
                 }
 
                 if ( this.playbackState === this.UNSCHEDULED_STATE ) {
@@ -314,7 +324,7 @@ define( [ 'core/SPPlaybackRateParam', 'core/WebAudioDispatch' ],
 
                     // Create new parameters for rate parameter
                     var playBackRateVal = self.playbackRate.value;
-                    self.playbackRate = new SPPlaybackRateParam( bufferSourceNode_.playbackRate, counterNode_.playbackRate );
+                    self.playbackRate = new SPPlaybackRateParam( self, bufferSourceNode_.playbackRate, counterNode_.playbackRate );
                     self.playbackRate.setValueAtTime( playBackRateVal, 0 );
 
                     // Reconnect to output.

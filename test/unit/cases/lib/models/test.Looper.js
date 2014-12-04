@@ -7,10 +7,10 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
     describe( 'Looper.js', function () {
         var looper;
         var internalSpies = {
-            onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
-            onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
-            onAudioStart: jasmine.createSpy( "onAudioStart" ),
-            onAudioEnd: jasmine.createSpy( "onAudioEnd" )
+            onLoadProgress: jasmine.createSpy( 'onLoadProgress' ),
+            onLoadComplete: jasmine.createSpy( 'onLoadComplete' ),
+            onAudioStart: jasmine.createSpy( 'onAudioStart' ),
+            onAudioEnd: jasmine.createSpy( 'onAudioEnd' )
         };
         var customMatchers = {
             toBeInstanceOf: function () {
@@ -66,7 +66,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
             } );
 
             it( "should have a model name as Looper", function () {
-                expect( looper.modelName ).toBe( "Looper" );
+                expect( looper.modelName ).toBe( 'Looper' );
             } );
 
             it( "should be a BaseSound", function () {
@@ -108,7 +108,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
             } );
 
             it( "should call onprogress events", function ( done ) {
-                var progressSpy = jasmine.createSpy( "progressSpy" );
+                var progressSpy = jasmine.createSpy( 'progressSpy' );
                 looper.setSources( listofSounds[ 0 ], progressSpy, function () {
                     expect( progressSpy ).toHaveBeenCalled();
                     done();
@@ -116,7 +116,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
             } );
 
             it( "should call onload event", function ( done ) {
-                var loadSpy = jasmine.createSpy( "loadSpy" );
+                var loadSpy = jasmine.createSpy( 'loadSpy' );
                 looper.setSources( listofSounds, null, loadSpy );
                 window.setTimeout( function () {
                     expect( loadSpy ).toHaveBeenCalled();
@@ -129,46 +129,46 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
             it( "should have a valid parameter playspeed", function () {
 
                 expect( looper.playSpeed ).toBeInstanceOf( SPAudioParam );
-                expect( looper.playSpeed.name ).toBe( "playSpeed" );
+                expect( looper.playSpeed.name ).toBe( 'playSpeed' );
                 expect( looper.playSpeed.value ).toBe( 1.0 );
                 expect( looper.playSpeed.minValue ).toBe( 0.0 );
                 expect( looper.playSpeed.maxValue ).toBe( 10.0 );
 
             } );
 
-            it( "should have a valid parameter riseTime", function () {
+            it( "should have a valid parameter easeIn", function () {
 
-                expect( looper.riseTime ).toBeInstanceOf( SPAudioParam );
+                expect( looper.easeIn ).toBeInstanceOf( SPAudioParam );
 
                 expect( function () {
-                    looper.riseTime = 0;
+                    looper.easeIn = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete looper.riseTime;
+                    delete looper.easeIn;
                 } ).toThrowError();
 
-                expect( looper.riseTime.name ).toBe( "riseTime" );
-                expect( looper.riseTime.value ).toBe( 0.05 );
-                expect( looper.riseTime.minValue ).toBe( 0.05 );
-                expect( looper.riseTime.maxValue ).toBe( 10.0 );
+                expect( looper.easeIn.name ).toBe( 'easeIn' );
+                expect( looper.easeIn.value ).toBe( 0.05 );
+                expect( looper.easeIn.minValue ).toBe( 0.05 );
+                expect( looper.easeIn.maxValue ).toBe( 10.0 );
 
             } );
 
-            it( "should have a valid parameter decayTime", function () {
-                expect( looper.decayTime ).toBeInstanceOf( SPAudioParam );
+            it( "should have a valid parameter easeOut", function () {
+                expect( looper.easeOut ).toBeInstanceOf( SPAudioParam );
                 expect( function () {
-                    looper.decayTime = 0;
+                    looper.easeOut = 0;
                 } ).toThrowError();
 
                 expect( function () {
-                    delete looper.decayTime;
+                    delete looper.easeOut;
                 } ).toThrowError();
 
-                expect( looper.decayTime.name ).toBe( "decayTime" );
-                expect( looper.decayTime.value ).toBe( 0.05 );
-                expect( looper.decayTime.minValue ).toBe( 0.05 );
-                expect( looper.decayTime.maxValue ).toBe( 10.0 );
+                expect( looper.easeOut.name ).toBe( "easeOut" );
+                expect( looper.easeOut.value ).toBe( 0.05 );
+                expect( looper.easeOut.minValue ).toBe( 0.05 );
+                expect( looper.easeOut.maxValue ).toBe( 10.0 );
 
             } );
 
@@ -189,23 +189,6 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
 
             } );
 
-            it( "should have a valid parameter startPoint", function () {
-                expect( looper.startPoint ).toBeInstanceOf( SPAudioParam );
-                expect( function () {
-                    looper.startPoint = 0;
-                } ).toThrowError();
-
-                expect( function () {
-                    delete looper.startPoint;
-                } ).toThrowError();
-
-                expect( looper.startPoint.name ).toBe( "startPoint" );
-                expect( looper.startPoint.value ).toBe( 0 );
-                expect( looper.startPoint.minValue ).toBe( 0 );
-                expect( looper.startPoint.maxValue ).toBe( 0.99 );
-
-            } );
-
             it( "should have a valid parameter multiTrackGain", function () {
                 expect( looper.multiTrackGain ).toBeInstanceOf( Array );
                 expect( looper.multiTrackGain.length ).toBe( listofSounds.length );
@@ -218,7 +201,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                     delete looper.multiTrackGain;
                 } ).toThrowError();
 
-                expect( looper.multiTrackGain[ 0 ].name ).toBe( "gain-0" );
+                expect( looper.multiTrackGain[ 0 ].name ).toBe( 'track-0-gain' );
                 expect( looper.multiTrackGain[ 0 ].value ).toBe( 1 );
                 expect( looper.multiTrackGain[ 0 ].minValue ).toBe( 0 );
                 expect( looper.multiTrackGain[ 0 ].maxValue ).toBe( 1 );
@@ -248,7 +231,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
 
             it( "should be able to start/stop audio", function ( done ) {
                 expect( function () {
-                    looper.start();
+                    looper.start( 0 );
                 } ).not.toThrowError();
 
                 setTimeout( function () {
@@ -256,7 +239,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                     expect( looper.isPlaying ).toBe( true );
 
                     expect( function () {
-                        looper.stop();
+                        looper.stop( 0 );
                     } ).not.toThrowError();
 
                     expect( looper.isPlaying ).toBe( false );
@@ -283,8 +266,8 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                         expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
                         expect( looper.isPlaying ).toBe( false );
 
-                        internalSpies.onAudioStart = jasmine.createSpy( "onAudioStart2" );
-                        internalSpies.onAudioEnd = jasmine.createSpy( "onAudioEnd2" );
+                        internalSpies.onAudioStart = jasmine.createSpy( 'onAudioStart2' );
+                        internalSpies.onAudioEnd = jasmine.createSpy( 'onAudioEnd2' );
                         looper.onAudioStart = internalSpies.onAudioStart;
                         looper.onAudioEnd = internalSpies.onAudioEnd;
 
@@ -348,7 +331,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
 
                         setTimeout( function () {
                             expect( function () {
-                                looper.start();
+                                looper.start( 0 );
                             } ).not.toThrowError();
                             setTimeout( function () {
                                 expect( function () {
@@ -357,11 +340,11 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                                 setTimeout( function () {
                                     expect( looper.isPlaying ).toBe( false );
                                     done();
-                                }, 1000 );
-                            }, 1000 );
-                        }, 1000 );
-                    }, 1000 );
-                }, 1000 );
+                                }, 800 );
+                            }, 800 );
+                        }, 800 );
+                    }, 800 );
+                }, 800 );
             } );
         } );
     } );
@@ -385,6 +368,8 @@ var sourceStub = {
             connect: sourceSpies.connect,
             disconnect: sourceSpies.disconnect,
             start: sourceSpies.start,
+            loopStart: 0,
+            loopEnd: 1,
             stop: function ( when ) {
                 this.onended();
                 sourceSpies.stop( when );
@@ -457,14 +442,14 @@ requireWithStubbedSource( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioPara
 
             it( "should be start/stop audio", function ( done ) {
                 expect( function () {
-                    looper.start();
+                    looper.start( 0 );
                 } ).not.toThrowError();
 
                 expect( looper.isPlaying ).toBe( true );
                 expect( sourceSpies.start ).toHaveBeenCalled();
 
                 expect( function () {
-                    looper.stop();
+                    looper.stop( 0 );
                 } ).not.toThrowError();
 
                 expect( looper.isPlaying ).toBe( false );
@@ -549,7 +534,7 @@ requireWithStubbedSource( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioPara
             it( "should be pass parameters from stop to source", function ( done ) {
                 var duration = Math.random() * 2;
                 expect( function () {
-                    looper.start();
+                    looper.start( 0 );
                 } ).not.toThrowError();
 
                 expect( function () {

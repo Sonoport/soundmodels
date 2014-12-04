@@ -8,15 +8,15 @@
 
     var scrubber;
 
-    require( [ "models/Scrubber" ], function ( Scrubber ) {
+    require( [ 'models/Scrubber' ], function ( Scrubber ) {
 
         //console.log(Looper);
 
-        //var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Marked.mp3";
-        // var url = "https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Original.wav";
-        // var url = "https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.wav";
+        //var url = 'https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Marked.mp3';
+        // var url = 'https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Original.wav';
+        // var url = 'https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.wav';
 
-        var url = "https://dl.dropboxusercontent.com/u/77191118/sounds/gettysburg_address.mp3";
+        var url = 'https://dl.dropboxusercontent.com/u/77191118/sounds/gettysburg_address.mp3';
         // Single test
         scrubber = new Scrubber( context, url, function ( progressEvent, sound ) {
             console.log( sound, ( progressEvent.loaded / progressEvent.total ) );

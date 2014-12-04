@@ -4,10 +4,10 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
         window.context = new AudioContext();
     }
     var internalSpies = {
-        onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
-        onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
-        onAudioStart: jasmine.createSpy( "onAudioStart" ),
-        onAudioEnd: jasmine.createSpy( "onAudioEnd" )
+        onLoadProgress: jasmine.createSpy( 'onLoadProgress' ),
+        onLoadComplete: jasmine.createSpy( 'onLoadComplete' ),
+        onAudioStart: jasmine.createSpy( 'onAudioStart' ),
+        onAudioEnd: jasmine.createSpy( 'onAudioEnd' )
     };
     var listofSounds = [ 'audio/surf.mp3' ];
 
@@ -68,7 +68,7 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
             } );
 
             it( "should have a model name as Scrubber", function () {
-                expect( scrubber.modelName ).toBe( "Scrubber" );
+                expect( scrubber.modelName ).toBe( 'Scrubber' );
             } );
 
             it( "should be a BaseSound", function () {
@@ -109,7 +109,7 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
             } );
 
             it( "should call onprogress events", function ( done ) {
-                var progressSpy = jasmine.createSpy( "progressSpy" );
+                var progressSpy = jasmine.createSpy( 'progressSpy' );
                 scrubber.setSources( listofSounds[ 0 ], progressSpy, function () {
                     expect( progressSpy ).toHaveBeenCalled();
                     done();
@@ -117,7 +117,7 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
             } );
 
             it( "should call onload event", function ( done ) {
-                var loadSpy = jasmine.createSpy( "loadSpy" );
+                var loadSpy = jasmine.createSpy( 'loadSpy' );
                 scrubber.setSources( listofSounds, null, loadSpy );
                 window.setTimeout( function () {
                     expect( loadSpy ).toHaveBeenCalled();
@@ -140,7 +140,7 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                     delete scrubber.playPosition;
                 } ).toThrowError();
 
-                expect( scrubber.playPosition.name ).toBe( "playPosition" );
+                expect( scrubber.playPosition.name ).toBe( 'playPosition' );
                 expect( scrubber.playPosition.value ).toBe( 0.0 );
                 expect( scrubber.playPosition.minValue ).toBe( 0.0 );
                 expect( scrubber.playPosition.maxValue ).toBe( 1.0 );
@@ -157,7 +157,7 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                     delete scrubber.noMotionFade;
                 } ).toThrowError();
 
-                expect( scrubber.noMotionFade.name ).toBe( "noMotionFade" );
+                expect( scrubber.noMotionFade.name ).toBe( 'noMotionFade' );
                 expect( scrubber.noMotionFade.value ).toBe( true );
                 expect( scrubber.noMotionFade.minValue ).toBe( true );
                 expect( scrubber.noMotionFade.maxValue ).toBe( false );
@@ -174,7 +174,7 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                     delete scrubber.muteOnReverse;
                 } ).toThrowError();
 
-                expect( scrubber.muteOnReverse.name ).toBe( "muteOnReverse" );
+                expect( scrubber.muteOnReverse.name ).toBe( 'muteOnReverse' );
                 expect( scrubber.muteOnReverse.value ).toBe( true );
                 expect( scrubber.muteOnReverse.minValue ).toBe( true );
                 expect( scrubber.muteOnReverse.maxValue ).toBe( false );
@@ -244,8 +244,8 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                         expect( scrubber.isPlaying ).toBe( false );
                         expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
 
-                        internalSpies.onAudioStart = jasmine.createSpy( "onAudioStart2" );
-                        internalSpies.onAudioEnd = jasmine.createSpy( "onAudioEnd2" );
+                        internalSpies.onAudioStart = jasmine.createSpy( 'onAudioStart2' );
+                        internalSpies.onAudioEnd = jasmine.createSpy( 'onAudioEnd2' );
                         scrubber.onAudioStart = internalSpies.onAudioStart;
                         scrubber.onAudioEnd = internalSpies.onAudioEnd;
 

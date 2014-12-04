@@ -8,9 +8,9 @@
 
     var extender;
 
-    require( [ "models/Extender" ], function ( Extender ) {
+    require( [ 'models/Extender' ], function ( Extender ) {
 
-        var url = "https://dl.dropboxusercontent.com/u/77191118/Ocean_Surf.mp3";
+        var url = 'https://dl.dropboxusercontent.com/u/77191118/sounds/Ocean_Surf.mp3';
 
         extender = new Extender( context, url, function ( progressEvent, sound ) {
             console.log( "Loading.. ", sound, ( progressEvent.loaded / progressEvent.total ) );

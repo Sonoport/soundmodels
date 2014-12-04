@@ -9,12 +9,12 @@ var looperSpies = {
     disconnect: jasmine.createSpy( 'disconnect' ),
     listParams: jasmine.createSpy( 'listParams' ),
     startPointObj: {},
-    riseTimeObj: {
+    easeInObj: {
         setValueAtTime: jasmine.createSpy( 'setValueAtTime' )
     },
     maxLoopsObj: {},
-    decayTimeObj: {
-        setValueAtTime: jasmine.createSpy( 'decayTime' )
+    easeOutObj: {
+        setValueAtTime: jasmine.createSpy( 'easeOut' )
     },
     playSpeedObj: {
         setValueAtTime: jasmine.createSpy( 'playSpeed' )
@@ -27,8 +27,8 @@ var looperStub = {
         return {
             isInitialized: true,
             playSpeed: looperSpies.playSpeedObj,
-            riseTime: looperSpies.riseTimeObj,
-            decayTime: looperSpies.decayTimeObj,
+            easeIn: looperSpies.easeInObj,
+            easeOut: looperSpies.easeOutObj,
             startPoint: looperSpies.startPointObj,
             maxLoops: looperSpies.maxLoopsObj,
             start: looperSpies.start,
@@ -107,13 +107,13 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
         describe( '#new ', function () {
             it( ' should be able to construct a new SoundQueue with various number of voices', function ( done ) {
                 expect( function () {
-                    var queue = new SoundQueue( context );
-                } )
+                        var queue = new SoundQueue( context );
+                    } )
                     .not.toThrowError();
 
                 expect( function () {
-                    var queue = new SoundQueue( context, 4 );
-                } )
+                        var queue = new SoundQueue( context, 4 );
+                    } )
                     .not.toThrowError();
 
                 done();
@@ -129,8 +129,8 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var attackDuration = Math.random() * 10;
 
                 expect( function () {
-                    queue.queueStart( time, eventID, offset, attackDuration );
-                } )
+                        queue.queueStart( time, eventID, offset, attackDuration );
+                    } )
                     .not.toThrowError();
 
                 window.setTimeout( function () {
@@ -149,9 +149,9 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var offset = Math.random() * 100;
                 var attackDuration = Math.random() * 10;
                 expect( function () {
-                    queue.queueStart( time, eventID, offset, attackDuration );
-                    queue.queueStop( time + 0.001, eventID, offset, attackDuration );
-                } )
+                        queue.queueStart( time, eventID, offset, attackDuration );
+                        queue.queueStop( time + 0.001, eventID, offset, attackDuration );
+                    } )
                     .not.toThrowError();
                 window.setTimeout( function () {
                     expect( looperSpies.pause )
@@ -166,8 +166,8 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var offset = Math.random() * 100;
                 var attackDuration = Math.random() * 10;
                 expect( function () {
-                    queue.queueStop( time, eventID, offset, attackDuration );
-                } )
+                        queue.queueStop( time, eventID, offset, attackDuration );
+                    } )
                     .not.toThrowError();
                 window.setTimeout( function () {
                     expect( looperSpies.pause )
@@ -185,9 +185,9 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var offset = Math.random() * 100;
                 var attackDuration = Math.random() * 1;
                 expect( function () {
-                    queue.queueStart( time, eventID, offset, attackDuration );
-                    queue.queueRelease( time + 0.001, eventID, attackDuration );
-                } )
+                        queue.queueStart( time, eventID, offset, attackDuration );
+                        queue.queueRelease( time + 0.001, eventID, attackDuration );
+                    } )
                     .not.toThrowError();
                 window.setTimeout( function () {
                     expect( looperSpies.release )
@@ -202,8 +202,8 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var offset = Math.random() * 100;
                 var attackDuration = Math.random() * 10;
                 expect( function () {
-                    queue.queueRelease( time, eventID, offset, attackDuration );
-                } )
+                        queue.queueRelease( time, eventID, offset, attackDuration );
+                    } )
                     .not.toThrowError();
                 window.setTimeout( function () {
                     expect( looperSpies.release )
@@ -220,9 +220,9 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var eventID = parseInt( Math.random() * 10000 );
                 var paramValue = Math.random() * 10;
                 expect( function () {
-                    queue.queueStart( time, eventID );
-                    queue.queueSetParameter( time + 0.001, eventID, 'playSpeed', paramValue );
-                } )
+                        queue.queueStart( time, eventID );
+                        queue.queueSetParameter( time + 0.001, eventID, 'playSpeed', paramValue );
+                    } )
                     .not.toThrowError();
                 window.setTimeout( function () {
                     expect( looperSpies.playSpeedObj.setValueAtTime )
@@ -231,17 +231,17 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 }, 400 );
             } );
 
-            it( ' should be able to enqueue a setParameter event without an error on decayTime', function ( done ) {
+            it( ' should be able to enqueue a setParameter event without an error on easeOut', function ( done ) {
                 var time = ( Math.random() - 0.1 ) * 0.2 + context.currentTime;
                 var eventID = parseInt( Math.random() * 10000 );
                 var paramValue = Math.random() * 10;
                 expect( function () {
-                    queue.queueStart( time, eventID );
-                    queue.queueSetParameter( time + 0.001, eventID, 'decayTime', paramValue );
-                } )
+                        queue.queueStart( time, eventID );
+                        queue.queueSetParameter( time + 0.001, eventID, 'easeOut', paramValue );
+                    } )
                     .not.toThrowError();
                 window.setTimeout( function () {
-                    expect( looperSpies.decayTimeObj.setValueAtTime )
+                    expect( looperSpies.easeOutObj.setValueAtTime )
                         .toHaveBeenCalled();
                     done();
                 }, 400 );
@@ -252,9 +252,9 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var eventID = parseInt( Math.random() * 10000 );
                 var paramValue = Math.random() * 10;
                 expect( function () {
-                    queue.queueStart( time, eventID );
-                    queue.queueSetParameter( time + 0.001, eventID, 'randomParameter', paramValue );
-                } )
+                        queue.queueStart( time, eventID );
+                        queue.queueSetParameter( time + 0.001, eventID, 'randomParameter', paramValue );
+                    } )
                     .not.toThrowError();
                 done();
             } );
@@ -264,12 +264,12 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
         describe( '#queueSetSource ', function () {
             it( ' should be able to enqueue a setSource event without an error', function ( done ) {
 
-                loadAndDecode( "audio/sineloopstereomarked.wav", function ( buffer ) {
+                loadAndDecode( 'audio/sineloopstereomarked.wav', function ( buffer ) {
                     var time = ( Math.random() - 0.1 ) * 0.2 + context.currentTime;
                     var eventID = parseInt( Math.random() * 10000 );
                     expect( function () {
-                        queue.queueSetSource( time, eventID, buffer );
-                    } )
+                            queue.queueSetSource( time, eventID, buffer );
+                        } )
                         .not.toThrowError();
 
                     window.setTimeout( function () {
@@ -286,8 +286,8 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var offset = Math.random() * 100;
                 var attackDuration = Math.random() * 10;
                 expect( function () {
-                    queue.queueStart( time, eventID, null );
-                } )
+                        queue.queueStart( time, eventID, null );
+                    } )
                     .not.toThrowError();
 
                 window.setTimeout( function () {
@@ -306,18 +306,18 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var offset = Math.random() * 100;
                 var attackDuration = Math.random() * 10;
                 expect( function () {
-                    queue.queueStart( time, eventID, offset, attackDuration );
-                    queue.queueSetParameter( time + 0.2, eventID, "riseTime", attackDuration );
-                } )
+                        queue.queueStart( time, eventID, offset, attackDuration );
+                        queue.queueSetParameter( time + 0.2, eventID, 'easeIn', attackDuration );
+                    } )
                     .not.toThrowError();
 
                 expect( function () {
-                    queue.queueUpdate( "QESETPARAM", eventID, "paramValue", attackDuration + 1 );
-                } )
+                        queue.queueUpdate( 'QESETPARAM', eventID, 'paramValue', attackDuration + 1 );
+                    } )
                     .not.toThrowError();
 
                 window.setTimeout( function () {
-                    expect( looperSpies.riseTimeObj.setValueAtTime )
+                    expect( looperSpies.easeInObj.setValueAtTime )
                         .toHaveBeenCalledWith( attackDuration + 1, time + 0.2 );
                     done();
                 }, 600 );
@@ -328,8 +328,8 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
         describe( '#pause/stop ', function () {
             it( ' should be able to pause an empty queue', function ( done ) {
                 expect( function () {
-                    queue.pause();
-                } )
+                        queue.pause();
+                    } )
                     .not.toThrowError();
                 done();
             } );
@@ -340,17 +340,17 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var offset = Math.random() * 100;
                 var attackDuration = Math.random() * 10;
                 expect( function () {
-                    queue.queueStart( time, eventID, offset, attackDuration );
-                    queue.queueStart( time, eventID, offset, attackDuration );
-                    queue.queueSetParameter( time, eventID, "riseTime ", attackDuration );
-                } )
+                        queue.queueStart( time, eventID, offset, attackDuration );
+                        queue.queueStart( time, eventID, offset, attackDuration );
+                        queue.queueSetParameter( time, eventID, 'easeIn', attackDuration );
+                    } )
                     .not.toThrowError();
 
                 window.setTimeout( function () {
                     expect( function () {
-                        queue.pause();
-                        //looperSpies.start.calls.reset();
-                    } )
+                            queue.pause();
+                            //looperSpies.start.calls.reset();
+                        } )
                         .not.toThrowError();
                 }, 400 );
 
@@ -360,7 +360,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
 
                     expect( looperSpies.start )
                         .toHaveBeenCalled();
-                    expect( looperSpies.riseTimeObj.setValueAtTime )
+                    expect( looperSpies.easeInObj.setValueAtTime )
                         .toHaveBeenCalled();
                     done();
                 }, 1000 );
@@ -373,18 +373,18 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
                 var offset = Math.random() * 100;
                 var attackDuration = Math.random() * 10;
                 expect( function () {
-                    queue.queueStart( time, eventID, offset, attackDuration );
-                    queue.queueStart( time + 0.5, eventID, offset, attackDuration );
-                    queue.queueSetParameter( time + 0.5, eventID, "riseTime ", attackDuration );
-                } )
+                        queue.queueStart( time, eventID, offset, attackDuration );
+                        queue.queueStart( time + 0.5, eventID, offset, attackDuration );
+                        queue.queueSetParameter( time + 0.5, eventID, 'easeIn', attackDuration );
+                    } )
                     .not.toThrowError();
 
                 window.setTimeout( function () {
                     expect( function () {
-                        queue.pause();
-                        looperSpies.start.calls.reset();
-                        looperSpies.riseTimeObj.setValueAtTime.calls.reset();
-                    } )
+                            queue.pause();
+                            looperSpies.start.calls.reset();
+                            looperSpies.easeInObj.setValueAtTime.calls.reset();
+                        } )
                         .not.toThrowError();
                 }, 200 );
 
@@ -394,7 +394,7 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
 
                     expect( looperSpies.start )
                         .not.toHaveBeenCalled();
-                    expect( looperSpies.riseTimeObj.setValueAtTime )
+                    expect( looperSpies.easeInObj.setValueAtTime )
                         .not.toHaveBeenCalled();
 
                     done();
@@ -409,16 +409,16 @@ requireWithStubbedLooper( [ 'core/SoundQueue' ], function ( SoundQueue ) {
         describe( '#connect/disconnect ', function () {
             it( ' should be able to connect to an AudioNode', function ( done ) {
                 expect( function () {
-                    queue.connect( context.destination );
-                } )
+                        queue.connect( context.destination );
+                    } )
                     .not.toThrowError();
                 done();
             } );
             it( ' should be able to disconnect from an AudioNode', function ( done ) {
                 expect( function () {
-                    queue.connect( context.destination );
-                    queue.connect();
-                } )
+                        queue.connect( context.destination );
+                        queue.connect();
+                    } )
                     .not.toThrowError();
                 done();
             } );

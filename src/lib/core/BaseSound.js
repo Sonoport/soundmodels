@@ -20,7 +20,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
          * @type AudioContext
          */
         if ( context === undefined || context === null ) {
-            console.log( "Making a new AudioContext" );
+            console.log( 'Making a new AudioContext' );
             this.audioContext = new AudioContext();
         } else {
             this.audioContext = context;
@@ -150,7 +150,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
          * @type String
          * @default "Model"
          **/
-        this.modelName = "Model";
+        this.modelName = 'Model';
 
         /**
          * Callback for handling progress events thrown during loading of audio files.
@@ -188,6 +188,8 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
          */
         this.onAudioEnd = null;
 
+        this.parameterList_ = [];
+
         this.connect( this.audioContext.destination );
 
         function bootAudioContext( context ) {
@@ -219,25 +221,6 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
     }
 
     /**
-     * Registers a Parameter to the model. This ensures that the Parameter is unwritable and allows
-     * to lock in the configurability of the object.
-     *
-     * @param  {SPAudioParam} audioParam
-     */
-    BaseSound.prototype.registerParameter = function ( audioParam, configurable ) {
-
-        if ( configurable === undefined || configurable === null ) {
-            configurable = false;
-        }
-
-        Object.defineProperty( this, audioParam.name, {
-            enumerable: true,
-            configurable: configurable,
-            value: audioParam
-        } );
-    };
-
-    /**
      * If the parameter `output` is an AudioNode, it connects to the releaseGainNode.
      * If the output is a BaseSound, it will connect BaseSound's releaseGainNode to the output's inputNode.
      *
@@ -250,16 +233,16 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
         if ( destination instanceof AudioNode ) {
             this.releaseGainNode.connect( destination, output, input );
             this.destinations.push( {
-                "destination": destination,
-                "output": output,
-                "input": input
+                'destination': destination,
+                'output': output,
+                'input': input
             } );
         } else if ( destination.inputNode instanceof AudioNode ) {
             this.releaseGainNode.connect( destination.inputNode, output, input );
             this.destinations.push( {
-                "destination": destination.inputNode,
-                "output": output,
-                "input": input
+                'destination': destination.inputNode,
+                'output': output,
+                'input': input
             } );
         } else {
             console.error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) );
@@ -287,7 +270,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * @param {Number} [attackDuration] Duration (in seconds) of attack ramp of the envelope.
      */
     BaseSound.prototype.start = function ( when, offset, duration, attackDuration ) {
-        if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+        if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
             when = this.audioContext.currentTime;
         }
 
@@ -313,7 +296,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
      * @param {Number} [when] Time (in seconds) the sound should stop playing
      */
     BaseSound.prototype.stop = function ( when ) {
-        if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+        if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
             when = this.audioContext.currentTime;
         }
 
@@ -340,7 +323,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
             var FADE_TIME = 0.5;
             //var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
 
-            if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+            if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
                 when = this.audioContext.currentTime;
             }
 
@@ -400,24 +383,45 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
     };
 
     /**
+     * Registers a Parameter to the model. This ensures that the Parameter is unwritable and allows
+     * to lock in the configurability of the object.
+     *
+     * @param  {SPAudioParam} audioParam
+     */
+    BaseSound.prototype.registerParameter = function ( audioParam, configurable ) {
+
+        if ( configurable === undefined || configurable === null ) {
+            configurable = false;
+        }
+
+        Object.defineProperty( this, audioParam.name, {
+            enumerable: true,
+            configurable: configurable,
+            value: audioParam
+        } );
+
+        var self = this;
+        var replaced = false;
+        this.parameterList_.forEach( function ( thisParam, paramIndex ) {
+            if ( thisParam.name === audioParam.name ) {
+                self.parameterList_.splice( paramIndex, 1, audioParam );
+                replaced = true;
+            }
+        } );
+
+        if ( !replaced ) {
+            this.parameterList_.push( audioParam );
+        }
+    };
+
+    /**
      * List all SPAudioParams this Sound exposes
      *
      * @method listParams
      * @param {Array} [paramArray] Array of all the SPAudioParams this Sound exposes.
      */
     BaseSound.prototype.listParams = function () {
-        var paramList = [];
-
-        for ( var paramName in this ) {
-            if ( this.hasOwnProperty( paramName ) ) {
-                var param = this[ paramName ];
-                // Get properties that are of SPAudioParam
-                if ( param && ( param.hasOwnProperty( "value" ) && param.hasOwnProperty( "minValue" ) && param.hasOwnProperty( "maxValue" ) ) || ( param instanceof Array && param.length > 0 && param[ 0 ].hasOwnProperty( "value" ) && param[ 0 ].hasOwnProperty( "minValue" ) && param[ 0 ].hasOwnProperty( "maxValue" ) ) ) {
-                    paramList.push( param );
-                }
-            }
-        }
-        return paramList;
+        return this.parameterList_;
     };
 
     // Return constructor function

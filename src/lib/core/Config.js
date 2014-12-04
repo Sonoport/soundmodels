@@ -30,7 +30,7 @@ define( [],
          * @default 1e-37
          *
          */
-        Config.ZERO = parseFloat( "1e-37" );
+        Config.ZERO = parseFloat( '1e-37' );
 
         /**
          * Maximum number of voices supported
@@ -75,6 +75,17 @@ define( [],
          *
          */
         Config.CHUNK_LENGTH = 256;
+
+        /**
+         * Default smoothing constant.
+         *
+         * @final
+         * @static
+         * @property CHUNK_LENGTH
+         * @default 0.05
+         *
+         */
+        Config.DEFAULT_SMOOTHING_CONSTANT = 0.05;
 
         return Config;
     } );

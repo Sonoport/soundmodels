@@ -1,7 +1,7 @@
 /**
  * @module Models
  */
-define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBufferSourceNode", 'core/MultiFileLoader', 'core/WebAudioDispatch' ],
+define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/SPAudioBufferSourceNode', 'core/MultiFileLoader', 'core/WebAudioDispatch' ],
     function ( Config, BaseSound, SPAudioParam, SPAudioBufferSourceNode, multiFileLoader, webAudioDispatch ) {
         "use strict";
 
@@ -12,7 +12,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
          * @constructor
          * @extends BaseSound
          * @param {AudioContext} [context] AudioContext to be used.
-         * @param {Array/String/AudioBuffer/File} [sources] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
+         * @param {Array/String/AudioBuffer/SPAudioBuffer/File} [sources] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
          * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
          * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
          * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
@@ -27,7 +27,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             BaseSound.call( this, context );
             this.maxSources = Config.MAX_VOICES;
             this.minSources = 1;
-            this.modelName = "Looper";
+            this.modelName = 'Looper';
 
             this.onLoadProgress = onLoadProgress;
             this.onLoadComplete = onLoadComplete;
@@ -45,11 +45,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 self.multiTrackGain.length = arrayOfBuffers.length;
                 arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
                     lastStopPosition_.push( 0 );
-                    insertBufferSource( thisBuffer, trackIndex );
+                    insertBufferSource( thisBuffer, trackIndex, arrayOfBuffers.length );
                 } );
 
                 if ( rateArray_ && rateArray_.length > 0 ) {
-                    self.registerParameter( new SPAudioParam( "playSpeed", 0.0, 10, 1, rateArray_, null, playSpeedSetter_, self.audioContext ), true );
+                    self.registerParameter( new SPAudioParam( self, 'playSpeed', 0.0, 10, 1, rateArray_, null, playSpeedSetter_ ), true );
                 }
 
                 if ( status ) {
@@ -61,10 +61,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 }
             };
 
-            var insertBufferSource = function ( audioBuffer, trackIndex ) {
+            var insertBufferSource = function ( audioBuffer, trackIndex, totalTracks ) {
                 var source;
-                if ( !sourceBufferNodes_[ trackIndex ] ) {
-                    //console.log( "creating new buffer" );
+                if ( !( sourceBufferNodes_[ trackIndex ] instanceof SPAudioBufferSourceNode ) ) {
                     source = new SPAudioBufferSourceNode( self.audioContext );
                 } else {
                     source = sourceBufferNodes_[ trackIndex ];
@@ -76,8 +75,10 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                     onSourceEnd( event, trackIndex, source );
                 };
 
-                var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, source.gain, null, null, self.audioContext );
-                self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
+                if ( totalTracks > 1 ) {
+                    var multiChannelGainParam = new SPAudioParam( self, 'track-' + trackIndex + '-gain', 0.0, 1, 1, source.gain, null, null );
+                    self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
+                }
 
                 source.connect( self.releaseGainNode );
 
@@ -89,8 +90,11 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 var cTime = self.audioContext.currentTime;
                 // Create a new source since SourceNodes can't play again.
                 source.resetBufferSource( cTime, self.releaseGainNode );
-                var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, source.gain, null, null, self.audioContext );
-                self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
+
+                if ( self.multiTrackGain.length > 1 ) {
+                    var multiChannelGainParam = new SPAudioParam( self, 'track-' + trackIndex + '-gain' + trackIndex, 0.0, 1, 1, source.gain, null, null );
+                    self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
+                }
 
                 if ( typeof self.onTrackEnd === 'function' ) {
                     onTrackEnd( self, trackIndex );
@@ -119,24 +123,28 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
                     var currentSpeed = sourceBufferNodes_[ 0 ] ? sourceBufferNodes_[ 0 ].playbackRate.value : 1;
 
-                    if ( value > currentSpeed ) {
+                    if ( self.isPlaying ) {
+                        // console.log( "easingIn/Out" );
+                        // easeIn/Out
+                        if ( value > currentSpeed ) {
+                            sourceBufferNodes_.forEach( function ( thisSource ) {
+                                thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                                thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.easeIn.value / t60multiplier );
+                            } );
+                        } else if ( value < currentSpeed ) {
+                            sourceBufferNodes_.forEach( function ( thisSource ) {
+                                thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                                thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.easeOut.value / t60multiplier );
+                            } );
+                        }
+                    } else {
+                        // console.log( "changing directly" );
                         sourceBufferNodes_.forEach( function ( thisSource ) {
                             thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                            thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.riseTime.value / t60multiplier );
-                        } );
-                    } else if ( value < currentSpeed ) {
-                        sourceBufferNodes_.forEach( function ( thisSource ) {
-                            thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                            thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.decayTime.value / t60multiplier );
+                            thisSource.playbackRate.setValueAtTime( value, audioContext.currentTime );
                         } );
                     }
                 }
-            };
-
-            var startPointSetter_ = function ( aParam, value ) {
-                sourceBufferNodes_.forEach( function ( thisSource ) {
-                    thisSource.loopStart = value * thisSource.buffer.duration;
-                } );
             };
 
             function init( sources ) {
@@ -144,6 +152,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                 sourceBufferNodes_.forEach( function ( thisSource ) {
                     thisSource.disconnect();
                 } );
+                self.multiTrackGain.length = 0;
                 multiFileLoader.call( self, sources, self.audioContext, self.onLoadProgress, onLoadAll );
             }
 
@@ -167,41 +176,30 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue 0.0
              * @maxvalue 10.0
              */
-            this.registerParameter( new SPAudioParam( "playSpeed", 0.0, 10, 1, null, null, playSpeedSetter_, self.audioContext ), true );
+            this.registerParameter( new SPAudioParam( this, 'playSpeed', 0.0, 10, 1.005, null, null, playSpeedSetter_ ), true );
 
             /**
              * Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
              *
-             * @property riseTime
+             * @property easeIn
              * @type SPAudioParam
              * @default 0.05
              * @minvalue 0.05
              * @maxvalue 10.0
              */
 
-            this.registerParameter( SPAudioParam.createPsuedoParam( "riseTime", 0.05, 10.0, 0.05, this.audioContext ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'easeIn', 0.05, 10.0, 0.05 ) );
 
             /**
              * Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
              *
-             * @property decayTime
+             * @property easeOut
              * @type SPAudioParam
              * @default 0.05
              * @minvalue 0.05
              * @maxvalue 10.0
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( "decayTime", 0.05, 10.0, 0.05, this.audioContext ) );
-
-            /**
-             * Start point (as a factor of the length of the entire track) where the Looping should start from.
-             *
-             * @property startPoint
-             * @type SPAudioParam
-             * @default 0.0
-             * @minvalue 0.0
-             * @maxvalue 0.99
-             */
-            this.registerParameter( new SPAudioParam( "startPoint", 0.0, 0.99, 0.00, null, null, startPointSetter_, this.audioContext ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'easeOut', 0.05, 10.0, 0.05 ) );
 
             /**
              * The volume (loudness) for each individual track if multiple sources are used. Works even if a single source is used.
@@ -213,11 +211,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue 0.0
              * @maxvalue 1.0
              */
-            Object.defineProperty( this, "multiTrackGain", {
-                enumerable: true,
-                configurable: false,
-                value: []
-            } );
+            var multiTrackGainArray = [];
+            multiTrackGainArray.name = 'multiTrackGain';
+            this.registerParameter( multiTrackGainArray, false );
 
             /**
              * The maximum number time the source will be looped before stopping. Currently only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).
@@ -228,7 +224,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @minvalue -1 (Infinite)
              * @maxvalue 1
              */
-            this.registerParameter( SPAudioParam.createPsuedoParam( "maxLoops", -1, 1, -1, this.audioContext ) );
+            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'maxLoops', -1, 1, -1 ) );
 
             /**
              * Reinitializes a Looper and sets it's sources.
@@ -259,7 +255,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
                 if ( !this.isPlaying ) {
                     sourceBufferNodes_.forEach( function ( thisSource, index ) {
-                        var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : self.startPoint.value * thisSource.buffer.duration;
+                        var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : thisSource.loopStart;
                         thisSource.loop = ( self.maxLoops.value !== 1 );
                         thisSource.start( now, offset );
                     } );
@@ -273,8 +269,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
             };
 
             /**
-             * Start playing after specific time and from a specific offset. If offset is not defined,
-             * the value of startPoint property is used.
+             * Start playing after specific time and from a specific offset.
              *
              * @method start
              * @param {Number} when Time (in seconds) when the sound should start playing.
@@ -290,9 +285,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
 
                 if ( !this.isPlaying ) {
                     sourceBufferNodes_.forEach( function ( thisSource ) {
-                        if ( typeof offset == 'undefined' || offset === null ) {
-                            offset = self.startPoint.value * thisSource.buffer.duration;
-                        }
+
+                        offset = thisSource.loopStart + parseFloat( offset ) || 0;
+
                         if ( typeof duration == 'undefined' || duration === null ) {
                             duration = thisSource.buffer.duration;
                         }
@@ -361,7 +356,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
              * @param {Boolean} [resetOnRelease] Boolean to define if release resets (stops) the playback or just pauses it.
              */
             this.release = function ( when, fadeTime, resetOnRelease ) {
-                if ( typeof when === "undefined" || when < this.audioContext.currentTime ) {
+                if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
                     when = this.audioContext.currentTime;
                 }
 
@@ -384,7 +379,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', "core/SPAudioBuf
                         lastStopPosition_[ trackIndex ] = 0;
 
                         thisSource.resetBufferSource( when, self.releaseGainNode );
-                        var multiChannelGainParam = new SPAudioParam( "gain-" + trackIndex, 0.0, 1, 1, thisSource.gain, null, null, self.audioContext );
+                        var multiChannelGainParam = new SPAudioParam( self, 'gain-' + trackIndex, 0.0, 1, 1, thisSource.gain, null, null );
                         self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
                     } );
 

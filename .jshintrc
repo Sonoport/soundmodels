@@ -53,6 +53,7 @@
         "AudioContext" : true,
         "AudioParam" : true,
         "AudioNode" : true,
+        "AudioBuffer" : true,
         "expect" : true,
         "jasmine": true,
         "describe": true,

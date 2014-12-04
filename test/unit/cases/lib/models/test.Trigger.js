@@ -4,10 +4,10 @@ require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function (
         window.context = new AudioContext();
     }
     var internalSpies = {
-        onLoadProgress: jasmine.createSpy( "onLoadProgress" ),
-        onLoadComplete: jasmine.createSpy( "onLoadComplete" ),
-        onAudioStart: jasmine.createSpy( "onAudioStart" ),
-        onAudioEnd: jasmine.createSpy( "onAudioEnd" )
+        onLoadProgress: jasmine.createSpy( 'onLoadProgress' ),
+        onLoadComplete: jasmine.createSpy( 'onLoadComplete' ),
+        onAudioStart: jasmine.createSpy( 'onAudioStart' ),
+        onAudioEnd: jasmine.createSpy( 'onAudioEnd' )
     };
     var listofSounds = [ 'audio/Hit5.mp3', 'audio/Hit6.mp3', 'audio/Hit7.mp3', 'audio/Hit8.mp3' ];
     describe( 'Trigger.js', function () {
@@ -67,7 +67,7 @@ require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function (
             } );
 
             it( "should have a model name as Trigger", function () {
-                expect( trigger.modelName ).toBe( "Trigger" );
+                expect( trigger.modelName ).toBe( 'Trigger' );
             } );
 
             it( "should be a BaseSound", function () {
@@ -108,7 +108,7 @@ require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function (
             } );
 
             it( "should call onprogress events", function ( done ) {
-                var progressSpy = jasmine.createSpy( "progressSpy" );
+                var progressSpy = jasmine.createSpy( 'progressSpy' );
                 trigger.setSources( listofSounds[ 0 ], progressSpy, function () {
                     expect( progressSpy ).toHaveBeenCalled();
                     done();
@@ -116,7 +116,7 @@ require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function (
             } );
 
             it( "should call onload event", function ( done ) {
-                var loadSpy = jasmine.createSpy( "loadSpy" );
+                var loadSpy = jasmine.createSpy( 'loadSpy' );
                 trigger.setSources( listofSounds, null, loadSpy );
                 window.setTimeout( function () {
                     expect( loadSpy ).toHaveBeenCalled();
@@ -139,7 +139,7 @@ require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function (
                     delete trigger.pitchShift;
                 } ).toThrowError();
 
-                expect( trigger.pitchShift.name ).toBe( "pitchShift" );
+                expect( trigger.pitchShift.name ).toBe( 'pitchShift' );
                 expect( trigger.pitchShift.value ).toBe( 0 );
                 expect( trigger.pitchShift.minValue ).toBe( -60 );
                 expect( trigger.pitchShift.maxValue ).toBe( 60 );
@@ -156,7 +156,7 @@ require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function (
                     delete trigger.pitchRand;
                 } ).toThrowError();
 
-                expect( trigger.pitchRand.name ).toBe( "pitchRand" );
+                expect( trigger.pitchRand.name ).toBe( 'pitchRand' );
                 expect( trigger.pitchRand.value ).toBe( 0 );
                 expect( trigger.pitchRand.minValue ).toBe( 0 );
                 expect( trigger.pitchRand.maxValue ).toBe( 24 );
@@ -173,7 +173,7 @@ require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function (
                     delete trigger.eventRand;
                 } ).toThrowError();
 
-                expect( trigger.eventRand.name ).toBe( "eventRand" );
+                expect( trigger.eventRand.name ).toBe( 'eventRand' );
                 expect( trigger.eventRand.value ).toBe( false );
                 expect( trigger.eventRand.minValue ).toBe( true );
                 expect( trigger.eventRand.maxValue ).toBe( false );
@@ -238,8 +238,8 @@ require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function (
                     setTimeout( function () {
                         expect( internalSpies.onAudioEnd ).toHaveBeenCalled();
 
-                        internalSpies.onAudioStart = jasmine.createSpy( "onAudioStart2" );
-                        internalSpies.onAudioEnd = jasmine.createSpy( "onAudioEnd2" );
+                        internalSpies.onAudioStart = jasmine.createSpy( 'onAudioStart2' );
+                        internalSpies.onAudioEnd = jasmine.createSpy( 'onAudioEnd2' );
                         trigger.onAudioStart = internalSpies.onAudioStart;
                         trigger.onAudioEnd = internalSpies.onAudioEnd;
 

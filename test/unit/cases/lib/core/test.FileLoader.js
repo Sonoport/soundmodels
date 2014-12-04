@@ -4,7 +4,7 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
     if ( !window.context ) {
         window.context = new AudioContext();
     }
-    var mp3File = "audio/bullet.mp3";
+    var mp3File = 'audio/bullet.mp3';
 
     describe( 'FileLoader.js', function () {
 
@@ -108,7 +108,7 @@ require( [ 'core/FileLoader' ], function ( FileLoader ) {
             it( "should return the original unsliced buffer", function ( done ) {
                 var fileLoader = new FileLoader( mp3File, context, function () {
                     expect( fileLoader.getBuffer()
-                        .length )
+                            .length )
                         .not.toEqual( fileLoader.getRawBuffer()
                             .length );
                     expect( fileLoader.getRawBuffer() )

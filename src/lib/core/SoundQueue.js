@@ -24,7 +24,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
                 throw new TypeError( "SoundQueue constructor cannot be called as a function." );
             }
 
-            if ( typeof numberOfVoices === "undefined" ) {
+            if ( typeof numberOfVoices === 'undefined' ) {
                 numberOfVoices = Config.MAX_VOICES;
             }
 
@@ -68,7 +68,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
                 busyVoices_.splice( busyVoices_.indexOf( endedVoice ), 1 );
 
                 var noPlayableEvents = eventQueue_.reduce( function ( prev, thisEvent ) {
-                    return prev || thisEvent.type !== "QESTART";
+                    return prev || thisEvent.type !== 'QESTART';
                 }, ( eventQueue_.length === 0 ) );
 
                 if ( self.isPlaying && busyVoices_.length === 0 && noPlayableEvents ) {
@@ -119,7 +119,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
             function processSingleEvent( thisEvent ) {
                 var selectedVoice = findVoiceWithID( thisEvent.eventID );
 
-                if ( ( thisEvent.type == "QESTART" || thisEvent.type == "QESETPARAM" || thisEvent.type == "QESETSRC" ) && selectedVoice === null ) {
+                if ( ( thisEvent.type == 'QESTART' || thisEvent.type == 'QESETPARAM' || thisEvent.type == 'QESETSRC' ) && selectedVoice === null ) {
                     selectedVoice = getFreeVoice( thisEvent.eventID, thisEvent.time );
                 }
 
@@ -130,7 +130,7 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
 
                 //console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice.voiceIndex );
 
-                if ( thisEvent.type == "QESTART" ) {
+                if ( thisEvent.type == 'QESTART' ) {
                     //console.log( "starting " + selectedVoice.voiceIndex );
                     selectedVoice.start( thisEvent.time, thisEvent.offset, null, thisEvent.attackDuration );
                     webaudioDispatch( function () {
@@ -141,16 +141,16 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
                             }
                         }
                     }, thisEvent.time, context );
-                } else if ( thisEvent.type == "QESETPARAM" ) {
+                } else if ( thisEvent.type == 'QESETPARAM' ) {
                     if ( selectedVoice[ thisEvent.paramName ] ) {
                         selectedVoice[ thisEvent.paramName ].setValueAtTime( thisEvent.paramValue, thisEvent.time );
                     }
-                } else if ( thisEvent.type == "QESETSRC" ) {
+                } else if ( thisEvent.type == 'QESETSRC' ) {
                     selectedVoice.setSources( thisEvent.sourceBuffer );
-                } else if ( thisEvent.type == "QERELEASE" ) {
+                } else if ( thisEvent.type == 'QERELEASE' ) {
                     //console.log( "releasing " + selectedVoice.voiceIndex );
                     selectedVoice.release( thisEvent.time, thisEvent.releaseDuration );
-                } else if ( thisEvent.type == "QESTOP" ) {
+                } else if ( thisEvent.type == 'QESTOP' ) {
                     selectedVoice.pause( thisEvent.time );
                     webaudioDispatch( function () {
                         freeVoices_.push( selectedVoice );
@@ -188,11 +188,11 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
              */
             this.queueStart = function ( time, eventID, offset, attackDuration ) {
                 eventQueue_.push( {
-                    "type": "QESTART",
-                    "time": time,
-                    "eventID": eventID,
-                    "offset": offset,
-                    "attackDuration": attackDuration
+                    'type': 'QESTART',
+                    'time': time,
+                    'eventID': eventID,
+                    'offset': offset,
+                    'attackDuration': attackDuration
                 } );
             };
 
@@ -206,10 +206,10 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
              */
             this.queueRelease = function ( time, eventID, releaseDuration ) {
                 eventQueue_.push( {
-                    "type": "QERELEASE",
-                    "time": time,
-                    "eventID": eventID,
-                    "releaseDuration": releaseDuration
+                    'type': 'QERELEASE',
+                    'time': time,
+                    'eventID': eventID,
+                    'releaseDuration': releaseDuration
                 } );
             };
 
@@ -222,9 +222,9 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
              */
             this.queueStop = function ( time, eventID ) {
                 eventQueue_.push( {
-                    "type": "QESTOP",
-                    "time": time,
-                    "eventID": eventID
+                    'type': 'QESTOP',
+                    'time': time,
+                    'eventID': eventID
                 } );
             };
 
@@ -240,11 +240,11 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
              */
             this.queueSetParameter = function ( time, eventID, paramName, paramValue ) {
                 eventQueue_.push( {
-                    "type": "QESETPARAM",
-                    "time": time,
-                    "eventID": eventID,
-                    "paramName": paramName,
-                    "paramValue": paramValue
+                    'type': 'QESETPARAM',
+                    'time': time,
+                    'eventID': eventID,
+                    'paramName': paramName,
+                    'paramValue': paramValue
                 } );
             };
 
@@ -258,10 +258,10 @@ define( [ 'core/Config', 'models/Looper', 'core/FileLoader', 'core/WebAudioDispa
              */
             this.queueSetSource = function ( time, eventID, sourceBuffer ) {
                 eventQueue_.push( {
-                    "type": "QESETSRC",
-                    "time": time,
-                    "eventID": eventID,
-                    "sourceBuffer": sourceBuffer
+                    'type': 'QESETSRC',
+                    'time': time,
+                    'eventID': eventID,
+                    'sourceBuffer': sourceBuffer
                 } );
             };
 
