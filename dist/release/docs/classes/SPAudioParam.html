@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.2.1</em>
+            <em>API Docs for: 2.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -54,6 +54,8 @@
                 <li><a href="../classes/MultiTrigger.html">MultiTrigger</a></li>
             
                 <li><a href="../classes/Scrubber.html">Scrubber</a></li>
+            
+                <li><a href="../classes/SPAudioBuffer.html">SPAudioBuffer</a></li>
             
                 <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
             
@@ -138,6 +140,12 @@
             
                 <li class="arg">
                     
+                        <code>baseSound</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
                         <code class="optional">[name]</code>
                     
                 </li>
@@ -175,12 +183,6 @@
                 <li class="arg">
                     
                         <code class="optional">[setter]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[audioContext]</code>
                     
                 </li>
             
@@ -228,6 +230,22 @@
             <h4>Parameters:</h4>
 
             <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">baseSound</code>
+                        <span class="type"><a href="../classes/BaseSound.html" class="crosslink">BaseSound</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>A reference to the BaseSound which exposes this parameter.</p>
+
+                    </div>
+
+                    
+                </li>
             
                 <li class="param">
                     
@@ -342,23 +360,6 @@
 
                     <div class="param-description">
                         <p>A setter function which can be used to set the underlying audioParam. If this function is undefined, then the parameter is set directly.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[audioContext]</code>
-                        <span class="type">AudioContext</span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>A WebAudio AudioContext for timing.</p>
 
                     </div>
 
@@ -605,6 +606,12 @@
             
                 <li class="arg">
                     
+                        <code>baseSound</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
                         <code>name</code>
                     
                 </li>
@@ -624,12 +631,6 @@
                 <li class="arg">
                     
                         <code>defaultValue</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code>audioContext</code>
                     
                 </li>
             
@@ -685,6 +686,22 @@
             <h4>Parameters:</h4>
 
             <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">baseSound</code>
+                        <span class="type"><a href="../classes/BaseSound.html" class="crosslink">BaseSound</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>A reference to the BaseSound which exposes this parameter.</p>
+
+                    </div>
+
+                    
+                </li>
             
                 <li class="param">
                     
@@ -744,22 +761,6 @@
 
                     <div class="param-description">
                         <p>The default and starting value of the parameter.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name">audioContext</code>
-                        <span class="type">AudioContext</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>An audiocontext in which this model exists.</p>
 
                     </div>
 

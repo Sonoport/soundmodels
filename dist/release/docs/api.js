@@ -7,6 +7,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "Extender",
         "Looper",
         "MultiTrigger",
+        "SPAudioBuffer",
         "SPAudioParam",
         "Scrubber",
         "Trigger"

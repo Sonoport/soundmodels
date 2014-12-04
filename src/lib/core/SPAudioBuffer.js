@@ -4,7 +4,17 @@
 define( [],
     function () {
         "use strict";
-
+        /**
+         * Wrapper around AudioBuffer to support audio source caching and allowing clipping of audiobuffers to various lengths.
+         *
+         * @class SPAudioBuffer
+         * @constructor
+         * @param {AudioContext} audioContext WebAudio Context.
+         * @param {String/AudioBuffer/File} URL The source URL or File object or an AudioBuffer to encapsulate.
+         * @param {Number} startPoint The startPoint of the AudioBuffer in seconds.
+         * @param {Number} endPoint The endPoint of the AudioBuffer in seconds.
+         * @param [AudioBuffer] audioBuffer An AudioBuffer object incase the URL has already been downloaded and decoded.
+         */
         function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
 
             // new SPAudioBuffer("http://example.com", 0.8,1.0)
@@ -16,12 +26,69 @@ define( [],
                 console.error( 'First argument to SPAudioBuffer must be a valid AudioContext' );
                 return;
             }
-            this.audioContext = audioContext;
-            this.sourceURL = null;
-            this.duration = null;
 
+            // Private Variables
             var buffer_;
             var rawBuffer_;
+            var startPoint_;
+            var endPoint_;
+
+            this.audioContext = audioContext;
+
+            // Variables exposed by AudioBuffer
+
+            this.duration = null;
+
+            /**
+             * The number of discrete audio channels.
+             *
+             * @property numberOfChannels
+             * @type Number
+             * @readOnly
+             */
+            Object.defineProperty( this, 'numberOfChannels', {
+                get: function () {
+                    return this.buffer ? this.buffer.numberOfChannels : 0;
+                }
+            } );
+
+            /**
+             * The sample-rate for the PCM audio data in samples per second.
+             *
+             * @property sampleRate
+             * @type Number
+             * @readOnly
+             */
+            Object.defineProperty( this, 'sampleRate', {
+                get: function () {
+                    return this.buffer ? this.buffer.sampleRate : 0;
+                }
+            } );
+
+            /**
+             * Returns the Float32Array representing the PCM audio data for the specific channel.
+             *
+             * @method getChannelData
+             * @param {Number} channel This parameter is an index representing the particular channel to get data for. An index value of 0 represents the first channel.
+             *
+             */
+            this.getChannelData = function ( channel ) {
+                if ( !this.buffer ) {
+                    return null;
+                } else {
+                    return this.buffer.getChannelData( channel );
+                }
+            };
+
+            // New Interfaces.
+
+            /**
+             * The actual AudioBuffer that this SPAudioBuffer object is wrapping around. The getter of this property returns a clipped AudioBuffer based on the startPoint and endPoint properties.
+             *
+             * @property buffer
+             * @type AudioBuffer
+             * @default null
+             */
             Object.defineProperty( this, 'buffer', {
                 set: function ( buffer ) {
 
@@ -46,7 +113,23 @@ define( [],
                 }
             } );
 
-            var startPoint_;
+            /**
+             * URL or File object that is the source of the sound in the buffer. This property can be used for indexing and caching decoded sound buffers.
+             *
+             * @property sourceURL
+             * @type String/File
+             * @default null
+             */
+            this.sourceURL = null;
+
+            /**
+             * The starting point of the buffer in seconds. This, along with the {{#crossLink "SPAudioBuffer/endPoint:property"}}endPoint{{/crossLink}} property, decides which part of the original buffer is clipped and returned by the getter of the {{#crossLink "SPAudioBuffer/buffer:property"}}buffer{{/crossLink}} property.
+             *
+             * @property startPoint
+             * @type Number
+             * @default null
+             * @minvalue 0
+             */
             Object.defineProperty( this, 'startPoint', {
                 set: function ( startPoint ) {
                     if ( endPoint_ !== undefined && startPoint >= endPoint_ ) {
@@ -67,7 +150,14 @@ define( [],
                 }
             } );
 
-            var endPoint_;
+            /**
+             * The ending point of the buffer in seconds. This, along with the {{#crossLink "SPAudioBuffer/startPoint:property"}}startPoint{{/crossLink}} property, decides which part of the original buffer is clipped and returned by the getter of the {{#crossLink "SPAudioBuffer/buffer:property"}}buffer{{/crossLink}} property.
+             *
+             * @property endPoint
+             * @type Number
+             * @default null
+             * @minvalue 0
+             */
             Object.defineProperty( this, 'endPoint', {
                 set: function ( endPoint ) {
                     if ( startPoint_ !== undefined && endPoint <= startPoint_ ) {
@@ -85,18 +175,6 @@ define( [],
                 }.bind( this ),
                 get: function () {
                     return endPoint_;
-                }
-            } );
-
-            Object.defineProperty( this, 'numberOfChannels', {
-                get: function () {
-                    return this.buffer ? this.buffer.numberOfChannels : 0;
-                }
-            } );
-
-            Object.defineProperty( this, 'sampleRate', {
-                get: function () {
-                    return this.buffer ? this.buffer.sampleRate : 0;
                 }
             } );
 
@@ -133,14 +211,6 @@ define( [],
                                 .set( aData.subarray( startIndex, endIndex ) );
                         }
                     }
-                }
-            };
-
-            this.getChannelData = function ( channel ) {
-                if ( !this.buffer ) {
-                    return null;
-                } else {
-                    return this.buffer.getChannelData( channel );
                 }
             };
 

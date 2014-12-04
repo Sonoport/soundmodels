@@ -19,7 +19,7 @@
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: 1.2.1</em>
+            <em>API Docs for: 2.0.0</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -54,6 +54,8 @@
                 <li><a href="../classes/MultiTrigger.html">MultiTrigger</a></li>
             
                 <li><a href="../classes/Scrubber.html">Scrubber</a></li>
+            
+                <li><a href="../classes/SPAudioBuffer.html">SPAudioBuffer</a></li>
             
                 <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
             
@@ -446,15 +448,22 @@
                                 
                             </li>
                         
-                            <li class="index-item property">
-                                <a href="#property_decayTime">decayTime</a>
+                            <li class="index-item property inherited">
+                                <a href="#property_destinations">destinations</a>
 
                                 
                                 
                             </li>
                         
-                            <li class="index-item property inherited">
-                                <a href="#property_destinations">destinations</a>
+                            <li class="index-item property">
+                                <a href="#property_easeIn">easeIn</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_easeOut">easeOut</a>
 
                                 
                                 
@@ -559,21 +568,7 @@
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_riseTime">riseTime</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
                                 <a href="#property_sensitivity">sensitivity</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_startPoint">startPoint</a>
 
                                 
                                 
@@ -1340,8 +1335,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Start playing after specific time and from a specific offset. If offset is not defined,
-the value of startPoint property is used.</p>
+        <p>Start playing after specific time and from a specific offset.</p>
 
     </div>
 
@@ -1616,8 +1610,103 @@ the value of startPoint property is used.</p>
 </div>
 
                 
-                    <div id="property_decayTime" class="property item">
-    <h3 class="name"><code>decayTime</code></h3>
+                    <div id="property_destinations" class="property item inherited">
+    <h3 class="name"><code>destinations</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_destinations">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Set of nodes the output of this sound is currently connected to.</p>
+
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_easeIn" class="property item">
+    <h3 class="name"><code>easeIn</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the <a href="../classes/Looper.html#property_playSpeed" class="crosslink">playSpeed</a> property.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 1</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0.05</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 10.0</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_easeOut" class="property item">
+    <h3 class="name"><code>easeOut</code></h3>
     <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
@@ -1659,50 +1748,6 @@ the value of startPoint property is used.</p>
 
     
            <p><strong>Maximum Value:</strong> 10.0</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_destinations" class="property item inherited">
-    <h3 class="name"><code>destinations</code></h3>
-    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#property_destinations">BaseSound</a>:
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Set of nodes the output of this sound is currently connected to.</p>
-
-    </div>
-
-    
-
-    
-
     
 
     
@@ -2363,57 +2408,6 @@ Set this value to null if no connection can be made on the input node</p>
 </div>
 
                 
-                    <div id="property_riseTime" class="property item">
-    <h3 class="name"><code>riseTime</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the <a href="../classes/Looper.html#property_playSpeed" class="crosslink">playSpeed</a> property.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 1</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0.05</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 10.0</p>
-    
-
-    
-
-    
-</div>
-
-                
                     <div id="property_sensitivity" class="property item">
     <h3 class="name"><code>sensitivity</code></h3>
     <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
@@ -2457,57 +2451,6 @@ Set this value to null if no connection can be made on the input node</p>
 
     
            <p><strong>Maximum Value:</strong> 1.0</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_startPoint" class="property item">
-    <h3 class="name"><code>startPoint</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Start point (as a factor of the length of the entire track) where the Looping should start from.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 0.0</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0.0</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 0.99</p>
     
 
     

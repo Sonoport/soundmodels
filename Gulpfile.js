@@ -32,7 +32,7 @@ var paths = {
         modelSrc: 'src/lib/models/*.js',
         allTestSrc: 'test/**/*.js',
         unitTestCases: 'test/unit/cases/**/**/.js',
-        publishableSrc : ['src/lib/models/*.js', 'src/lib/core/SPAudioParam.js','src/lib/core/BaseSound.js','src/lib/core/Envelope.js']
+        publishableSrc : ['src/lib/models/*.js', 'src/lib/core/SPAudioParam.js','src/lib/core/BaseSound.js','src/lib/core/Envelope.js', 'src/lib/core/SPAudioBuffer.js']
     },
     dirs: {
         build: 'build/',
