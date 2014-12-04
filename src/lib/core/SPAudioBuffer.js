@@ -17,20 +17,28 @@ define( [],
                 return;
             }
             this.audioContext = audioContext;
-            this.sourceURL = "";
+            this.sourceURL = null;
             this.duration = null;
 
             var buffer_;
             var rawBuffer_;
             Object.defineProperty( this, 'buffer', {
                 set: function ( buffer ) {
-                    rawBuffer_ = buffer;
+
                     if ( startPoint_ === null ) {
                         this.startPoint = 0;
+                    } else if ( startPoint_ > buffer.length / buffer.sampleRate ) {
+                        console.error( "SPAudioBuffer : startPoint cannot be greater than buffer length" );
+                        return;
                     }
                     if ( endPoint_ === null ) {
                         this.endPoint = this.rawBuffer_.length;
+                    } else if ( endPoint_ > buffer.length / buffer.sampleRate ) {
+                        console.error( "SPAudioBuffer : endPoint cannot be greater than buffer length" );
+                        return;
                     }
+
+                    rawBuffer_ = buffer;
                     this.updateBuffer();
                 }.bind( this ),
                 get: function () {
@@ -41,6 +49,16 @@ define( [],
             var startPoint_;
             Object.defineProperty( this, 'startPoint', {
                 set: function ( startPoint ) {
+                    if ( endPoint_ !== undefined && startPoint >= endPoint_ ) {
+                        console.error( "SPAudioBuffer : startPoint cannot be greater than endPoint" );
+                        return;
+                    }
+
+                    if ( rawBuffer_ && ( startPoint * rawBuffer_.sampleRate ) >= rawBuffer_.length ) {
+                        console.error( "SPAudioBuffer : startPoint cannot be greater than or equal to buffer length" );
+                        return;
+                    }
+
                     startPoint_ = startPoint;
                     this.updateBuffer();
                 }.bind( this ),
@@ -52,6 +70,16 @@ define( [],
             var endPoint_;
             Object.defineProperty( this, 'endPoint', {
                 set: function ( endPoint ) {
+                    if ( startPoint_ !== undefined && endPoint <= startPoint_ ) {
+                        console.error( "SPAudioBuffer : endPoint cannot be lesser than startPoint" );
+                        return;
+                    }
+
+                    if ( rawBuffer_ && ( endPoint * rawBuffer_.sampleRate ) >= rawBuffer_.length ) {
+                        console.error( "SPAudioBuffer : endPoint cannot be greater than buffer or equal to length" );
+                        return;
+                    }
+
                     endPoint_ = endPoint;
                     this.updateBuffer();
                 }.bind( this ),
@@ -84,7 +112,7 @@ define( [],
                     }
 
                     this.duration = endPoint_ - startPoint_;
-                    this.length = rawBuffer_.sampleRate * this.duration;
+                    this.length = Math.ceil( rawBuffer_.sampleRate * this.duration ) + 1;
 
                     if ( this.length > 0 ) {
                         // Start trimming
