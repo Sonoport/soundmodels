@@ -7,7 +7,7 @@ Latest Version : v2.0.0 (30/12/2014)
 
 ## Sound Models
 
-Sound Models currently avilable.
+Sound Models currently available:
 
 ### Texture Based Models
 
@@ -20,13 +20,13 @@ Loops the audio source continuously. Also supports looping of multiple source sy
 Triggers a single playback of the audio source. Supports multiple voices and multiple simulteanous playbacks.
 
 ##### MultiTrgger
-Triggers a repeated playback of the audio source. 
+Triggers a repeated playback of the audio source.
 
 ##### Activity
 Change the playback speed on an audio source based on the rate of change of a parameter.
 
 ##### Scrubber
-Allows for 'scrubbing' of the audio source by changing which part of the audio source is being played. 
+Allows for 'scrubbing' of the audio source by changing which part of the audio source is being played.
 
 ##### Extender
 Extends an audio source inifinitely without making it feel repeated.
@@ -34,11 +34,11 @@ Extends an audio source inifinitely without making it feel repeated.
 ### Algorithmic Models
 
 Coming soon...
- 
+
 
 ## Usage
 
-The models currently use [RequireJS](http://requirejs.org/) for async depdencency management.
+The models use [RequireJS](http://requirejs.org/) for async depdencency management.
 
 1. To use the Sound Models, you need to have RequireJS loaded, which can be done from a CDN with this script tag
 
@@ -52,7 +52,7 @@ The models currently use [RequireJS](http://requirejs.org/) for async depdencenc
 
 	```
 require(["models/Looper"], function (Looper) {
-	var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",function(){
+	var loop = new Looper("loop.wav",function(){
 		console.log("Loaded!");
 		loop.play();
     });
@@ -78,14 +78,14 @@ The build process uses [gulpjs](https://github.com/gulpjs/gulp/)
 - ```gulp makedoc```
 
 	API documentation is compiled and placed in the build/docs directory.
-	
+
 ## Testing
 
 Two types of tests are current supported
 
 ##### Manual testing.
 
-Manual simple loads and runs some basic parameter changes on Sound Models. This can be used for basic sanity checking of Sound Models. 
+Manual simple loads and runs some basic parameter changes on Sound Models. This can be used for basic sanity checking of Sound Models.
 
 Manual testing can be launched using the command `gulp test`.
 
@@ -97,7 +97,7 @@ The unit test can be launched using `gulp unittest`
 
 ##### JSM Player
 
-To test interactions and effects of various parameters, the JSM Player can be pretty handy.
+JSM Player is a tool for testing the interaction and effects of the various parameters.
 
 ## JSM Player
 
