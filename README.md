@@ -150,7 +150,7 @@ The JSM Player can be launched using the command `gulp player`
 
 ## Bugs and Contact
 
-Please [raise issues](./issues) if you find any bugs or want to request for new features for the Sound Models.
+Please [raise issues](https://github.com/Sonoport/js-sound-models/issues) if you find any bugs or want to request for new features for the Sound Models.
 
 ## License
 
