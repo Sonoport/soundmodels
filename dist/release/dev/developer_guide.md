@@ -6,8 +6,8 @@ A developer guide to Sonoport JavaScript Sound Models
 ## Introduction
 The Sonoport JavaScript Sound Models allow developer to leverage the new WebAudio API to create interactive experiences with dynamic sound in the browser. This plugin-free technology is purely based on JavaScript, and only requires a browser which has WebAudio API enabled. Chrome, Firefox, Safari and Opera have the API currently enabled.
 
-## Release 1.1.0
-The current release is 1.1.0. It currently contains six sound models, `Looper`, `Trigger`,  `MultiTrigger`, `Extender`, `Activity` and `Scrubber`.
+## Release 2.0.0
+The current release is 2.0.0. It currently contains six sound models, `Looper`, `Trigger`,  `MultiTrigger`, `Extender`, `Activity` and `Scrubber`.
 
 All current models require some sort of source material, _mp3_ or _wav_ audio files, which can be used by the models as source.
 
@@ -26,7 +26,7 @@ The Models are JavaScript libraries and use the [requirejs](http://requirejs.org
 
 - Ensure the requirejs is loaded in your context. This can be done using a script tag in the HTML file.
 
-`<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>`
+`<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js"></script>`
 
 - Ensure that the Sonoport JavaScript Sound Models JavaScript file (for eg. `Trigger.js`) is also loaded into your context. You might have to ensure that it is loaded AFTER requirejs.
 
@@ -36,13 +36,15 @@ The Models are JavaScript libraries and use the [requirejs](http://requirejs.org
 
 ```
 require(["models/Looper"], function (Looper) {
-    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",function(){
+    var loop = new Looper(null, "https://dl.dropboxusercontent.com/u/77191118/loop.wav", null,function(){
         console.log("Loaded!");
         loop.play();
     });
     console.log("Loading Audio File...");
 });
 ```
+
+- The first argument of the constructor is an Object of type AudioContext. Browsers usually limit the number of AudioContexts that can be created. If creating multiple Sound Models, consider creating a single AudioContext using `new AudioContext()` and passing it to Sound Model constructors everywhere.
 
 - The Sound Models are initialized using the constructor, and accept a single URL or an array of URLs as the first argument, and a async callback as the second argument triggered when the audio files are loaded. Detailed information about the API can be found in the API docs
 

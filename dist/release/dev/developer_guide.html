@@ -6,10 +6,10 @@
 <style>
 body {
   font-family: Helvetica, arial, sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.6;
   padding-top: 10px;
-  padding-bottom: 15px;
+  padding-bottom: 10px;
   background-color: white;
   padding: 30px; }
 
@@ -168,12 +168,10 @@ table {
     table tr th {
       font-weight: bold;
       border: 1px solid #cccccc;
-      text-align: left;
       margin: 0;
       padding: 6px 13px; }
     table tr td {
       border: 1px solid #cccccc;
-      text-align: left;
       margin: 0;
       padding: 6px 13px; }
     table tr th :first-child, table tr td :first-child {
@@ -281,6 +279,14 @@ pre {
     background-color: transparent;
     border: none; }
 
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
 @media screen and (min-width: 914px) {
     body {
         width: 854px;
@@ -291,10 +297,13 @@ pre {
 	table, pre {
 		page-break-inside: avoid;
 	}
+	pre {
+		word-wrap: break-word;
+	}
 }
 </style>
 <title>Developer Guide</title>
-<script type="text/x-mathjax-config">MathJax.Hub.Config({tex2jax:{inlineMath:[['$$$','$$$']]}});</script><script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
 </head>
 <body>
 <h1>Developer Guide</h1>
@@ -305,9 +314,9 @@ pre {
 
 <p>The Sonoport JavaScript Sound Models allow developer to leverage the new WebAudio API to create interactive experiences with dynamic sound in the browser. This plugin-free technology is purely based on JavaScript, and only requires a browser which has WebAudio API enabled. Chrome, Firefox, Safari and Opera have the API currently enabled.</p>
 
-<h2>Release 1.0.3</h2>
+<h2>Release 2.0.0</h2>
 
-<p>The current release is 1.0.3. It currently only contains six sound models, <code>Looper</code>, <code>Trigger</code>,  <code>MultiTrigger</code>, <code>Extender</code>, <code>Activity</code> and <code>Scrubber</code>.</p>
+<p>The current release is 2.0.0. It currently contains six sound models, <code>Looper</code>, <code>Trigger</code>,  <code>MultiTrigger</code>, <code>Extender</code>, <code>Activity</code> and <code>Scrubber</code>.</p>
 
 <p>All current models require some sort of source material, <em>mp3</em> or <em>wav</em> audio files, which can be used by the models as source.</p>
 
@@ -333,7 +342,7 @@ pre {
 </ul>
 
 
-<p><code>&lt;script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"&gt;&lt;/script&gt;</code></p>
+<p><code>&lt;script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js"&gt;&lt;/script&gt;</code></p>
 
 <ul>
 <li>Ensure that the Sonoport JavaScript Sound Models JavaScript file (for eg. <code>Trigger.js</code>) is also loaded into your context. You might have to ensure that it is loaded AFTER requirejs.</li>
@@ -348,7 +357,7 @@ pre {
 
 
 <pre><code>require(["models/Looper"], function (Looper) {
-    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",function(){
+    var loop = new Looper(null, "https://dl.dropboxusercontent.com/u/77191118/loop.wav", null,function(){
         console.log("Loaded!");
         loop.play();
     });
@@ -357,6 +366,7 @@ pre {
 </code></pre>
 
 <ul>
+<li><p>The first argument of the constructor is an Object of type AudioContext. Browsers usually limit the number of AudioContexts that can be created. If creating multiple Sound Models, consider creating a single AudioContext using <code>new AudioContext()</code> and passing it to Sound Model constructors everywhere.</p></li>
 <li><p>The Sound Models are initialized using the constructor, and accept a single URL or an array of URLs as the first argument, and a async callback as the second argument triggered when the audio files are loaded. Detailed information about the API can be found in the API docs</p></li>
 <li><p>The Sonoport JavaScript Sound Models emulate the <a href="http://webaudio.github.io/web-audio-api/#idl-def-AudioNode">Web Audio API AudioNode</a>. Many methods and parameters APIs exposed by the Sound Models are similar to the WebAudio API AudioNodes and <a href="http://webaudio.github.io/web-audio-api/#the-audioparam-interface">AudioParams</a>;</p></li>
 <li><p>Once the audio files are loaded, each Sound Model exposes an array of Parameter which can be tweaked in real time, as well as actions which can be performed on the Sound Mode.</p></li>
@@ -365,7 +375,7 @@ pre {
 
 <pre><code>require(["models/Looper"], function (Looper) {
     // Create a new Looper
-    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
+    var loop = new Looper(null,"https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
         console.log("Loaded!");
         loop.play();
 
@@ -396,7 +406,7 @@ pre {
 
 
 <pre><code>require(["models/Looper"], function (Looper) {
-    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
+    var loop = new Looper(null ,"https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
         console.log("Play Faster");
         loop.playSpeed.value = 2;
         loop.play();
@@ -445,7 +455,7 @@ pre {
 
 <pre><code>require(["models/Looper"], function (Looper) {
     var gain;
-    var loop = new Looper("https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
+    var loop = new Looper(null,"https://dl.dropboxusercontent.com/u/77191118/loop.wav",null,function(){
 
         // Create a Gain Node
         gain = loop.audioContext.createGain();
