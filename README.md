@@ -60,7 +60,7 @@ require(["models/Looper"], function (Looper) {
 });
 	```
 
-- Detailed information about the API can be found in the [API docs for individual Sound Models](/dist/docs/index.html).
+- Detailed information about rest of the API can be found in the [API docs for individual Sound Models](http://cdn.rawgit.com/Sonoport/js-sound-models/master/dist/release/docs/classes/Scrubber.html).
 
 
 ## Build Process
@@ -78,6 +78,25 @@ The build process uses [gulpjs](https://github.com/gulpjs/gulp/)
 - ```gulp makedoc```
 
 	API documentation is compiled and placed in the build/docs directory.
+
+## Release
+
+The built Sound Models for the latest release are avaliable in the [dist/release/models](https://github.com/Sonoport/js-sound-models/tree/master/dist/release/models) directory.
+
+Each Sound Model is packaged into a seperate Javascript file (with all it's depencies bundled along). The individual files can be downloaded and added to your project, or could be linked straight from github (using the raw github URL) for testing. Refer to section on [Usage](#Usage) for instructions on using the Models.
+
+Here are the URLs for the currently supported Models.
+
+
+| Model         | URL           |
+| ------------- |:-------------:|
+| Looper        |[ https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Looper.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Looper.js) |
+| Trigger       | [https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Trigger.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Trigger.js) |
+| MultiTrigger  | [https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/MultiTrigger.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/MultiTrigger.js) |
+| Scrubber      | [https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Scrubber.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Scrubber.js) |
+| Activity      | [https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Activity.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Activity.js) |
+| Extender      | [https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Extender.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Extender.js) |
+
 
 ## Testing
 
@@ -128,6 +147,10 @@ The JSM Player can be launched using the command `gulp player`
 	- manual : source for manual tests
 	- unit : source for unit tests
 
+
+## Bugs and Contact
+
+Please [raise issues](./issues) if you find any bugs or want to request for new features for the Sound Models.
 
 ## License
 
