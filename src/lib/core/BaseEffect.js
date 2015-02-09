@@ -29,13 +29,37 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         bootAudioContext( this.audioContext );
 
         /**
+         * The output node of this effect. This node will be connected to the next Effect or destination
+         *
+         * @property inputNode
+         * @type AudioNode
+         * @final
+         */
+        this.inputNode = null;
+
+        /**
          * Number of inputs
          *
          * @property numberOfInputs
          * @type Number
          * @default 0
          */
-        this.numberOfInputs = 0;
+        Object.defineProperty( this, 'numberOfInputs', {
+            enumerable: true,
+            configurable: false,
+            get: function () {
+                return this.inputNode.numberOfOutputs || 0;
+            }
+        } );
+
+        /**
+         * The output node of this effect. This node will be connected to the next Effect or destination
+         *
+         * @property outputNode
+         * @type AudioNode
+         * @final
+         */
+        this.outputNode = null;
 
         /**
          * Number of outputs
@@ -48,63 +72,9 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
             enumerable: true,
             configurable: false,
             get: function () {
-                return this.releaseGainNode.numberOfOutputs;
+                return this.outputNode.numberOfOutputs || 0;
             }
         } );
-
-        /**
-         *Maximum number of sources that can be given to this Sound
-         *
-         * @property maxSources
-         * @type Number
-         * @default 0
-         */
-        var maxSources_ = 0;
-        Object.defineProperty( this, 'maxSources', {
-            enumerable: true,
-            configurable: false,
-            set: function ( max ) {
-                if ( max < 0 ) {
-                    max = 0;
-                }
-                maxSources_ = Math.round( max );
-            },
-            get: function () {
-                return maxSources_;
-            }
-        } );
-
-        /**
-         *Minimum number of sources that can be given to this Sound
-         *
-         * @property minSources
-         * @type Number
-         * @default 0
-         */
-        var minSources_ = 0;
-        Object.defineProperty( this, 'minSources', {
-            enumerable: true,
-            configurable: false,
-            set: function ( max ) {
-                if ( max < 0 ) {
-                    max = 0;
-                }
-                minSources_ = Math.round( max );
-            },
-            get: function () {
-                return minSources_;
-            }
-        } );
-
-        /**
-         * The output node of this effect. This node will be connected to the next Effect or destination
-         *
-         * @property releaseGainNode
-         * @type GainNode
-         * @default Internal GainNode
-         * @final
-         */
-        this.outputNode = null;
 
         /**
          *  If Sound is currently playing.
@@ -125,16 +95,6 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.isInitialized = false;
 
         /**
-         * The input node that the output node will be connected to. <br />
-         * Set this value to null if no connection can be made on the input node
-         *
-         * @property inputNode
-         * @type Object
-         * @default null
-         **/
-        this.inputNode = null;
-
-        /**
          * Set of nodes the output of this effect is currently connected to.
          *
          * @property destinations
@@ -153,8 +113,6 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
         this.effectName = 'Effect';
 
         this.parameterList_ = [];
-
-        this.connect( this.audioContext.destination );
 
         function bootAudioContext( context ) {
 
@@ -185,7 +143,7 @@ define( [ 'core/AudioContextMonkeyPatch' ], function () {
     }
 
     /**
-     * If the parameter `output` is an AudioNode, it connects to the releaseGainNode.
+     * If the parameter `output` is an AudioNode, it connects to the outputNode.
      * If the output is a BaseEffect, it will connect BaseEffect's outputNode to the output's inputNode.
      *
      * @method connect

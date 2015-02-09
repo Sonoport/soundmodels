@@ -150,28 +150,32 @@ define(
             if ( aParams && ( aParams instanceof AudioParam || aParams instanceof Array ) ) {
                 // Use a nominal Parameter to populate the values.
                 var aParam = aParams[ 0 ] || aParams;
-                this.defaultValue = aParam.defaultValue;
-                this.minValue = aParam.minValue;
-                this.maxValue = aParam.maxValue;
-                this.value = aParam.defaultValue;
-                this.name = aParam.name;
             }
 
             if ( name ) {
                 this.name = name;
+            } else if ( aParam ) {
+                this.name = aParam.name;
             }
 
             if ( typeof defaultValue !== 'undefined' ) {
                 this.defaultValue = defaultValue;
                 this.value = defaultValue;
+            } else if ( aParam ) {
+                this.defaultValue = aParam.defaultValue;
+                this.value = aParam.defaultValue;
             }
 
             if ( typeof minValue !== 'undefined' ) {
                 this.minValue = minValue;
+            } else if ( aParam ) {
+                this.minValue = aParam.minValue;
             }
 
             if ( typeof maxValue !== 'undefined' ) {
                 this.maxValue = maxValue;
+            } else if ( aParam ) {
+                this.maxValue = aParam.maxValue;
             }
 
             /**

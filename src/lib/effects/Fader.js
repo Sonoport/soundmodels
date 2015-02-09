@@ -1,8 +1,8 @@
 /**
  * @module Effects
  */
-define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/Converter' ],
-    function ( Config, BaseSound, SPAudioParam, Converter ) {
+define( [ 'core/Config', 'core/BaseEffect', 'core/SPAudioParam', 'core/Converter' ],
+    function ( Config, BaseEffect, SPAudioParam, Converter ) {
         "use strict";
 
         /**
@@ -17,20 +17,24 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/Converter'
                 throw new TypeError( "Fader constructor cannot be called as a function." );
             }
             // Call superclass constructor
-            BaseSound.call( this, context );
+            BaseEffect.call( this, context );
             this.maxSources = 0;
             this.minSources = 0;
-            this.modelName = 'Fader';
+            this.effectName = 'Fader';
 
             this.numberOfInputs = 1;
 
-            var faderGain_ = this.context.createGain();
+            var faderGain_ = this.audioContext.createGain();
+            this.inputNode = faderGain_;
+            this.outputNode = faderGain_;
 
             function faderGainMap( volume ) {
+                // console.log( "Setting volume to ", volume / 100.0 );
                 return volume / 100.0;
             }
 
             function faderGainMapDB( volumeInDB ) {
+                // console.log( "Setting volume (DB) to ", Converter.dBFStoRatio( volumeInDB ) );
                 return Converter.dBFStoRatio( volumeInDB );
             }
 
@@ -59,7 +63,7 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam', 'core/Converter'
             this.registerParameter( new SPAudioParam( this, 'volumeInDB', -80, 0, 0, faderGain_.gain, faderGainMapDB, null ), true );
         }
 
-        Fader.prototype = Object.create( BaseSound.prototype );
+        Fader.prototype = Object.create( BaseEffect.prototype );
 
         return Fader;
 

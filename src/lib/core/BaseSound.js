@@ -245,7 +245,7 @@ define( [ 'core/WebAudioDispatch', 'core/AudioContextMonkeyPatch' ], function ( 
                 'input': input
             } );
         } else {
-            console.error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) );
+            console.error( "No Input Connection - Attempts to connect " + ( typeof destination ) + " to " + ( typeof this ) );
         }
     };
 

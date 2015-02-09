@@ -36,7 +36,7 @@ define( [],
          *
          */
         Converter.ratioToDBFS = function ( ratio ) {
-            return 2 * Math.pow( 10.0, ratio );
+            return 20 * Math.log10( ratio );
         };
 
         /**
@@ -49,7 +49,7 @@ define( [],
          *
          */
         Converter.dBFStoRatio = function ( dBFS ) {
-            return Math.log10( dBFS / 2.0 );
+            return Math.pow( 10.0, dBFS / 20 );
         };
 
         return Converter;
