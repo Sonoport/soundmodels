@@ -1,8 +1,8 @@
 /**
  * @module Effects
  */
-define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam' ],
-    function ( Config, BaseSound, SPAudioParam ) {
+define( [ 'core/Config', 'core/BaseEffect', 'core/SPAudioParam' ],
+    function ( Config, BaseEffect, SPAudioParam ) {
         "use strict";
 
         /**
@@ -17,14 +17,28 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam' ],
                 throw new TypeError( "Panner constructor cannot be called as a function." );
             }
             // Call superclass constructor
-            BaseSound.call( this, context );
+            BaseEffect.call( this, context );
             this.maxSources = 0;
             this.minSources = 0;
-            this.modelName = 'Panner';
+            this.effectName = 'Panner';
 
-            this.numberOfInputs = 1;
+            var panner_;
+            var usingNativePanner = typeof this.audioContext.createStereoPanner === 'function';
 
-            var panner_ = this.context.createPannerNode();
+            if ( usingNativePanner ) {
+                console.log( "using native panner" );
+                panner_ = this.audioContext.createStereoPanner();
+            } else {
+                console.log( "using 3D panner" );
+                panner_ = this.audioContext.createPanner();
+            }
+
+            this.inputNode = panner_;
+            this.outputNode = panner_;
+
+            function panMapper( value ) {
+                return value / 90.0;
+            }
 
             function panPositionSetter( aParams, panValue ) {
                 var xDeg = parseInt( panValue );
@@ -49,10 +63,15 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SPAudioParam' ],
              * @minvalue -90
              * @maxvalue 90
              */
-            this.registerParameter( new SPAudioParam( this, 'pan', -90, 90, 0, null, null, panPositionSetter ), true );
+            if ( usingNativePanner ) {
+                this.registerParameter( new SPAudioParam( this, 'pan', -90, 90, 0, panner_.pan, panMapper ), true );
+            } else {
+                this.registerParameter( new SPAudioParam( this, 'pan', -90, 90, 0, null, null, panPositionSetter ), true );
+            }
+
         }
 
-        Panner.prototype = Object.create( BaseSound.prototype );
+        Panner.prototype = Object.create( BaseEffect.prototype );
 
         return Panner;
 

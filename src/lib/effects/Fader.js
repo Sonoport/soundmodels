@@ -22,8 +22,6 @@ define( [ 'core/Config', 'core/BaseEffect', 'core/SPAudioParam', 'core/Converter
             this.minSources = 0;
             this.effectName = 'Fader';
 
-            this.numberOfInputs = 1;
-
             var faderGain_ = this.audioContext.createGain();
             this.inputNode = faderGain_;
             this.outputNode = faderGain_;
