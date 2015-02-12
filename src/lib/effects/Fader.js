@@ -10,6 +10,7 @@ define( [ 'core/Config', 'core/BaseEffect', 'core/SPAudioParam', 'core/Converter
          * An effect changes the amplitude or volume of the audio that this effect is connected to.
          * @class Fader
          * @constructor
+         * @param {AudioContext} [context] AudioContext to be used.
          * @extends BaseEffect
          */
         function Fader( context ) {
@@ -27,12 +28,12 @@ define( [ 'core/Config', 'core/BaseEffect', 'core/SPAudioParam', 'core/Converter
             this.outputNode = faderGain_;
 
             function faderGainMap( volume ) {
-                // console.log( "Setting volume to ", volume / 100.0 );
+                console.log( "Setting volume to ", volume / 100.0 );
                 return volume / 100.0;
             }
 
             function faderGainMapDB( volumeInDB ) {
-                // console.log( "Setting volume (DB) to ", Converter.dBFStoRatio( volumeInDB ) );
+                console.log( "Setting volume (DB) to ", Converter.dBFStoRatio( volumeInDB ) );
                 return Converter.dBFStoRatio( volumeInDB );
             }
 
@@ -46,7 +47,7 @@ define( [ 'core/Config', 'core/BaseEffect', 'core/SPAudioParam', 'core/Converter
              * @minvalue 0
              * @maxvalue 100
              */
-            this.registerParameter( new SPAudioParam( this, 'volume', 0, 100, 100, faderGain_.gain, faderGainMap, null ), true );
+            this.registerParameter( new SPAudioParam( this, 'volume', 0, 100, 100, faderGain_.gain, faderGainMap, null ), false );
 
             /**
              * Fades or reduces the volume of the audio based on the value in decibles. 0 dB implies no
@@ -58,7 +59,9 @@ define( [ 'core/Config', 'core/BaseEffect', 'core/SPAudioParam', 'core/Converter
              * @minvalue -80
              * @maxvalue 0
              */
-            this.registerParameter( new SPAudioParam( this, 'volumeInDB', -80, 0, 0, faderGain_.gain, faderGainMapDB, null ), true );
+            this.registerParameter( new SPAudioParam( this, 'volumeInDB', -80, 0, 0, faderGain_.gain, faderGainMapDB, null ), false );
+
+            this.isInitialized = true;
         }
 
         Fader.prototype = Object.create( BaseEffect.prototype );

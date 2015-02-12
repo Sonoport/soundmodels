@@ -66,6 +66,14 @@ require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function (
                 expect( trigger.maxSources ).toBe( 8 );
             } );
 
+            it( "should have no inputs", function () {
+                expect( trigger.numberOfInputs ).toBe( 0 );
+            } );
+
+            it( "should have atleast 1 output", function () {
+                expect( trigger.numberOfOutputs ).toBeGreaterThan( 0 );
+            } );
+
             it( "should have a model name as Trigger", function () {
                 expect( trigger.modelName ).toBe( 'Trigger' );
             } );
@@ -187,7 +195,7 @@ require( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function (
                 expect( trigger.connect ).toBeInstanceOf( Function );
             } );
             it( "have disconnect function defined", function () {
-                expect( trigger.connect ).toBeInstanceOf( Function );
+                expect( trigger.disconnect ).toBeInstanceOf( Function );
             } );
 
         } );

@@ -67,6 +67,14 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( scrubber.maxSources ).toBe( 1 );
             } );
 
+            it( "should have no inputs", function () {
+                expect( scrubber.numberOfInputs ).toBe( 0 );
+            } );
+
+            it( "should have atleast 1 output", function () {
+                expect( scrubber.numberOfOutputs ).toBeGreaterThan( 0 );
+            } );
+
             it( "should have a model name as Scrubber", function () {
                 expect( scrubber.modelName ).toBe( 'Scrubber' );
             } );
@@ -187,7 +195,7 @@ require( [ 'models/Scrubber', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( scrubber.connect ).toBeInstanceOf( Function );
             } );
             it( "have disconnect function defined", function () {
-                expect( scrubber.connect ).toBeInstanceOf( Function );
+                expect( scrubber.disconnect ).toBeInstanceOf( Function );
             } );
 
         } );

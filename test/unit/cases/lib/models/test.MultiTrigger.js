@@ -65,6 +65,14 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                 expect( multiTrigger.maxSources ).toBe( 8 );
             } );
 
+            it( "should have no inputs", function () {
+                expect( multiTrigger.numberOfInputs ).toBe( 0 );
+            } );
+
+            it( "should have atleast 1 output", function () {
+                expect( multiTrigger.numberOfOutputs ).toBeGreaterThan( 0 );
+            } );
+
             it( "should have a model name as MultiTrigger", function () {
                 expect( multiTrigger.modelName ).toBe( 'MultiTrigger' );
             } );
@@ -220,7 +228,7 @@ require( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], funct
                 expect( multiTrigger.connect ).toBeInstanceOf( Function );
             } );
             it( "have disconnect function defined", function () {
-                expect( multiTrigger.connect ).toBeInstanceOf( Function );
+                expect( multiTrigger.disconnect ).toBeInstanceOf( Function );
             } );
 
         } );

@@ -100,19 +100,22 @@ define(
                         }
                     }
 
-                    // Map the value first
+                    // Store the incoming value for getter
+                    value_ = value;
+
+                    // Map the value
                     if ( typeof mappingFunction === 'function' ) {
                         // Map if mappingFunction is defined
                         value = mappingFunction( value );
                     }
 
                     if ( !calledFromAutomation_ ) {
-                        console.log( "clearing automation" );
+                        // console.log( "clearing automation" );
                         window.clearInterval( intervalID_ );
                     }
                     calledFromAutomation_ = false;
 
-                    // If setter exists, use that
+                    // Dispatch the value
                     if ( typeof setter === 'function' && baseSound.audioContext ) {
                         setter( aParams, value, baseSound.audioContext );
                     } else if ( aParams ) {
@@ -133,21 +136,8 @@ define(
                             }
                         } );
                     }
-
-                    // Set the value_ anyway.
-                    value_ = value;
                 },
                 get: function () {
-                    if ( aParams ) {
-                        if ( aParams instanceof AudioParam ) {
-                            return aParams.value;
-                        } else if ( aParams instanceof Array ) {
-                            // use a nominal Parameter to populate
-                            return aParams[ 0 ].value;
-                        } else {
-                            return value_;
-                        }
-                    }
                     return value_;
                 }
             } );

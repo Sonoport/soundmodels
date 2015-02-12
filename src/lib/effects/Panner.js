@@ -64,10 +64,12 @@ define( [ 'core/Config', 'core/BaseEffect', 'core/SPAudioParam' ],
              * @maxvalue 90
              */
             if ( usingNativePanner ) {
-                this.registerParameter( new SPAudioParam( this, 'pan', -90, 90, 0, panner_.pan, panMapper ), true );
+                this.registerParameter( new SPAudioParam( this, 'pan', -90, 90, 0, panner_.pan, panMapper ), false );
             } else {
-                this.registerParameter( new SPAudioParam( this, 'pan', -90, 90, 0, null, null, panPositionSetter ), true );
+                this.registerParameter( new SPAudioParam( this, 'pan', -90, 90, 0, null, null, panPositionSetter ), false );
             }
+
+            this.isInitialized = true;
 
         }
 
