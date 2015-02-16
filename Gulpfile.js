@@ -14,6 +14,7 @@ var gulpFilter = require('gulp-filter');
 var compass = require('gulp-compass');
 var webserver = require('gulp-webserver');
 var cached = require('gulp-cached');
+var merge = require('merge-stream');
 
 //var debug = require('gulp-debug');
 
@@ -184,15 +185,37 @@ gulp.task('release', ['bump', 'releasebuild'], function(){
     pkg = require('./package.json');
     gutil.log("Creating the ", pkg.version, " release.");
 
-    return gulp.src(paths.dirs.build + 'models/*.js')
+    var modelStream = gulp.src(paths.dirs.build + 'models/*.js')
     .pipe(header(banner, {pkg: pkg}))
     .pipe(gulp.dest(paths.dirs.release + 'models/'));
+
+    var effectStream = gulp.src(paths.dirs.build + 'effects/*.js')
+    .pipe(header(banner, {pkg: pkg}))
+    .pipe(gulp.dest(paths.dirs.release + 'effects/'));
+
+    return merge(modelStream, effectStream);
 });
 
-gulp.task('release-nobump', ['releasebuild'], function(){
+gulp.task('release:nobump', ['releasebuild'], function(){
     require.uncache('./package.json');
     pkg = require('./package.json');
     gutil.log("Creating the ", pkg.version, " release.");
+
+    var modelStream = gulp.src(paths.dirs.build + 'models/*.js')
+    .pipe(header(banner, {pkg: pkg}))
+    .pipe(gulp.dest(paths.dirs.release + 'models/'));
+
+    var effectStream = gulp.src(paths.dirs.build + 'effects/*.js')
+    .pipe(header(banner, {pkg: pkg}))
+    .pipe(gulp.dest(paths.dirs.release + 'effects/'));
+
+    return merge(modelStream, effectStream);
+});
+
+gulp.task('test:release', ['bump:pre', 'releasebuild'], function(){
+    require.uncache('./package.json');
+    pkg = require('./package.json');
+    gutil.log("Creating the ", pkg.version, " test release.");
 
     return gulp.src(paths.dirs.build + 'models/*.js')
     .pipe(header(banner, {pkg: pkg}))
@@ -203,16 +226,6 @@ gulp.task('bump:pre', function(){
   return gulp.src('./package.json')
   .pipe(bump({type: 'prerelease'}))
   .pipe(gulp.dest('./'));
-});
-
-gulp.task('test-release', ['bump:pre', 'releasebuild'], function(){
-    require.uncache('./package.json');
-    pkg = require('./package.json');
-    gutil.log("Creating the ", pkg.version, " test release.");
-
-    return gulp.src(paths.dirs.build + 'models/*.js')
-    .pipe(header(banner, {pkg: pkg}))
-    .pipe(gulp.dest(paths.dirs.release + 'models/'));
 });
 
 gulp.task('player:compass', function (){
