@@ -3,7 +3,7 @@
 
 [Web Audio](http://webaudio.github.io/web-audio-api/) based Sound Models for creating dynamic interactive sounds.
 
-Latest Version : v2.0.0 (30/12/2014)
+Latest Version : v2.1.0 (16/2/2015)
 
 ## Sound Models
 
@@ -35,6 +35,17 @@ Extends an audio source inifinitely without making it feel repeated.
 
 Coming soon...
 
+## Sound Effects
+
+Sound Effects change the sound coming out of Sound Models. They are attached to the Sound Models and expose Parameters similar to Sound Models.
+
+Sound Effects currently available:
+
+##### Panner
+Allows simple stereo panning of the audio from left to right.
+
+##### Fader
+Allows controling the loudness/volume of audio coming from a Sound Model.
 
 ## Usage
 
