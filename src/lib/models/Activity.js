@@ -13,7 +13,7 @@ define( [ 'core/Config', 'core/BaseSound', 'models/Looper', 'core/SPAudioParam',
          * @class Activity
          * @constructor
          * @extends BaseSound
-         * @param {AudioContext} [context] AudioContext to be used.
+         *
          * @param {Array/String/AudioBuffer/File} [source] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
          * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
          * @param {Function} [onLoadComplete] Callback when the source has finished loading.

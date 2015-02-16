@@ -65,6 +65,14 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( extender.maxSources ).toBe( 1 );
             } );
 
+            it( "should have no inputs", function () {
+                expect( extender.numberOfInputs ).toBe( 0 );
+            } );
+
+            it( "should have atleast 1 output", function () {
+                expect( extender.numberOfOutputs ).toBeGreaterThan( 0 );
+            } );
+
             it( "should have a model name as Extender", function () {
                 expect( extender.modelName ).toBe( "Extender" );
             } );
@@ -186,7 +194,7 @@ require( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( extender.connect ).toBeInstanceOf( Function );
             } );
             it( "have disconnect function defined", function () {
-                expect( extender.connect ).toBeInstanceOf( Function );
+                expect( extender.disconnect ).toBeInstanceOf( Function );
             } );
 
         } );

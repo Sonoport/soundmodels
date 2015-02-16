@@ -37,7 +37,6 @@ define( [ 'core/BaseSound' ], function ( BaseSound ) {
          * @type Object
          * @default Internal Release-GainNode
          */
-        this.inputNode = this.releaseGainNode;
 
         // Set gain to 0
         this.releaseGainNode.gain.value = 0;

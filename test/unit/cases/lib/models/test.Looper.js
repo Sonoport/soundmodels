@@ -65,6 +65,14 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                 expect( looper.maxSources ).toBeGreaterThan( 1 );
             } );
 
+            it( "should have no inputs", function () {
+                expect( looper.numberOfInputs ).toBe( 0 );
+            } );
+
+            it( "should have atleast 1 output", function () {
+                expect( looper.numberOfOutputs ).toBeGreaterThan( 0 );
+            } );
+
             it( "should have a model name as Looper", function () {
                 expect( looper.modelName ).toBe( 'Looper' );
             } );
@@ -215,7 +223,7 @@ require( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( 
                 expect( looper.connect ).toBeInstanceOf( Function );
             } );
             it( "have disconnect function defined", function () {
-                expect( looper.connect ).toBeInstanceOf( Function );
+                expect( looper.disconnect ).toBeInstanceOf( Function );
             } );
 
         } );

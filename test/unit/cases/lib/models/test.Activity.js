@@ -64,6 +64,14 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( activity.maxSources ).toBeGreaterThan( 1 );
             } );
 
+            it( "should have no inputs", function () {
+                expect( activity.numberOfInputs ).toBe( 0 );
+            } );
+
+            it( "should have atleast 1 output", function () {
+                expect( activity.numberOfOutputs ).toBeGreaterThan( 0 );
+            } );
+
             it( "should have a model name as Activity", function () {
                 expect( activity.modelName ).toBe( 'Activity' );
             } );
@@ -211,7 +219,7 @@ require( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function 
                 expect( activity.connect ).toBeInstanceOf( Function );
             } );
             it( "have disconnect function defined", function () {
-                expect( activity.connect ).toBeInstanceOf( Function );
+                expect( activity.disconnect ).toBeInstanceOf( Function );
             } );
 
         } );
