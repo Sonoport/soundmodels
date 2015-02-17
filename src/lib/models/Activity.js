@@ -33,14 +33,14 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
     /*Support upto 8 seperate voices*/
     this.maxSources = Config.MAX_VOICES;
     this.minSources = 1;
-            this.modelName = 'Activity';
+    this.modelName = 'Activity';
 
     this.onLoadProgress = onLoadProgress;
     this.onLoadComplete = onLoadComplete;
     var onAudioStart_ = onAudioStart;
     var onAudioEnd_ = onAudioEnd;
 
-            Object.defineProperty( this, 'onAudioStart', {
+    Object.defineProperty( this, 'onAudioStart', {
         enumerable: true,
         configurable: false,
         set: function ( startCallback ) {
@@ -54,7 +54,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
         }
     } );
 
-            Object.defineProperty( this, 'onAudioEnd', {
+    Object.defineProperty( this, 'onAudioEnd', {
         enumerable: true,
         configurable: false,
         set: function ( endCallback ) {
@@ -72,12 +72,12 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
     var self = this;
 
     // Private Variables
-            var internalLooper_ = null;
+    var internalLooper_ = null;
     var lastPosition_ = 0;
-            var lastUpdateTime_ = 0;
-            var smoothDeltaTime_ = 0;
-            var timeoutID = null;
-            var endEventTimeout = null;
+    var lastUpdateTime_ = 0;
+    var smoothDeltaTime_ = 0;
+    var timeoutID = null;
+    var endEventTimeout = null;
     var audioPlaying = false;
 
     // Constants
@@ -209,7 +209,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue 0.05
      * @maxvalue 8.0
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'maxSpeed', 0.05, 8.0, 1 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'maxSpeed', 0.05, 8.0, 1 ) );
 
     /**
      * Controls the playback of the source. The more this parameter is moved, the higher the speed of playback.
@@ -220,7 +220,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue 0.0
      * @maxvalue 1.0
      */
-            this.registerParameter( new SPAudioParam( this, 'action', 0, 1.0, 0.0, null, null, actionSetter_ ) );
+    this.registerParameter( new SPAudioParam( this, 'action', 0, 1.0, 0.0, null, null, actionSetter_ ) );
 
     /**
      * Maximum value for random pitch shift of the triggered voices in semitones.
@@ -231,7 +231,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue 0.0
      * @maxvalue 1.0
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'sensitivity', 0.0, 1.0, 0.5 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'sensitivity', 0.0, 1.0, 0.5 ) );
 
     /**
      * Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
@@ -242,7 +242,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue 0.05
      * @maxvalue 10.0
      */
-            this.registerParameter( new SPAudioParam( this, 'easeIn', 0.05, 10.0, 1, null, null, easeInSetter_ ) );
+    this.registerParameter( new SPAudioParam( this, 'easeIn', 0.05, 10.0, 1, null, null, easeInSetter_ ) );
 
     /**
      *  Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
@@ -253,7 +253,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue 0.05
      * @maxvalue 10.0
      */
-            this.registerParameter( new SPAudioParam( this, 'easeOut', 0.05, 10.0, 1, null, null, easeOutSetter_ ) );
+    this.registerParameter( new SPAudioParam( this, 'easeOut', 0.05, 10.0, 1, null, null, easeOutSetter_ ) );
 
     // Public Functions
 
@@ -287,7 +287,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
     };
 
     /**
-             * Start playing after specific time and from a specific offset.
+     * Start playing after specific time and from a specific offset.
      *
      * @method start
      * @param {Number} when The delay in seconds before playing the model

@@ -39,7 +39,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
     var self = this;
     this.maxSources = Config.MAX_VOICES;
     this.minSources = 1;
-            this.modelName = 'MultiTrigger';
+    this.modelName = 'MultiTrigger';
 
     this.onLoadProgress = onLoadProgress;
     this.onLoadComplete = onLoadComplete;
@@ -47,7 +47,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
     var onAudioStart_ = onAudioStart;
     var onAudioEnd_ = onAudioEnd;
 
-            Object.defineProperty( this, 'onAudioStart', {
+    Object.defineProperty( this, 'onAudioStart', {
         enumerable: true,
         configurable: false,
         set: function ( startCallback ) {
@@ -61,7 +61,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
         }
     } );
 
-            Object.defineProperty( this, 'onAudioEnd', {
+    Object.defineProperty( this, 'onAudioEnd', {
         enumerable: true,
         configurable: false,
         set: function ( endCallback ) {
@@ -129,7 +129,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
         var playSpeed = Converter.semitonesToRatio( self.pitchShift.value + Math.random() * self.pitchRand.value );
 
         soundQueue_.queueSetSource( timeStamp, currentEventID_, sourceBuffers_[ currentSourceID_ ] );
-                soundQueue_.queueSetParameter( timeStamp, currentEventID_, 'playSpeed', playSpeed );
+        soundQueue_.queueSetParameter( timeStamp, currentEventID_, 'playSpeed', playSpeed );
         soundQueue_.queueStart( timeStamp, currentEventID_ );
         currentEventID_++;
         currentSourceID_++;
@@ -164,7 +164,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
         if ( isFinite( updateTime ) ) {
             //Update releaseDur of Loopers being released
             var releaseDur = Math.max( 0.99 * period * ( 1 - self.eventJitter.value ), 0.01 );
-                    soundQueue_.queueUpdate( 'QERELEASE', null, 'releaseDuration', releaseDur );
+            soundQueue_.queueUpdate( 'QERELEASE', null, 'releaseDuration', releaseDur );
         } else {
             // 1  year in seconds.
             updateTime = 365 * 24 * 3600;
@@ -202,7 +202,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
      * @minvalue -60.0
      * @maxvalue 60.0
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchShift', -60.0, 60.0, 0 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchShift', -60.0, 60.0, 0 ) );
 
     /**
      * Maximum value for random pitch shift of the triggered voices in semitones.
@@ -213,7 +213,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
      * @minvalue 0.0
      * @maxvalue 24.0
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchRand', 0.0, 24.0, 0.0 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchRand', 0.0, 24.0, 0.0 ) );
 
     /**
      * Enable randomness in the order of sources which are triggered.
@@ -224,7 +224,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
      * @minvalue true
      * @maxvalue false
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventRand', true, false, false ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventRand', true, false, false ) );
 
     /**
      * Trigger rate for playing the model in Hz.
@@ -235,7 +235,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
      * @minvalue 0.0
      * @maxvalue 60.0
      */
-            this.registerParameter( new SPAudioParam( this, 'eventRate', 0, 60.0, 10.0, null, null, eventRateSetter_ ) );
+    this.registerParameter( new SPAudioParam( this, 'eventRate', 0, 60.0, 10.0, null, null, eventRateSetter_ ) );
     /**
      * Maximum deviation from the regular trigger interval (as a factor of 1).
      *
@@ -245,7 +245,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
      * @minvalue 0.0
      * @maxvalue 0.99
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventJitter', 0, 0.99, 0 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventJitter', 0, 0.99, 0 ) );
 
     // Public Functions
 

@@ -34,7 +34,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
     /*Support upto 8 seperate voices*/
     this.maxSources = Config.MAX_VOICES;
     this.minSources = 1;
-            this.modelName = 'Trigger';
+    this.modelName = 'Trigger';
 
     this.onLoadProgress = onLoadProgress;
     this.onLoadComplete = onLoadComplete;
@@ -42,7 +42,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
     var onAudioStart_ = onAudioStart;
     var onAudioEnd_ = onAudioEnd;
 
-            Object.defineProperty( this, 'onAudioStart', {
+    Object.defineProperty( this, 'onAudioStart', {
         enumerable: true,
         configurable: false,
         set: function ( startCallback ) {
@@ -56,7 +56,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
         }
     } );
 
-            Object.defineProperty( this, 'onAudioEnd', {
+    Object.defineProperty( this, 'onAudioEnd', {
         enumerable: true,
         configurable: false,
         set: function ( endCallback ) {
@@ -109,7 +109,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue -60
      * @maxvalue 60
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchShift', -60.0, 60.0, 0 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchShift', -60.0, 60.0, 0 ) );
 
     /**
      * Maximum value for random pitch shift of the triggered voices in semitones.
@@ -120,7 +120,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue 0.0
      * @maxvalue 24
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchRand', 0.0, 24.0, 0 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchRand', 0.0, 24.0, 0 ) );
 
     /**
      * Enable randomness in the order of sources which are triggered.
@@ -131,7 +131,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue true
      * @maxvalue false
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventRand', true, false, false ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventRand', true, false, false ) );
 
     // Public Functions
 
@@ -196,7 +196,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
             return;
         }
 
-                if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
+        if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
             when = this.audioContext.currentTime;
         }
 
@@ -219,7 +219,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
         var playSpeed = Converter.semitonesToRatio( this.pitchShift.value + Math.random() * this.pitchRand.value );
 
         soundQueue_.queueSetSource( timeStamp, currentEventID_, sourceBuffers_[ currentSourceID_ ] );
-                soundQueue_.queueSetParameter( timeStamp, currentEventID_, 'playSpeed', playSpeed );
+        soundQueue_.queueSetParameter( timeStamp, currentEventID_, 'playSpeed', playSpeed );
         soundQueue_.queueStart( timeStamp, currentEventID_ );
         currentEventID_++;
         currentSourceID_++;

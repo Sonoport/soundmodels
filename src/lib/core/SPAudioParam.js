@@ -29,7 +29,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
     var intervalID_;
 
     var value_ = 0;
-            var calledFromAutomation_ = false;
+    var calledFromAutomation_ = false;
 
     /**
      * Initial value for the value attribute.
@@ -82,7 +82,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
         enumerable: true,
         configurable: false,
         set: function ( value ) {
-                    //console.log( "setting", name );
+            //console.log( "setting", name );
             // Sanitize the value with min/max
             // bounds first.
             if ( typeof value !== typeof defaultValue ) {
@@ -101,41 +101,41 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
                 }
             }
 
-                    // Store the incoming value for getter
-                    value_ = value;
+            // Store the incoming value for getter
+            value_ = value;
 
-                    // Map the value
+            // Map the value
             if ( typeof mappingFunction === 'function' ) {
                 // Map if mappingFunction is defined
                 value = mappingFunction( value );
             }
 
-                    if ( !calledFromAutomation_ ) {
-                        // console.log( "clearing automation" );
-                        window.clearInterval( intervalID_ );
-                    }
-                    calledFromAutomation_ = false;
+            if ( !calledFromAutomation_ ) {
+                // console.log( "clearing automation" );
+                window.clearInterval( intervalID_ );
+            }
+            calledFromAutomation_ = false;
 
-                    // Dispatch the value
+            // Dispatch the value
             if ( typeof setter === 'function' && baseSound.audioContext ) {
                 setter( aParams, value, baseSound.audioContext );
             } else if ( aParams ) {
                 // else if param is defined, set directly
                 if ( aParams instanceof AudioParam ) {
-                            var array = [];
-                            array.push( aParams );
-                            aParams = array;
-                        }
-                        aParams.forEach( function ( thisParam ) {
-                            if ( baseSound.isPlaying ) {
-                                //dezipper if already playing
-                                thisParam.setTargetAtTime( value, baseSound.audioContext.currentTime, Config.DEFAULT_SMOOTHING_CONSTANT );
-                            } else {
-                                //set directly if not playing
-                                //console.log( "setting directly" );
-                                thisParam.setValueAtTime( value, baseSound.audioContext.currentTime );
-                            }
-                        } );
+                    var array = [];
+                    array.push( aParams );
+                    aParams = array;
+                }
+                aParams.forEach( function ( thisParam ) {
+                    if ( baseSound.isPlaying ) {
+                        //dezipper if already playing
+                        thisParam.setTargetAtTime( value, baseSound.audioContext.currentTime, Config.DEFAULT_SMOOTHING_CONSTANT );
+                    } else {
+                        //set directly if not playing
+                        //console.log( "setting directly" );
+                        thisParam.setValueAtTime( value, baseSound.audioContext.currentTime );
+                    }
+                } );
             }
         },
         get: function () {
@@ -149,28 +149,28 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
 
     if ( name ) {
         this.name = name;
-            } else if ( aParam ) {
-                this.name = aParam.name;
+    } else if ( aParam ) {
+        this.name = aParam.name;
     }
 
     if ( typeof defaultValue !== 'undefined' ) {
         this.defaultValue = defaultValue;
         this.value = defaultValue;
-            } else if ( aParam ) {
-                this.defaultValue = aParam.defaultValue;
-                this.value = aParam.defaultValue;
+    } else if ( aParam ) {
+        this.defaultValue = aParam.defaultValue;
+        this.value = aParam.defaultValue;
     }
 
     if ( typeof minValue !== 'undefined' ) {
         this.minValue = minValue;
-            } else if ( aParam ) {
-                this.minValue = aParam.minValue;
+    } else if ( aParam ) {
+        this.minValue = aParam.minValue;
     }
 
     if ( typeof maxValue !== 'undefined' ) {
         this.maxValue = maxValue;
-            } else if ( aParam ) {
-                this.maxValue = aParam.maxValue;
+    } else if ( aParam ) {
+        this.maxValue = aParam.maxValue;
     }
 
     /**
@@ -181,10 +181,10 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
      * @param {Number} startTime The startTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
      */
     this.setValueAtTime = function ( value, startTime ) {
-                if ( aParams ) {
-                    if ( typeof mappingFunction === 'function' ) {
-                        value = mappingFunction( value );
-                    }
+        if ( aParams ) {
+            if ( typeof mappingFunction === 'function' ) {
+                value = mappingFunction( value );
+            }
             if ( aParams instanceof AudioParam ) {
                 aParams.setValueAtTime( value, startTime );
             } else if ( aParams instanceof Array ) {
@@ -214,10 +214,10 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
      * @param {Number} timeConstant The timeConstant parameter is the time-constant value of first-order filter (exponential) approach to the target value. The larger this value is, the slower the transition will be.
      */
     this.setTargetAtTime = function ( target, startTime, timeConstant ) {
-                if ( aParams ) {
-                    if ( typeof mappingFunction === 'function' ) {
-                        target = mappingFunction( target );
-                    }
+        if ( aParams ) {
+            if ( typeof mappingFunction === 'function' ) {
+                target = mappingFunction( target );
+            }
             if ( aParams instanceof AudioParam ) {
                 aParams.setTargetAtTime( target, startTime, timeConstant );
             } else if ( aParams instanceof Array ) {
@@ -231,10 +231,10 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
             var self = this;
             var initValue_ = self.value;
             var initTime_ = baseSound.audioContext.currentTime;
-                    console.log( "starting automation" );
+            console.log( "starting automation" );
             intervalID_ = window.setInterval( function () {
                 if ( baseSound.audioContext.currentTime >= startTime ) {
-                            calledFromAutomation_ = true;
+                    calledFromAutomation_ = true;
                     self.value = target + ( initValue_ - target ) * Math.exp( -( baseSound.audioContext.currentTime - initTime_ ) / timeConstant );
                     if ( Math.abs( self.value - target ) < MIN_DIFF ) {
                         window.clearInterval( intervalID_ );
@@ -256,12 +256,12 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
      * @param {Number} duration The duration parameter is the amount of time in seconds (after the startTime parameter) where values will be calculated according to the values parameter.
      */
     this.setValueCurveAtTime = function ( values, startTime, duration ) {
-                if ( aParams ) {
-                    if ( typeof mappingFunction === 'function' ) {
-                        for ( var index = 0; index < values.length; index++ ) {
-                            values[ index ] = mappingFunction( values[ index ] );
-                        }
-                    }
+        if ( aParams ) {
+            if ( typeof mappingFunction === 'function' ) {
+                for ( var index = 0; index < values.length; index++ ) {
+                    values[ index ] = mappingFunction( values[ index ] );
+                }
+            }
             if ( aParams instanceof AudioParam ) {
                 aParams.setValueCurveAtTime( values, startTime, duration );
             } else if ( aParams instanceof Array ) {
@@ -276,7 +276,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
                 if ( baseSound.audioContext.currentTime >= startTime ) {
                     var index = Math.floor( values.length * ( baseSound.audioContext.currentTime - initTime_ ) / duration );
                     if ( index < values.length ) {
-                                calledFromAutomation_ = true;
+                        calledFromAutomation_ = true;
                         self.value = values[ index ];
                     } else {
                         window.clearInterval( intervalID_ );
@@ -296,10 +296,10 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
      * @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
      */
     this.exponentialRampToValueAtTime = function ( value, endTime ) {
-                if ( aParams ) {
-                    if ( typeof mappingFunction === 'function' ) {
-                        value = mappingFunction( value );
-                    }
+        if ( aParams ) {
+            if ( typeof mappingFunction === 'function' ) {
+                value = mappingFunction( value );
+            }
             if ( aParams instanceof AudioParam ) {
                 aParams.exponentialRampToValueAtTime( value, endTime );
             } else if ( aParams instanceof Array ) {
@@ -316,7 +316,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
             }
             intervalID_ = window.setInterval( function () {
                 var timeRatio = ( baseSound.audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
-                        calledFromAutomation_ = true;
+                calledFromAutomation_ = true;
                 self.value = initValue_ * Math.pow( value / initValue_, timeRatio );
                 if ( baseSound.audioContext.currentTime >= endTime ) {
                     window.clearInterval( intervalID_ );
@@ -333,10 +333,10 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
      * @param {Number} endTime The endTime parameter is the time in the same time coordinate system as AudioContext.currentTime.
      */
     this.linearRampToValueAtTime = function ( value, endTime ) {
-                if ( aParams ) {
-                    if ( typeof mappingFunction === 'function' ) {
-                        value = mappingFunction( value );
-                    }
+        if ( aParams ) {
+            if ( typeof mappingFunction === 'function' ) {
+                value = mappingFunction( value );
+            }
             if ( aParams instanceof AudioParam ) {
                 aParams.linearRampToValueAtTime( value, endTime );
             } else if ( aParams instanceof Array ) {
@@ -350,7 +350,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
             var initTime_ = baseSound.audioContext.currentTime;
             intervalID_ = window.setInterval( function () {
                 var timeRatio = ( baseSound.audioContext.currentTime - initTime_ ) / ( endTime - initTime_ );
-                        calledFromAutomation_ = true;
+                calledFromAutomation_ = true;
                 self.value = initValue_ + ( ( value - initValue_ ) * timeRatio );
                 if ( baseSound.audioContext.currentTime >= endTime ) {
                     window.clearInterval( intervalID_ );

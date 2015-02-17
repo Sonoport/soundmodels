@@ -18,7 +18,7 @@ var webAudioDispatch = require( "core/webAudioDispatch" );
  * @constructor
  * @extends BaseSound
  * @param {AudioContext} [context] AudioContext to be used.
-         * @param {Array/String/AudioBuffer/SPAudioBuffer/File} [sources] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
+ * @param {Array/String/AudioBuffer/SPAudioBuffer/File} [sources] Single or Array of either URLs or AudioBuffers or File Object of the audio source.
  * @param {Function} [onLoadProgress] Callback when the audio file is being downloaded.
  * @param {Function} [onLoadComplete] Callback when all sources have finished loading.
  * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
@@ -33,7 +33,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
     BaseSound.call( this, context );
     this.maxSources = Config.MAX_VOICES;
     this.minSources = 1;
-            this.modelName = 'Looper';
+    this.modelName = 'Looper';
 
     this.onLoadProgress = onLoadProgress;
     this.onLoadComplete = onLoadComplete;
@@ -55,7 +55,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
         } );
 
         if ( rateArray_ && rateArray_.length > 0 ) {
-                    self.registerParameter( new SPAudioParam( self, 'playSpeed', 0.0, 10, 1, rateArray_, null, playSpeedSetter_ ), true );
+            self.registerParameter( new SPAudioParam( self, 'playSpeed', 0.0, 10, 1, rateArray_, null, playSpeedSetter_ ), true );
         }
 
         if ( status ) {
@@ -69,7 +69,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
 
     var insertBufferSource = function ( audioBuffer, trackIndex, totalTracks ) {
         var source;
-                if ( !( sourceBufferNodes_[ trackIndex ] instanceof SPAudioBufferSourceNode ) ) {
+        if ( !( sourceBufferNodes_[ trackIndex ] instanceof SPAudioBufferSourceNode ) ) {
             source = new SPAudioBufferSourceNode( self.audioContext );
         } else {
             source = sourceBufferNodes_[ trackIndex ];
@@ -82,7 +82,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
         };
 
         if ( totalTracks > 1 ) {
-                    var multiChannelGainParam = new SPAudioParam( self, 'track-' + trackIndex + '-gain', 0.0, 1, 1, source.gain, null, null );
+            var multiChannelGainParam = new SPAudioParam( self, 'track-' + trackIndex + '-gain', 0.0, 1, 1, source.gain, null, null );
             self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
         }
 
@@ -98,7 +98,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
         source.resetBufferSource( cTime, self.releaseGainNode );
 
         if ( self.multiTrackGain.length > 1 ) {
-                    var multiChannelGainParam = new SPAudioParam( self, 'track-' + trackIndex + '-gain' + trackIndex, 0.0, 1, 1, source.gain, null, null );
+            var multiChannelGainParam = new SPAudioParam( self, 'track-' + trackIndex + '-gain' + trackIndex, 0.0, 1, 1, source.gain, null, null );
             self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
         }
 
@@ -129,28 +129,28 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
 
             var currentSpeed = sourceBufferNodes_[ 0 ] ? sourceBufferNodes_[ 0 ].playbackRate.value : 1;
 
-                    if ( self.isPlaying ) {
-                        // console.log( "easingIn/Out" );
-                        // easeIn/Out
-                        if ( value > currentSpeed ) {
-                            sourceBufferNodes_.forEach( function ( thisSource ) {
-                                thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                                thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.easeIn.value / t60multiplier );
-                            } );
-                        } else if ( value < currentSpeed ) {
-                            sourceBufferNodes_.forEach( function ( thisSource ) {
-                                thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                                thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.easeOut.value / t60multiplier );
-                            } );
-                        }
-                    } else {
-                        // console.log( "changing directly" );
-                        sourceBufferNodes_.forEach( function ( thisSource ) {
-                            thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
-                            thisSource.playbackRate.setValueAtTime( value, audioContext.currentTime );
-                        } );
-                    }
+            if ( self.isPlaying ) {
+                // console.log( "easingIn/Out" );
+                // easeIn/Out
+                if ( value > currentSpeed ) {
+                    sourceBufferNodes_.forEach( function ( thisSource ) {
+                        thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                        thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.easeIn.value / t60multiplier );
+                    } );
+                } else if ( value < currentSpeed ) {
+                    sourceBufferNodes_.forEach( function ( thisSource ) {
+                        thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                        thisSource.playbackRate.setTargetAtTime( value, audioContext.currentTime, self.easeOut.value / t60multiplier );
+                    } );
                 }
+            } else {
+                // console.log( "changing directly" );
+                sourceBufferNodes_.forEach( function ( thisSource ) {
+                    thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
+                    thisSource.playbackRate.setValueAtTime( value, audioContext.currentTime );
+                } );
+            }
+        }
     };
 
     function init( sources ) {
@@ -182,7 +182,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
      * @minvalue 0.0
      * @maxvalue 10.0
      */
-            this.registerParameter( new SPAudioParam( this, 'playSpeed', 0.0, 10, 1.005, null, null, playSpeedSetter_ ), true );
+    this.registerParameter( new SPAudioParam( this, 'playSpeed', 0.0, 10, 1.005, null, null, playSpeedSetter_ ), true );
 
     /**
      * Rate of increase of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
@@ -194,7 +194,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
      * @maxvalue 10.0
      */
 
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'easeIn', 0.05, 10.0, 0.05 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'easeIn', 0.05, 10.0, 0.05 ) );
 
     /**
      * Rate of decrease of Play Speed. It is the time-constant value of first-order filter (exponential) which approaches the target speed set by the {{#crossLink "Looper/playSpeed:property"}}{{/crossLink}} property.
@@ -205,7 +205,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
      * @minvalue 0.05
      * @maxvalue 10.0
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'easeOut', 0.05, 10.0, 0.05 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'easeOut', 0.05, 10.0, 0.05 ) );
 
     /**
      * The volume (loudness) for each individual track if multiple sources are used. Works even if a single source is used.
@@ -218,8 +218,8 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
      * @maxvalue 1.0
      */
     var multiTrackGainArray = [];
-            multiTrackGainArray.name = 'multiTrackGain';
-            this.registerParameter( multiTrackGainArray, false );
+    multiTrackGainArray.name = 'multiTrackGain';
+    this.registerParameter( multiTrackGainArray, false );
 
     /**
      * The maximum number time the source will be looped before stopping. Currently only supports -1 (loop indefinitely), and 1 (only play the track once, ie. no looping).
@@ -230,7 +230,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
      * @minvalue -1 (Infinite)
      * @maxvalue 1
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'maxLoops', -1, 1, -1 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'maxLoops', -1, 1, -1 ) );
 
     /**
      * Reinitializes a Looper and sets it's sources.
@@ -261,7 +261,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
 
         if ( !this.isPlaying ) {
             sourceBufferNodes_.forEach( function ( thisSource, index ) {
-                        var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : thisSource.loopStart;
+                var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : thisSource.loopStart;
                 thisSource.loop = ( self.maxLoops.value !== 1 );
                 thisSource.start( now, offset );
             } );
@@ -275,7 +275,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
     };
 
     /**
-             * Start playing after specific time and from a specific offset.
+     * Start playing after specific time and from a specific offset.
      *
      * @method start
      * @param {Number} when Time (in seconds) when the sound should start playing.
@@ -292,7 +292,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
         if ( !this.isPlaying ) {
             sourceBufferNodes_.forEach( function ( thisSource ) {
 
-                        offset = thisSource.loopStart + parseFloat( offset ) || 0;
+                offset = thisSource.loopStart + parseFloat( offset ) || 0;
 
                 if ( typeof duration == 'undefined' || duration === null ) {
                     duration = thisSource.buffer.duration;
@@ -362,7 +362,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
      * @param {Boolean} [resetOnRelease] Boolean to define if release resets (stops) the playback or just pauses it.
      */
     this.release = function ( when, fadeTime, resetOnRelease ) {
-                if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
+        if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
             when = this.audioContext.currentTime;
         }
 
@@ -385,7 +385,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
                 lastStopPosition_[ trackIndex ] = 0;
 
                 thisSource.resetBufferSource( when, self.releaseGainNode );
-                        var multiChannelGainParam = new SPAudioParam( self, 'gain-' + trackIndex, 0.0, 1, 1, thisSource.gain, null, null );
+                var multiChannelGainParam = new SPAudioParam( self, 'gain-' + trackIndex, 0.0, 1, 1, thisSource.gain, null, null );
                 self.multiTrackGain.splice( trackIndex, 1, multiChannelGainParam );
             } );
 

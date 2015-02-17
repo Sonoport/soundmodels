@@ -4,7 +4,7 @@
  * @module Core
  *
  */
-        "use strict";
+"use strict";
 
 /*
  *  MonkeyPatch for AudioContext. Normalizes AudioContext across browsers and implementations.

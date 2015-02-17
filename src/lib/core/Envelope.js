@@ -24,7 +24,7 @@ function Envelope( context ) {
     // Pass in an audioContext
     BaseSound.call( this, context );
 
-        if ( typeof context !== 'undefined' ) {
+    if ( typeof context !== 'undefined' ) {
         this.audioContext = context;
     }
 
@@ -37,7 +37,7 @@ function Envelope( context ) {
      * @type Object
      * @default Internal Release-GainNode
      */
-        this.inputNode = this.releaseGainNode;
+    this.inputNode = this.releaseGainNode;
 
     // Set gain to 0
     this.releaseGainNode.gain.value = 0;
@@ -62,7 +62,7 @@ function Envelope( context ) {
      */
     this.start = function start( when ) {
         BaseSound.prototype.start.call( this, when );
-            if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
+        if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
             when = this.audioContext.currentTime;
         }
 
@@ -94,7 +94,7 @@ function Envelope( context ) {
      */
     this.stop = function stop( when ) {
         BaseSound.prototype.stop.call( this, when );
-            if ( typeof when === 'undefined' ) {
+        if ( typeof when === 'undefined' ) {
             when = this.audioContext.currentTime;
         }
         // cancel all scheduled ramps on this releaseGainNode
@@ -131,11 +131,11 @@ function Envelope( context ) {
      * @param {Number} [when] Time (in seconds) at which the Envelope will release.
      */
     this.release = function release( fadeTime, when ) {
-            if ( typeof when === 'undefined' ) {
+        if ( typeof when === 'undefined' ) {
             when = this.audioContext.currentTime;
         }
 
-            if ( typeof fadeTime === 'undefined' ) {
+        if ( typeof fadeTime === 'undefined' ) {
             fadeTime = releaseDur;
         }
 
@@ -182,7 +182,7 @@ function Envelope( context ) {
      */
     this.reinit = function ( hard, when ) {
         hard = hard || false;
-            if ( typeof when === 'undefined' ) {
+        if ( typeof when === 'undefined' ) {
             when = this.audioContext.currentTime;
         }
         if ( hard ) {

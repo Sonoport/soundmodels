@@ -3,8 +3,11 @@
 var pkg = require('./package.json');
 var rjsconfig = require('./rjsconfig.js');
 
-var fs = require('fs');
-var path = require('path');
+var glob = require("glob");
+var merge = require('merge-stream');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var bump = require("gulp-bump");
@@ -16,7 +19,7 @@ var gulpFilter = require('gulp-filter');
 var compass = require('gulp-compass');
 var webserver = require('gulp-webserver');
 var cached = require('gulp-cached');
-var merge = require('merge-stream');
+
 
 //var debug = require('gulp-debug');
 
@@ -33,6 +36,7 @@ var paths = {
         vendor: 'src/jsmplayer/vendor/*.js',
         libSrc: 'src/lib/**/*.js',
         modelSrc: 'src/lib/models/*.js',
+        effectSrc: 'src/lib/effects/*.js',
         allTestSrc: 'test/**/*.js',
         unitTestCases: 'test/unit/cases/**/**/.js',
         publishableSrc : ['src/lib/models/*.js', 'src/lib/core/SPAudioParam.js','src/lib/core/BaseSound.js','src/lib/core/Envelope.js', 'src/lib/core/SPAudioBuffer.js']
@@ -291,20 +295,40 @@ gulp.task('integration', ['devbuild', 'watch:test'], function(){
     }));
 });
 
-function getModels(dir) {
-    return fs.readdirSync(dir).filter(function(file) {
-        return !fs.statSync(path.join(dir, file)).isDirectory();
-      });
+// Returns an array of Gulp Streams
+function createBundlerStreams(globPattern, destDir){
+    var moduleStripRegex = /.*\//;
+    return glob.sync(globPattern).map(function (thisFile){
+        gutil.log("Bundling ", thisFile);
+        var bundleName = thisFile.replace(moduleStripRegex,'');
+        var bundler = browserify({
+            entries: ["./" + thisFile],
+            standalone: bundleName,
+            paths : [paths.dirs.lib]
+        });
+        return bundler
+        .bundle()
+        .pipe(source(bundleName))
+        .pipe(gulp.dest(destDir));
+    });
 }
 
 
 gulp.task('browserifybuild', function(){
-    getModels('src/lib/models/').map(function(thisModel) {
-           gulp.src('src/lib/models/' + thisModel)
-          .pipe(browserify({
-            paths : ['src/lib'],
-            standalone : thisModel.slice(0,-3)
-        }))
-          .pipe(gulp.dest('./build/models/'));
-    });
+
+    var modelStreams = createBundlerStreams(paths.files.modelSrc, 'build/models/');
+    var effectsStreams = createBundlerStreams(paths.files.effectSrc, 'build/effects/');
+    var coreStream = createBundlerStreams('src/lib/core/SPAudioBuffer.js', 'build/core/');
+
+    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream);
+
+    return merge.apply(combinedStreams);
+});
+
+gulp.task('test:browserify', function(){
+    return gulp.src([paths.dirs.manualtest, paths.dirs.build])
+    .pipe(webserver({
+        port: 8080,
+        host : "localhost"
+    }));
 });

@@ -28,7 +28,7 @@ Config.LOG_ERRORS = true;
  * @default 1e-37
  *
  */
-        Config.ZERO = parseFloat( '1e-37' );
+Config.ZERO = parseFloat( '1e-37' );
 
 /**
  * Maximum number of voices supported

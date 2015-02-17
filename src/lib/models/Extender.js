@@ -35,7 +35,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
     /*Support a single input only*/
     this.maxSources = 1;
     this.minSources = 1;
-            this.modelName = 'Extender';
+    this.modelName = 'Extender';
 
     this.onLoadProgress = onLoadProgress;
     this.onLoadComplete = onLoadComplete;
@@ -43,7 +43,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
     var onAudioStart_ = onAudioStart;
     var onAudioEnd_ = onAudioEnd;
 
-            Object.defineProperty( this, 'onAudioStart', {
+    Object.defineProperty( this, 'onAudioStart', {
         enumerable: true,
         configurable: false,
         set: function ( startCallback ) {
@@ -57,7 +57,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
         }
     } );
 
-            Object.defineProperty( this, 'onAudioEnd', {
+    Object.defineProperty( this, 'onAudioEnd', {
         enumerable: true,
         configurable: false,
         set: function ( endCallback ) {
@@ -146,7 +146,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
             }
             // Queue up an event to specify all the properties
             soundQueue_.queueSetSource( eventTime, currentEventID_, sourceBuffer_ );
-                    soundQueue_.queueSetParameter( eventTime, currentEventID_, 'playSpeed', playSpeed );
+            soundQueue_.queueSetParameter( eventTime, currentEventID_, 'playSpeed', playSpeed );
             //  Queue the start of the audio snippet
             soundQueue_.queueStart( eventTime, currentEventID_, startOffset, fadeDur );
 
@@ -174,7 +174,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue -60.0
      * @maxvalue 60.0
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchShift', -60.0, 60.0, 0 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'pitchShift', -60.0, 60.0, 0 ) );
 
     /**
      * The length (in seconds) of each window used to overlap the source.
@@ -185,7 +185,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue 0.1
      * @maxvalue 10.0
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventPeriod', 0.1, 10.0, 2.0 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'eventPeriod', 0.1, 10.0, 2.0 ) );
 
     /**
      * Fraction of each window of the source that is overlapped with the succeding window of the source.
@@ -196,7 +196,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
      * @minvalue 0.1
      * @maxvalue 0.99
      */
-            this.registerParameter( SPAudioParam.createPsuedoParam( this, 'crossFadeDuration', 0.1, 0.99, 0.5 ) );
+    this.registerParameter( SPAudioParam.createPsuedoParam( this, 'crossFadeDuration', 0.1, 0.99, 0.5 ) );
 
     // Public Functions
 
