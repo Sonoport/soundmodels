@@ -19,26 +19,67 @@
 						line-height: 1.42857143;
 						width: 300px;
 					}
+				.left {
+						border-style:	solid;
+						border-color: lightgrey;
+						padding-bottom: 5%;
+				    float: left;
+				    width: 45%;
+				}
+				.right {
+					  border-style:	solid;
+						border-color: lightgrey;
+						padding-bottom: 5%;
+				    margin-left: 50%;
+				    width: 45%;
+				}
 		</style>
 
 		<script type="text/javascript">
 			"use strict";
 			window.addEventListener("hashchange",function() {
-				console.log("hello");
 				window.location.reload();
 			});
 
 			window.addEventListener("load", function(){
 				if (location.hash && location.hash !== ""){
-					console.log("world");
-					var s = document.getElementById( 'testscript' );
-					if (s) document.head.removeChild(s);
-					var hash = window.location.hash.split('#')[1];
-					s = document.createElement("script");
-					s.setAttribute('src', 'require.js');
-					s.setAttribute('id', 'testscript');
-					s.setAttribute( 'data-main', "test." + hash );
-					document.head.appendChild(s);
+					var depSystem = location.hash.replace(/(.*)-/,'')
+
+					if (depSystem === "AMD"){
+						var r = document.getElementById( 'libscript' );
+						if (r) document.head.removeChild(r);
+						var s = document.getElementById( 'testscript' );
+						if (s) document.head.removeChild(s);
+
+						var hash = window.location.hash.match('#(.*)-')[1];
+
+						s = document.createElement("script");
+						s.setAttribute('src', 'require.js');
+						s.setAttribute('id', 'testscript');
+						s.setAttribute( 'data-main', "test." + hash );
+						document.head.appendChild(s);
+
+					}else if (depSystem === "Common"){
+						var r = document.getElementById( 'libscript' );
+						if (r) document.head.removeChild(r);
+						var s = document.getElementById( 'testscript' );
+						if (s) document.head.removeChild(s);
+
+						var hash = window.location.hash.match('#(.*)-')[1];
+
+						r = document.createElement("script");
+						r.setAttribute('src', "models/" + hash+ ".js");
+						r.setAttribute('id', 'libscript');
+						document.head.appendChild(r);
+
+						window.setTimeout(function(){
+							s = document.createElement("script");
+							s.setAttribute('src', "test." + hash + ".common.js");
+							s.setAttribute('id', 'testscript');
+							document.head.appendChild(s);
+						},1000);
+					}
+
 				}
 			});
 		</script>
@@ -46,47 +87,97 @@
 	</head>
 
 	<body>
-		<h2 style="padding: 10px 15px">
-			<a href="index.html">Sound Models</a>
-		</h2>
-		<div class="model">
-			<a href="#Looper">Looper</a>
-		</div>
-		<div class="model" >
-			<a href="#Trigger">Trigger</a>
-			<button style= "float : right" disabled="disabled" id='trigger'>Play</button>
-		</div>
-		<div class="model">
-			<a  href="#MultiTrigger">MultiTrigger</a>
-			<button style= "float : right" disabled="disabled" id='multitrigger'>Play</button>
-		</div>
-		<div class="model">
-			<a href="#Activity">Activity</a>
-			<input type= "range" disabled = "true" style= "float : right" min="0" max="1" value="0" step="0.01" id='activity' />
-		</div>
-		<div class="model">
-			<a href="#Extender">Extender</a>
-			<input type= "range" disabled = "true" style= "float : right" min="0" max="10" value="2" step="0.1" id='extender' />
-		</div class="model">
-		<div class="model">
-			<a href="#Scrubber">Scrubber</a>
-			<input type= "range" disabled = "true" style= "float : right" min="0" max="1" value="0" step="0.01" id='scrubber' />
+	<div>
+		<div class="left">
+			<h2 style="padding: 10px 15px; margin-left: auto; margin-right: auto; width: 3em">AMD </h2>
+			<h2 style="padding: 10px 15px">
+				<a href="index.html">Sound Models</a>
+			</h2>
+			<div class="model">
+				<a href="#Looper-AMD">Looper</a>
+			</div>
+			<div class="model" >
+				<a href="#Trigger-AMD">Trigger</a>
+				<button style= "float : right" disabled="disabled" id='trigger'>Play</button>
+			</div>
+			<div class="model">
+				<a  href="#MultiTrigger-AMD">MultiTrigger</a>
+				<button style= "float : right" disabled="disabled" id='multitrigger'>Play</button>
+			</div>
+			<div class="model">
+				<a href="#Activity-AMD">Activity</a>
+				<input type= "range" disabled = "true" style= "float : right" min="0" max="1" value="0" step="0.01" id='activity' />
+			</div>
+			<div class="model">
+				<a href="#Extender-AMD">Extender</a>
+				<input type= "range" disabled = "true" style= "float : right" min="0" max="10" value="2" step="0.1" id='extender' />
+			</div>
+			<div class="model">
+				<a href="#Scrubber-AMD">Scrubber</a>
+				<input type= "range" disabled = "true" style= "float : right" min="0" max="1" value="0" step="0.01" id='scrubber' />
+			</div>
+
+			<h2 style="padding: 10px 15px">
+				<a href="index.html">Effects</a>
+			</h2>
+
+			<div class="model">
+				<a href="#Fader-AMD">Fader</a>
+				<input type= "range" disabled = "true" style= "float : right" min="0" max="100" value="0" step="0.1" id='fader' />
+			</div>
+
+			<div class="model">
+				<a href="#Panner-AMD">Panner</a>
+				<input type= "range" disabled = "true" style= "float : right" min="-90" max="90" value="0" step="1" id='panner' />
+			</div>
 		</div>
 
-		<h2 style="padding: 10px 15px">
-			<a href="index.html">Effects</a>
-		</h2>
+		<div class="right">
+		<h2 style="padding: 10px 15px; margin-left: auto; margin-right: auto; width: 3em">CommonJS</h2>
+			<h2 style="padding: 10px 15px">
+				<a href="index.html">Sound Models</a>
+			</h2>
+			<div class="model">
+				<a href="#Looper-Common">Looper</a>
+			</div>
+			<div class="model" >
+				<a href="#Trigger-Common">Trigger</a>
+				<button style= "float : right" disabled="disabled" id='trigger'>Play</button>
+			</div>
+			<div class="model">
+				<a  href="#MultiTrigger-Common">MultiTrigger</a>
+				<button style= "float : right" disabled="disabled" id='multitrigger'>Play</button>
+			</div>
+			<div class="model">
+				<a href="#Activity-Common">Activity</a>
+				<input type= "range" disabled = "true" style= "float : right" min="0" max="1" value="0" step="0.01" id='activity' />
+			</div>
+			<div class="model">
+				<a href="#Extender-Common">Extender</a>
+				<input type= "range" disabled = "true" style= "float : right" min="0" max="10" value="2" step="0.1" id='extender' />
+			</div>
+			<div class="model">
+				<a href="#Scrubber-Common">Scrubber</a>
+				<input type= "range" disabled = "true" style= "float : right" min="0" max="1" value="0" step="0.01" id='scrubber' />
+			</div>
 
-		<div class="model">
-			<a href="#Fader">Fader</a>
-			<input type= "range" disabled = "true" style= "float : right" min="0" max="100" value="0" step="0.1" id='fader' />
+			<h2 style="padding: 10px 15px">
+				<a href="index.html">Effects</a>
+			</h2>
+
+			<div class="model">
+				<a href="#Fader-Common">Fader</a>
+				<input type= "range" disabled = "true" style= "float : right" min="0" max="100" value="0" step="0.1" id='fader' />
+			</div>
+
+			<div class="model">
+				<a href="#Panner-Common">Panner</a>
+				<input type= "range" disabled = "true" style= "float : right" min="-90" max="90" value="0" step="1" id='panner' />
+			</div>
 		</div>
 
-		<div class="model">
-			<a href="#Panner">Panner</a>
-			<input type= "range" disabled = "true" style= "float : right" min="-90" max="90" value="0" step="1" id='panner' />
-		</div>
 
+	</div>
 
 	</body>
 

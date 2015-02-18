@@ -137,9 +137,11 @@ gulp.task('build',['devbuild']);
 // Returns an array of Gulp Streams
 function createBundlerStreams(globPattern, destDir, transforms){
     var moduleStripRegex = /.*\//;
+    var extStripRegex = /\.js/;
     return glob.sync(globPattern).map(function (thisFile){
         gutil.log("Bundling ", thisFile);
-        var bundleName = thisFile.replace(moduleStripRegex,'');
+        var fileName = thisFile.replace(moduleStripRegex,'');
+        var bundleName = fileName.replace(extStripRegex,'');
         var bundler = browserify({
             entries: ["./" + thisFile],
             standalone: bundleName,
@@ -152,14 +154,14 @@ function createBundlerStreams(globPattern, destDir, transforms){
         }
         return bundler
         .bundle()
-        .pipe(source(bundleName))
+        .pipe(source(fileName))
         .pipe(gulp.dest(destDir));
     });
 }
 
 gulp.task('devbuild',['jsbeautify:src'], function(){
 
-    del([paths.files.builtSrc], function () {
+    del([paths.dirs.build], function () {
         console.log('Cleaning old built assets.');
     });
 
@@ -174,7 +176,7 @@ gulp.task('devbuild',['jsbeautify:src'], function(){
 
 gulp.task('releasebuild',['jsbeautify:src'], function(){
 
-    del([paths.files.builtSrc], function () {
+    del([paths.dirs.build], function () {
         console.log('Cleaning old built assets.');
     });
 
