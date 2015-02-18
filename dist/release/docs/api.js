@@ -2,11 +2,13 @@ YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
         "Activity",
+        "BaseEffect",
         "BaseSound",
-        "Envelope",
         "Extender",
+        "Fader",
         "Looper",
         "MultiTrigger",
+        "Panner",
         "SPAudioBuffer",
         "SPAudioParam",
         "Scrubber",
@@ -14,12 +16,17 @@ YUI.add("yuidoc-meta", function(Y) {
     ],
     "modules": [
         "Core",
+        "Effects",
         "Models"
     ],
     "allModules": [
         {
             "displayName": "Core",
             "name": "Core"
+        },
+        {
+            "displayName": "Effects",
+            "name": "Effects"
         },
         {
             "displayName": "Models",

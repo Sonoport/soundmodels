@@ -2,6 +2,7 @@
 
 var pkg = require('./package.json');
 
+var del = require('del');
 var glob = require("glob");
 var merge = require('merge-stream');
 var browserify = require('browserify');
@@ -36,6 +37,7 @@ var paths = {
         libSrc: 'src/lib/**/*.js',
         modelsSrc: 'src/lib/models/*.js',
         effectsSrc: 'src/lib/effects/*.js',
+        coreSrc: 'src/lib/core/*.js',
         allTestSrc: 'test/**/*.js',
         unitTestCases: 'test/unit/cases/**/**/.js',
         builtSrc : 'build/**/*.js',
@@ -157,9 +159,13 @@ function createBundlerStreams(globPattern, destDir, transforms){
 
 gulp.task('devbuild',['jsbeautify:src'], function(){
 
+    del([paths.files.builtSrc], function () {
+        console.log('Cleaning old built assets.');
+    });
+
     var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/');
     var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/');
-    var coreStream = createBundlerStreams('src/lib/core/SPAudioBuffer.js', 'build/core/');
+    var coreStream = createBundlerStreams(paths.files.coreSrc, 'build/core/');
 
     var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream);
 
@@ -167,6 +173,10 @@ gulp.task('devbuild',['jsbeautify:src'], function(){
 });
 
 gulp.task('releasebuild',['jsbeautify:src'], function(){
+
+    del([paths.files.builtSrc], function () {
+        console.log('Cleaning old built assets.');
+    });
 
     var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/', 'uglifyify');
     var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/', 'uglifyify');
@@ -218,7 +228,7 @@ gulp.task('bump:patch', function(){
 **** Release ****
 */
 
-gulp.task('release', ['releasebuild'], function(){
+gulp.task('release', ['releasebuild', 'publishdocs'], function(){
     pkg = requireUncached('./package.json');
     gutil.log("Creating the ", pkg.version, " release.");
 
@@ -227,7 +237,7 @@ gulp.task('release', ['releasebuild'], function(){
     .pipe(gulp.dest(paths.dirs.release ));
 });
 
-gulp.task('release:test', ['bump:pre', 'releasebuild'], function(){
+gulp.task('release:testbuild', ['bump:pre', 'releasebuild', 'publishdocs'], function(){
     pkg = requireUncached('./package.json');
     gutil.log("Creating the ", pkg.version, " test release.");
 

@@ -19,6 +19,7 @@
   ],
   "devDependencies": {
     "browserify": "^6.3.2",
+    "del": "^1.1.1",
     "glob": "^4.3.5",
     "gulp": "^3.8.11",
     "gulp-bump": "^0.1.13",
@@ -34,10 +35,10 @@
     "gulp-yuidoc": "^0.1.2",
     "jshint-stylish": "^1.0.0",
     "merge-stream": "^0.1.7",
+    "require-uncached": "^1.0.2",
     "requirejs": "2.1.16",
     "uglifyify": "^3.0.1",
-    "vinyl-source-stream": "^1.0.0",
-    "require-uncached": "^1.0.2"
+    "vinyl-source-stream": "^1.0.0"
   },
   "keywords": [
     "sonoport",
