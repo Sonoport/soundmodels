@@ -1,12 +1,12 @@
 "use strict";
 
 var pkg = require('./package.json');
-var rjsconfig = require('./rjsconfig.js');
 
 var glob = require("glob");
 var merge = require('merge-stream');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
+var requireUncached = require('require-uncached');
 
 var gulp = require('gulp');
 var gutil = require('gulp-util');
@@ -14,16 +14,15 @@ var bump = require("gulp-bump");
 var yuidoc = require("gulp-yuidoc");
 var prettify = require('gulp-jsbeautifier');
 var jshint = require('gulp-jshint');
+var ignore = require('gulp-ignore');
 var header = require('gulp-header');
-var gulpFilter = require('gulp-filter');
 var compass = require('gulp-compass');
 var webserver = require('gulp-webserver');
 var cached = require('gulp-cached');
 
 
 //var debug = require('gulp-debug');
-
-var requirejs = require('requirejs');
+// var using = require('gulp-using');
 
 var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
 '<%= new Date() %> */ \n' +
@@ -33,13 +32,14 @@ var paths = {
     files: {
         jsSrc: 'src/**/**/*.js',
         playerCSS: 'src/jsmplayer/**/**.css',
-        vendor: 'src/jsmplayer/vendor/*.js',
+        vendorSrc: 'src/jsmplayer/vendor/*.js',
         libSrc: 'src/lib/**/*.js',
-        modelSrc: 'src/lib/models/*.js',
-        effectSrc: 'src/lib/effects/*.js',
+        modelsSrc: 'src/lib/models/*.js',
+        effectsSrc: 'src/lib/effects/*.js',
         allTestSrc: 'test/**/*.js',
         unitTestCases: 'test/unit/cases/**/**/.js',
-        publishableSrc : ['src/lib/models/*.js', 'src/lib/core/SPAudioParam.js','src/lib/core/BaseSound.js','src/lib/core/Envelope.js', 'src/lib/core/SPAudioBuffer.js']
+        builtSrc : 'build/**/*.js',
+        publishableSrc : ['src/lib/models/*.js', 'src/lib/effects/*.js', 'src/lib/core/SPAudioParam.js','src/lib/core/BaseSound.js', 'src/lib/core/BaseEffect.js', 'src/lib/core/SPAudioBuffer.js']
     },
     dirs: {
         build: 'build/',
@@ -59,42 +59,9 @@ var paths = {
     },
 };
 
-/**
- * Removes a module from the cache
- */
- require.uncache = function (moduleName) {
-    // Run over the cache looking for the files
-    // loaded by the specified module name
-    require.searchCache(moduleName, function (mod) {
-        delete require.cache[mod.id];
-    });
-};
-
-/**
- * Runs over the cache to search for all the cached
- * files
- */
- require.searchCache = function (moduleName, callback) {
-    // Resolve the module identified by the specified name
-    var mod = require.resolve(moduleName);
-
-    // Check if the module has been resolved and found within
-    // the cache
-    if (mod && ((mod = require.cache[mod]) !== undefined)) {
-        // Recursively go over the results
-        (function run(mod) {
-            // Go over each of the module's children and
-            // run over it
-            mod.children.forEach(function (child) {
-                run(child);
-            });
-
-            // Call the specified callback providing the
-            // found module
-            callback(mod);
-        })(mod);
-    }
-};
+/*
+**** Documentation ****
+*/
 
 var yuiParserOpts = {
     project: {
@@ -126,20 +93,26 @@ gulp.task('publishdocs', function() {
         nocode: "true"
     };
 
-    var fileFilter = gulpFilter(['**', '!**/files/**']);
+    var ignoreFiles = ignore.exclude('**/files/**');
 
     return gulp.src(paths.files.publishableSrc)
     .pipe(yuidoc.parser(yuiParserOpts))
     .pipe(yuidoc.generator(generatorOpt))
-    .pipe(fileFilter)
+    .pipe(ignoreFiles)
     .pipe(gulp.dest(paths.dirs.release + "docs/"));
 });
 
+/*
+**** Hinting and Code Style
+*/
+
 gulp.task('jshint:src', function(){
-    var hintFiler = gulpFilter(['**', '!**/AudioContextMonkeyPatch.js', '!**/vendor/*.js']);
+    var ignoreVendor = ignore.exclude(['**/jsmplayer/vendor/*.js']);
+    var ignoreMonkeyPatch = ignore.exclude(['**/AudioContextMonkeyPatch.js']);
 
     return gulp.src([paths.files.jsSrc, 'package.json', 'Gulpfile.js'])
-    .pipe(hintFiler)
+    .pipe(ignoreVendor)
+    .pipe(ignoreMonkeyPatch)
     .pipe(cached('jshint:src'))
     .pipe(jshint('.jshintrc'))
     .pipe(jshint.reporter('jshint-stylish'))
@@ -153,47 +126,86 @@ gulp.task('jsbeautify:src', ['jshint:src'], function(){
     .pipe(gulp.dest(paths.dirs.lib));
 });
 
+/*
+**** Builds ****
+*/
 
-gulp.task('devbuild', ['jsbeautify:src'], function(cb) {
+gulp.task('build',['devbuild']);
 
-    var config  = JSON.parse(JSON.stringify(rjsconfig.main));
-    config.optimize = "none";
-
-    requirejs.optimize(config, function(){
-        return cb();
-    }, function(err) {
-        return cb(err);
+// Returns an array of Gulp Streams
+function createBundlerStreams(globPattern, destDir, transforms){
+    var moduleStripRegex = /.*\//;
+    return glob.sync(globPattern).map(function (thisFile){
+        gutil.log("Bundling ", thisFile);
+        var bundleName = thisFile.replace(moduleStripRegex,'');
+        var bundler = browserify({
+            entries: ["./" + thisFile],
+            standalone: bundleName,
+            paths : [paths.dirs.lib],
+        });
+        if (transforms){
+            bundler.transform({
+              global: true
+          }, transforms);
+        }
+        return bundler
+        .bundle()
+        .pipe(source(bundleName))
+        .pipe(gulp.dest(destDir));
     });
+}
+
+gulp.task('devbuild',['jsbeautify:src'], function(){
+
+    var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/');
+    var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/');
+    var coreStream = createBundlerStreams('src/lib/core/SPAudioBuffer.js', 'build/core/');
+
+    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream);
+
+    return merge.apply(this,combinedStreams);
 });
 
+gulp.task('releasebuild',['jsbeautify:src'], function(){
 
-gulp.task('releasebuild', ['jsbeautify:src', 'publishdocs'], function(cb) {
+    var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/', 'uglifyify');
+    var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/', 'uglifyify');
+    var coreStream = createBundlerStreams('src/lib/core/SPAudioBuffer.js', 'build/core/', 'uglifyify');
 
-    var config  = JSON.parse(JSON.stringify(rjsconfig.main));
-    config.optimize = "uglify2";
-    config.uglify2 = rjsconfig.uglify;
+    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream);
 
-    requirejs.optimize(config, function(){
-        return cb();
-    }, function(err) {
-        return cb(err);
-    });
+    return merge.apply(this,combinedStreams);
 });
 
-gulp.task('bump', function(){
+gulp.task('watch:lib', function(){
+    gulp.watch(paths.files.libSrc, ['devbuild']);
+});
+
+/*
+**** Version Bumping ****
+*/
+
+gulp.task('bump:major', function(){
   return gulp.src('./package.json')
-  .pipe(bump())
+  .pipe(bump({type: 'major'}))
+  .pipe(gulp.dest('./'));
+    var effectStream = gulp.src(paths.dirs.build + 'effects/*.js')
+    .pipe(header(banner, {pkg: pkg}))
+    .pipe(gulp.dest(paths.dirs.release + 'effects/'));
+
+    return merge(modelStream, effectStream);
+});
+
+gulp.task('bump:minor', function(){
+  return gulp.src('./package.json')
+  .pipe(bump({type: 'minor'}))
   .pipe(gulp.dest('./'));
 });
 
-gulp.task('release', ['bump', 'releasebuild'], function(){
-    require.uncache('./package.json');
-    pkg = require('./package.json');
-    gutil.log("Creating the ", pkg.version, " release.");
-
-    var modelStream = gulp.src(paths.dirs.build + 'models/*.js')
-    .pipe(header(banner, {pkg: pkg}))
-    .pipe(gulp.dest(paths.dirs.release + 'models/'));
+gulp.task('bump:patch', function(){
+  return gulp.src('./package.json')
+  .pipe(bump({type: 'patch'}))
+  .pipe(gulp.dest('./'));
 
     var effectStream = gulp.src(paths.dirs.build + 'effects/*.js')
     .pipe(header(banner, {pkg: pkg}))
@@ -202,30 +214,26 @@ gulp.task('release', ['bump', 'releasebuild'], function(){
     return merge(modelStream, effectStream);
 });
 
-gulp.task('release:nobump', ['releasebuild'], function(){
-    require.uncache('./package.json');
-    pkg = require('./package.json');
+/*
+**** Release ****
+*/
+
+gulp.task('release', ['releasebuild'], function(){
+    pkg = requireUncached('./package.json');
     gutil.log("Creating the ", pkg.version, " release.");
 
-    var modelStream = gulp.src(paths.dirs.build + 'models/*.js')
+    return gulp.src(paths.files.builtSrc)
     .pipe(header(banner, {pkg: pkg}))
-    .pipe(gulp.dest(paths.dirs.release + 'models/'));
-
-    var effectStream = gulp.src(paths.dirs.build + 'effects/*.js')
-    .pipe(header(banner, {pkg: pkg}))
-    .pipe(gulp.dest(paths.dirs.release + 'effects/'));
-
-    return merge(modelStream, effectStream);
+    .pipe(gulp.dest(paths.dirs.release ));
 });
 
-gulp.task('test:release', ['bump:pre', 'releasebuild'], function(){
-    require.uncache('./package.json');
-    pkg = require('./package.json');
+gulp.task('release:test', ['bump:pre', 'releasebuild'], function(){
+    pkg = requireUncached('./package.json');
     gutil.log("Creating the ", pkg.version, " test release.");
 
-    return gulp.src(paths.dirs.build + 'models/*.js')
+    return gulp.src(paths.files.builtSrc)
     .pipe(header(banner, {pkg: pkg}))
-    .pipe(gulp.dest(paths.dirs.release + 'models/'));
+    .pipe(gulp.dest(paths.dirs.release));
 });
 
 gulp.task('bump:pre', function(){
@@ -233,6 +241,10 @@ gulp.task('bump:pre', function(){
   .pipe(bump({type: 'prerelease'}))
   .pipe(gulp.dest('./'));
 });
+
+/*
+**** Player ****
+*/
 
 gulp.task('player:compass', function (){
     return gulp.src(paths.dirs.player + "sass/*.scss")
@@ -243,22 +255,27 @@ gulp.task('player:compass', function (){
     }));
 });
 
-gulp.task('watch:lib', function(){
-    gulp.watch(paths.files.libSrc, ['devbuild']);
+gulp.task('playerbuild', ['player:compass', 'devbuild']);
+
+gulp.task('player', ['player:compass', 'devbuild', 'watch:player'], function(){
+    return gulp.src([paths.dirs.player, paths.dirs.build])
+    .pipe(webserver({
+        port: 8080,
+        open: true,
+        host : "localhost"
+    }));
 });
 
 gulp.task('watch:player', ['watch:lib'], function(){
     gulp.watch(paths.files.playerCSS, ['player:compass']);
 });
 
-gulp.task('playerbuild', ['player:compass', 'devbuild']);
 
-gulp.task('player', ['player:compass', 'devbuild', 'watch:player'], function(){
-    return gulp.src([paths.dirs.player, paths.dirs.build])
-    .pipe(webserver({
-        port: 8000
-    }));
-});
+
+/*
+**** Testing ****
+*/
+
 
 gulp.task('jsbeautify:test', function(){
     return gulp.src([paths.files.allTestSrc, '!test/unit/vendor/**'])
@@ -271,10 +288,11 @@ gulp.task('watch:test', ['watch:lib'], function(){
     gulp.watch(paths.files.allTestSrc, ['jsbeautify:test']);
 });
 
-gulp.task('test', ['devbuild', 'watch:test'], function(){
+gulp.task('test', ['devbuild'], function(){
     return gulp.src([paths.dirs.manualtest, paths.dirs.build])
     .pipe(webserver({
         port: 8080,
+        open: true,
         host : "localhost"
     }));
 });
@@ -283,6 +301,7 @@ gulp.task('unittest', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.unittest, paths.dirs.build])
     .pipe(webserver({
         port: 8081,
+        open: true,
         host : "localhost"
     }));
 });
@@ -291,44 +310,26 @@ gulp.task('integration', ['devbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.integration, paths.dirs.build])
     .pipe(webserver({
         port: 8082,
+         open: true,
         host : "localhost"
     }));
+
 });
 
-// Returns an array of Gulp Streams
-function createBundlerStreams(globPattern, destDir){
-    var moduleStripRegex = /.*\//;
-    return glob.sync(globPattern).map(function (thisFile){
-        gutil.log("Bundling ", thisFile);
-        var bundleName = thisFile.replace(moduleStripRegex,'');
-        var bundler = browserify({
-            entries: ["./" + thisFile],
-            standalone: bundleName,
-            paths : [paths.dirs.lib]
-        });
-        return bundler
-        .bundle()
-        .pipe(source(bundleName))
-        .pipe(gulp.dest(destDir));
-    });
-}
 
 
-gulp.task('browserifybuild', function(){
+/*
 
-    var modelStreams = createBundlerStreams(paths.files.modelSrc, 'build/models/');
-    var effectsStreams = createBundlerStreams(paths.files.effectSrc, 'build/effects/');
-    var coreStream = createBundlerStreams('src/lib/core/SPAudioBuffer.js', 'build/core/');
+gulp build
+gulp player
+gulp test
+gulp unittest
 
-    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream);
 
-    return merge.apply(combinedStreams);
-});
+gulp bump:major
+gulp bump:minor
+gulp bump:patch
+gulp bump:pre
+gulp release
 
-gulp.task('test:browserify', function(){
-    return gulp.src([paths.dirs.manualtest, paths.dirs.build])
-    .pipe(webserver({
-        port: 8080,
-        host : "localhost"
-    }));
-});
+*/

@@ -1,7 +1,7 @@
 {
   "name": "javascript-sound-models",
   "description": "Sonoport Javascript Sound Models",
-  "version": "2.1.0",
+  "version": "2.3.0",
   "author": "Sonport Asia Pte. Ltd",
   "contributors": [
     {
@@ -17,9 +17,6 @@
       "email": "cliburn.solano@sonoport.com"
     }
   ],
-  "dependencies": {
-    "requirejs": "2.1.16"
-  },
   "devDependencies": {
     "browserify": "^6.3.2",
     "glob": "^4.3.5",
@@ -28,8 +25,8 @@
     "gulp-cached": "^1.0.2",
     "gulp-compass": "^2.0.3",
     "gulp-debug": "^2.0.0",
-    "gulp-filter": "^2.0.2",
     "gulp-header": "^1.2.2",
+    "gulp-ignore": "^1.2.1",
     "gulp-jsbeautifier": "0.0.4",
     "gulp-jshint": "^1.9.2",
     "gulp-util": "^3.0.3",
@@ -38,7 +35,9 @@
     "jshint-stylish": "^1.0.0",
     "merge-stream": "^0.1.7",
     "requirejs": "2.1.16",
-    "vinyl-source-stream": "^1.0.0"
+    "uglifyify": "^3.0.1",
+    "vinyl-source-stream": "^1.0.0",
+    "require-uncached": "^1.0.2"
   },
   "keywords": [
     "sonoport",
@@ -53,7 +52,7 @@
     "url": "git@bitbucket.org:sonoport/javascript-sound-models.git"
   },
   "scripts": {
-    "build": "gulp devbuid",
+    "build": "gulp build",
     "test": "gulp test"
   },
   "engines": {
