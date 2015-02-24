@@ -19,6 +19,7 @@ function SPPlaybackRateParam( bufferSourceNode, audioParam, counterParam ) {
     this.minValue = audioParam.minValue;
     this.name = audioParam.name;
     this.units = audioParam.units;
+    this.isSPPlaybackRateParam = true;
 
     Object.defineProperty( this, 'value', {
         enumerable: true,

@@ -70,6 +70,8 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
 
     this.name = "";
 
+    this.isSPAudioParam = true;
+
     /**
      * The parameter's value. This attribute is initialized to the defaultValue. If value is set during a time when there are any automation events scheduled then it will be ignored and no exception will be thrown.
      *

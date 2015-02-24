@@ -309,7 +309,23 @@ gulp.task('test', ['devbuild'], function(){
     }));
 });
 
-gulp.task('unittest', ['devbuild', 'watch:test'], function(){
+gulp.task('unittestbuild',['jsbeautify:test'], function(){
+
+    del(['test/unit/test_bundle.js'], function () {
+        console.log('Cleaning old built assets.');
+    });
+
+    var bundler = browserify({
+        entries: ['./test/unit/spec_entry.js'],
+        paths : [paths.dirs.lib],
+    });
+    return bundler
+    .bundle()
+    .pipe(source('test_bundle.js'))
+    .pipe(gulp.dest('test/unit/'));
+});
+
+gulp.task('unittest', ['devbuild', 'unittestbuild', 'watch:test'], function(){
     return gulp.src([paths.dirs.unittest, paths.dirs.build])
     .pipe(webserver({
         port: 8081,

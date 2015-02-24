@@ -112,6 +112,8 @@ function BaseEffect( context ) {
      **/
     this.effectName = 'Effect';
 
+    this.isBaseEffect = true;
+
     this.parameterList_ = [];
 
     function bootAudioContext( context ) {

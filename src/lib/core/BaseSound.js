@@ -190,6 +190,8 @@ function BaseSound( context ) {
      */
     this.onAudioEnd = null;
 
+    this.isBaseSound = true;
+
     this.parameterList_ = [];
 
     this.connect( this.audioContext.destination );

@@ -1,5 +1,5 @@
-require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
     "use strict";
+    var detectLoopMarkers = require( 'core/DetectLoopMarkers' )
     console.log( "Running DetectLoopMarker Test... " );
     if ( !window.context ) {
         window.context = new AudioContext();
@@ -279,4 +279,3 @@ require( [ 'core/DetectLoopMarkers' ], function ( detectLoopMarkers ) {
             } );
         } );
     } );
-} );
