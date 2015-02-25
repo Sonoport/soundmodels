@@ -7,6 +7,7 @@ var glob = require("glob");
 var merge = require('merge-stream');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
+var proxyquire = require('proxyquireify');
 var requireUncached = require('require-uncached');
 
 var gulp = require('gulp');
@@ -39,7 +40,7 @@ var paths = {
         effectsSrc: 'src/lib/effects/*.js',
         coreSrc: 'src/lib/core/*.js',
         allTestSrc: 'test/**/*.js',
-        unitTestCases: 'test/unit/cases/**/**/.js',
+        unitTestCases: 'test/unit/cases/**/*.js',
         builtSrc : 'build/**/*.js',
         publishableSrc : ['src/lib/models/*.js', 'src/lib/effects/*.js', 'src/lib/core/SPAudioParam.js','src/lib/core/BaseSound.js', 'src/lib/core/BaseEffect.js', 'src/lib/core/SPAudioBuffer.js']
     },
@@ -309,6 +310,10 @@ gulp.task('test', ['devbuild'], function(){
     }));
 });
 
+gulp.task('watch:unittest', ['watch:lib'], function(){
+    gulp.watch([paths.files.unitTestCases, './test/unit/spec_entry.js'], ['unittestbuild']);
+});
+
 gulp.task('unittestbuild',['jsbeautify:test'], function(){
 
     del(['test/unit/test_bundle.js'], function () {
@@ -320,12 +325,13 @@ gulp.task('unittestbuild',['jsbeautify:test'], function(){
         paths : [paths.dirs.lib],
     });
     return bundler
+    .plugin(proxyquire.plugin)
     .bundle()
     .pipe(source('test_bundle.js'))
     .pipe(gulp.dest('test/unit/'));
 });
 
-gulp.task('unittest', ['devbuild', 'unittestbuild', 'watch:test'], function(){
+gulp.task('unittest', ['devbuild', 'unittestbuild', 'watch:unittest'], function(){
     return gulp.src([paths.dirs.unittest, paths.dirs.build])
     .pipe(webserver({
         port: 8081,

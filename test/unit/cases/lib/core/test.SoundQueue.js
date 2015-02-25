@@ -1,53 +1,51 @@
-// var looperSpies = {
-//     start: jasmine.createSpy( 'start' ),
-//     stop: jasmine.createSpy( 'stop' ),
-//     play: jasmine.createSpy( 'play' ),
-//     pause: jasmine.createSpy( 'pause' ),
-//     release: jasmine.createSpy( 'release' ),
-//     setSources: jasmine.createSpy( 'setSources' ),
-//     connect: jasmine.createSpy( 'connect' ),
-//     disconnect: jasmine.createSpy( 'disconnect' ),
-//     listParams: jasmine.createSpy( 'listParams' ),
-//     startPointObj: {},
-//     easeInObj: {
-//         setValueAtTime: jasmine.createSpy( 'setValueAtTime' )
-//     },
-//     maxLoopsObj: {},
-//     easeOutObj: {
-//         setValueAtTime: jasmine.createSpy( 'easeOut' )
-//     },
-//     playSpeedObj: {
-//         setValueAtTime: jasmine.createSpy( 'playSpeed' )
-//     }
-// };
+var looperSpies = {
+    start: jasmine.createSpy( 'start' ),
+    stop: jasmine.createSpy( 'stop' ),
+    play: jasmine.createSpy( 'play' ),
+    pause: jasmine.createSpy( 'pause' ),
+    release: jasmine.createSpy( 'release' ),
+    setSources: jasmine.createSpy( 'setSources' ),
+    connect: jasmine.createSpy( 'connect' ),
+    disconnect: jasmine.createSpy( 'disconnect' ),
+    listParams: jasmine.createSpy( 'listParams' ),
+    startPointObj: {},
+    easeInObj: {
+        setValueAtTime: jasmine.createSpy( 'setValueAtTime' )
+    },
+    maxLoopsObj: {},
+    easeOutObj: {
+        setValueAtTime: jasmine.createSpy( 'easeOut' )
+    },
+    playSpeedObj: {
+        setValueAtTime: jasmine.createSpy( 'playSpeed' )
+    }
+};
 
-// var looperStub = {
-//     "models/Looper": function () {
-//         "use strict";
-//         return {
-//             isInitialized: true,
-//             playSpeed: looperSpies.playSpeedObj,
-//             easeIn: looperSpies.easeInObj,
-//             easeOut: looperSpies.easeOutObj,
-//             startPoint: looperSpies.startPointObj,
-//             maxLoops: looperSpies.maxLoopsObj,
-//             start: looperSpies.start,
-//             stop: looperSpies.stop,
-//             play: looperSpies.play,
-//             pause: looperSpies.pause,
-//             release: looperSpies.release,
-//             setSources: looperSpies.setSources,
-//             connect: looperSpies.connect,
-//             disconnect: looperSpies.disconnect,
-//             listParams: looperSpies.listParams
-//         };
-//     }
-// };
-
-// var requireWithStubbedLooper = stubbedRequire( looperStub );
+var looperStub = {
+    'models/Looper': function () {
+        return {
+            isInitialized: true,
+            playSpeed: looperSpies.playSpeedObj,
+            easeIn: looperSpies.easeInObj,
+            easeOut: looperSpies.easeOutObj,
+            startPoint: looperSpies.startPointObj,
+            maxLoops: looperSpies.maxLoopsObj,
+            start: looperSpies.start,
+            stop: looperSpies.stop,
+            play: looperSpies.play,
+            pause: looperSpies.pause,
+            release: looperSpies.release,
+            setSources: looperSpies.setSources,
+            connect: looperSpies.connect,
+            disconnect: looperSpies.disconnect,
+            listParams: looperSpies.listParams
+        }
+    }
+};
 
 "use strict";
-var SoundQueue = require( 'core/SoundQueue' );
+var proxyquire = require( 'proxyquireify' )( require );
+var SoundQueue = proxyquire( 'core/SoundQueue', looperStub );
 console.log( "Running SoundQueue Test... " );
 if ( !window.context ) {
     window.context = new AudioContext();
@@ -137,7 +135,7 @@ describe( 'SoundQueue.js', function () {
                 expect( looperSpies.start )
                     .toHaveBeenCalledWith( jasmine.any( Number ), offset, jasmine.any( Object ), attackDuration );
                 done();
-            }, 400 );
+            }, 500 );
         } );
     } );
 

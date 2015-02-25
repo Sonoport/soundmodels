@@ -135,7 +135,7 @@ describe( 'Extender.js', function () {
     describe( '#properties', function () {
 
         it( "should have a valid parameter pitchShift", function () {
-
+            "use strict";
             expect( extender.pitchShift.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -154,6 +154,7 @@ describe( 'Extender.js', function () {
         } );
 
         it( "should have a valid parameter eventPeriod", function () {
+            "use strict";
             expect( extender.eventPeriod.isSPAudioParam ).toBe( true );
             expect( function () {
                 extender.eventPeriod = 0;
@@ -171,6 +172,7 @@ describe( 'Extender.js', function () {
         } );
 
         it( "should have a valid parameter crossFadeDuration", function () {
+            "use strict";
             expect( extender.crossFadeDuration.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -296,185 +298,179 @@ describe( 'Extender.js', function () {
     } );
 } );
 
-// var queueSpies = {
-//     queueStart: jasmine.createSpy( 'queueStart' ),
-//     queueRelease: jasmine.createSpy( 'queueRelease' ),
-//     queueSetParameter: jasmine.createSpy( 'queueSetParameter' ),
-//     queueSetSource: jasmine.createSpy( 'queueSetSource' ),
-//     connect: jasmine.createSpy( 'connect' ),
-//     disconnect: jasmine.createSpy( 'disconnect' ),
-//     pause: jasmine.createSpy( 'pause' ),
-//     stop: jasmine.createSpy( 'stop' )
-// };
+var queueSpies = {
+    queueStart: jasmine.createSpy( 'queueStart' ),
+    queueRelease: jasmine.createSpy( 'queueRelease' ),
+    queueSetParameter: jasmine.createSpy( 'queueSetParameter' ),
+    queueSetSource: jasmine.createSpy( 'queueSetSource' ),
+    connect: jasmine.createSpy( 'connect' ),
+    disconnect: jasmine.createSpy( 'disconnect' ),
+    pause: jasmine.createSpy( 'pause' ),
+    stop: jasmine.createSpy( 'stop' )
+};
 
-// var queueStub = {
-//     "core/SoundQueue": function () {
-//         return {
-//             connect: queueSpies.connect,
-//             disconnect: queueSpies.disconnect,
-//             pause: queueSpies.pause,
-//             stop: queueSpies.stop,
-//             queueStart: queueSpies.queueStart,
-//             queueRelease: queueSpies.queueRelease,
-//             queueSetSource: queueSpies.queueSetSource,
-//             queueSetParameter: queueSpies.queueSetParameter
-//         };
-//     }
-// };
+var queueStub = {
+    "core/SoundQueue": function () {
+        return {
+            connect: queueSpies.connect,
+            disconnect: queueSpies.disconnect,
+            pause: queueSpies.pause,
+            stop: queueSpies.stop,
+            queueStart: queueSpies.queueStart,
+            queueRelease: queueSpies.queueRelease,
+            queueSetSource: queueSpies.queueSetSource,
+            queueSetParameter: queueSpies.queueSetParameter
+        };
+    }
+};
 
-// var requireWithStubbedSource = stubbedRequire( queueStub );
-// requireWithStubbedSource( [ 'models/Extender', 'core/BaseSound', 'core/SPAudioParam' ], function ( Extender, BaseSound, SPAudioParam ) {
-//     if ( !window.context ) {
-//         window.context = new AudioContext();
-//     }
-//     var listofSounds = [ 'audio/surf.mp3' ];
+var proxyquire = require( 'proxyquireify' )( require );
+var sExtender = proxyquire( 'models/Extender', queueStub );
+describe( 'Extender.js with stubbed Queue', function () {
+    var extender;
+    var customMatchers = {
+        toBeInstanceOf: function () {
+            return {
+                compare: function ( actual, expected ) {
+                    var result = {};
+                    result.pass = actual instanceof expected;
+                    if ( result.pass ) {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
+                    } else {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
+                    }
+                    return result;
+                }
+            };
+        }
+    };
 
-//     describe( 'Extender.js with stubbed Queue', function () {
-//         var extender;
-//         var customMatchers = {
-//             toBeInstanceOf: function () {
-//                 return {
-//                     compare: function ( actual, expected ) {
-//                         var result = {};
-//                         result.pass = actual instanceof expected;
-//                         if ( result.pass ) {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
-//                         } else {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
-//                         }
-//                         return result;
-//                     }
-//                 };
-//             }
-//         };
+    beforeEach( function ( done ) {
+        jasmine.addMatchers( customMatchers );
+        resetAllSourceSpies();
+        if ( !extender ) {
+            console.log( "Initing Stubbed Extender.." );
+            extender = new sExtender( window.context, listofSounds, null, function () {
+                done();
+            } );
+        } else {
+            done();
+        }
+    } );
 
-//         beforeEach( function ( done ) {
-//             jasmine.addMatchers( customMatchers );
-//             resetAllSourceSpies();
-//             if ( !extender ) {
-//                 console.log( "Initing Stubbed Extender.." );
-//                 extender = new Extender( window.context, listofSounds, null, function () {
-//                     done();
-//                 } );
-//             } else {
-//                 done();
-//             }
-//         } );
+    function resetAllSourceSpies() {
+        for ( var key in queueSpies ) {
+            if ( queueSpies.hasOwnProperty( key ) && queueSpies[ key ].calls ) {
+                queueSpies[ key ].calls.reset();
+            }
+        }
+    }
+    describe( '#new Extender( context ) ', function () {
+        it( "should have audioContext available", function () {
+            expect( extender.audioContext ).toBeInstanceOf( AudioContext );
+        } );
+    } );
+    describe( '#actions', function () {
+        it( "should have start/stop/play/pause/release defined", function () {
+            expect( extender.start ).toBeInstanceOf( Function );
+            expect( extender.stop ).toBeInstanceOf( Function );
+            expect( extender.play ).toBeInstanceOf( Function );
+            expect( extender.pause ).toBeInstanceOf( Function );
+            expect( extender.release ).toBeInstanceOf( Function );
+        } );
 
-//         function resetAllSourceSpies() {
-//             for ( var key in queueSpies ) {
-//                 if ( queueSpies.hasOwnProperty( key ) && queueSpies[ key ].calls ) {
-//                     queueSpies[ key ].calls.reset();
-//                 }
-//             }
-//         }
-//         describe( '#new Extender( context ) ', function () {
-//             it( "should have audioContext available", function () {
-//                 expect( extender.audioContext ).toBeInstanceOf( AudioContext );
-//             } );
-//         } );
-//         describe( '#actions', function () {
-//             it( "should have start/stop/play/pause/release defined", function () {
-//                 expect( extender.start ).toBeInstanceOf( Function );
-//                 expect( extender.stop ).toBeInstanceOf( Function );
-//                 expect( extender.play ).toBeInstanceOf( Function );
-//                 expect( extender.pause ).toBeInstanceOf( Function );
-//                 expect( extender.release ).toBeInstanceOf( Function );
-//             } );
+        it( "should be start/stop audio", function ( done ) {
+            expect( function () {
+                extender.start();
+            } ).not.toThrowError();
 
-//             it( "should be start/stop audio", function ( done ) {
-//                 expect( function () {
-//                     extender.start();
-//                 } ).not.toThrowError();
+            expect( extender.isPlaying ).toBe( true );
+            setTimeout( function () {
+                expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+                expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+                expect( queueSpies.queueStart ).toHaveBeenCalled();
+            }, 2000 );
 
-//                 expect( extender.isPlaying ).toBe( true );
-//                 setTimeout( function () {
-//                     expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                     expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                     expect( queueSpies.queueStart ).toHaveBeenCalled();
-//                 }, 2000 );
+            expect( function () {
+                extender.stop();
+            } ).not.toThrowError();
 
-//                 expect( function () {
-//                     extender.stop();
-//                 } ).not.toThrowError();
+            expect( extender.isPlaying ).toBe( false );
+            setTimeout( function () {
+                expect( queueSpies.pause ).toHaveBeenCalled();
+            }, 2000 );
+            done();
+        } );
 
-//                 expect( extender.isPlaying ).toBe( false );
-//                 setTimeout( function () {
-//                     expect( queueSpies.pause ).toHaveBeenCalled();
-//                 }, 2000 );
-//                 done();
-//             } );
+        it( "should be play/pause audio", function ( done ) {
+            expect( function () {
+                extender.play();
+            } ).not.toThrowError();
 
-//             it( "should be play/pause audio", function ( done ) {
-//                 expect( function () {
-//                     extender.play();
-//                 } ).not.toThrowError();
+            setTimeout( function () {
+                expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+                expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+                expect( queueSpies.queueStart ).toHaveBeenCalled();
+                expect( extender.isPlaying ).toBe( true );
 
-//                 setTimeout( function () {
-//                     expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                     expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                     expect( queueSpies.queueStart ).toHaveBeenCalled();
-//                     expect( extender.isPlaying ).toBe( true );
+                expect( function () {
+                    extender.pause();
+                } ).not.toThrowError();
 
-//                     expect( function () {
-//                         extender.pause();
-//                     } ).not.toThrowError();
+                expect( extender.isPlaying ).toBe( false );
 
-//                     expect( extender.isPlaying ).toBe( false );
+                setTimeout( function () {
+                    expect( queueSpies.pause ).toHaveBeenCalled();
 
-//                     setTimeout( function () {
-//                         expect( queueSpies.pause ).toHaveBeenCalled();
+                    queueSpies.queueSetSource.calls.reset();
+                    queueSpies.queueSetParameter.calls.reset();
+                    queueSpies.queueSetSource.calls.reset();
+                    queueSpies.pause.calls.reset();
 
-//                         queueSpies.queueSetSource.calls.reset();
-//                         queueSpies.queueSetParameter.calls.reset();
-//                         queueSpies.queueSetSource.calls.reset();
-//                         queueSpies.pause.calls.reset();
+                    expect( function () {
+                        extender.play();
+                    } ).not.toThrowError();
 
-//                         expect( function () {
-//                             extender.play();
-//                         } ).not.toThrowError();
+                    setTimeout( function () {
+                        expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+                        expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+                        expect( queueSpies.queueStart ).toHaveBeenCalled();
+                        expect( extender.isPlaying ).toBe( true );
 
-//                         setTimeout( function () {
-//                             expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                             expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                             expect( queueSpies.queueStart ).toHaveBeenCalled();
-//                             expect( extender.isPlaying ).toBe( true );
+                        expect( function () {
+                            extender.pause();
+                        } ).not.toThrowError();
 
-//                             expect( function () {
-//                                 extender.pause();
-//                             } ).not.toThrowError();
+                        expect( extender.isPlaying ).toBe( false );
+                        setTimeout( function () {
+                            expect( queueSpies.pause ).toHaveBeenCalled();
+                            done();
+                        }, 1000 );
+                    }, 1000 );
+                }, 1000 );
+            }, 1000 );
 
-//                             expect( extender.isPlaying ).toBe( false );
-//                             setTimeout( function () {
-//                                 expect( queueSpies.pause ).toHaveBeenCalled();
-//                                 done();
-//                             }, 1000 );
-//                         }, 1000 );
-//                     }, 1000 );
-//                 }, 1000 );
+        } );
 
-//             } );
+        it( "should be play/release audio", function ( done ) {
+            expect( function () {
+                extender.play();
+            } ).not.toThrowError();
 
-//             it( "should be play/release audio", function ( done ) {
-//                 expect( function () {
-//                     extender.play();
-//                 } ).not.toThrowError();
+            expect( extender.isPlaying ).toBe( true );
+            expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+            expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+            expect( queueSpies.queueStart ).toHaveBeenCalled();
 
-//                 expect( extender.isPlaying ).toBe( true );
-//                 expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                 expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                 expect( queueSpies.queueStart ).toHaveBeenCalled();
+            expect( function () {
+                extender.release();
+            } ).not.toThrowError();
 
-//                 expect( function () {
-//                     extender.release();
-//                 } ).not.toThrowError();
-
-//                 setTimeout( function () {
-//                     expect( extender.isPlaying ).toBe( false );
-//                     expect( queueSpies.pause ).toHaveBeenCalled();
-//                     done();
-//                 }, 1000 );
-//             } );
-//         } );
-//     } );
-// } );
+            setTimeout( function () {
+                expect( extender.isPlaying ).toBe( false );
+                expect( queueSpies.pause ).toHaveBeenCalled();
+                done();
+            }, 1000 );
+        } );
+    } );
+} );

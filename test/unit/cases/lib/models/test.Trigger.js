@@ -136,7 +136,7 @@ describe( 'Trigger.js', function () {
     describe( '#properties', function () {
 
         it( "should have a valid parameter pitchShift", function () {
-
+            "use strict";
             expect( trigger.pitchShift.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -155,6 +155,7 @@ describe( 'Trigger.js', function () {
         } );
 
         it( "should have a valid parameter pitchRand", function () {
+            "use strict";
             expect( trigger.pitchRand.isSPAudioParam ).toBe( true );
             expect( function () {
                 trigger.pitchRand = 0;
@@ -172,6 +173,7 @@ describe( 'Trigger.js', function () {
         } );
 
         it( "should have a valid parameter eventRand", function () {
+            "use strict";
             expect( trigger.eventRand.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -296,184 +298,179 @@ describe( 'Trigger.js', function () {
         } );
     } );
 } );
-// var queueSpies = {
-//     queueStart: jasmine.createSpy( 'queueStart' ),
-//     queueRelease: jasmine.createSpy( 'queueRelease' ),
-//     queueSetParameter: jasmine.createSpy( 'queueSetParameter' ),
-//     queueSetSource: jasmine.createSpy( 'queueSetSource' ),
-//     connect: jasmine.createSpy( 'connect' ),
-//     disconnect: jasmine.createSpy( 'disconnect' ),
-//     pause: jasmine.createSpy( 'pause' ),
-//     stop: jasmine.createSpy( 'stop' )
-// };
 
-// var queueStub = {
-//     "core/SoundQueue": function () {
-//         return {
-//             connect: queueSpies.connect,
-//             disconnect: queueSpies.disconnect,
-//             pause: queueSpies.pause,
-//             stop: queueSpies.stop,
-//             queueStart: queueSpies.queueStart,
-//             queueRelease: queueSpies.queueRelease,
-//             queueSetSource: queueSpies.queueSetSource,
-//             queueSetParameter: queueSpies.queueSetParameter
-//         };
-//     }
-// };
+var queueSpies = {
+    queueStart: jasmine.createSpy( 'queueStart' ),
+    queueRelease: jasmine.createSpy( 'queueRelease' ),
+    queueSetParameter: jasmine.createSpy( 'queueSetParameter' ),
+    queueSetSource: jasmine.createSpy( 'queueSetSource' ),
+    connect: jasmine.createSpy( 'connect' ),
+    disconnect: jasmine.createSpy( 'disconnect' ),
+    pause: jasmine.createSpy( 'pause' ),
+    stop: jasmine.createSpy( 'stop' )
+};
 
-// var requireWithStubbedSource = stubbedRequire( queueStub );
-// requireWithStubbedSource( [ 'models/Trigger', 'core/BaseSound', 'core/SPAudioParam' ], function ( Trigger, BaseSound, SPAudioParam ) {
-//     if ( !window.context ) {
-//         window.context = new AudioContext();
-//     }
-//     var listofSounds = [ 'audio/surf.mp3' ];
+var queueStub = {
+    "core/SoundQueue": function () {
+        return {
+            connect: queueSpies.connect,
+            disconnect: queueSpies.disconnect,
+            pause: queueSpies.pause,
+            stop: queueSpies.stop,
+            queueStart: queueSpies.queueStart,
+            queueRelease: queueSpies.queueRelease,
+            queueSetSource: queueSpies.queueSetSource,
+            queueSetParameter: queueSpies.queueSetParameter
+        };
+    }
+};
 
-//     describe( 'Trigger.js with stubbed Queue', function () {
-//         var trigger;
-//         var customMatchers = {
-//             toBeInstanceOf: function () {
-//                 return {
-//                     compare: function ( actual, expected ) {
-//                         var result = {};
-//                         result.pass = actual instanceof expected;
-//                         if ( result.pass ) {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
-//                         } else {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
-//                         }
-//                         return result;
-//                     }
-//                 };
-//             }
-//         };
+var proxyquire = require( 'proxyquireify' )( require );
+var sTrigger = proxyquire( 'models/Trigger', queueStub );
+describe( 'Trigger.js with stubbed Queue', function () {
+    var trigger;
+    var customMatchers = {
+        toBeInstanceOf: function () {
+            return {
+                compare: function ( actual, expected ) {
+                    var result = {};
+                    result.pass = actual instanceof expected;
+                    if ( result.pass ) {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
+                    } else {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
+                    }
+                    return result;
+                }
+            };
+        }
+    };
 
-//         beforeEach( function ( done ) {
-//             jasmine.addMatchers( customMatchers );
-//             resetAllSourceSpies();
-//             if ( !trigger ) {
-//                 trigger = new Trigger( window.context, listofSounds, null, function () {
-//                     done();
-//                 } );
-//             } else {
-//                 done();
-//             }
-//         } );
+    beforeEach( function ( done ) {
+        jasmine.addMatchers( customMatchers );
+        resetAllSourceSpies();
+        if ( !trigger ) {
+            trigger = new sTrigger( window.context, listofSounds, null, function () {
+                done();
+            } );
+        } else {
+            done();
+        }
+    } );
 
-//         function resetAllSourceSpies() {
-//             for ( var key in queueSpies ) {
-//                 if ( queueSpies.hasOwnProperty( key ) && queueSpies[ key ].calls ) {
-//                     queueSpies[ key ].calls.reset();
-//                 }
-//             }
-//         }
-//         describe( '#new Trigger( context ) ', function () {
-//             it( "should have audioContext available", function () {
-//                 expect( trigger.audioContext ).toBeInstanceOf( AudioContext );
-//             } );
-//         } );
-//         describe( '#actions', function () {
-//             it( "should have start/stop/play/pause/release defined", function () {
-//                 expect( trigger.start ).toBeInstanceOf( Function );
-//                 expect( trigger.stop ).toBeInstanceOf( Function );
-//                 expect( trigger.play ).toBeInstanceOf( Function );
-//                 expect( trigger.pause ).toBeInstanceOf( Function );
-//                 expect( trigger.release ).toBeInstanceOf( Function );
-//             } );
+    function resetAllSourceSpies() {
+        for ( var key in queueSpies ) {
+            if ( queueSpies.hasOwnProperty( key ) && queueSpies[ key ].calls ) {
+                queueSpies[ key ].calls.reset();
+            }
+        }
+    }
+    describe( '#new Trigger( context ) ', function () {
+        it( "should have audioContext available", function () {
+            expect( trigger.audioContext ).toBeInstanceOf( AudioContext );
+        } );
+    } );
+    describe( '#actions', function () {
+        it( "should have start/stop/play/pause/release defined", function () {
+            expect( trigger.start ).toBeInstanceOf( Function );
+            expect( trigger.stop ).toBeInstanceOf( Function );
+            expect( trigger.play ).toBeInstanceOf( Function );
+            expect( trigger.pause ).toBeInstanceOf( Function );
+            expect( trigger.release ).toBeInstanceOf( Function );
+        } );
 
-//             it( "should be start/stop audio", function ( done ) {
-//                 expect( function () {
-//                     trigger.start();
-//                 } ).not.toThrowError();
+        it( "should be start/stop audio", function ( done ) {
+            expect( function () {
+                trigger.start();
+            } ).not.toThrowError();
 
-//                 expect( trigger.isPlaying ).toBe( true );
-//                 setTimeout( function () {
-//                     expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                     expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                     expect( queueSpies.queueStart ).toHaveBeenCalled();
-//                 }, 2000 );
+            expect( trigger.isPlaying ).toBe( true );
+            setTimeout( function () {
+                expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+                expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+                expect( queueSpies.queueStart ).toHaveBeenCalled();
+            }, 2000 );
 
-//                 expect( function () {
-//                     trigger.stop();
-//                 } ).not.toThrowError();
+            expect( function () {
+                trigger.stop();
+            } ).not.toThrowError();
 
-//                 expect( trigger.isPlaying ).toBe( false );
-//                 setTimeout( function () {
-//                     expect( queueSpies.pause ).toHaveBeenCalled();
-//                 }, 2000 );
-//                 done();
-//             } );
+            expect( trigger.isPlaying ).toBe( false );
+            setTimeout( function () {
+                expect( queueSpies.pause ).toHaveBeenCalled();
+            }, 2000 );
+            done();
+        } );
 
-//             it( "should be play/pause audio", function ( done ) {
-//                 expect( function () {
-//                     trigger.play();
-//                 } ).not.toThrowError();
+        it( "should be play/pause audio", function ( done ) {
+            expect( function () {
+                trigger.play();
+            } ).not.toThrowError();
 
-//                 setTimeout( function () {
-//                     expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                     expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                     expect( queueSpies.queueStart ).toHaveBeenCalled();
-//                     expect( trigger.isPlaying ).toBe( true );
+            setTimeout( function () {
+                expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+                expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+                expect( queueSpies.queueStart ).toHaveBeenCalled();
+                expect( trigger.isPlaying ).toBe( true );
 
-//                     expect( function () {
-//                         trigger.pause();
-//                     } ).not.toThrowError();
+                expect( function () {
+                    trigger.pause();
+                } ).not.toThrowError();
 
-//                     expect( trigger.isPlaying ).toBe( false );
+                expect( trigger.isPlaying ).toBe( false );
 
-//                     setTimeout( function () {
-//                         expect( queueSpies.pause ).toHaveBeenCalled();
+                setTimeout( function () {
+                    expect( queueSpies.pause ).toHaveBeenCalled();
 
-//                         queueSpies.queueSetSource.calls.reset();
-//                         queueSpies.queueSetParameter.calls.reset();
-//                         queueSpies.queueSetSource.calls.reset();
-//                         queueSpies.pause.calls.reset();
+                    queueSpies.queueSetSource.calls.reset();
+                    queueSpies.queueSetParameter.calls.reset();
+                    queueSpies.queueSetSource.calls.reset();
+                    queueSpies.pause.calls.reset();
 
-//                         expect( function () {
-//                             trigger.play();
-//                         } ).not.toThrowError();
+                    expect( function () {
+                        trigger.play();
+                    } ).not.toThrowError();
 
-//                         setTimeout( function () {
-//                             expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                             expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                             expect( queueSpies.queueStart ).toHaveBeenCalled();
-//                             expect( trigger.isPlaying ).toBe( true );
+                    setTimeout( function () {
+                        expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+                        expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+                        expect( queueSpies.queueStart ).toHaveBeenCalled();
+                        expect( trigger.isPlaying ).toBe( true );
 
-//                             expect( function () {
-//                                 trigger.pause();
-//                             } ).not.toThrowError();
+                        expect( function () {
+                            trigger.pause();
+                        } ).not.toThrowError();
 
-//                             expect( trigger.isPlaying ).toBe( false );
-//                             setTimeout( function () {
-//                                 expect( queueSpies.pause ).toHaveBeenCalled();
-//                                 done();
-//                             }, 1000 );
-//                         }, 1000 );
-//                     }, 1000 );
-//                 }, 1000 );
+                        expect( trigger.isPlaying ).toBe( false );
+                        setTimeout( function () {
+                            expect( queueSpies.pause ).toHaveBeenCalled();
+                            done();
+                        }, 1000 );
+                    }, 1000 );
+                }, 1000 );
+            }, 1000 );
 
-//             } );
+        } );
 
-//             it( "should be play/release audio", function ( done ) {
-//                 expect( function () {
-//                     trigger.play();
-//                 } ).not.toThrowError();
+        it( "should be play/release audio", function ( done ) {
+            expect( function () {
+                trigger.play();
+            } ).not.toThrowError();
 
-//                 expect( trigger.isPlaying ).toBe( true );
-//                 expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                 expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                 expect( queueSpies.queueStart ).toHaveBeenCalled();
+            expect( trigger.isPlaying ).toBe( true );
+            expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+            expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+            expect( queueSpies.queueStart ).toHaveBeenCalled();
 
-//                 expect( function () {
-//                     trigger.release();
-//                 } ).not.toThrowError();
+            expect( function () {
+                trigger.release();
+            } ).not.toThrowError();
 
-//                 setTimeout( function () {
-//                     expect( trigger.isPlaying ).toBe( false );
-//                     expect( queueSpies.pause ).toHaveBeenCalled();
-//                     done();
-//                 }, 1000 );
-//             } );
-//         } );
-//     } );
-// } );
+            setTimeout( function () {
+                expect( trigger.isPlaying ).toBe( false );
+                expect( queueSpies.pause ).toHaveBeenCalled();
+                done();
+            }, 1000 );
+        } );
+    } );
+} );

@@ -152,7 +152,7 @@ describe( 'Looper.js', function () {
         } );
 
         it( "should have a valid parameter easeIn", function () {
-
+            "use strict";
             expect( looper.easeIn.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -171,6 +171,7 @@ describe( 'Looper.js', function () {
         } );
 
         it( "should have a valid parameter easeOut", function () {
+            "use strict";
             expect( looper.easeOut.isSPAudioParam ).toBe( true );
             expect( function () {
                 looper.easeOut = 0;
@@ -188,6 +189,7 @@ describe( 'Looper.js', function () {
         } );
 
         it( "should have a valid parameter maxLoops", function () {
+            "use strict";
             expect( looper.maxLoops.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -205,6 +207,7 @@ describe( 'Looper.js', function () {
         } );
 
         it( "should have a valid parameter multiTrackGain", function () {
+            "use strict";
             expect( looper.multiTrackGain ).toBeInstanceOf( Array );
             expect( looper.multiTrackGain.length ).toBe( listofSounds.length );
             expect( looper.multiTrackGain[ 0 ].isSPAudioParam ).toBe( true );
@@ -364,200 +367,195 @@ describe( 'Looper.js', function () {
     } );
 } );
 
-// var sourceSpies = {
-//     start: jasmine.createSpy( 'start' ),
-//     stop: jasmine.createSpy( 'stop' ),
-//     connect: jasmine.createSpy( 'connect' ),
-//     disconnect: jasmine.createSpy( 'disconnect' ),
-//     resetBufferSource: jasmine.createSpy( 'resetBuffer' )
-// };
+var sourceSpies = {
+    start: jasmine.createSpy( 'start' ),
+    stop: jasmine.createSpy( 'stop' ),
+    connect: jasmine.createSpy( 'connect' ),
+    disconnect: jasmine.createSpy( 'disconnect' ),
+    resetBufferSource: jasmine.createSpy( 'resetBuffer' )
+};
 
-// var sourceStub = {
-//     "core/SPAudioBufferSourceNode": function () {
-//         return {
-//             playbackRate: {
-//                 value: 1.0,
-//                 defaultValue: 0
-//             },
-//             connect: sourceSpies.connect,
-//             disconnect: sourceSpies.disconnect,
-//             start: sourceSpies.start,
-//             loopStart: 0,
-//             loopEnd: 1,
-//             stop: function ( when ) {
-//                 this.onended();
-//                 sourceSpies.stop( when );
-//             },
-//             resetBufferSource: sourceSpies.resetBufferSource,
-//         };
-//     }
-// };
+var sourceStub = {
+    "core/SPAudioBufferSourceNode": function () {
+        return {
+            playbackRate: {
+                value: 1.0,
+                defaultValue: 0
+            },
+            connect: sourceSpies.connect,
+            disconnect: sourceSpies.disconnect,
+            start: sourceSpies.start,
+            loopStart: 0,
+            loopEnd: 1,
+            stop: function ( when ) {
+                this.onended();
+                sourceSpies.stop( when );
+            },
+            resetBufferSource: sourceSpies.resetBufferSource,
+        };
+    }
+};
 
-// var requireWithStubbedSource = stubbedRequire( sourceStub );
-// requireWithStubbedSource( [ 'models/Looper', 'core/BaseSound', 'core/SPAudioParam' ], function ( Looper, BaseSound, SPAudioParam ) {
-//     if ( !window.context ) {
-//         window.context = new AudioContext();
-//     }
-//     var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
-//     describe( 'Looper.js with stubbed Source', function () {
-//         var looper;
-//         var customMatchers = {
-//             toBeInstanceOf: function () {
-//                 return {
-//                     compare: function ( actual, expected ) {
-//                         var result = {};
-//                         result.pass = actual instanceof expected;
-//                         if ( result.pass ) {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
-//                         } else {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
-//                         }
-//                         return result;
-//                     }
-//                 };
-//             }
-//         };
+var proxyquire = require( 'proxyquireify' )( require );
+var sLooper = proxyquire( 'models/Looper', sourceStub );
+describe( 'Looper.js with stubbed Source', function () {
+    var looper;
+    var customMatchers = {
+        toBeInstanceOf: function () {
+            return {
+                compare: function ( actual, expected ) {
+                    var result = {};
+                    result.pass = actual instanceof expected;
+                    if ( result.pass ) {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
+                    } else {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
+                    }
+                    return result;
+                }
+            };
+        }
+    };
 
-//         beforeEach( function ( done ) {
-//             jasmine.addMatchers( customMatchers );
-//             resetAllSourceSpies();
-//             if ( !looper ) {
-//                 console.log( "Initing Stubbed Looper.." );
-//                 looper = new Looper( window.context, listofSounds, null, function () {
-//                     done();
-//                 } );
-//             } else {
-//                 done();
-//             }
-//         } );
+    beforeEach( function ( done ) {
+        jasmine.addMatchers( customMatchers );
+        resetAllSourceSpies();
+        if ( !looper ) {
+            console.log( "Initing Stubbed Looper.." );
+            looper = new sLooper( window.context, listofSounds, null, function () {
+                done();
+            } );
+        } else {
+            done();
+        }
+    } );
 
-//         function resetAllSourceSpies() {
-//             for ( var key in sourceSpies ) {
-//                 if ( sourceSpies.hasOwnProperty( key ) && sourceSpies[ key ].calls ) {
-//                     sourceSpies[ key ].calls.reset();
-//                 }
-//             }
-//         }
+    function resetAllSourceSpies() {
+        for ( var key in sourceSpies ) {
+            if ( sourceSpies.hasOwnProperty( key ) && sourceSpies[ key ].calls ) {
+                sourceSpies[ key ].calls.reset();
+            }
+        }
+    }
 
-//         describe( '#new Looper( context ) ', function () {
-//             it( "should have audioContext available", function () {
-//                 expect( looper.audioContext ).toBeInstanceOf( AudioContext );
-//             } );
-//         } );
+    describe( '#new Looper( context ) ', function () {
+        it( "should have audioContext available", function () {
+            expect( looper.audioContext ).toBeInstanceOf( AudioContext );
+        } );
+    } );
 
-//         describe( '#actions', function () {
-//             it( "should have start/stop/play/pause/release defined", function () {
-//                 expect( looper.start ).toBeInstanceOf( Function );
-//                 expect( looper.stop ).toBeInstanceOf( Function );
-//                 expect( looper.play ).toBeInstanceOf( Function );
-//                 expect( looper.pause ).toBeInstanceOf( Function );
-//                 expect( looper.release ).toBeInstanceOf( Function );
-//             } );
+    describe( '#actions', function () {
+        it( "should have start/stop/play/pause/release defined", function () {
+            expect( looper.start ).toBeInstanceOf( Function );
+            expect( looper.stop ).toBeInstanceOf( Function );
+            expect( looper.play ).toBeInstanceOf( Function );
+            expect( looper.pause ).toBeInstanceOf( Function );
+            expect( looper.release ).toBeInstanceOf( Function );
+        } );
 
-//             it( "should be start/stop audio", function ( done ) {
-//                 expect( function () {
-//                     looper.start( 0 );
-//                 } ).not.toThrowError();
+        it( "should be start/stop audio", function ( done ) {
+            expect( function () {
+                looper.start( 0 );
+            } ).not.toThrowError();
 
-//                 expect( looper.isPlaying ).toBe( true );
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
+            expect( looper.isPlaying ).toBe( true );
+            expect( sourceSpies.start ).toHaveBeenCalled();
 
-//                 expect( function () {
-//                     looper.stop( 0 );
-//                 } ).not.toThrowError();
+            expect( function () {
+                looper.stop( 0 );
+            } ).not.toThrowError();
 
-//                 expect( looper.isPlaying ).toBe( false );
-//                 expect( sourceSpies.stop ).toHaveBeenCalled();
-//                 done();
-//             } );
+            expect( looper.isPlaying ).toBe( false );
+            expect( sourceSpies.stop ).toHaveBeenCalled();
+            done();
+        } );
 
-//             it( "should be play/pause audio", function ( done ) {
-//                 expect( function () {
-//                     looper.play();
-//                 } ).not.toThrowError();
+        it( "should be play/pause audio", function ( done ) {
+            expect( function () {
+                looper.play();
+            } ).not.toThrowError();
 
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
-//                 expect( looper.isPlaying ).toBe( true );
+            expect( sourceSpies.start ).toHaveBeenCalled();
+            expect( looper.isPlaying ).toBe( true );
 
-//                 expect( function () {
-//                     looper.pause();
-//                 } ).not.toThrowError();
+            expect( function () {
+                looper.pause();
+            } ).not.toThrowError();
 
-//                 expect( looper.isPlaying ).toBe( false );
-//                 expect( sourceSpies.stop ).toHaveBeenCalled();
-//                 setTimeout( function () {
-//                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
-//                 }, 1000 );
+            expect( looper.isPlaying ).toBe( false );
+            expect( sourceSpies.stop ).toHaveBeenCalled();
+            setTimeout( function () {
+                expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
+            }, 1000 );
 
-//                 sourceSpies.start.calls.reset();
-//                 sourceSpies.stop.calls.reset();
-//                 sourceSpies.resetBufferSource.calls.reset();
+            sourceSpies.start.calls.reset();
+            sourceSpies.stop.calls.reset();
+            sourceSpies.resetBufferSource.calls.reset();
 
-//                 expect( function () {
-//                     looper.play();
-//                 } ).not.toThrowError();
+            expect( function () {
+                looper.play();
+            } ).not.toThrowError();
 
-//                 expect( looper.isPlaying ).toBe( true );
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
+            expect( looper.isPlaying ).toBe( true );
+            expect( sourceSpies.start ).toHaveBeenCalled();
 
-//                 expect( function () {
-//                     looper.pause();
-//                 } ).not.toThrowError();
+            expect( function () {
+                looper.pause();
+            } ).not.toThrowError();
 
-//                 expect( looper.isPlaying ).toBe( false );
-//                 expect( sourceSpies.stop ).toHaveBeenCalled();
-//                 setTimeout( function () {
-//                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
-//                     done();
-//                 }, 1000 );
+            expect( looper.isPlaying ).toBe( false );
+            expect( sourceSpies.stop ).toHaveBeenCalled();
+            setTimeout( function () {
+                expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
+                done();
+            }, 1000 );
 
-//             } );
+        } );
 
-//             it( "should be play/release audio", function ( done ) {
-//                 expect( function () {
-//                     looper.play();
-//                 } ).not.toThrowError();
+        it( "should be play/release audio", function ( done ) {
+            expect( function () {
+                looper.play();
+            } ).not.toThrowError();
 
-//                 expect( looper.isPlaying ).toBe( true );
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
+            expect( looper.isPlaying ).toBe( true );
+            expect( sourceSpies.start ).toHaveBeenCalled();
 
-//                 expect( function () {
-//                     looper.release();
-//                 } ).not.toThrowError();
+            expect( function () {
+                looper.release();
+            } ).not.toThrowError();
 
-//                 setTimeout( function () {
-//                     expect( looper.isPlaying ).toBe( false );
-//                     expect( sourceSpies.stop ).toHaveBeenCalled();
-//                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
-//                     done();
-//                 }, 1000 );
-//             } );
+            setTimeout( function () {
+                expect( looper.isPlaying ).toBe( false );
+                expect( sourceSpies.stop ).toHaveBeenCalled();
+                expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
+                done();
+            }, 1000 );
+        } );
 
-//             it( "should be pass parameters from start to source", function ( done ) {
-//                 var when = Math.random();
-//                 var offset = Math.random() / 2;
-//                 var duration = Math.random() * 2;
-//                 expect( function () {
-//                     looper.start( when, offset, duration, 0.5 );
-//                 } ).not.toThrowError();
+        it( "should be pass parameters from start to source", function ( done ) {
+            var when = Math.random();
+            var offset = Math.random() / 2;
+            var duration = Math.random() * 2;
+            expect( function () {
+                looper.start( when, offset, duration, 0.5 );
+            } ).not.toThrowError();
 
-//                 expect( sourceSpies.start ).toHaveBeenCalledWith( when, offset, duration );
-//                 done();
-//             } );
+            expect( sourceSpies.start ).toHaveBeenCalledWith( when, offset, duration );
+            done();
+        } );
 
-//             it( "should be pass parameters from stop to source", function ( done ) {
-//                 var duration = Math.random() * 2;
-//                 expect( function () {
-//                     looper.start( 0 );
-//                 } ).not.toThrowError();
+        it( "should be pass parameters from stop to source", function ( done ) {
+            var duration = Math.random() * 2;
+            expect( function () {
+                looper.start( 0 );
+            } ).not.toThrowError();
 
-//                 expect( function () {
-//                     looper.stop( duration );
-//                 } ).not.toThrowError();
+            expect( function () {
+                looper.stop( duration );
+            } ).not.toThrowError();
 
-//                 expect( sourceSpies.stop ).toHaveBeenCalledWith( duration );
-//                 done();
-//             } );
-//         } );
-//     } );
-// } );
+            expect( sourceSpies.stop ).toHaveBeenCalledWith( duration );
+            done();
+        } );
+    } );
+} );

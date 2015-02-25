@@ -35,7 +35,7 @@
     "gulp-yuidoc": "^0.1.2",
     "jshint-stylish": "^1.0.0",
     "merge-stream": "^0.1.7",
-    "proxyquireify": "^1.2.1",
+    "proxyquireify": "^1.2.2",
     "require-uncached": "^1.0.2",
     "requirejs": "2.1.16",
     "uglifyify": "^3.0.1",

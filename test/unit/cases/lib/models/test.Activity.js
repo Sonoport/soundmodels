@@ -32,7 +32,7 @@ describe( 'Activity.js', function () {
         jasmine.addMatchers( customMatchers );
         resetAllInternalSpies();
         if ( !activity ) {
-            console.log( "Initing Stubbed Activity.." );
+            console.log( "Initing Activity.." );
             activity = new Activity( window.context, listofSounds, internalSpies.onLoadProgress, function () {
                 internalSpies.onLoadComplete();
                 done();
@@ -144,6 +144,7 @@ describe( 'Activity.js', function () {
 
         it( "should have a valid parameter easeIn", function () {
 
+            "use strict";
             expect( activity.easeIn.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -162,6 +163,7 @@ describe( 'Activity.js', function () {
         } );
 
         it( "should have a valid parameter easeOut", function () {
+            "use strict";
             expect( activity.easeOut.isSPAudioParam ).toBe( true );
             expect( function () {
                 activity.easeOut = 0;
@@ -179,6 +181,7 @@ describe( 'Activity.js', function () {
         } );
 
         it( "should have a valid parameter action", function () {
+            "use strict";
             expect( activity.action.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -196,6 +199,7 @@ describe( 'Activity.js', function () {
         } );
 
         it( "should have a valid parameter sensitivity", function () {
+            "use strict";
             expect( activity.sensitivity.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -321,197 +325,192 @@ describe( 'Activity.js', function () {
     } );
 } );
 
-// var sourceSpies = {
-//     start: jasmine.createSpy( 'start' ),
-//     stop: jasmine.createSpy( 'stop' ),
-//     connect: jasmine.createSpy( 'connect' ),
-//     disconnect: jasmine.createSpy( 'disconnect' ),
-//     resetBufferSource: jasmine.createSpy( 'resetBuffer' )
-// };
-// var sourceStub = {
-//     "core/SPAudioBufferSourceNode": function () {
-//         return {
-//             playbackRate: {
-//                 value: 1.0,
-//                 defaultValue: 0,
-//                 setValueAtTime: function () {}
-//             },
-//             connect: sourceSpies.connect,
-//             disconnect: sourceSpies.disconnect,
-//             start: sourceSpies.start,
-//             loopStart: 0,
-//             loopEnd: 1,
-//             stop: function ( when ) {
-//                 this.onended();
-//                 sourceSpies.stop( when );
-//             },
-//             resetBufferSource: sourceSpies.resetBufferSource,
-//         };
-//     }
-// };
+var sourceSpies = {
+    start: jasmine.createSpy( 'start' ),
+    stop: jasmine.createSpy( 'stop' ),
+    connect: jasmine.createSpy( 'connect' ),
+    disconnect: jasmine.createSpy( 'disconnect' ),
+    resetBufferSource: jasmine.createSpy( 'resetBuffer' )
+};
+var sourceStub = {
+    "core/SPAudioBufferSourceNode": function () {
+        return {
+            playbackRate: {
+                value: 1.0,
+                defaultValue: 0,
+                setValueAtTime: function () {}
+            },
+            connect: sourceSpies.connect,
+            disconnect: sourceSpies.disconnect,
+            start: sourceSpies.start,
+            loopStart: 0,
+            loopEnd: 1,
+            stop: function ( when ) {
+                this.onended();
+                sourceSpies.stop( when );
+            },
+            resetBufferSource: sourceSpies.resetBufferSource,
+        };
+    }
+};
 
-// var requireWithStubbedSource = stubbedRequire( sourceStub );
-// requireWithStubbedSource( [ 'models/Activity', 'core/BaseSound', 'core/SPAudioParam' ], function ( Activity, BaseSound, SPAudioParam ) {
-//     if ( !window.context ) {
-//         window.context = new AudioContext();
-//     }
-//     var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
-//     describe( 'Activity.js with stubbed Source', function () {
-//         var activity;
-//         var customMatchers = {
-//             toBeInstanceOf: function () {
-//                 return {
-//                     compare: function ( actual, expected ) {
-//                         var result = {};
-//                         result.pass = actual instanceof expected;
-//                         if ( result.pass ) {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
-//                         } else {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
-//                         }
-//                         return result;
-//                     }
-//                 };
-//             }
-//         };
-//         beforeEach( function ( done ) {
-//             jasmine.addMatchers( customMatchers );
-//             resetAllSourceSpies();
-//             if ( !activity ) {
-//                 console.log( "Initing Activity.." );
-//                 activity = new Activity( window.context, listofSounds, null, function () {
-//                     done();
-//                 } );
-//             } else {
-//                 done();
-//             }
-//         } );
+var proxyquire = require( 'proxyquireify' )( require );
+var sActivity = proxyquire( 'models/Activity', sourceStub );
+describe( 'Activity.js with stubbed Source', function () {
+    var activity;
+    var customMatchers = {
+        toBeInstanceOf: function () {
+            return {
+                compare: function ( actual, expected ) {
+                    var result = {};
+                    result.pass = actual instanceof expected;
+                    if ( result.pass ) {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
+                    } else {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
+                    }
+                    return result;
+                }
+            };
+        }
+    };
+    beforeEach( function ( done ) {
+        jasmine.addMatchers( customMatchers );
+        resetAllSourceSpies();
+        if ( !activity ) {
+            console.log( "Initing Stubbed Activity.." );
+            activity = new sActivity( window.context, listofSounds, null, function () {
+                done();
+            } );
+        } else {
+            done();
+        }
+    } );
 
-//         function resetAllSourceSpies() {
-//             for ( var key in sourceSpies ) {
-//                 if ( sourceSpies.hasOwnProperty( key ) && sourceSpies[ key ].calls ) {
-//                     sourceSpies[ key ].calls.reset();
-//                 }
-//             }
-//         }
-//         describe( '#new Activity( context ) ', function () {
-//             it( "should have audioContext available", function () {
-//                 expect( activity.audioContext ).toBeInstanceOf( AudioContext );
-//             } );
-//         } );
-//         describe( '#actions', function () {
-//             it( "should have start/stop/play/pause/release defined", function () {
-//                 expect( activity.start ).toBeInstanceOf( Function );
-//                 expect( activity.stop ).toBeInstanceOf( Function );
-//                 expect( activity.play ).toBeInstanceOf( Function );
-//                 expect( activity.pause ).toBeInstanceOf( Function );
-//                 expect( activity.release ).toBeInstanceOf( Function );
-//             } );
+    function resetAllSourceSpies() {
+        for ( var key in sourceSpies ) {
+            if ( sourceSpies.hasOwnProperty( key ) && sourceSpies[ key ].calls ) {
+                sourceSpies[ key ].calls.reset();
+            }
+        }
+    }
+    describe( '#new Activity( context ) ', function () {
+        it( "should have audioContext available", function () {
+            expect( activity.audioContext ).toBeInstanceOf( AudioContext );
+        } );
+    } );
+    describe( '#actions', function () {
+        it( "should have start/stop/play/pause/release defined", function () {
+            expect( activity.start ).toBeInstanceOf( Function );
+            expect( activity.stop ).toBeInstanceOf( Function );
+            expect( activity.play ).toBeInstanceOf( Function );
+            expect( activity.pause ).toBeInstanceOf( Function );
+            expect( activity.release ).toBeInstanceOf( Function );
+        } );
 
-//             it( "should be start/stop audio", function ( done ) {
-//                 expect( function () {
-//                     activity.start( 0 );
-//                 } ).not.toThrowError();
+        it( "should be start/stop audio", function ( done ) {
+            expect( function () {
+                activity.start( 0 );
+            } ).not.toThrowError();
 
-//                 expect( activity.isPlaying ).toBe( true );
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
+            expect( activity.isPlaying ).toBe( true );
+            expect( sourceSpies.start ).toHaveBeenCalled();
 
-//                 expect( function () {
-//                     activity.stop( 0 );
-//                 } ).not.toThrowError();
+            expect( function () {
+                activity.stop( 0 );
+            } ).not.toThrowError();
 
-//                 expect( activity.isPlaying ).toBe( false );
-//                 expect( sourceSpies.stop ).toHaveBeenCalled();
-//                 done();
-//             } );
+            expect( activity.isPlaying ).toBe( false );
+            expect( sourceSpies.stop ).toHaveBeenCalled();
+            done();
+        } );
 
-//             it( "should be play/pause audio", function ( done ) {
-//                 expect( function () {
-//                     activity.play();
-//                 } ).not.toThrowError();
+        it( "should be play/pause audio", function ( done ) {
+            expect( function () {
+                activity.play();
+            } ).not.toThrowError();
 
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
-//                 expect( activity.isPlaying ).toBe( true );
+            expect( sourceSpies.start ).toHaveBeenCalled();
+            expect( activity.isPlaying ).toBe( true );
 
-//                 expect( function () {
-//                     activity.pause();
-//                 } ).not.toThrowError();
+            expect( function () {
+                activity.pause();
+            } ).not.toThrowError();
 
-//                 expect( activity.isPlaying ).toBe( false );
-//                 expect( sourceSpies.stop ).toHaveBeenCalled();
-//                 setTimeout( function () {
-//                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
-//                 }, 1000 );
+            expect( activity.isPlaying ).toBe( false );
+            expect( sourceSpies.stop ).toHaveBeenCalled();
+            setTimeout( function () {
+                expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
+            }, 1000 );
 
-//                 sourceSpies.start.calls.reset();
-//                 sourceSpies.stop.calls.reset();
-//                 sourceSpies.resetBufferSource.calls.reset();
+            sourceSpies.start.calls.reset();
+            sourceSpies.stop.calls.reset();
+            sourceSpies.resetBufferSource.calls.reset();
 
-//                 expect( function () {
-//                     activity.play();
-//                 } ).not.toThrowError();
+            expect( function () {
+                activity.play();
+            } ).not.toThrowError();
 
-//                 expect( activity.isPlaying ).toBe( true );
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
+            expect( activity.isPlaying ).toBe( true );
+            expect( sourceSpies.start ).toHaveBeenCalled();
 
-//                 expect( function () {
-//                     activity.pause();
-//                 } ).not.toThrowError();
+            expect( function () {
+                activity.pause();
+            } ).not.toThrowError();
 
-//                 expect( activity.isPlaying ).toBe( false );
-//                 expect( sourceSpies.stop ).toHaveBeenCalled();
-//                 setTimeout( function () {
-//                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
-//                     done();
-//                 }, 1000 );
+            expect( activity.isPlaying ).toBe( false );
+            expect( sourceSpies.stop ).toHaveBeenCalled();
+            setTimeout( function () {
+                expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
+                done();
+            }, 1000 );
 
-//             } );
+        } );
 
-//             it( "should be play/release audio", function ( done ) {
-//                 expect( function () {
-//                     activity.play();
-//                 } ).not.toThrowError();
+        it( "should be play/release audio", function ( done ) {
+            expect( function () {
+                activity.play();
+            } ).not.toThrowError();
 
-//                 expect( activity.isPlaying ).toBe( true );
-//                 expect( sourceSpies.start ).toHaveBeenCalled();
+            expect( activity.isPlaying ).toBe( true );
+            expect( sourceSpies.start ).toHaveBeenCalled();
 
-//                 expect( function () {
-//                     activity.release();
-//                 } ).not.toThrowError();
+            expect( function () {
+                activity.release();
+            } ).not.toThrowError();
 
-//                 setTimeout( function () {
-//                     expect( activity.isPlaying ).toBe( false );
-//                     expect( sourceSpies.stop ).toHaveBeenCalled();
-//                     expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
-//                     done();
-//                 }, 1000 );
-//             } );
+            setTimeout( function () {
+                expect( activity.isPlaying ).toBe( false );
+                expect( sourceSpies.stop ).toHaveBeenCalled();
+                expect( sourceSpies.resetBufferSource ).toHaveBeenCalled();
+                done();
+            }, 1000 );
+        } );
 
-//             it( "should be pass parameters from start to source", function ( done ) {
-//                 var when = Math.random();
-//                 var offset = Math.random() / 2;
-//                 var duration = Math.random() * 2;
-//                 expect( function () {
-//                     activity.start( when, offset, duration, 0.5 );
-//                 } ).not.toThrowError();
+        it( "should be pass parameters from start to source", function ( done ) {
+            var when = Math.random();
+            var offset = Math.random() / 2;
+            var duration = Math.random() * 2;
+            expect( function () {
+                activity.start( when, offset, duration, 0.5 );
+            } ).not.toThrowError();
 
-//                 expect( sourceSpies.start ).toHaveBeenCalledWith( when, offset, duration );
-//                 done();
-//             } );
+            expect( sourceSpies.start ).toHaveBeenCalledWith( when, offset, duration );
+            done();
+        } );
 
-//             it( "should be pass parameters from stop to source", function ( done ) {
-//                 var duration = Math.random() * 2;
-//                 expect( function () {
-//                     activity.start( 0 );
-//                 } ).not.toThrowError();
+        it( "should be pass parameters from stop to source", function ( done ) {
+            var duration = Math.random() * 2;
+            expect( function () {
+                activity.start( 0 );
+            } ).not.toThrowError();
 
-//                 expect( function () {
-//                     activity.stop( duration );
-//                 } ).not.toThrowError();
+            expect( function () {
+                activity.stop( duration );
+            } ).not.toThrowError();
 
-//                 expect( sourceSpies.stop ).toHaveBeenCalledWith( duration );
-//                 done();
-//             } );
-//         } );
-//     } );
-// } );
+            expect( sourceSpies.stop ).toHaveBeenCalledWith( duration );
+            done();
+        } );
+    } );
+} );

@@ -135,6 +135,7 @@ describe( 'MultiTrigger.js', function () {
     describe( '#properties', function () {
 
         it( "should have a valid parameter pitchShift", function () {
+            "use strict";
 
             expect( multiTrigger.pitchShift.isSPAudioParam ).toBe( true );
 
@@ -154,6 +155,7 @@ describe( 'MultiTrigger.js', function () {
         } );
 
         it( "should have a valid parameter pitchRand", function () {
+            "use strict";
             expect( multiTrigger.pitchRand.isSPAudioParam ).toBe( true );
             expect( function () {
                 multiTrigger.pitchRand = 0;
@@ -171,6 +173,7 @@ describe( 'MultiTrigger.js', function () {
         } );
 
         it( "should have a valid parameter eventRand", function () {
+            "use strict";
             expect( multiTrigger.eventRand.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -188,6 +191,7 @@ describe( 'MultiTrigger.js', function () {
         } );
 
         it( "should have a valid parameter eventRate", function () {
+            "use strict";
             expect( multiTrigger.eventRate.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -205,6 +209,7 @@ describe( 'MultiTrigger.js', function () {
         } );
 
         it( "should have a valid parameter eventJitter", function () {
+            "use strict";
             expect( multiTrigger.eventJitter.isSPAudioParam ).toBe( true );
 
             expect( function () {
@@ -330,186 +335,181 @@ describe( 'MultiTrigger.js', function () {
     } );
 } );
 
-// var queueSpies = {
-//     queueStart: jasmine.createSpy( 'queueStart' ),
-//     queueRelease: jasmine.createSpy( 'queueRelease' ),
-//     queueSetParameter: jasmine.createSpy( 'queueSetParameter' ),
-//     queueSetSource: jasmine.createSpy( 'queueSetSource' ),
-//     queueUpdate: jasmine.createSpy( 'queueUpdate' ),
-//     connect: jasmine.createSpy( 'connect' ),
-//     disconnect: jasmine.createSpy( 'disconnect' ),
-//     pause: jasmine.createSpy( 'pause' ),
-//     stop: jasmine.createSpy( 'stop' )
-// };
+var queueSpies = {
+    queueStart: jasmine.createSpy( 'queueStart' ),
+    queueRelease: jasmine.createSpy( 'queueRelease' ),
+    queueSetParameter: jasmine.createSpy( 'queueSetParameter' ),
+    queueSetSource: jasmine.createSpy( 'queueSetSource' ),
+    queueUpdate: jasmine.createSpy( 'queueUpdate' ),
+    connect: jasmine.createSpy( 'connect' ),
+    disconnect: jasmine.createSpy( 'disconnect' ),
+    pause: jasmine.createSpy( 'pause' ),
+    stop: jasmine.createSpy( 'stop' )
+};
 
-// var queueStub = {
-//     "core/SoundQueue": function () {
-//         return {
-//             connect: queueSpies.connect,
-//             disconnect: queueSpies.disconnect,
-//             pause: queueSpies.pause,
-//             stop: queueSpies.stop,
-//             queueStart: queueSpies.queueStart,
-//             queueUpdate: queueSpies.queueUpdate,
-//             queueRelease: queueSpies.queueRelease,
-//             queueSetSource: queueSpies.queueSetSource,
-//             queueSetParameter: queueSpies.queueSetParameter
-//         };
-//     }
-// };
+var queueStub = {
+    "core/SoundQueue": function () {
+        return {
+            connect: queueSpies.connect,
+            disconnect: queueSpies.disconnect,
+            pause: queueSpies.pause,
+            stop: queueSpies.stop,
+            queueStart: queueSpies.queueStart,
+            queueUpdate: queueSpies.queueUpdate,
+            queueRelease: queueSpies.queueRelease,
+            queueSetSource: queueSpies.queueSetSource,
+            queueSetParameter: queueSpies.queueSetParameter
+        };
+    }
+};
 
-// var requireWithStubbedSource = stubbedRequire( queueStub );
-// requireWithStubbedSource( [ 'models/MultiTrigger', 'core/BaseSound', 'core/SPAudioParam' ], function ( MultiTrigger, BaseSound, SPAudioParam ) {
-//     if ( !window.context ) {
-//         window.context = new AudioContext();
-//     }
-//     var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
+var proxyquire = require( 'proxyquireify' )( require );
+var sMultiTrigger = proxyquire( 'models/MultiTrigger', queueStub );
 
-//     describe( 'MultiTrigger.js with stubbed Queue', function () {
-//         var multiTrigger;
-//         var customMatchers = {
-//             toBeInstanceOf: function () {
-//                 return {
-//                     compare: function ( actual, expected ) {
-//                         var result = {};
-//                         result.pass = actual instanceof expected;
-//                         if ( result.pass ) {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
-//                         } else {
-//                             result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
-//                         }
-//                         return result;
-//                     }
-//                 };
-//             }
-//         };
+describe( 'MultiTrigger.js with stubbed Queue', function () {
+    var multiTrigger;
+    var customMatchers = {
+        toBeInstanceOf: function () {
+            return {
+                compare: function ( actual, expected ) {
+                    var result = {};
+                    result.pass = actual instanceof expected;
+                    if ( result.pass ) {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
+                    } else {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
+                    }
+                    return result;
+                }
+            };
+        }
+    };
 
-//         beforeEach( function ( done ) {
-//             jasmine.addMatchers( customMatchers );
-//             resetAllSourceSpies();
-//             if ( !multiTrigger ) {
-//                 multiTrigger = new MultiTrigger( window.context, listofSounds, null, function () {
-//                     done();
-//                 } );
-//             } else {
-//                 done();
-//             }
-//         } );
+    beforeEach( function ( done ) {
+        jasmine.addMatchers( customMatchers );
+        resetAllSourceSpies();
+        if ( !multiTrigger ) {
+            multiTrigger = new sMultiTrigger( window.context, listofSounds, null, function () {
+                done();
+            } );
+        } else {
+            done();
+        }
+    } );
 
-//         function resetAllSourceSpies() {
-//             for ( var key in queueSpies ) {
-//                 if ( queueSpies.hasOwnProperty( key ) && queueSpies[ key ].calls ) {
-//                     queueSpies[ key ].calls.reset();
-//                 }
-//             }
-//         }
-//         describe( '#new MultiTrigger( context ) ', function () {
-//             it( "should have audioContext available", function () {
-//                 expect( multiTrigger.audioContext ).toBeInstanceOf( AudioContext );
-//             } );
-//         } );
-//         describe( '#actions', function () {
-//             it( "should have start/stop/play/pause/release defined", function () {
-//                 expect( multiTrigger.start ).toBeInstanceOf( Function );
-//                 expect( multiTrigger.stop ).toBeInstanceOf( Function );
-//                 expect( multiTrigger.play ).toBeInstanceOf( Function );
-//                 expect( multiTrigger.pause ).toBeInstanceOf( Function );
-//                 expect( multiTrigger.release ).toBeInstanceOf( Function );
-//             } );
+    function resetAllSourceSpies() {
+        for ( var key in queueSpies ) {
+            if ( queueSpies.hasOwnProperty( key ) && queueSpies[ key ].calls ) {
+                queueSpies[ key ].calls.reset();
+            }
+        }
+    }
+    describe( '#new MultiTrigger( context ) ', function () {
+        it( "should have audioContext available", function () {
+            expect( multiTrigger.audioContext ).toBeInstanceOf( AudioContext );
+        } );
+    } );
+    describe( '#actions', function () {
+        it( "should have start/stop/play/pause/release defined", function () {
+            expect( multiTrigger.start ).toBeInstanceOf( Function );
+            expect( multiTrigger.stop ).toBeInstanceOf( Function );
+            expect( multiTrigger.play ).toBeInstanceOf( Function );
+            expect( multiTrigger.pause ).toBeInstanceOf( Function );
+            expect( multiTrigger.release ).toBeInstanceOf( Function );
+        } );
 
-//             it( "should be start/stop audio", function ( done ) {
-//                 expect( function () {
-//                     multiTrigger.start();
-//                 } ).not.toThrowError();
+        it( "should be start/stop audio", function ( done ) {
+            expect( function () {
+                multiTrigger.start();
+            } ).not.toThrowError();
 
-//                 expect( multiTrigger.isPlaying ).toBe( true );
-//                 setTimeout( function () {
-//                     expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                     expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                     expect( queueSpies.queueStart ).toHaveBeenCalled();
-//                 }, 2000 );
+            expect( multiTrigger.isPlaying ).toBe( true );
+            setTimeout( function () {
+                expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+                expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+                expect( queueSpies.queueStart ).toHaveBeenCalled();
+            }, 2000 );
 
-//                 expect( function () {
-//                     multiTrigger.stop();
-//                 } ).not.toThrowError();
+            expect( function () {
+                multiTrigger.stop();
+            } ).not.toThrowError();
 
-//                 expect( multiTrigger.isPlaying ).toBe( false );
-//                 setTimeout( function () {
-//                     expect( queueSpies.pause ).toHaveBeenCalled();
-//                 }, 2000 );
-//                 done();
-//             } );
+            expect( multiTrigger.isPlaying ).toBe( false );
+            setTimeout( function () {
+                expect( queueSpies.pause ).toHaveBeenCalled();
+            }, 2000 );
+            done();
+        } );
 
-//             it( "should be play/pause audio", function ( done ) {
-//                 expect( function () {
-//                     multiTrigger.play();
-//                 } ).not.toThrowError();
+        it( "should be play/pause audio", function ( done ) {
+            expect( function () {
+                multiTrigger.play();
+            } ).not.toThrowError();
 
-//                 setTimeout( function () {
-//                     expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                     expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                     expect( queueSpies.queueStart ).toHaveBeenCalled();
-//                     expect( multiTrigger.isPlaying ).toBe( true );
+            setTimeout( function () {
+                expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+                expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+                expect( queueSpies.queueStart ).toHaveBeenCalled();
+                expect( multiTrigger.isPlaying ).toBe( true );
 
-//                     expect( function () {
-//                         multiTrigger.pause();
-//                     } ).not.toThrowError();
+                expect( function () {
+                    multiTrigger.pause();
+                } ).not.toThrowError();
 
-//                     expect( multiTrigger.isPlaying ).toBe( false );
+                expect( multiTrigger.isPlaying ).toBe( false );
 
-//                     setTimeout( function () {
-//                         expect( queueSpies.pause ).toHaveBeenCalled();
+                setTimeout( function () {
+                    expect( queueSpies.pause ).toHaveBeenCalled();
 
-//                         queueSpies.queueSetSource.calls.reset();
-//                         queueSpies.queueSetParameter.calls.reset();
-//                         queueSpies.queueSetSource.calls.reset();
-//                         queueSpies.pause.calls.reset();
+                    queueSpies.queueSetSource.calls.reset();
+                    queueSpies.queueSetParameter.calls.reset();
+                    queueSpies.queueSetSource.calls.reset();
+                    queueSpies.pause.calls.reset();
 
-//                         expect( function () {
-//                             multiTrigger.play();
-//                         } ).not.toThrowError();
+                    expect( function () {
+                        multiTrigger.play();
+                    } ).not.toThrowError();
 
-//                         setTimeout( function () {
-//                             expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                             expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                             expect( queueSpies.queueStart ).toHaveBeenCalled();
-//                             expect( multiTrigger.isPlaying ).toBe( true );
+                    setTimeout( function () {
+                        expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+                        expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+                        expect( queueSpies.queueStart ).toHaveBeenCalled();
+                        expect( multiTrigger.isPlaying ).toBe( true );
 
-//                             expect( function () {
-//                                 multiTrigger.pause();
-//                             } ).not.toThrowError();
+                        expect( function () {
+                            multiTrigger.pause();
+                        } ).not.toThrowError();
 
-//                             expect( multiTrigger.isPlaying ).toBe( false );
-//                             setTimeout( function () {
-//                                 expect( queueSpies.pause ).toHaveBeenCalled();
-//                                 done();
-//                             }, 1000 );
-//                         }, 1000 );
-//                     }, 1000 );
-//                 }, 1000 );
+                        expect( multiTrigger.isPlaying ).toBe( false );
+                        setTimeout( function () {
+                            expect( queueSpies.pause ).toHaveBeenCalled();
+                            done();
+                        }, 1000 );
+                    }, 1000 );
+                }, 1000 );
+            }, 1000 );
 
-//             } );
+        } );
 
-//             it( "should be play/release audio", function ( done ) {
-//                 expect( function () {
-//                     multiTrigger.play();
-//                 } ).not.toThrowError();
+        it( "should be play/release audio", function ( done ) {
+            expect( function () {
+                multiTrigger.play();
+            } ).not.toThrowError();
 
-//                 expect( multiTrigger.isPlaying ).toBe( true );
-//                 expect( queueSpies.queueSetSource ).toHaveBeenCalled();
-//                 expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
-//                 expect( queueSpies.queueStart ).toHaveBeenCalled();
+            expect( multiTrigger.isPlaying ).toBe( true );
+            expect( queueSpies.queueSetSource ).toHaveBeenCalled();
+            expect( queueSpies.queueSetParameter ).toHaveBeenCalled();
+            expect( queueSpies.queueStart ).toHaveBeenCalled();
 
-//                 expect( function () {
-//                     multiTrigger.release();
-//                 } ).not.toThrowError();
+            expect( function () {
+                multiTrigger.release();
+            } ).not.toThrowError();
 
-//                 setTimeout( function () {
-//                     expect( multiTrigger.isPlaying ).toBe( false );
-//                     expect( queueSpies.pause ).toHaveBeenCalled();
-//                     done();
-//                 }, 1000 );
-//             } );
-//         } );
-//     } );
-// } );
+            setTimeout( function () {
+                expect( multiTrigger.isPlaying ).toBe( false );
+                expect( queueSpies.pause ).toHaveBeenCalled();
+                done();
+            }, 1000 );
+        } );
+    } );
+} );
