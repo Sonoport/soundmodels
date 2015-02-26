@@ -145,8 +145,7 @@ function createBundlerStreams(globPattern, destDir, transforms){
         var bundleName = fileName.replace(extStripRegex,'');
         var bundler = browserify({
             entries: ["./" + thisFile],
-            standalone: bundleName,
-            paths : [paths.dirs.lib],
+            standalone: bundleName
         });
         if (transforms){
             bundler.transform({

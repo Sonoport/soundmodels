@@ -4,10 +4,10 @@
 
 "use strict";
 
-var Config = require( 'core/Config' );
-var BaseSound = require( "core/BaseSound" );
-var SPAudioParam = require( "core/SPAudioParam" );
-var multiFileLoader = require( "core/multiFileLoader" );
+var Config = require( '../core/Config' );
+var BaseSound = require( '../core/BaseSound' );
+var SPAudioParam = require( '../core/SPAudioParam' );
+var multiFileLoader = require( '../core/multiFileLoader' );
 /**
  *
  * A model which loads a source and allows it to be scrubbed using a position parameter.

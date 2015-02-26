@@ -7,8 +7,8 @@
 
  "use strict";
 
- var FileLoader = require( 'core/FileLoader' );
- var SPAudioBuffer = require( 'core/SPAudioBuffer' );
+ var FileLoader = require( '../core/FileLoader' );
+ var SPAudioBuffer = require( '../core/SPAudioBuffer' );
 
  /**
   * Helper class to loader multiple sources from URL String, File or AudioBuffer or SPAudioBuffer Objects.

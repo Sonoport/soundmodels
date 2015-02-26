@@ -2,9 +2,9 @@
  * @module Core
  */
 "use strict";
-var Config = require( 'core/Config' );
-var Looper = require( 'models/Looper' );
-var webaudioDispatch = require( 'core/WebAudioDispatch' );
+var Config = require( '../core/Config' );
+var Looper = require( '../models/Looper' );
+var webaudioDispatch = require( '../core/WebAudioDispatch' );
 
 /**
  * A primitive which allows events on other Sound Models to be queued based on time of execution and executed at the appropriate time. Enables polyphony.

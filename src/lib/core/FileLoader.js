@@ -2,7 +2,7 @@
  * @module Core
  */
 "use strict";
-var detectLoopMarkers = require( 'core/DetectLoopMarkers' );
+var detectLoopMarkers = require( '../core/DetectLoopMarkers' );
 
 /**
  * Load a single file from a URL or a File object.

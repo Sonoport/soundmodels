@@ -3,13 +3,13 @@
  */
 "use strict";
 
-var Config = require( 'core/Config' );
-var BaseSound = require( 'core/BaseSound' );
-var SoundQueue = require( 'core/SoundQueue' );
-var SPAudioParam = require( 'core/SPAudioParam' );
-var multiFileLoader = require( 'core/multiFileLoader' );
-var Converter = require( 'core/Converter' );
-var webAudioDispatch = require( 'core/webAudioDispatch' );
+var Config = require( '../core/Config' );
+var BaseSound = require( '../core/BaseSound' );
+var SoundQueue = require( '../core/SoundQueue' );
+var SPAudioParam = require( '../core/SPAudioParam' );
+var multiFileLoader = require( '../core/multiFileLoader' );
+var Converter = require( '../core/Converter' );
+var webAudioDispatch = require( '../core/webAudioDispatch' );
 
 /**
  * A model which extends the playing of a single source infinitely with windowed overlapping.

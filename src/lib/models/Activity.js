@@ -4,11 +4,11 @@
  */
 "use strict";
 
-var Config = require( 'core/Config' );
-var BaseSound = require( "core/BaseSound" );
-var Looper = require( 'models/Looper' );
-var SPAudioParam = require( "core/SPAudioParam" );
-var webAudioDispatch = require( "core/webAudioDispatch" );
+var Config = require( '../core/Config' );
+var BaseSound = require( '../core/BaseSound' );
+var Looper = require( '../models/Looper' );
+var SPAudioParam = require( '../core/SPAudioParam' );
+var webAudioDispatch = require( '../core/webAudioDispatch' );
 
 /**
  * A model plays back the source at various speeds based on the movement of the activity parameter.

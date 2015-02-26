@@ -2,7 +2,7 @@
  * @module Core
  */
 'use strict';
-require( 'core/AudioContextMonkeyPatch' );
+require( '../core/AudioContextMonkeyPatch' );
 
 /**
  * Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. To be extended by all other Effects

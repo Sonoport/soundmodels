@@ -2,7 +2,7 @@
  * @module Core
  */
 "use strict";
-var Config = require( 'core/Config' );
+var Config = require( '../core/Config' );
 
 /**
  * Wrapper around AudioParam playbackRate of SPAudioBufferSourceNode to help calculate the playbackPosition of the AudioBufferSourceNode.

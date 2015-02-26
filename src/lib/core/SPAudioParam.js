@@ -3,8 +3,8 @@
  */
 
 "use strict";
-var webAudioDispatch = require( 'core/WebAudioDispatch' );
-var Config = require( 'core/Config' );
+var webAudioDispatch = require( '../core/WebAudioDispatch' );
+var Config = require( '../core/Config' );
 
 /**
  * Mock AudioParam used to create Parameters for Sonoport Sound Models. The SPAudioParam supports either a AudioParam backed parameter, or a completely Javascript mocked up Parameter, which supports a rough version of parameter automation.

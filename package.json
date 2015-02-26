@@ -1,8 +1,14 @@
 {
-  "name": "javascript-sound-models",
-  "description": "Sonoport Javascript Sound Models",
+  "name": "soundmodels",
+  "description": "Sonoport Sound Models",
   "version": "2.3.0",
-  "author": "Sonport Asia Pte. Ltd",
+  "homepage": "http://sonoport.com",
+  "author": "Sonport <tech@sonoport.com> (http://sonoport.com/)",
+  "files": [
+    "index.js",
+    "src/lib/"
+  ],
+  "main": "index.js",
   "contributors": [
     {
       "name": "Chinmay Pendharkar",
@@ -60,5 +66,5 @@
   "engines": {
     "node": ">= 0.8.0"
   },
-  "license": "Proprietary"
+  "license": "Apache-2.0"
 }

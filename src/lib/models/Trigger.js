@@ -3,12 +3,12 @@
  */
 "use strict";
 
-var Config = require( 'core/Config' );
-var BaseSound = require( 'core/BaseSound' );
-var SoundQueue = require( 'core/SoundQueue' );
-var SPAudioParam = require( 'core/SPAudioParam' );
-var multiFileLoader = require( 'core/multiFileLoader' );
-var Converter = require( 'core/Converter' );
+var Config = require( '../core/Config' );
+var BaseSound = require( '../core/BaseSound' );
+var SoundQueue = require( '../core/SoundQueue' );
+var SPAudioParam = require( '../core/SPAudioParam' );
+var multiFileLoader = require( '../core/multiFileLoader' );
+var Converter = require( '../core/Converter' );
 
 /**
  * A model which triggers a single or multiple audio sources with multiple voices (polyphony).

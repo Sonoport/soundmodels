@@ -3,8 +3,8 @@
  */
 
 "use strict";
-var SPPlaybackRateParam = require( 'core/SPPlaybackRateParam' );
-var webAudioDispatch = require( 'core/WebAudioDispatch' );
+var SPPlaybackRateParam = require( '../core/SPPlaybackRateParam' );
+var webAudioDispatch = require( '../core/WebAudioDispatch' );
 
 /**
  * A wrapper around the AudioBufferSourceNode to be able to track the current playPosition of a AudioBufferSourceNode.

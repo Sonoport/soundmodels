@@ -4,12 +4,12 @@
 
 "use strict";
 
-var Config = require( 'core/Config' );
-var BaseSound = require( "core/BaseSound" );
-var SPAudioParam = require( "core/SPAudioParam" );
-var SPAudioBufferSourceNode = require( "core/SPAudioBufferSourceNode" );
-var multiFileLoader = require( "core/multiFileLoader" );
-var webAudioDispatch = require( "core/webAudioDispatch" );
+var Config = require( '../core/Config' );
+var BaseSound = require( '../core/BaseSound' );
+var SPAudioParam = require( '../core/SPAudioParam' );
+var SPAudioBufferSourceNode = require( '../core/SPAudioBufferSourceNode' );
+var multiFileLoader = require( '../core/multiFileLoader' );
+var webAudioDispatch = require( '../core/webAudioDispatch' );
 
 /**
  *

@@ -2,7 +2,7 @@
  *  @module Core
  */
 'use strict';
-var BaseSound = require( 'core/BaseSound' );
+var BaseSound = require( '../core/BaseSound' );
 
 /**
  * Implements an ASDR Envelope.

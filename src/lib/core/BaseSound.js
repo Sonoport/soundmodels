@@ -3,8 +3,8 @@
  */
 
 'use strict';
-require( 'core/AudioContextMonkeyPatch' );
-var webAudioDispatch = require( 'core/WebAudioDispatch' );
+require( '../core/AudioContextMonkeyPatch' );
+var webAudioDispatch = require( '../core/WebAudioDispatch' );
 
 /**
  * Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. To be extended by all other Sound Models

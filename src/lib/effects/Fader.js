@@ -3,9 +3,9 @@
  */
 
 "use strict";
-var BaseEffect = require( 'core/BaseEffect' );
-var SPAudioParam = require( 'core/SPAudioParam' );
-var Converter = require( 'core/Converter' );
+var BaseEffect = require( '../core/BaseEffect' );
+var SPAudioParam = require( '../core/SPAudioParam' );
+var Converter = require( '../core/Converter' );
 
 /**
  *

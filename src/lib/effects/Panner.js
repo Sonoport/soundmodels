@@ -2,8 +2,8 @@
  * @module Effects
  */
 "use strict";
-var BaseEffect = require( 'core/BaseEffect' );
-var SPAudioParam = require( 'core/SPAudioParam' );
+var BaseEffect = require( '../core/BaseEffect' );
+var SPAudioParam = require( '../core/SPAudioParam' );
 
 /**
  *
