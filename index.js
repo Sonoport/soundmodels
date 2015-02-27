@@ -1,11 +1,11 @@
-module.exports.Activity = require('./src/lib/models/Activity');
-module.exports.Extender = require('./src/lib/models/Extender');
-module.exports.Looper = require('./src/lib/models/Looper');
-module.exports.MultiTrigger = require('./src/lib/models/MultiTrigger');
-module.exports.Scrubber = require('./src/lib/models/Scrubber');
-module.exports.Trigger = require('./src/lib/models/Trigger');
+module.exports.Activity = require('./dist/release/models/Activity');
+module.exports.Extender = require('./dist/release/models/Extender');
+module.exports.Looper = require('./dist/release/models/Looper');
+module.exports.MultiTrigger = require('./dist/release/models/MultiTrigger');
+module.exports.Scrubber = require('./dist/release/models/Scrubber');
+module.exports.Trigger = require('./dist/release/models/Trigger');
 
-module.exports.Fader = require('./src/lib/effects/Fader');
-module.exports.Panner = require('./src/lib/effects/Panner');
+module.exports.Fader = require('./dist/release/effects/Fader');
+module.exports.Panner = require('./dist/release/effects/Panner');
 
-module.exports.SPAudioBuffer = require('./src/lib/core/SPAudioBuffer');
+module.exports.SPAudioBuffer = require('./dist/release/core/SPAudioBuffer');
