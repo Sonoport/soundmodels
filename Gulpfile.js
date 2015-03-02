@@ -2,6 +2,7 @@
 
 var pkg = require('./package.json');
 
+var npm = require("npm");
 var del = require('del');
 var glob = require("glob");
 var merge = require('merge-stream');
@@ -47,7 +48,6 @@ var paths = {
     dirs: {
         build: 'build/',
         dist: 'dist/',
-        release: 'dist/release/',
         src: 'src/',
         player: 'src/jsmplayer/',
         lib: 'src/lib/',
@@ -102,7 +102,7 @@ gulp.task('publishdocs', function() {
     .pipe(yuidoc.parser(yuiParserOpts))
     .pipe(yuidoc.generator(generatorOpt))
     .pipe(ignoreFiles)
-    .pipe(gulp.dest(paths.dirs.release + "docs/"));
+    .pipe(gulp.dest(paths.dirs.dist + "docs/"));
 });
 
 /*
@@ -237,7 +237,7 @@ gulp.task('release', ['releasebuild', 'publishdocs'], function(){
 
     return gulp.src(paths.files.builtSrc)
     .pipe(header(banner, {pkg: pkg}))
-    .pipe(gulp.dest(paths.dirs.release ));
+    .pipe(gulp.dest(paths.dirs.dist));
 });
 
 gulp.task('release:testbuild', ['bump:pre', 'releasebuild', 'publishdocs'], function(){
@@ -246,7 +246,7 @@ gulp.task('release:testbuild', ['bump:pre', 'releasebuild', 'publishdocs'], func
 
     return gulp.src(paths.files.builtSrc)
     .pipe(header(banner, {pkg: pkg}))
-    .pipe(gulp.dest(paths.dirs.release));
+    .pipe(gulp.dest(paths.dirs.dist));
 });
 
 gulp.task('bump:pre', function(){
