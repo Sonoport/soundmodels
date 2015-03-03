@@ -376,7 +376,7 @@ var sourceSpies = {
 };
 
 var sourceStub = {
-    "core/SPAudioBufferSourceNode": function () {
+    "../core/SPAudioBufferSourceNode": function () {
         return {
             playbackRate: {
                 value: 1.0,

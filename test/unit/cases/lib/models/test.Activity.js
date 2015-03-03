@@ -333,7 +333,7 @@ var sourceSpies = {
     resetBufferSource: jasmine.createSpy( 'resetBuffer' )
 };
 var sourceStub = {
-    "core/SPAudioBufferSourceNode": function () {
+    "../core/SPAudioBufferSourceNode": function () {
         return {
             playbackRate: {
                 value: 1.0,

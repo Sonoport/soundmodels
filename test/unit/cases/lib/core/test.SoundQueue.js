@@ -22,7 +22,7 @@ var looperSpies = {
 };
 
 var looperStub = {
-    'models/Looper': function () {
+    '../models/Looper': function () {
         return {
             isInitialized: true,
             playSpeed: looperSpies.playSpeedObj,

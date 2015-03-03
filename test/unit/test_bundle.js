@@ -6619,7 +6619,7 @@ describe( 'SPAudioParam.js', function () {
 };
 
 var looperStub = {
-    'models/Looper': function () {
+    '../models/Looper': function () {
         return {
             isInitialized: true,
             playSpeed: looperSpies.playSpeedObj,
@@ -7579,7 +7579,7 @@ var sourceSpies = {
     resetBufferSource: jasmine.createSpy( 'resetBuffer' )
 };
 var sourceStub = {
-    "core/SPAudioBufferSourceNode": function () {
+    "../core/SPAudioBufferSourceNode": function () {
         return {
             playbackRate: {
                 value: 1.0,
@@ -8074,7 +8074,7 @@ var queueSpies = {
 };
 
 var queueStub = {
-    "core/SoundQueue": function () {
+    "../core/SoundQueue": function () {
         return {
             connect: queueSpies.connect,
             disconnect: queueSpies.disconnect,
@@ -8618,7 +8618,7 @@ var sourceSpies = {
 };
 
 var sourceStub = {
-    "core/SPAudioBufferSourceNode": function () {
+    "../core/SPAudioBufferSourceNode": function () {
         return {
             playbackRate: {
                 value: 1.0,
@@ -9153,7 +9153,7 @@ var queueSpies = {
 };
 
 var queueStub = {
-    "core/SoundQueue": function () {
+    "../core/SoundQueue": function () {
         return {
             connect: queueSpies.connect,
             disconnect: queueSpies.disconnect,
@@ -9950,7 +9950,7 @@ var queueSpies = {
 };
 
 var queueStub = {
-    "core/SoundQueue": function () {
+    "../core/SoundQueue": function () {
         return {
             connect: queueSpies.connect,
             disconnect: queueSpies.disconnect,

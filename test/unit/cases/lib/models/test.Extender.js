@@ -310,7 +310,7 @@ var queueSpies = {
 };
 
 var queueStub = {
-    "core/SoundQueue": function () {
+    "../core/SoundQueue": function () {
         return {
             connect: queueSpies.connect,
             disconnect: queueSpies.disconnect,
