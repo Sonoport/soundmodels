@@ -7,7 +7,6 @@ var del = require('del');
 var glob = require("glob");
 var merge = require('merge-stream');
 var browserify = require('browserify');
-var vinylPaths = require('vinyl-paths');
 var source = require('vinyl-source-stream');
 var proxyquire = require('proxyquireify');
 var requireUncached = require('require-uncached');
@@ -232,7 +231,7 @@ gulp.task('bump:patch', function(){
 **** Release ****
 */
 
-gulp.task('release:npm', function(){
+gulp.task('release:npm',['release'] , function(){
     npm.load('dist/package.json' ,function (er, npm) {
         npm.commands.pack(["dist/"], function(){
             var tarballName = pkg.name+"-"+pkg.version+".tgz";
