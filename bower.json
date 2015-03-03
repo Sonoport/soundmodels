@@ -1,13 +1,15 @@
 {
   "name": "javascript-sound-models",
-  "version": "0.3.0",
+  "version": "2.3.0",
   "authors": [
     "Sonport Asia Pte. Ltd"
   ],
-  "description": "Sonoport Javascript Sound Models Player",
+  "description": "Sonoport Sound Models",
   "main": "jsmplayer/js/player.js",
   "moduleType": [
-    "amd"
+    "amd",
+    "umd",
+    "commonjs"
   ],
   "keywords": [
     "sonoport",

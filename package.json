@@ -5,6 +5,9 @@
   "homepage": "http://sonoport.com",
   "author": "Sonport <tech@sonoport.com> (http://sonoport.com/)",
   "files": [
+    "package.json",
+    "README.md",
+    "LICENSE",
     "core/",
     "models/",
     "effects/"

@@ -43,6 +43,7 @@ var paths = {
         allTestSrc: 'test/**/*.js',
         unitTestCases: 'test/unit/cases/**/*.js',
         builtSrc : 'build/**/*.js',
+        packageData : ['LICENSE', 'package.json', 'README.md'],
         publishableSrc : ['src/lib/models/*.js', 'src/lib/effects/*.js', 'src/lib/core/SPAudioParam.js','src/lib/core/BaseSound.js', 'src/lib/core/BaseEffect.js', 'src/lib/core/SPAudioBuffer.js']
     },
     dirs: {
@@ -248,18 +249,28 @@ gulp.task('release', ['releasebuild', 'publishdocs'], function(){
     pkg = requireUncached('./package.json');
     gutil.log("Creating the ", pkg.version, " release.");
 
-    return gulp.src(paths.files.builtSrc)
+    var builtFileStream = gulp.src(paths.files.builtSrc)
     .pipe(header(banner, {pkg: pkg}))
     .pipe(gulp.dest(paths.dirs.dist));
+
+    var packageDataStream = gulp.src(paths.files.packageData)
+    .pipe(gulp.dest(paths.dirs.dist));
+
+    return merge(builtFileStream,packageDataStream);
 });
 
 gulp.task('release:testbuild', ['bump:pre', 'releasebuild', 'publishdocs'], function(){
     pkg = requireUncached('./package.json');
     gutil.log("Creating the ", pkg.version, " test release.");
 
-    return gulp.src(paths.files.builtSrc)
+    var builtFileStream = gulp.src(paths.files.builtSrc)
     .pipe(header(banner, {pkg: pkg}))
     .pipe(gulp.dest(paths.dirs.dist));
+
+    var packageDataStream = gulp.src(paths.files.packageData)
+    .pipe(gulp.dest(paths.dirs.dist));
+
+    return merge(builtFileStream,packageDataStream);
 });
 
 gulp.task('bump:pre', function(){
