@@ -428,5 +428,17 @@ BaseSound.prototype.listParams = function () {
     return this.parameterList_;
 };
 
+/**
+ * Adds an sound effect to the output of this model, and connects the output of the effect to the Audio Destination
+ *
+ * @method setOutputEffect
+ * @param {Object} effect An Sound Effect of type BaseEffect to be appended to the output of this Sound.
+ */
+BaseSound.prototype.setOutputEffect = function ( effect ) {
+    this.disconnect();
+    this.connect( effect );
+    effect.connect( this.audioContext.destination );
+};
+
 // Return constructor function
 module.exports = BaseSound;
