@@ -7,9 +7,11 @@ var del = require('del');
 var glob = require("glob");
 var merge = require('merge-stream');
 var browserify = require('browserify');
+var vinylPaths = require('vinyl-paths');
 var source = require('vinyl-source-stream');
 var proxyquire = require('proxyquireify');
 var requireUncached = require('require-uncached');
+
 
 var gulp = require('gulp');
 var gutil = require('gulp-util');
@@ -28,8 +30,7 @@ var cached = require('gulp-cached');
 // var using = require('gulp-using');
 
 var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - ' +
-'<%= new Date() %> */ \n' +
-'console.log("   ____                           __ \\n" + "  / _____  ___ ___  ___ ___  ____/ /_\\n" + " _\\\\ \\\\/ _ \\\\/ _ / _ \\\\/ _ / _ \\\\/ __/ __/\\n" + "/___/\\\\___/_//_\\\\___/ .__\\\\___/_/  \\\\__/ \\n" + "                 /_/                 \\n" + "Hello Developer!\\n" + "Thanks for using Sonoport Dynamic Sound Library v<%= pkg.version %>.");\n';
+'console.log("Hello Developer!\\n" + "Thanks for using Sonoport Dynamic Sound Library v<%= pkg.version %>.");\n';
 
 var paths = {
     files: {
@@ -230,6 +231,19 @@ gulp.task('bump:patch', function(){
 /*
 **** Release ****
 */
+
+gulp.task('release:npm', function(){
+    npm.load('dist/package.json' ,function (er, npm) {
+        npm.commands.pack(["dist/"], function(){
+            var tarballName = pkg.name+"-"+pkg.version+".tgz";
+            gulp.src(tarballName)
+             .pipe(gulp.dest('dist/'))
+             .on('end', function () {
+                    del(tarballName);
+                });
+        });
+    });
+});
 
 gulp.task('release', ['releasebuild', 'publishdocs'], function(){
     pkg = requireUncached('./package.json');
