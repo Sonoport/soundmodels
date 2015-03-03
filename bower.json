@@ -1,16 +1,23 @@
 {
-  "name": "javascript-sound-models",
+  "name": "soundmodels",
   "version": "2.3.0",
   "authors": [
-    "Sonport Asia Pte. Ltd"
+    {
+      "name": "Chinmay Pendharkar",
+      "email": "chinmay.pendharkar@sonoport.com"
+    },
+    {
+      "name": "Yap Hong Kheng",
+      "email": "hong.kheng@sonoport.com"
+    },
+    {
+      "name": "Cliburn Solano",
+      "email": "cliburn.solano@sonoport.com"
+    }
   ],
   "description": "Sonoport Sound Models",
-  "main": "jsmplayer/js/player.js",
-  "moduleType": [
-    "amd",
-    "umd",
-    "commonjs"
-  ],
+  "main": ["src/lib/"],
+  "ignore": ["build/", "test/", "docs/", "src/"],
   "keywords": [
     "sonoport",
     "audio",
@@ -19,11 +26,6 @@
     "sound",
     "interactive"
   ],
-  "license": "Proprietary",
-  "homepage": "http://www.sonoport.com",
-  "private": true,
-  "dependencies": {
-    "jquery": "~2.1.0",
-    "jquery-ui": "~1.10.4"
-  }
+  "license": "Apache-2.0",
+  "homepage": "http://www.sonoport.com"
 }
