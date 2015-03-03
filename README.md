@@ -3,9 +3,11 @@
 
 [Web Audio](http://webaudio.github.io/web-audio-api/) based Sound Models for creating dynamic interactive sounds.
 
-Latest Version : v2.1.0 (16/2/2015)
+Latest Version : v2.3.0 (3/03/2015)
 
 ## Sound Models
+
+Sound Models are parameterized algorithms which generate dynamic sounds in real time.
 
 Sound Models currently available:
 
@@ -35,21 +37,48 @@ Extends an audio source inifinitely without making it feel repeated.
 
 Coming soon...
 
-## Sound Effects
+## Effects
 
-Sound Effects change the sound coming out of Sound Models. They are attached to the Sound Models and expose Parameters similar to Sound Models.
+Effects are connected to the output of these Sound Models to change some audio qualities of the Sound. Effects, just like Sound Models, also expose Parameters which can be used to control the effects in real time.
 
-Sound Effects currently available:
+Effects currently available:
 
-##### Panner
-Allows simple stereo panning of the audio from left to right.
+#### Fader
 
-##### Fader
-Allows controling the loudness/volume of audio coming from a Sound Model.
+A simple Fader effect which allows the change of the volume (loudness) of the incoming audio.
+
+#### Panner
+
+A simple stereo Panner effect which allows moving of the perceived source of the audio towards the left or right side of the listener.
 
 ## Usage
 
-The models use [RequireJS](http://requirejs.org/) for async depdencency management.
+The sound models are avilable in two types of packages, [CommonJS](wiki.commonjs.org) and [AMD](http://requirejs.org/docs/whyamd.html. The sound models are packed as [UMD modules](https://github.com/umdjs/umd) and hence usable directly as global variable as well.
+
+### CommonJS (browserify)
+
+The sound models are available in an npm module which you can install using
+
+`npm install --save-dev soundmodels`
+
+The individual models can then be included in your code using nodejs style `require` statements.
+
+```js
+var Trigger = require('soundmodels/models/Trigger');
+
+var trigger = new Trigger('loop.wav');
+trigger.play();
+```
+
+The individual models are available using the `require('soundmodels/model/<model name>)` scheme, while the sound effects are available using the `require('soundmodels/effects/<effect name>)`. This helps to minimize the amount of code bundled.
+
+The CommonJS based dependencies can then be bundled using something like [browserify](http://browserify.org/)
+
+`browserify index.js > bundle.js`
+
+### AMD (requirejs)
+
+The are available using [RequireJS](http://requirejs.org/) for async depdencency management.
 
 1. To use the Sound Models, you need to have RequireJS loaded, which can be done from a CDN with this script tag
 
@@ -71,20 +100,24 @@ require(["models/Looper"], function (Looper) {
 });
 	```
 
-- Detailed information about rest of the API can be found in the [API docs for individual Sound Models](http://cdn.rawgit.com/Sonoport/js-sound-models/master/dist/release/docs/classes/Scrubber.html).
+- Detailed information about rest of the API can be found in the [API docs for individual Sound Models](http://cdn.rawgit.com/Sonoport/soundmodels/master/dist/docs/classes/Scrubber.html).
 
 
 ## Build Process
 
 The build process uses [gulpjs](https://github.com/gulpjs/gulp/)
 
-- ``` gulp devbuild```
+- ``` gulp build```
 
 	A concatenated file per model is placed in the `build` directory.
 
 - ``` gulp test```
 
-	Generates a `devbuild` and serves the test files in the `test/models `directory.
+	Generates a `build` and serves the test files in the `test/manual `directory.
+
+- ``` gulp unittest```
+
+	Generates a `build` and serves the unittest files in the `test/unittest `directory.
 
 - ```gulp makedoc```
 
@@ -92,21 +125,21 @@ The build process uses [gulpjs](https://github.com/gulpjs/gulp/)
 
 ## Release
 
-The built Sound Models for the latest release are avaliable in the [dist/release/models](https://github.com/Sonoport/js-sound-models/tree/master/dist/release/models) directory.
+The built Sound Models for the latest release are avaliable in the [dist/models](https://github.com/Sonoport/soundmodels/tree/master/dist/models) directory. Otherwise they can be installed using [npm](https://www.npmjs.org/package/soundmodels) or [bower](http://bower.io/search/?q=soundmodels).
 
-Each Sound Model is packaged into a seperate Javascript file (with all it's depencies bundled along). The individual files can be downloaded and added to your project, or could be linked straight from github (using the raw github URL) for testing. Refer to section on [Usage](#Usage) for instructions on using the Models.
+Each Sound Model is packaged into a seperate [UMD](https://github.com/umdjs/umd) bundled JavaScript file (with all it's depencies bundled along). The individual files can be downloaded and added to your project, or could be linked straight from github (using the raw github URL) for testing. Refer to section on [Usage](#Usage) for instructions on using the Models.
 
 Here are the URLs for the currently supported Models.
 
 
 | Model         | URL           |
 | ------------- |:-------------:|
-| Looper        |[ https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Looper.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Looper.js) |
-| Trigger       | [https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Trigger.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Trigger.js) |
-| MultiTrigger  | [https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/MultiTrigger.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/MultiTrigger.js) |
-| Scrubber      | [https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Scrubber.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Scrubber.js) |
-| Activity      | [https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Activity.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Activity.js) |
-| Extender      | [https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Extender.js](https://github.com/Sonoport/js-sound-models/blob/master/dist/release/models/Extender.js) |
+| Looper        |[ https://github.com/Sonoport/soundmodels/blob/master/dist/models/Looper.js](https://github.com/Sonoport/soundmodels/blob/master/dist/models/Looper.js) |
+| Trigger       | [https://github.com/Sonoport/soundmodels/blob/master/dist/models/Trigger.js](https://github.com/Sonoport/soundmodels/blob/master/dist/models/Trigger.js) |
+| MultiTrigger  | [https://github.com/Sonoport/soundmodels/blob/master/dist/models/MultiTrigger.js](https://github.com/Sonoport/soundmodels/blob/master/dist/models/MultiTrigger.js) |
+| Scrubber      | [https://github.com/Sonoport/soundmodels/blob/master/dist/models/Scrubber.js](https://github.com/Sonoport/soundmodels/blob/master/dist/models/Scrubber.js) |
+| Activity      | [https://github.com/Sonoport/soundmodels/blob/master/dist/models/Activity.js](https://github.com/Sonoport/soundmodels/blob/master/dist/models/Activity.js) |
+| Extender      | [https://github.com/Sonoport/soundmodels/blob/master/dist/models/Extender.js](https://github.com/Sonoport/soundmodels/blob/master/dist/models/Extender.js) |
 
 
 ## Testing
@@ -161,7 +194,7 @@ The JSM Player can be launched using the command `gulp player`
 
 ## Bugs and Contact
 
-Please [raise issues](https://github.com/Sonoport/js-sound-models/issues) if you find any bugs or want to request for new features for the Sound Models.
+Please [raise issues](https://github.com/Sonoport/soundmodels/issues) if you find any bugs or want to request for new features for the Sound Models.
 
 ## License
 

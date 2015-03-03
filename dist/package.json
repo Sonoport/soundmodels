@@ -62,7 +62,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:sonoport/javascript-sound-models.git"
+    "url": "git@github.com:Sonoport/soundmodels.git"
   },
   "scripts": {
     "build": "gulp build",
