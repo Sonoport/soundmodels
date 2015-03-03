@@ -344,7 +344,7 @@ gulp.task('unittestbuild',['jsbeautify:test'], function(){
     .pipe(gulp.dest('test/unit/'));
 });
 
-gulp.task('unittest', ['devbuild', 'unittestbuild', 'watch:unittest'], function(){
+gulp.task('unittest', ['jsbeautify:src', 'unittestbuild', 'watch:unittest'], function(){
     return gulp.src([paths.dirs.unittest, paths.dirs.build])
     .pipe(webserver({
         port: 8081,
@@ -353,7 +353,7 @@ gulp.task('unittest', ['devbuild', 'unittestbuild', 'watch:unittest'], function(
     }));
 });
 
-gulp.task('integration', ['devbuild', 'watch:test'], function(){
+gulp.task('integration', function(){
     return gulp.src([paths.dirs.integration, paths.dirs.build])
     .pipe(webserver({
         port: 8082,

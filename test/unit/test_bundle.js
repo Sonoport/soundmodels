@@ -3122,10 +3122,10 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
 module.exports = WebAudioDispatch;
 
 },{}],17:[function(require,module,exports){
-module.exports=require(10)
-},{"../core/FileLoader":9,"../core/SPAudioBuffer":11,"/Users/chinmay/Documents/Sonoport/Projects/javascript-sound-models/src/lib/core/MultiFileLoader.js":10}],18:[function(require,module,exports){
-module.exports=require(16)
-},{"/Users/chinmay/Documents/Sonoport/Projects/javascript-sound-models/src/lib/core/WebAudioDispatch.js":16}],19:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"../core/FileLoader":9,"../core/SPAudioBuffer":11,"dup":10}],18:[function(require,module,exports){
+arguments[4][16][0].apply(exports,arguments)
+},{"dup":16}],19:[function(require,module,exports){
 /**
  * @module Effects
  */
