@@ -1,0 +1,2535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>MultiTrigger - soundmodels</title>
+    <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
+    <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
+    <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
+    <link rel="shortcut icon" type="image/png" href="../assets/favicon.png">
+    <script src="http://yui.yahooapis.com/combo?3.9.1/build/yui/yui-min.js"></script>
+</head>
+<body class="yui3-skin-sam">
+
+<div id="doc">
+    <div id="hd" class="yui3-g header">
+        <div class="yui3-u-3-4">
+            
+                <h1><img src="http://sonoport.com/img/Logo.png" title="soundmodels"></h1>
+            
+        </div>
+        <div class="yui3-u-1-4 version">
+            <em>API Docs for: 2.3.0</em>
+        </div>
+    </div>
+    <div id="bd" class="yui3-g">
+
+        <div class="yui3-u-1-4">
+            <div id="docs-sidebar" class="sidebar apidocs">
+                <div id="api-list">
+    <h2 class="off-left">APIs</h2>
+    <div id="api-tabview" class="tabview">
+        <ul class="tabs">
+            <li><a href="#api-classes">Classes</a></li>
+            <li><a href="#api-modules">Modules</a></li>
+        </ul>
+
+        <div id="api-tabview-filter">
+            <input type="search" id="api-filter" placeholder="Type to filter APIs">
+        </div>
+
+        <div id="api-tabview-panel">
+            <ul id="api-classes" class="apis classes">
+            
+                <li><a href="../classes/Activity.html">Activity</a></li>
+            
+                <li><a href="../classes/BaseEffect.html">BaseEffect</a></li>
+            
+                <li><a href="../classes/BaseSound.html">BaseSound</a></li>
+            
+                <li><a href="../classes/Extender.html">Extender</a></li>
+            
+                <li><a href="../classes/Fader.html">Fader</a></li>
+            
+                <li><a href="../classes/Looper.html">Looper</a></li>
+            
+                <li><a href="../classes/MultiTrigger.html">MultiTrigger</a></li>
+            
+                <li><a href="../classes/Panner.html">Panner</a></li>
+            
+                <li><a href="../classes/Scrubber.html">Scrubber</a></li>
+            
+                <li><a href="../classes/SPAudioBuffer.html">SPAudioBuffer</a></li>
+            
+                <li><a href="../classes/SPAudioParam.html">SPAudioParam</a></li>
+            
+                <li><a href="../classes/Trigger.html">Trigger</a></li>
+            
+            </ul>
+
+            <ul id="api-modules" class="apis modules">
+            
+                <li><a href="../modules/Core.html">Core</a></li>
+            
+                <li><a href="../modules/Effects.html">Effects</a></li>
+            
+                <li><a href="../modules/Models.html">Models</a></li>
+            
+            </ul>
+        </div>
+    </div>
+</div>
+
+            </div>
+        </div>
+        <div class="yui3-u-3-4">
+                <div id="api-options">
+        Show:
+        <label for="api-show-inherited">
+            <input type="checkbox" id="api-show-inherited" checked>
+            Inherited
+        </label>
+
+        <label for="api-show-protected">
+            <input type="checkbox" id="api-show-protected">
+            Protected
+        </label>
+
+        <label for="api-show-private">
+            <input type="checkbox" id="api-show-private">
+            Private
+        </label>
+        <label for="api-show-deprecated">
+            <input type="checkbox" id="api-show-deprecated">
+            Deprecated
+        </label>
+
+    </div>
+
+
+            <div class="apidocs">
+                <div id="docs-main">
+                    <div class="content">
+                        <h1>MultiTrigger Class</h1>
+<div class="box meta">
+    
+
+    
+        <div class="extends">
+            Extends <a href="../classes/BaseSound.html" class="crosslink">BaseSound</a>
+        </div>
+    
+
+    
+
+    
+        
+            Module: <a href="../modules/Models.html">Models</a>
+        
+    
+
+    
+</div>
+
+
+
+<div class="box intro">
+    <p>A model which triggers a single or multiple sources with multiple voices (polyphony)
+repeatedly.</p>
+
+</div>
+
+
+    <div class="constructor">
+        <h2>Constructor</h2>
+        <div id="method_MultiTrigger" class="method item">
+    <h3 class="name"><code>MultiTrigger</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[context]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[sources]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onLoadProgress]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onLoadComplete]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onAudioStart]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onAudioEnd]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[context]</code>
+                        <span class="type">AudioContext</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>AudioContext to be used.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[sources]</code>
+                        <span class="type">Array/String/AudioBuffer/File</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Single or Array of either URLs or AudioBuffers or File Object of the audio source.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onLoadProgress]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when the audio file is being downloaded.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onLoadComplete]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when all sources have finished loading.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onAudioStart]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when the audio is about to start playing.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onAudioEnd]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when the audio has finished playing.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+    </div>
+
+
+<div id="classdocs" class="tabview">
+    <ul class="api-class-tabs">
+        <li class="api-class-tab index"><a href="#index">Index</a></li>
+
+        
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
+        
+        
+            <li class="api-class-tab properties"><a href="#properties">Properties</a></li>
+        
+        
+        
+    </ul>
+
+    <div>
+        <div id="index" class="api-class-tabpanel index">
+            <h2 class="off-left">Item Index</h2>
+
+            
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods extends">
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_connect">connect</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_disconnect">disconnect</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_listParams">listParams</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_pause">pause</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_play">play</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_release">release</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_setOutputEffect">setOutputEffect</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_setSources">setSources</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_start">start</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item method inherited">
+                                <a href="#method_stop">stop</a>
+
+                                
+                                
+                            </li>
+                        
+                    </ul>
+                </div>
+            
+
+            
+                <div class="index-section properties">
+                    <h3>Properties</h3>
+
+                    <ul class="index-list properties extends">
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_audioContext">audioContext</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_destinations">destinations</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_eventJitter">eventJitter</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_eventRand">eventRand</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_eventRate">eventRate</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_inputNode">inputNode</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_isInitialized">isInitialized</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_isPlaying">isPlaying</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_maxSources">maxSources</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_minSources">minSources</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_modelName">modelName</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_numberOfInputs">numberOfInputs</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_numberOfOutputs">numberOfOutputs</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onAudioEnd">onAudioEnd</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onAudioStart">onAudioStart</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onLoadComplete">onLoadComplete</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_onLoadProgress">onLoadProgress</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_pitchRand">pitchRand</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_pitchShift">pitchShift</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property inherited">
+                                <a href="#property_releaseGainNode">releaseGainNode</a>
+
+                                
+                                
+                            </li>
+                        
+                    </ul>
+                </div>
+            
+
+            
+
+            
+        </div>
+
+        
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+                
+                    <div id="method_connect" class="method item inherited">
+    <h3 class="name"><code>connect</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>destination</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[output]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[input]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_connect">BaseSound</a>:
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>If the parameter <code>output</code> is an AudioNode, it connects to the releaseGainNode.
+If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to the output&#39;s inputNode.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">destination</code>
+                        <span class="type">AudioNode</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>AudioNode to connect to.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[output]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Index describing which output of the AudioNode from which to connect.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[input]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Index describing which input of the destination AudioNode to connect to.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_disconnect" class="method item inherited">
+    <h3 class="name"><code>disconnect</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[outputIndex]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_disconnect">BaseSound</a>:
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Disconnects the Sound from the AudioNode Chain.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[outputIndex]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Index describing which output of the AudioNode to disconnect.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_listParams" class="method item inherited">
+    <h3 class="name"><code>listParams</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[paramArray]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_listParams">BaseSound</a>:
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>List all SPAudioParams this Sound exposes</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[paramArray]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Array of all the SPAudioParams this Sound exposes.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_pause" class="method item">
+    <h3 class="name"><code>pause</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_pause">
+                BaseSound
+            </a>
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Pauses playing all voices.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_play" class="method item">
+    <h3 class="name"><code>play</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_play">
+                BaseSound
+            </a>
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Start repeated triggering immediately</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_release" class="method item inherited">
+    <h3 class="name"><code>release</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[when]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[fadeTime]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[resetOnRelease]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_release">BaseSound</a>:
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Linearly ramp down the gain of the audio in time (seconds) to 0.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[when]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Time (in seconds) at which the Envelope will release.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[fadeTime]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Amount of time (seconds) it takes for linear ramp down to happen.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[resetOnRelease]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Boolean to define if release stops (resets) the playback or just pauses it.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_setOutputEffect" class="method item inherited">
+    <h3 class="name"><code>setOutputEffect</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>effect</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_setOutputEffect">BaseSound</a>:
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Adds an sound effect to the output of this model, and connects the output of the effect to the Audio Destination</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">effect</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>An Sound Effect of type BaseEffect to be appended to the output of this Sound.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_setSources" class="method item">
+    <h3 class="name"><code>setSources</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>sources</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onLoadProgress]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[onLoadComplete]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_setSources">
+                BaseSound
+            </a>
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Reinitializes a MultiTrigger and sets it&#39;s sources.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">sources</code>
+                        <span class="type">Array/AudioBuffer/String/File</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Single or Array of either URLs or AudioBuffers or File Objects of audio sources.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onLoadProgress]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when the audio file is being downloaded.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[onLoadComplete]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Callback when all sources have finished loading.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_start" class="method item">
+    <h3 class="name"><code>start</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>when</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[offset]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[duration]</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code class="optional">[attackDuration]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_start">
+                BaseSound
+            </a>
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Start repeated triggering.</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">when</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The delay in seconds before playing the model</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[offset]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The starting position of the playhead</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[duration]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Duration of the portion (in seconds) to be played</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[attackDuration]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Duration (in seconds) of attack ramp of the envelope.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="method_stop" class="method item">
+    <h3 class="name"><code>stop</code></h3>
+
+    
+        <span class="paren">()</span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_stop">
+                BaseSound
+            </a>
+            
+        
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Stops playing all voices.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+            </div>
+        
+
+        
+            <div id="properties" class="api-class-tabpanel">
+                <h2 class="off-left">Properties</h2>
+
+                
+                    <div id="property_audioContext" class="property item inherited">
+    <h3 class="name"><code>audioContext</code></h3>
+    <span class="type">AudioContext</span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_audioContext">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Web Audio API&#39;s AudioContext. If the context passed to the constructor is an AudioContext, a new one is created here.</p>
+
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_destinations" class="property item inherited">
+    <h3 class="name"><code>destinations</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_destinations">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Set of nodes the output of this sound is currently connected to.</p>
+
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_eventJitter" class="property item">
+    <h3 class="name"><code>eventJitter</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Maximum deviation from the regular trigger interval (as a factor of 1).</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0.0</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0.0</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 0.99</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_eventRand" class="property item">
+    <h3 class="name"><code>eventRand</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Enable randomness in the order of sources which are triggered.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> false</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> true</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> false</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_eventRate" class="property item">
+    <h3 class="name"><code>eventRate</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Trigger rate for playing the model in Hz.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 10.0</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0.0</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 60.0</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_inputNode" class="property item inherited">
+    <h3 class="name"><code>inputNode</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_inputNode">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>The input node that the output node will be connected to. <br />
+Set this value to null if no connection can be made on the input node</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_isInitialized" class="property item inherited">
+    <h3 class="name"><code>isInitialized</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_isInitialized">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>If Sound is currently initialized.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> false</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_isPlaying" class="property item inherited">
+    <h3 class="name"><code>isPlaying</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_isPlaying">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>If Sound is currently playing.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> false</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_maxSources" class="property item inherited">
+    <h3 class="name"><code>maxSources</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_maxSources">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Maximum number of sources that can be given to this Sound</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_minSources" class="property item inherited">
+    <h3 class="name"><code>minSources</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_minSources">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Minimum number of sources that can be given to this Sound</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_modelName" class="property item inherited">
+    <h3 class="name"><code>modelName</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_modelName">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>String name of the model.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> &quot;Model&quot;</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_numberOfInputs" class="property item inherited">
+    <h3 class="name"><code>numberOfInputs</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_numberOfInputs">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Number of inputs</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_numberOfOutputs" class="property item inherited">
+    <h3 class="name"><code>numberOfOutputs</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_numberOfOutputs">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Number of outputs</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onAudioEnd" class="property item inherited">
+    <h3 class="name"><code>onAudioEnd</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onAudioEnd">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for the audio is about to stop playing.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onAudioStart" class="property item inherited">
+    <h3 class="name"><code>onAudioStart</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onAudioStart">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for when the audio is about to start playing.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onLoadComplete" class="property item inherited">
+    <h3 class="name"><code>onLoadComplete</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onLoadComplete">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for when loading of audio files is done and the the model is initalized.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_onLoadProgress" class="property item inherited">
+    <h3 class="name"><code>onLoadProgress</code></h3>
+    <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Function" class="crosslink external" target="_blank">Function</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_onLoadProgress">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Callback for handling progress events thrown during loading of audio files.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> null</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_pitchRand" class="property item">
+    <h3 class="name"><code>pitchRand</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Maximum value for random pitch shift of the triggered voices in semitones.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0.0</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0.0</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 24.0</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_pitchShift" class="property item">
+    <h3 class="name"><code>pitchShift</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Pitch shift of the triggered voices in semitones.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> -60.0</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 60.0</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_releaseGainNode" class="property item inherited">
+    <h3 class="name"><code>releaseGainNode</code></h3>
+    <span class="type">GainNode</span>
+
+    
+
+    
+
+    
+        <span class="flag final">final</span>
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#property_releaseGainNode">BaseSound</a>:
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Release Gain Node</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> Internal GainNode</p>
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+                
+            </div>
+        
+
+        
+
+        
+    </div>
+</div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../assets/vendor/prettify/prettify-min.js"></script>
+<script>prettyPrint();</script>
+<script src="../assets/js/yui-prettify.js"></script>
+<script src="../assets/../api.js"></script>
+<script src="../assets/js/api-filter.js"></script>
+<script src="../assets/js/api-list.js"></script>
+<script src="../assets/js/api-search.js"></script>
+<script src="../assets/js/apidocs.js"></script>
+</body>
+</html>
