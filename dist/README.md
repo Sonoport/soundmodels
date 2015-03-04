@@ -3,7 +3,7 @@
 
 [Web Audio](http://webaudio.github.io/web-audio-api/) based Sound Models for creating dynamic interactive sounds.
 
-Latest Version : v2.3.0 (3/03/2015)
+Latest Version : v2.3.2 (04/03/2015)
 
 ## Sound Models
 
@@ -57,24 +57,24 @@ The sound models are avilable in two types of packages, [CommonJS](wiki.commonjs
 
 ### CommonJS (browserify)
 
-The sound models are available in an npm module which you can install using
+1. The sound models are available in an npm module which you can install using
 
-`npm install --save-dev soundmodels`
+	`npm install --save-dev soundmodels`
 
-The individual models can then be included in your code using nodejs style `require` statements.
+2. The individual models can then be included in your code using nodejs style `require` statements.
 
-```js
-var Trigger = require('soundmodels/models/Trigger');
+	```js
+	var Trigger = require('soundmodels/models/Trigger');
 
-var trigger = new Trigger('loop.wav');
-trigger.play();
-```
+	var trigger = new Trigger('loop.wav');
+	trigger.play();
+	```
 
-The individual models are available using the `require('soundmodels/model/<model name>)` scheme, while the sound effects are available using the `require('soundmodels/effects/<effect name>)`. This helps to minimize the amount of code bundled.
+3. The individual models are available using the `require('soundmodels/model/<model name>)` scheme, while the sound effects are available using the `require('soundmodels/effects/<effect name>)`. This helps to minimize the amount of code bundled.
 
-The CommonJS based dependencies can then be bundled using something like [browserify](http://browserify.org/)
+4. The CommonJS based dependencies can then be bundled using something like [browserify](http://browserify.org/)
 
-`browserify index.js > bundle.js`
+	`browserify index.js > bundle.js`
 
 ### AMD (requirejs)
 
@@ -84,23 +84,23 @@ The are available using [RequireJS](http://requirejs.org/) for async depdencency
 
 	`<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/require.js/2.1.11/require.min.js"></script>`
 
-- Also include the actual model file which you would like to use (for eg. `Trigger.js`).
+2. Also include the actual model file which you would like to use (for eg. `Trigger.js`).
 
 	`<script type="text/javascript" src="js/Trigger.js"></script>`
 
-- You can then use the loaded Sound Model using RequireJS. (For now you have to use `models/Looper` or `models/Trigger` as the names of the requirements)
+3. You can then use the loaded Sound Model using RequireJS. (For now you have to use `models/Looper` or `models/Trigger` as the names of the requirements)
 
-	```
-require(["models/Looper"], function (Looper) {
-	var loop = new Looper("loop.wav",function(){
-		console.log("Loaded!");
-		loop.play();
-    });
-   	console.log("Loading Audio File...");
-});
+	```js
+	require(["models/Looper"], function (Looper) {
+		var loop = new Looper("loop.wav",function(){
+			console.log("Loaded!");
+			loop.play();
+	    });
+	   	console.log("Loading Audio File...");
+	});
 	```
 
-- Detailed information about rest of the API can be found in the [API docs for individual Sound Models](http://cdn.rawgit.com/Sonoport/soundmodels/master/dist/docs/classes/Scrubber.html).
+4. Detailed information about rest of the API can be found in the [API docs for individual Sound Models](http://cdn.rawgit.com/Sonoport/soundmodels/master/dist/docs/classes/Scrubber.html).
 
 
 ## Build Process
