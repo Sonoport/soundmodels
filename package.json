@@ -1,7 +1,7 @@
 {
   "name": "soundmodels",
   "description": "Sonoport Sound Models",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "homepage": "http://sonoport.com",
   "author": "Sonport <tech@sonoport.com> (http://sonoport.com/)",
   "files": [

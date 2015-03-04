@@ -53,7 +53,7 @@ A simple stereo Panner effect which allows moving of the perceived source of the
 
 ## Usage
 
-The sound models are avilable in two types of packages, [CommonJS](wiki.commonjs.org) and [AMD](http://requirejs.org/docs/whyamd.html. The sound models are packed as [UMD modules](https://github.com/umdjs/umd) and hence usable directly as global variable as well.
+The sound models are avilable in two types of packages, [CommonJS](wiki.commonjs.org) and [AMD](http://requirejs.org/docs/whyamd.html). The sound models are packed as [UMD modules](https://github.com/umdjs/umd) and hence usable directly as global variable as well.
 
 ### CommonJS (browserify)
 
