@@ -203,11 +203,6 @@ gulp.task('bump:major', function(){
   return gulp.src('./package.json')
   .pipe(bump({type: 'major'}))
   .pipe(gulp.dest('./'));
-    var effectStream = gulp.src(paths.dirs.build + 'effects/*.js')
-    .pipe(header(banner, {pkg: pkg}))
-    .pipe(gulp.dest(paths.dirs.release + 'effects/'));
-
-    return merge(modelStream, effectStream);
 });
 
 gulp.task('bump:minor', function(){
@@ -220,12 +215,6 @@ gulp.task('bump:patch', function(){
   return gulp.src('./package.json')
   .pipe(bump({type: 'patch'}))
   .pipe(gulp.dest('./'));
-
-    var effectStream = gulp.src(paths.dirs.build + 'effects/*.js')
-    .pipe(header(banner, {pkg: pkg}))
-    .pipe(gulp.dest(paths.dirs.release + 'effects/'));
-
-    return merge(modelStream, effectStream);
 });
 
 /*
