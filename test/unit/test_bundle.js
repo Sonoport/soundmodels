@@ -97,6 +97,7 @@ require( './cases/lib/core/test.SPAudioParam.js' );
 /*Effects Tests*/
 require( './cases/lib/effects/test.Fader.js' );
 require( './cases/lib/effects/test.Panner.js' );
+require( './cases/lib/effects/test.Filter.js' );
 
 /*Models Tests*/
 require( './cases/lib/models/test.Activity.js' );
@@ -106,7 +107,7 @@ require( './cases/lib/models/test.MultiTrigger.js' );
 require( './cases/lib/models/test.Scrubber.js' );
 require( './cases/lib/models/test.Trigger.js' );
 
-},{"./cases/lib/core/test.BaseSound.js":27,"./cases/lib/core/test.Config.js":28,"./cases/lib/core/test.Converter.js":29,"./cases/lib/core/test.DetectLoopMarkers.js":30,"./cases/lib/core/test.FileLoader.js":31,"./cases/lib/core/test.MultiFileLoader.js":32,"./cases/lib/core/test.SPAudioBuffer.js":33,"./cases/lib/core/test.SPAudioBufferSourceNode.js":34,"./cases/lib/core/test.SPAudioParam.js":35,"./cases/lib/core/test.SoundQueue.js":36,"./cases/lib/effects/test.Fader.js":37,"./cases/lib/effects/test.Panner.js":38,"./cases/lib/models/test.Activity.js":39,"./cases/lib/models/test.Extender.js":40,"./cases/lib/models/test.Looper.js":41,"./cases/lib/models/test.MultiTrigger.js":42,"./cases/lib/models/test.Scrubber.js":43,"./cases/lib/models/test.Trigger.js":44}],2:[function(require,module,exports){
+},{"./cases/lib/core/test.BaseSound.js":28,"./cases/lib/core/test.Config.js":29,"./cases/lib/core/test.Converter.js":30,"./cases/lib/core/test.DetectLoopMarkers.js":31,"./cases/lib/core/test.FileLoader.js":32,"./cases/lib/core/test.MultiFileLoader.js":33,"./cases/lib/core/test.SPAudioBuffer.js":34,"./cases/lib/core/test.SPAudioBufferSourceNode.js":35,"./cases/lib/core/test.SPAudioParam.js":36,"./cases/lib/core/test.SoundQueue.js":37,"./cases/lib/effects/test.Fader.js":38,"./cases/lib/effects/test.Filter.js":39,"./cases/lib/effects/test.Panner.js":40,"./cases/lib/models/test.Activity.js":41,"./cases/lib/models/test.Extender.js":42,"./cases/lib/models/test.Looper.js":43,"./cases/lib/models/test.MultiTrigger.js":44,"./cases/lib/models/test.Scrubber.js":45,"./cases/lib/models/test.Trigger.js":46}],2:[function(require,module,exports){
 'use strict';
 
 function ProxyquireifyError(msg) {
@@ -893,6 +894,18 @@ BaseSound.prototype.registerParameter = function ( audioParam, configurable ) {
  */
 BaseSound.prototype.listParams = function () {
     return this.parameterList_;
+};
+
+/**
+ * Adds an sound effect to the output of this model, and connects the output of the effect to the Audio Destination
+ *
+ * @method setOutputEffect
+ * @param {Object} effect An Sound Effect of type BaseEffect to be appended to the output of this Sound.
+ */
+BaseSound.prototype.setOutputEffect = function ( effect ) {
+    this.disconnect();
+    this.connect( effect );
+    effect.connect( this.audioContext.destination );
 };
 
 // Return constructor function
@@ -3082,7 +3095,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
 
 module.exports = SoundQueue;
 
-},{"../core/Config":6,"../core/WebAudioDispatch":16,"../models/Looper":23}],16:[function(require,module,exports){
+},{"../core/Config":6,"../core/WebAudioDispatch":16,"../models/Looper":24}],16:[function(require,module,exports){
 /**
  * @module Core
  *
@@ -3209,6 +3222,104 @@ var SPAudioParam = require( '../core/SPAudioParam' );
 /**
  *
  * A simple stereo fader which moves the stereophonic image of the source left or right.
+ * @class Filter
+ * @constructor
+ * @extends BaseEffect
+ */
+function Filter( context ) {
+    if ( !( this instanceof Filter ) ) {
+        throw new TypeError( "Filter constructor cannot be called as a function." );
+    }
+    // Call superclass constructor
+    BaseEffect.call( this, context );
+    this.maxSources = 0;
+    this.minSources = 0;
+    this.effectName = 'Filter';
+
+    var filter_ = this.audioContext.createBiquadFilter();
+
+    this.inputNode = filter_;
+    this.outputNode = filter_;
+
+    function typeSetter( aParams, value ) {
+        if ( typeof value === 'string' ) {
+            filter_.type = value;
+        } else {
+            console.warn( "Unknown filter type", value );
+        }
+    }
+
+    /**
+     *The frequency at which the BiquadFilterNode will operate, in Hz. Its nominal range is from 10Hz to half the Nyquist frequency.
+     *
+     * @property frequency
+     * @type SPAudioParam
+     * @default 350
+     * @minvalue 10
+     * @maxvalue (AudioContext.sampleRate)/2
+     */
+    this.registerParameter( new SPAudioParam( this, 'frequency', 10, this.audioContext.sampleRate / 2, 350, filter_.frequency ), false );
+
+    /**
+     *A detune value, in cents, for the frequency. Its default value is 0.
+     *
+     * @property detune
+     * @type SPAudioParam
+     * @default 0
+     * @minvalue -1200
+     * @maxvalue 1200
+     */
+    this.registerParameter( new SPAudioParam( this, 'detune', -1200, 1200, 0, filter_.detune ), false );
+
+    /**
+     *The Q factor has a default value of 1, with a nominal range of 0.0001 to 1000.
+     *
+     * @property Q
+     * @type SPAudioParam
+     * @default 1
+     * @minvalue 0.0001
+     * @maxvalue 1000
+     */
+    this.registerParameter( new SPAudioParam( this, 'Q', 0.0001, 1000, 1, filter_.Q ), false );
+
+    /**
+     *The type of this BiquadFilterNode, lowpass, highpass, etc. The exact meaning of the other parameters depend on the value of the type attribute. Possible values for this type are :
+     * "lowpass"
+     * "highpass"
+     * "bandpass"
+     * "lowshelf"
+     * "highshelf"
+     * "peaking"
+     * "notch"
+     * "allpass"
+     *
+     * @property type
+     * @type SPAudioParam
+     * @default "lowpass"
+     * @minvalue "lowpass"
+     * @maxvalue "allpass"
+     */
+    this.registerParameter( new SPAudioParam( this, 'type', 'lowpass', 'allpass', 'lowpass', null, null, typeSetter ), false );
+
+    this.isInitialized = true;
+
+}
+
+Filter.prototype = Object.create( BaseEffect.prototype );
+
+module.exports = Filter;
+
+},{"../core/BaseEffect":4,"../core/SPAudioParam":13}],21:[function(require,module,exports){
+/**
+ * @module Effects
+ */
+"use strict";
+var BaseEffect = require( '../core/BaseEffect' );
+var SPAudioParam = require( '../core/SPAudioParam' );
+
+/**
+ *
+ * A simple stereo fader which moves the stereophonic image of the source left or right.
  * @class Panner
  * @constructor
  * @extends BaseEffect
@@ -3278,7 +3389,7 @@ Panner.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Panner;
 
-},{"../core/BaseEffect":4,"../core/SPAudioParam":13}],21:[function(require,module,exports){
+},{"../core/BaseEffect":4,"../core/SPAudioParam":13}],22:[function(require,module,exports){
 /**
  * @module Models
  *
@@ -3655,7 +3766,7 @@ Activity.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Activity;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/SPAudioParam":13,"../core/webAudioDispatch":18,"../models/Looper":23}],22:[function(require,module,exports){
+},{"../core/BaseSound":5,"../core/Config":6,"../core/SPAudioParam":13,"../core/webAudioDispatch":18,"../models/Looper":24}],23:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -3935,7 +4046,7 @@ Extender.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Extender;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/Converter":7,"../core/SPAudioParam":13,"../core/SoundQueue":15,"../core/multiFileLoader":17,"../core/webAudioDispatch":18}],23:[function(require,module,exports){
+},{"../core/BaseSound":5,"../core/Config":6,"../core/Converter":7,"../core/SPAudioParam":13,"../core/SoundQueue":15,"../core/multiFileLoader":17,"../core/webAudioDispatch":18}],24:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4347,7 +4458,7 @@ Looper.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Looper;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/SPAudioBufferSourceNode":12,"../core/SPAudioParam":13,"../core/multiFileLoader":17,"../core/webAudioDispatch":18}],24:[function(require,module,exports){
+},{"../core/BaseSound":5,"../core/Config":6,"../core/SPAudioBufferSourceNode":12,"../core/SPAudioParam":13,"../core/multiFileLoader":17,"../core/webAudioDispatch":18}],25:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4677,7 +4788,7 @@ MultiTrigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = MultiTrigger;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/Converter":7,"../core/SPAudioParam":13,"../core/SoundQueue":15,"../core/multiFileLoader":17,"../core/webAudioDispatch":18}],25:[function(require,module,exports){
+},{"../core/BaseSound":5,"../core/Config":6,"../core/Converter":7,"../core/SPAudioParam":13,"../core/SoundQueue":15,"../core/multiFileLoader":17,"../core/webAudioDispatch":18}],26:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5047,7 +5158,7 @@ Scrubber.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Scrubber;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/SPAudioParam":13,"../core/multiFileLoader":17}],26:[function(require,module,exports){
+},{"../core/BaseSound":5,"../core/Config":6,"../core/SPAudioParam":13,"../core/multiFileLoader":17}],27:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5289,7 +5400,7 @@ Trigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Trigger;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/Converter":7,"../core/SPAudioParam":13,"../core/SoundQueue":15,"../core/multiFileLoader":17}],27:[function(require,module,exports){
+},{"../core/BaseSound":5,"../core/Config":6,"../core/Converter":7,"../core/SPAudioParam":13,"../core/SoundQueue":15,"../core/multiFileLoader":17}],28:[function(require,module,exports){
 "use strict";
 var BaseSound = require( 'core/BaseSound' );
 console.log( "Running BaseSound Test... " );
@@ -5463,7 +5574,7 @@ describe( 'BaseSound.js', function () {
     } );
 } );
 
-},{"core/BaseSound":5}],28:[function(require,module,exports){
+},{"core/BaseSound":5}],29:[function(require,module,exports){
 "use strict";
 var Config = require( 'core/Config' );
 console.log( "Running Config Test... " );
@@ -5481,7 +5592,7 @@ describe( 'Config.js', function () {
     } );
 } );
 
-},{"core/Config":6}],29:[function(require,module,exports){
+},{"core/Config":6}],30:[function(require,module,exports){
 "use strict";
 var Converter = require( 'core/Converter' );
 console.log( "Running Converter Test... " );
@@ -5504,7 +5615,7 @@ describe( 'Converter.js', function () {
     } );
 } );
 
-},{"core/Converter":7}],30:[function(require,module,exports){
+},{"core/Converter":7}],31:[function(require,module,exports){
     "use strict";
     var detectLoopMarkers = require( 'core/DetectLoopMarkers' )
     console.log( "Running DetectLoopMarker Test... " );
@@ -5787,7 +5898,7 @@ describe( 'Converter.js', function () {
         } );
     } );
 
-},{"core/DetectLoopMarkers":8}],31:[function(require,module,exports){
+},{"core/DetectLoopMarkers":8}],32:[function(require,module,exports){
 "use strict";
 var FileLoader = require( 'core/FileLoader' );
 console.log( "Running FileLoader Test... " );
@@ -5939,7 +6050,7 @@ describe( 'FileLoader.js', function () {
     } );
 } );
 
-},{"core/FileLoader":9}],32:[function(require,module,exports){
+},{"core/FileLoader":9}],33:[function(require,module,exports){
 "use strict";
 var multiFileLoader = require( 'core/MultiFileLoader' );
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
@@ -6014,7 +6125,7 @@ describe( 'MultiFileLoader.js', function () {
     } );
 } );
 
-},{"core/MultiFileLoader":10,"core/SPAudioBuffer":11}],33:[function(require,module,exports){
+},{"core/MultiFileLoader":10,"core/SPAudioBuffer":11}],34:[function(require,module,exports){
 "use strict";
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
 console.log( "Running SPAudioBuffer Test... " );
@@ -6288,7 +6399,7 @@ describe( 'SPAudioBuffer.js', function () {
     } );
 } );
 
-},{"core/SPAudioBuffer":11}],34:[function(require,module,exports){
+},{"core/SPAudioBuffer":11}],35:[function(require,module,exports){
 "use strict";
 var SPAudioBufferSourceNode = require( 'core/SPAudioBufferSourceNode' );
 var SPPlaybackRateParam = require( 'core/SPPlaybackRateParam' );
@@ -6431,7 +6542,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
     } );
 } );
 
-},{"core/SPAudioBufferSourceNode":12,"core/SPPlaybackRateParam":14}],35:[function(require,module,exports){
+},{"core/SPAudioBufferSourceNode":12,"core/SPPlaybackRateParam":14}],36:[function(require,module,exports){
 "use strict";
 var SPAudioParam = require( 'core/SPAudioParam' );
 console.log( "Running SPAudioParam Test... " );
@@ -6594,7 +6705,7 @@ describe( 'SPAudioParam.js', function () {
     } );
 } );
 
-},{"core/SPAudioParam":13}],36:[function(require,module,exports){
+},{"core/SPAudioParam":13}],37:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('core/SoundQueue');var looperSpies = {
     start: jasmine.createSpy( 'start' ),
     stop: jasmine.createSpy( 'stop' ),
@@ -7020,7 +7131,7 @@ describe( 'SoundQueue.js', function () {
     } );
 } );
 
-},{"core/SoundQueue":15,"proxyquireify":2}],37:[function(require,module,exports){
+},{"core/SoundQueue":15,"proxyquireify":2}],38:[function(require,module,exports){
 "use strict";
 var Fader = require( 'effects/Fader' );
 if ( !window.context ) {
@@ -7141,7 +7252,166 @@ describe( 'Fader.js', function () {
     } );
 } );
 
-},{"effects/Fader":19}],38:[function(require,module,exports){
+},{"effects/Fader":19}],39:[function(require,module,exports){
+"use strict";
+var Filter = require( 'effects/Filter' );
+if ( !window.context ) {
+    window.context = new AudioContext();
+}
+describe( 'Filter.js', function () {
+    var filter;
+    var internalSpies = {};
+    var customMatchers = {
+        toBeInstanceOf: function () {
+            return {
+                compare: function ( actual, expected ) {
+                    var result = {};
+                    result.pass = actual instanceof expected;
+                    if ( result.pass ) {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
+                    } else {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
+                    }
+                    return result;
+                }
+            };
+        }
+    };
+    beforeEach( function ( done ) {
+        jasmine.addMatchers( customMatchers );
+        if ( !filter ) {
+            console.log( "Initing Filter.." );
+            filter = new Filter( window.context );
+        }
+        done();
+    } );
+
+    describe( '#new Filter( context )', function () {
+
+        it( "should have audioContext available", function () {
+            expect( filter.audioContext ).toBeInstanceOf( AudioContext );
+        } );
+
+        it( "should have a minimum number of sources as 0", function () {
+            expect( filter.minSources ).toBe( 0 );
+        } );
+
+        it( "should have a maximum number of sources as 0", function () {
+            expect( filter.maxSources ).toBe( 0 );
+        } );
+
+        it( "should have atleast 1 input", function () {
+            expect( filter.numberOfInputs ).toBeGreaterThan( 0 );
+        } );
+
+        it( "should have atleast 1 output", function () {
+            expect( filter.numberOfOutputs ).toBeGreaterThan( 0 );
+        } );
+
+        it( "should have a model name as Filter", function () {
+            expect( filter.effectName ).toBe( 'Filter' );
+        } );
+
+        it( "should be a BaseEffect", function () {
+            expect( filter.isBaseEffect ).toBe( true );
+        } );
+
+        it( "should be have been initialized", function () {
+            expect( filter.isInitialized ).toBe( true );
+        } );
+    } );
+
+    describe( '#properties', function () {
+        it( "should have a valid parameter frequency", function () {
+
+            expect( filter.frequency.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                filter.frequency = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete filter.frequency;
+            } ).toThrowError();
+
+            expect( filter.frequency.name ).toBe( 'frequency' );
+            expect( filter.frequency.value ).toBe( 350 );
+            expect( filter.frequency.minValue ).toBe( 10 );
+            expect( filter.frequency.maxValue ).toBe( filter.audioContext.sampleRate / 2 );
+
+        } );
+
+        it( "should have a valid parameter detune", function () {
+
+            expect( filter.detune.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                filter.detune = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete filter.detune;
+            } ).toThrowError();
+
+            expect( filter.detune.name ).toBe( 'detune' );
+            expect( filter.detune.value ).toBe( 0 );
+            expect( filter.detune.minValue ).toBe( -1200 );
+            expect( filter.detune.maxValue ).toBe( 1200 );
+
+        } );
+
+        it( "should have a valid parameter Q", function () {
+
+            expect( filter.Q.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                filter.Q = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete filter.Q;
+            } ).toThrowError();
+
+            expect( filter.Q.name ).toBe( 'Q' );
+            expect( filter.Q.value ).toBe( 1 );
+            expect( filter.Q.minValue ).toBe( 0.0001 );
+            expect( filter.Q.maxValue ).toBe( 1000 );
+
+        } );
+
+        it( "should have a valid parameter type", function () {
+
+            expect( filter.type.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                filter.type = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete filter.type;
+            } ).toThrowError();
+
+            expect( filter.type.name ).toBe( 'type' );
+            expect( filter.type.value ).toBe( 'lowpass' );
+            expect( filter.type.minValue ).toBe( 'lowpass' );
+            expect( filter.type.maxValue ).toBe( 'allpass' );
+
+        } );
+    } );
+
+    describe( '#connect/disconnect', function () {
+
+        it( "have connect function defined", function () {
+            expect( filter.connect ).toBeInstanceOf( Function );
+        } );
+        it( "have disconnect function defined", function () {
+            expect( filter.disconnect ).toBeInstanceOf( Function );
+        } );
+
+    } );
+} );
+
+},{"effects/Filter":20}],40:[function(require,module,exports){
 "use strict";
 var Panner = require( 'effects/Panner' );
 if ( !window.context ) {
@@ -7243,7 +7513,7 @@ describe( 'Panner.js', function () {
     } );
 } );
 
-},{"effects/Panner":20}],39:[function(require,module,exports){
+},{"effects/Panner":21}],41:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Activity');"use strict";
 var Activity = require( 'models/Activity' );
 if ( !window.context ) {
@@ -7761,7 +8031,7 @@ describe( 'Activity.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Activity":21,"proxyquireify":2}],40:[function(require,module,exports){
+},{"models/Activity":22,"proxyquireify":2}],42:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Extender');"use strict";
 var Extender = require( 'models/Extender' );
 if ( !window.context ) {
@@ -8239,7 +8509,7 @@ describe( 'Extender.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Extender":22,"proxyquireify":2}],41:[function(require,module,exports){
+},{"models/Extender":23,"proxyquireify":2}],43:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Looper');"use strict";
 var Looper = require( 'models/Looper' );
 if ( !window.context ) {
@@ -8802,7 +9072,7 @@ describe( 'Looper.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Looper":23,"proxyquireify":2}],42:[function(require,module,exports){
+},{"models/Looper":24,"proxyquireify":2}],44:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/MultiTrigger');"use strict";
 var MultiTrigger = require( 'models/MultiTrigger' );
 if ( !window.context ) {
@@ -9319,7 +9589,7 @@ describe( 'MultiTrigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/MultiTrigger":24,"proxyquireify":2}],43:[function(require,module,exports){
+},{"models/MultiTrigger":25,"proxyquireify":2}],45:[function(require,module,exports){
 "use strict";
 var Scrubber = require( 'models/Scrubber' );
 if ( !window.context ) {
@@ -9636,7 +9906,7 @@ describe( 'Scrubber.js', function () {
     } );
 } );
 
-},{"models/Scrubber":25}],44:[function(require,module,exports){
+},{"models/Scrubber":26}],46:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Trigger');"use strict";
 var Trigger = require( 'models/Trigger' );
 if ( !window.context ) {
@@ -10114,4 +10384,4 @@ describe( 'Trigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Trigger":26,"proxyquireify":2}]},{},[1]);
+},{"models/Trigger":27,"proxyquireify":2}]},{},[1]);
