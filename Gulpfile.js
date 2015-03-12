@@ -2,7 +2,6 @@
 
 var pkg = require('./package.json');
 
-var npm = require("npm");
 var del = require('del');
 var glob = require("glob");
 var merge = require('merge-stream');
