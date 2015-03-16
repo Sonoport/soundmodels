@@ -207,9 +207,9 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
 
         if ( this.eventRand.value ) {
             if ( length > 2 ) {
-                currentSourceID_ = ( currentSourceID_ + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
+                currentSourceID_ = ( currentSourceID_ + Math.floor( Math.random() * length - 1 ) ) % length;
             } else {
-                currentSourceID_ = Math.floor( Math.random() * ( length - 1 ) );
+                currentSourceID_ = Math.floor( Math.random() * length );
             }
         } else {
             currentSourceID_ = currentSourceID_ % length;
