@@ -110,9 +110,9 @@ define( [ 'core/Config', 'core/BaseSound', 'core/SoundQueue', 'core/SPAudioParam
 
                 if ( self.eventRand.value ) {
                     if ( length > 2 ) {
-                        currentSourceID_ = ( currentSourceID_ + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
+                        currentSourceID_ = ( currentSourceID_ + Math.floor( Math.random() * length ) ) % length;
                     } else {
-                        currentSourceID_ = Math.floor( Math.random() * ( length - 1 ) );
+                        currentSourceID_ = Math.floor( Math.random() * length );
                     }
                 } else {
                     currentSourceID_ = currentSourceID_ % length;
