@@ -2,7 +2,7 @@
  * @module Core
  */
 "use strict";
-var log = require('loglevel');
+var log = require( 'loglevel' );
 
 /**
  * @class DetectLoopMarkers
@@ -78,7 +78,7 @@ function DetectLoopMarkers( buffer ) {
      * @return {Function} A function which can check if the specific sample is beyond the silence threshold
      */
     var isChannelEmptyAfter = function ( channel, position ) {
-        log.trace( "checking at " + position );
+        log.debug( "Checking for loop marks at " + position );
         var sum = 0;
         for ( var sIndex = position + IGNORE_LENGTH; sIndex < position + IGNORE_LENGTH + EMPTY_CHECK_LENGTH; ++sIndex ) {
             sum += Math.abs( channel[ sIndex ] );

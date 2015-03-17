@@ -3,7 +3,7 @@
  */
 
 "use strict";
- var log = require('loglevel');
+var log = require( 'loglevel' );
 
 /**
  * Wrapper around AudioBuffer to support audio source caching and allowing clipping of audiobuffers to various lengths.

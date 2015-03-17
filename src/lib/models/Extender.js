@@ -10,7 +10,7 @@ var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/multiFileLoader' );
 var Converter = require( '../core/Converter' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
-var log = require('loglevel');
+var log = require( 'loglevel' );
 
 /**
  * A model which extends the playing of a single source infinitely with windowed overlapping.
@@ -139,7 +139,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
             // Find a suitable start point as a offset taking into account the required amount of audio
             var startOffset = Math.max( 0, audioDur - requiredDur ) * Math.random();
 
-            log.debug( "Start Point : " + startPoint + " playSpeed : " + playSpeed + " fadeDur : " + fadeDur + " audioDur : " + audioDur + " eventTime : " + eventTime + " eventLen : " + eventLen );
+            log.debug( "Start Point : " + startOffset + " playSpeed : " + playSpeed + " fadeDur : " + fadeDur + " audioDur : " + audioDur + " eventTime : " + eventTime + " eventLen : " + eventLen );
 
             //  Stop/release the *previous* audio snippet
             if ( lastEventID_ > 0 ) {

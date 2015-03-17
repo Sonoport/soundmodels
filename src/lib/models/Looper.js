@@ -10,7 +10,7 @@ var SPAudioParam = require( '../core/SPAudioParam' );
 var SPAudioBufferSourceNode = require( '../core/SPAudioBufferSourceNode' );
 var multiFileLoader = require( '../core/multiFileLoader' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
-var log = require('loglevel');
+var log = require( 'loglevel' );
 
 /**
  *

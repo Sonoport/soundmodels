@@ -3,6 +3,7 @@
  */
 "use strict";
 var detectLoopMarkers = require( '../core/DetectLoopMarkers' );
+var log = require( 'loglevel' );
 
 /**
  * Load a single file from a URL or a File object.
@@ -58,9 +59,9 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
         // Verify parameters
         if ( !isInt_( start ) ) {
             start = Number.isNan( start ) ? 0 : Math.round( Number( start ) );
-            log.info( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer. Coercing it to an Integer - start" );
+            log.debug( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer. Coercing it to an Integer - start" );
         } else if ( !isInt_( end ) ) {
-            log.info( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" );
+            log.debug( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" );
             end = Number.isNan( end ) ? 0 : Math.round( Number( end ) );
         }
         // Check if start is smaller than end

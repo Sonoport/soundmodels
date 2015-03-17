@@ -5,7 +5,7 @@
 var Config = require( '../core/Config' );
 var Looper = require( '../models/Looper' );
 var webaudioDispatch = require( '../core/WebAudioDispatch' );
-var log = require('loglevel');
+var log = require( 'loglevel' );
 
 /**
  * A primitive which allows events on other Sound Models to be queued based on time of execution and executed at the appropriate time. Enables polyphony.
@@ -103,7 +103,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
     function getFreeVoice( eventID, eventTime ) {
         var newVoice;
         if ( freeVoices_.length < 1 ) {
-            log.info( "No free voices left. Stealing the oldest" );
+            log.debug( "No free voices left. Stealing the oldest" );
             newVoice = busyVoices_.shift();
             dequeueEventsHavingID( newVoice.eventID );
             newVoice.eventID = eventID;
@@ -130,10 +130,10 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
             return;
         }
 
-        log.trace( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice.voiceIndex );
+        log.debug( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice.voiceIndex );
 
         if ( thisEvent.type == 'QESTART' ) {
-            log.trace( "starting " + selectedVoice.voiceIndex );
+            log.info( "starting " + selectedVoice.voiceIndex );
             selectedVoice.start( thisEvent.time, thisEvent.offset, null, thisEvent.attackDuration );
             webaudioDispatch( function () {
                 if ( !self.isPlaying ) {
@@ -150,7 +150,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
         } else if ( thisEvent.type == 'QESETSRC' ) {
             selectedVoice.setSources( thisEvent.sourceBuffer );
         } else if ( thisEvent.type == 'QERELEASE' ) {
-            log.trace( "releasing " + selectedVoice.voiceIndex );
+            log.debug( "releasing " + selectedVoice.voiceIndex );
             selectedVoice.release( thisEvent.time, thisEvent.releaseDuration );
         } else if ( thisEvent.type == 'QESTOP' ) {
             selectedVoice.pause( thisEvent.time );

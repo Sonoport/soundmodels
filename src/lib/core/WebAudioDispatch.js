@@ -5,7 +5,7 @@
  * @static
  */
 "use strict";
-var log = require('loglevel');
+var log = require( 'loglevel' );
 
 /**
  * Helper class to dispatch manual syncronized calls to for WebAudioAPI. This is to be used for API calls which can't don't take in a time argument and hence are inherently Syncronized.
@@ -28,9 +28,9 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
         log.debug( "Dispatching now" );
         functionCall();
     } else {
-        log.debug( "Dispatching in ", ( time - currentTime ) * 1000 );
+        log.debug( "Dispatching in", ( time - currentTime ) * 1000, 'ms' );
         window.setTimeout( function () {
-            log.debug( "Diff at dispatch ", ( time - audioContext.currentTime ) * 1000 );
+            log.debug( "Diff at dispatch", ( time - audioContext.currentTime ) * 1000, 'ms' );
             functionCall();
         }, ( time - currentTime ) * 1000 );
     }

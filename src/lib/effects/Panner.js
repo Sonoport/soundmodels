@@ -4,8 +4,7 @@
 "use strict";
 var BaseEffect = require( '../core/BaseEffect' );
 var SPAudioParam = require( '../core/SPAudioParam' );
-var log = require('loglevel');
-
+var log = require( 'loglevel' );
 
 /**
  *
@@ -28,10 +27,10 @@ function Panner( context ) {
     var usingNativePanner = typeof this.audioContext.createStereoPanner === 'function';
 
     if ( usingNativePanner ) {
-        log.info( "using native panner" );
+        log.debug( "using native panner" );
         panner_ = this.audioContext.createStereoPanner();
     } else {
-        log.info( "using 3D panner" );
+        log.debug( "using 3D panner" );
         panner_ = this.audioContext.createPanner();
     }
 

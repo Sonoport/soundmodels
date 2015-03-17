@@ -11,7 +11,7 @@ var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/multiFileLoader' );
 var Converter = require( '../core/Converter' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
-var log = require('loglevel');
+var log = require( 'loglevel' );
 
 /**
  * A model which triggers a single or multiple sources with multiple voices (polyphony)

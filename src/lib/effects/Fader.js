@@ -6,7 +6,7 @@
 var BaseEffect = require( '../core/BaseEffect' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var Converter = require( '../core/Converter' );
-var log = require('loglevel');
+var log = require( 'loglevel' );
 
 /**
  *

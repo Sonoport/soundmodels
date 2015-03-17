@@ -3,7 +3,7 @@
  */
 'use strict';
 require( '../core/AudioContextMonkeyPatch' );
-var log = require('loglevel');
+var log = require( 'loglevel' );
 
 /**
  * Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. To be extended by all other Effects
@@ -122,7 +122,7 @@ function BaseEffect( context ) {
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 
         function createDummyOsc() {
-            log.trace( "Booting ", context );
+            log.debug( "Booting ", context );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
             window.liveAudioContexts.push( context );

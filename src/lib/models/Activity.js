@@ -9,8 +9,7 @@ var BaseSound = require( '../core/BaseSound' );
 var Looper = require( '../models/Looper' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
-var log = require('loglevel');
-
+var log = require( 'loglevel' );
 
 /**
  * A model plays back the source at various speeds based on the movement of the activity parameter.
@@ -121,7 +120,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
             var deltaPos = Math.abs( newPosition - lastPosition_ );
             var deltaTime = ( time - lastUpdateTime_ );
 
-            log.debug("delta time", deltaTime );
+            log.debug( "delta time", deltaTime );
 
             if ( deltaTime > 0 ) {
 

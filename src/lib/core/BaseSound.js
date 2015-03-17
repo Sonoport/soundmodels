@@ -5,7 +5,7 @@
 'use strict';
 require( '../core/AudioContextMonkeyPatch' );
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
-var log = require('loglevel');
+var log = require( 'loglevel' );
 
 /**
  * Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. To be extended by all other Sound Models
@@ -202,7 +202,7 @@ function BaseSound( context ) {
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 
         function createDummyOsc() {
-            log.trace( "Booting ", context );
+            log.debug( "Booting ", context );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
             window.liveAudioContexts.push( context );
@@ -281,7 +281,7 @@ BaseSound.prototype.start = function ( when, offset, duration, attackDuration ) 
 
     this.releaseGainNode.gain.cancelScheduledValues( when );
     if ( typeof attackDuration !== 'undefined' ) {
-        log.trace( "Ramping from " + offset + "  in " + attackDuration );
+        log.debug( "Ramping from " + offset + "  in " + attackDuration );
         this.releaseGainNode.gain.setValueAtTime( 0, when );
         this.releaseGainNode.gain.linearRampToValueAtTime( 1, when + attackDuration );
     } else {
