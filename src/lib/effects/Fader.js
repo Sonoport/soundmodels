@@ -6,6 +6,7 @@
 var BaseEffect = require( '../core/BaseEffect' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var Converter = require( '../core/Converter' );
+var log = require('loglevel');
 
 /**
  *
@@ -30,12 +31,12 @@ function Fader( context ) {
     this.outputNode = faderGain_;
 
     function faderGainMap( volume ) {
-        console.log( "Setting volume to ", volume / 100.0 );
+        log.debug( "Setting volume to ", volume / 100.0 );
         return volume / 100.0;
     }
 
     function faderGainMapDB( volumeInDB ) {
-        console.log( "Setting volume (DB) to ", Converter.dBFStoRatio( volumeInDB ) );
+        log.debug( "Setting volume (DB) to ", Converter.dBFStoRatio( volumeInDB ) );
         return Converter.dBFStoRatio( volumeInDB );
     }
 

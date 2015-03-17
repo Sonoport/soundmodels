@@ -3,6 +3,7 @@
  */
 'use strict';
 require( '../core/AudioContextMonkeyPatch' );
+var log = require('loglevel');
 
 /**
  * Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. To be extended by all other Effects
@@ -20,7 +21,7 @@ function BaseEffect( context ) {
      * @type AudioContext
      */
     if ( context === undefined || context === null ) {
-        console.log( 'Making a new AudioContext' );
+        log.debug( 'Making a new AudioContext' );
         this.audioContext = new AudioContext();
     } else {
         this.audioContext = context;
@@ -121,7 +122,7 @@ function BaseEffect( context ) {
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 
         function createDummyOsc() {
-            //console.log( "Booting ", context );
+            log.trace( "Booting ", context );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
             window.liveAudioContexts.push( context );
@@ -169,7 +170,7 @@ BaseEffect.prototype.connect = function ( destination, output, input ) {
             'input': input
         } );
     } else {
-        console.error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) );
+        log.error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) );
     }
 };
 

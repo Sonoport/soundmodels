@@ -28,8 +28,7 @@ var cached = require('gulp-cached');
 //var debug = require('gulp-debug');
 // var using = require('gulp-using');
 
-var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - <%= new Date() %> */' +
-'console.log("Hello Developer!\\n" + "Thanks for using Sonoport Dynamic Sound Library v<%= pkg.version %>.");\n';
+var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - <%= new Date() %> */';
 
 var paths = {
     files: {

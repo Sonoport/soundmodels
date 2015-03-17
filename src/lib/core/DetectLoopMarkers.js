@@ -2,6 +2,7 @@
  * @module Core
  */
 "use strict";
+var log = require('loglevel');
 
 /**
  * @class DetectLoopMarkers
@@ -77,7 +78,7 @@ function DetectLoopMarkers( buffer ) {
      * @return {Function} A function which can check if the specific sample is beyond the silence threshold
      */
     var isChannelEmptyAfter = function ( channel, position ) {
-        //console.log( "checking at " + position );
+        log.trace( "checking at " + position );
         var sum = 0;
         for ( var sIndex = position + IGNORE_LENGTH; sIndex < position + IGNORE_LENGTH + EMPTY_CHECK_LENGTH; ++sIndex ) {
             sum += Math.abs( channel[ sIndex ] );
@@ -152,12 +153,12 @@ function DetectLoopMarkers( buffer ) {
             // Compute loop start and length
             nLoopStart_ = startSpikePos + correctedPostfixLen;
             nLoopEnd_ = endSpikePos - correctedPostfixLen;
-            //console.log( "Found loop between " + nLoopStart_ + " - " + nLoopEnd_ );
-            //console.log( "Spikes at  " + startSpikePos + " - " + endSpikePos );
+            log.debug( "Found loop between " + nLoopStart_ + " - " + nLoopEnd_ );
+            log.debug( "Spikes at  " + startSpikePos + " - " + endSpikePos );
             return true;
         } else {
             // Spikes not found!
-            //console.log( "No loop found" );
+            log.debug( "No loop found" );
             return false;
         }
     };

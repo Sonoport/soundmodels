@@ -3,6 +3,8 @@
  */
 
 "use strict";
+ var log = require('loglevel');
+
 /**
  * Wrapper around AudioBuffer to support audio source caching and allowing clipping of audiobuffers to various lengths.
  *
@@ -22,7 +24,7 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
     // new SPAudioBuffer([object AudioBuffer], 0.8,1.0)
 
     if ( !( audioContext instanceof AudioContext ) ) {
-        console.error( 'First argument to SPAudioBuffer must be a valid AudioContext' );
+        log.error( 'First argument to SPAudioBuffer must be a valid AudioContext' );
         return;
     }
 
@@ -97,13 +99,13 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
             if ( startPoint_ === null ) {
                 this.startPoint = 0;
             } else if ( startPoint_ > buffer.length / buffer.sampleRate ) {
-                console.error( "SPAudioBuffer : startPoint cannot be greater than buffer length" );
+                log.error( "SPAudioBuffer : startPoint cannot be greater than buffer length" );
                 return;
             }
             if ( endPoint_ === null ) {
                 this.endPoint = this.rawBuffer_.length;
             } else if ( endPoint_ > buffer.length / buffer.sampleRate ) {
-                console.error( "SPAudioBuffer : endPoint cannot be greater than buffer length" );
+                log.error( "SPAudioBuffer : endPoint cannot be greater than buffer length" );
                 return;
             }
 
@@ -135,12 +137,12 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
     Object.defineProperty( this, 'startPoint', {
         set: function ( startPoint ) {
             if ( endPoint_ !== undefined && startPoint >= endPoint_ ) {
-                console.error( "SPAudioBuffer : startPoint cannot be greater than endPoint" );
+                log.error( "SPAudioBuffer : startPoint cannot be greater than endPoint" );
                 return;
             }
 
             if ( rawBuffer_ && ( startPoint * rawBuffer_.sampleRate ) >= rawBuffer_.length ) {
-                console.error( "SPAudioBuffer : startPoint cannot be greater than or equal to buffer length" );
+                log.error( "SPAudioBuffer : startPoint cannot be greater than or equal to buffer length" );
                 return;
             }
 
@@ -163,12 +165,12 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
     Object.defineProperty( this, 'endPoint', {
         set: function ( endPoint ) {
             if ( startPoint_ !== undefined && endPoint <= startPoint_ ) {
-                console.error( "SPAudioBuffer : endPoint cannot be lesser than startPoint" );
+                log.error( "SPAudioBuffer : endPoint cannot be lesser than startPoint" );
                 return;
             }
 
             if ( rawBuffer_ && ( endPoint * rawBuffer_.sampleRate ) >= rawBuffer_.length ) {
-                console.error( "SPAudioBuffer : endPoint cannot be greater than buffer or equal to length" );
+                log.error( "SPAudioBuffer : endPoint cannot be greater than buffer or equal to length" );
                 return;
             }
 
@@ -226,14 +228,14 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
     } else if ( urlType === "[object AudioBuffer]" ) {
         this.buffer = URL;
     } else {
-        console.warn( "Incorrect Parameter Type. url can only be a String, File or an AudioBuffer" );
+        log.error( "Incorrect Parameter Type. url can only be a String, File or an AudioBuffer" );
     }
 
     if ( startPointType === "[object Number]" ) {
         this.startPoint = parseFloat( startPoint );
     } else {
         if ( startPointType !== "[object Undefined]" ) {
-            console.warn( "Incorrect Parameter Type. startPoint should be a Number" );
+            log.warn( "Incorrect Parameter Type. startPoint should be a Number. Setting startPoint to 0" );
         }
     }
 
@@ -241,7 +243,7 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
         this.endPoint = parseFloat( endPoint );
     } else {
         if ( startPointType !== "[object Undefined]" ) {
-            console.warn( "Incorrect Parameter Type. endPoint should be a Number" );
+            log.warn( "Incorrect Parameter Type. endPoint should be a Number. Setting endPoint to end of dile" );
         }
     }
 

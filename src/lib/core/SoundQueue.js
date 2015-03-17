@@ -5,6 +5,7 @@
 var Config = require( '../core/Config' );
 var Looper = require( '../models/Looper' );
 var webaudioDispatch = require( '../core/WebAudioDispatch' );
+var log = require('loglevel');
 
 /**
  * A primitive which allows events on other Sound Models to be queued based on time of execution and executed at the appropriate time. Enables polyphony.
@@ -64,7 +65,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
     }
 
     function onVoiceEnded( endedVoice ) {
-        //console.log( "freeing " + endedVoice.voiceIndex );
+        log.debug( "freeing " + endedVoice.voiceIndex );
         freeVoices_.push( endedVoice );
         busyVoices_.splice( busyVoices_.indexOf( endedVoice ), 1 );
 
@@ -102,7 +103,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
     function getFreeVoice( eventID, eventTime ) {
         var newVoice;
         if ( freeVoices_.length < 1 ) {
-            console.warn( "No free voices left. Stealing the oldest" );
+            log.info( "No free voices left. Stealing the oldest" );
             newVoice = busyVoices_.shift();
             dequeueEventsHavingID( newVoice.eventID );
             newVoice.eventID = eventID;
@@ -129,10 +130,10 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
             return;
         }
 
-        //console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice.voiceIndex );
+        log.trace( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice.voiceIndex );
 
         if ( thisEvent.type == 'QESTART' ) {
-            //console.log( "starting " + selectedVoice.voiceIndex );
+            log.trace( "starting " + selectedVoice.voiceIndex );
             selectedVoice.start( thisEvent.time, thisEvent.offset, null, thisEvent.attackDuration );
             webaudioDispatch( function () {
                 if ( !self.isPlaying ) {
@@ -149,7 +150,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
         } else if ( thisEvent.type == 'QESETSRC' ) {
             selectedVoice.setSources( thisEvent.sourceBuffer );
         } else if ( thisEvent.type == 'QERELEASE' ) {
-            //console.log( "releasing " + selectedVoice.voiceIndex );
+            log.trace( "releasing " + selectedVoice.voiceIndex );
             selectedVoice.release( thisEvent.time, thisEvent.releaseDuration );
         } else if ( thisEvent.type == 'QESTOP' ) {
             selectedVoice.pause( thisEvent.time );
@@ -158,7 +159,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
                 busyVoices_.splice( busyVoices_.indexOf( selectedVoice ), 1 );
             }, thisEvent.time, context );
         } else {
-            console.warn( "Unknown Event Type : " + thisEvent );
+            log.warn( "Unknown Event Type : " + thisEvent );
         }
     }
 

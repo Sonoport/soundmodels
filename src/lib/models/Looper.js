@@ -10,6 +10,7 @@ var SPAudioParam = require( '../core/SPAudioParam' );
 var SPAudioBufferSourceNode = require( '../core/SPAudioBufferSourceNode' );
 var multiFileLoader = require( '../core/multiFileLoader' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
+var log = require('loglevel');
 
 /**
  *
@@ -130,7 +131,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
             var currentSpeed = sourceBufferNodes_[ 0 ] ? sourceBufferNodes_[ 0 ].playbackRate.value : 1;
 
             if ( self.isPlaying ) {
-                // console.log( "easingIn/Out" );
+                log.debug( "easingIn/Out" );
                 // easeIn/Out
                 if ( value > currentSpeed ) {
                     sourceBufferNodes_.forEach( function ( thisSource ) {
@@ -144,7 +145,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
                     } );
                 }
             } else {
-                // console.log( "changing directly" );
+                log.debug( "changing directly" );
                 sourceBufferNodes_.forEach( function ( thisSource ) {
                     thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
                     thisSource.playbackRate.setValueAtTime( value, audioContext.currentTime );
@@ -285,7 +286,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
      */
     this.start = function ( when, offset, duration, attackDuration ) {
         if ( !this.isInitialized ) {
-            console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+            log.warn( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
             return;
         }
 
