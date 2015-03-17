@@ -2,7 +2,6 @@
 
 var pkg = require('./package.json');
 
-var npm = require("npm");
 var del = require('del');
 var glob = require("glob");
 var merge = require('merge-stream');
@@ -21,6 +20,7 @@ var jshint = require('gulp-jshint');
 var ignore = require('gulp-ignore');
 var header = require('gulp-header');
 var compass = require('gulp-compass');
+var markdown = require('gulp-markdown');
 var webserver = require('gulp-webserver');
 var cached = require('gulp-cached');
 
@@ -104,6 +104,18 @@ gulp.task('publishdocs', function() {
     .pipe(yuidoc.generator(generatorOpt))
     .pipe(ignoreFiles)
     .pipe(gulp.dest(paths.dirs.dist + "docs/"));
+});
+
+gulp.task('makedev', function(){
+    return gulp.src('docs/dev/*.md')
+        .pipe(markdown())
+        .pipe(gulp.dest('docs/dev/'));
+});
+
+
+gulp.task('publishdev', ['makedev'], function(){
+    return gulp.src('docs/dev/*.html')
+        .pipe(gulp.dest('dist/dev/'));
 });
 
 /*
@@ -200,41 +212,47 @@ gulp.task('watch:lib', function(){
 */
 
 gulp.task('bump:major', function(){
-  return gulp.src('./package.json')
+  var packageStream =  gulp.src('./package.json')
   .pipe(bump({type: 'major'}))
   .pipe(gulp.dest('./'));
+
+  var bowerStream =  gulp.src('./bower.json')
+  .pipe(bump({type: 'major'}))
+  .pipe(gulp.dest('./'));
+
+  return merge(packageStream,bowerStream);
 });
 
 gulp.task('bump:minor', function(){
-  return gulp.src('./package.json')
+  var packageStream =  gulp.src('./package.json')
   .pipe(bump({type: 'minor'}))
   .pipe(gulp.dest('./'));
+
+  var bowerStream =  gulp.src('./bower.json')
+  .pipe(bump({type: 'minor'}))
+  .pipe(gulp.dest('./'));
+
+  return merge(packageStream,bowerStream);
 });
 
 gulp.task('bump:patch', function(){
-  return gulp.src('./package.json')
+  var packageStream =  gulp.src('./package.json')
   .pipe(bump({type: 'patch'}))
   .pipe(gulp.dest('./'));
+
+  var bowerStream =  gulp.src('./bower.json')
+  .pipe(bump({type: 'patch'}))
+  .pipe(gulp.dest('./'));
+
+  return merge(packageStream,bowerStream);
 });
 
 /*
 **** Release ****
 */
 
-gulp.task('release:npm',['release'] , function(){
-    npm.load('dist/package.json' ,function (er, npm) {
-        npm.commands.pack(["dist/"], function(){
-            var tarballName = pkg.name+"-"+pkg.version+".tgz";
-            gulp.src(tarballName)
-             .pipe(gulp.dest('dist/'))
-             .on('end', function () {
-                    del(tarballName);
-                });
-        });
-    });
-});
 
-gulp.task('release', ['releasebuild', 'publishdocs'], function(){
+gulp.task('release', ['releasebuild', 'publishdocs', 'publishdev'], function(){
     pkg = requireUncached('./package.json');
     gutil.log("Creating the ", pkg.version, " release.");
 

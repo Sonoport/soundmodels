@@ -51,6 +51,14 @@ A simple Fader effect which allows the change of the volume (loudness) of the in
 
 A simple stereo Panner effect which allows moving of the perceived source of the audio towards the left or right side of the listener.
 
+#### Filter
+
+A simple low-order filters that can be used as a building blocks of basic tone controls (bass, mid, treble), graphic equalizers, and more advanced filters.
+
+#### Compressor
+
+Dynamics compression lowers the volume of the loudest parts of the signal and raises the volume of the softest parts. It can be used for produce, a louder, richer, and fuller sound.
+
 ## Usage
 
 The sound models are avilable in two types of packages, [CommonJS](wiki.commonjs.org) and [AMD](http://requirejs.org/docs/whyamd.html). The sound models are packed as [UMD modules](https://github.com/umdjs/umd) and hence usable directly as global variable as well.

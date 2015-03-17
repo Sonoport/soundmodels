@@ -13,6 +13,7 @@ require( './cases/lib/core/test.SPAudioParam.js' );
 /*Effects Tests*/
 require( './cases/lib/effects/test.Fader.js' );
 require( './cases/lib/effects/test.Panner.js' );
+require( './cases/lib/effects/test.Filter.js' );
 
 /*Models Tests*/
 require( './cases/lib/models/test.Activity.js' );
