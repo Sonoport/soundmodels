@@ -3,7 +3,7 @@
 
 [Web Audio](http://webaudio.github.io/web-audio-api/) based Sound Models for creating dynamic interactive sounds.
 
-Latest Version : v2.3.2 (04/03/2015)
+Latest Version : v2.4.0 (19/03/2015)
 
 ## Sound Models
 
@@ -13,7 +13,9 @@ Sound Models currently available:
 
 ### Texture Based Models
 
-Texture based models use some kind of audio source (mp3, wav audio files).
+Texture based models use some kind of audio source (mp3, wav audio files). The support for the various types of audio files is based on the browser being used. `wav` and `mp3` are the most widely supported file formats. Here is [a good guide](https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility) for knowing which codecs are supported by which browser.
+
+[DecodeThis](http://chinpen.net/decodethis/) is a good tool to check if a file of specific codec, bitrate, sample rate is support by a specific browser.
 
 ##### Looper
 Loops the audio source continuously. Also supports looping of multiple source synchronously.
@@ -50,6 +52,14 @@ A simple Fader effect which allows the change of the volume (loudness) of the in
 #### Panner
 
 A simple stereo Panner effect which allows moving of the perceived source of the audio towards the left or right side of the listener.
+
+#### Filter
+
+A simple low-order filters that can be used as a building blocks of basic tone controls (bass, mid, treble), graphic equalizers, and more advanced filters.
+
+#### Compressor
+
+Dynamics compression lowers the volume of the loudest parts of the signal and raises the volume of the softest parts. It can be used for produce, a louder, richer, and fuller sound.
 
 ## Usage
 

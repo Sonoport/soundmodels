@@ -1,6 +1,6 @@
 {
   "name": "soundmodels",
-  "version": "2.3.3",
+  "version": "2.4.0",
   "authors": [
     {
       "name": "Chinmay Pendharkar",
@@ -16,8 +16,15 @@
     }
   ],
   "description": "Sonoport Sound Models",
-  "main": ["src/lib/"],
-  "ignore": ["build/", "test/", "docs/", "src/"],
+  "main": [
+    "src/lib/"
+  ],
+  "ignore": [
+    "build/",
+    "test/",
+    "docs/",
+    "src/"
+  ],
   "keywords": [
     "sonoport",
     "audio",

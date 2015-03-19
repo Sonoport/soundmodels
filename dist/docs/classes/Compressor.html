@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Panner - soundmodels</title>
+    <title>Compressor - soundmodels</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -114,7 +114,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Panner Class</h1>
+                        <h1>Compressor Class</h1>
 <div class="box meta">
     
 
@@ -138,18 +138,28 @@
 
 
 <div class="box intro">
-    <p>A simple stereo fader which moves the stereophonic image of the source left or right.</p>
+    <p>An effect changes the amplitude or volume of the audio that this effect is connected to.</p>
 
 </div>
 
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_Panner" class="method item">
-    <h3 class="name"><code>Panner</code></h3>
+        <div id="method_Compressor" class="method item">
+    <h3 class="name"><code>Compressor</code></h3>
 
     
-        <span class="paren">()</span>
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[context]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
     
 
     
@@ -187,6 +197,31 @@
         
     </div>
 
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[context]</code>
+                        <span class="type">AudioContext</span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>AudioContext to be used.</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
     
 
     
@@ -252,6 +287,13 @@
 
                     <ul class="index-list properties extends">
                         
+                            <li class="index-item property">
+                                <a href="#property_attack">attack</a>
+
+                                
+                                
+                            </li>
+                        
                             <li class="index-item property inherited">
                                 <a href="#property_audioContext">audioContext</a>
 
@@ -287,6 +329,13 @@
                                 
                             </li>
                         
+                            <li class="index-item property">
+                                <a href="#property_knee">knee</a>
+
+                                
+                                
+                            </li>
+                        
                             <li class="index-item property inherited">
                                 <a href="#property_modelName">modelName</a>
 
@@ -316,7 +365,21 @@
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_pan">pan</a>
+                                <a href="#property_ratio">ratio</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_release">release</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_threshold">threshold</a>
 
                                 
                                 
@@ -645,6 +708,57 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
                 <h2 class="off-left">Properties</h2>
 
                 
+                    <div id="property_attack" class="property item">
+    <h3 class="name"><code>attack</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>The amount of time (in seconds) to reduce the gain by 10dB.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0.003</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 1</p>
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="property_audioContext" class="property item inherited">
     <h3 class="name"><code>audioContext</code></h3>
     <span class="type">AudioContext</span>
@@ -871,6 +985,57 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
 </div>
 
                 
+                    <div id="property_knee" class="property item">
+    <h3 class="name"><code>knee</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>A decibel value representing the range above the threshold where the curve * smoothly transitions to the &quot;ratio&quot; portion.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 30</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 40</p>
+    
+
+    
+
+    
+</div>
+
+                
                     <div id="property_modelName" class="property item inherited">
     <h3 class="name"><code>modelName</code></h3>
     <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
@@ -1055,8 +1220,8 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
 </div>
 
                 
-                    <div id="property_pan" class="property item">
-    <h3 class="name"><code>pan</code></h3>
+                    <div id="property_ratio" class="property item">
+    <h3 class="name"><code>ratio</code></h3>
     <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
@@ -1084,23 +1249,122 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     <div class="description">
-        <p>Pans the audio to left or right stereo audio channels using a value in degrees of the angle
-of the perceived audio source from the center. Positive value implies perceived source
-being on the right of center. Negative value implies the perceived sources being on the left
-of the center.</p>
+        <p>The amount of dB change in input for a 1 dB change in output.</p>
 
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
+        <p><strong>Default Value:</strong> 12</p>
     
 
     
-           <p><strong>Minimum Value:</strong> -90</p>
+           <p><strong>Minimum Value:</strong> 1</p>
     
 
     
-           <p><strong>Maximum Value:</strong> 90</p>
+           <p><strong>Maximum Value:</strong> 20</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_release" class="property item">
+    <h3 class="name"><code>release</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>The amount of time (in seconds) to increase the gain by 10dB.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> 0.250</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> 0</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 1</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_threshold" class="property item">
+    <h3 class="name"><code>threshold</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>The decibel value above which the compression will start taking effect.</p>
+
+    </div>
+
+    
+        <p><strong>Default Value:</strong> -24</p>
+    
+
+    
+           <p><strong>Minimum Value:</strong> -100</p>
+    
+
+    
+           <p><strong>Maximum Value:</strong> 0</p>
     
 
     

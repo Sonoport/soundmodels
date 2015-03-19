@@ -3,7 +3,7 @@
 
 [Web Audio](http://webaudio.github.io/web-audio-api/) based Sound Models for creating dynamic interactive sounds.
 
-Latest Version : v2.3.3 (12/03/2015)
+Latest Version : v2.4.0 (19/03/2015)
 
 ## Sound Models
 
