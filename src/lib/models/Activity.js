@@ -9,6 +9,7 @@ var BaseSound = require( '../core/BaseSound' );
 var Looper = require( '../models/Looper' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
+var log = require( 'loglevel' );
 
 /**
  * A model plays back the source at various speeds based on the movement of the activity parameter.
@@ -119,7 +120,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
             var deltaPos = Math.abs( newPosition - lastPosition_ );
             var deltaTime = ( time - lastUpdateTime_ );
 
-            //console.log( deltaTime );
+            log.debug( "delta time", deltaTime );
 
             if ( deltaTime > 0 ) {
 
@@ -279,7 +280,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
      */
     this.play = function ( when ) {
         if ( !this.isInitialized ) {
-            console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+            log.warn( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
             return;
         }
         internalLooper_.play( when );
@@ -297,7 +298,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
      */
     this.start = function ( when, offset, duration, attackDuration ) {
         if ( !this.isInitialized ) {
-            console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+            log.warn( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
             return;
         }
         internalLooper_.start( when, offset, duration );

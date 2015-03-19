@@ -13,7 +13,9 @@ Sound Models currently available:
 
 ### Texture Based Models
 
-Texture based models use some kind of audio source (mp3, wav audio files).
+Texture based models use some kind of audio source (mp3, wav audio files). The support for the various types of audio files is based on the browser being used. `wav` and `mp3` are the most widely supported file formats. Here is [a good guide](https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats#Browser_compatibility) for knowing which codecs are supported by which browser.
+
+[DecodeThis](http://chinpen.net/decodethis/) is a good tool to check if a file of specific codec, bitrate, sample rate is support by a specific browser.
 
 ##### Looper
 Loops the audio source continuously. Also supports looping of multiple source synchronously.

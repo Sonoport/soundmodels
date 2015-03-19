@@ -9,6 +9,7 @@
 
  var FileLoader = require( '../core/FileLoader' );
  var SPAudioBuffer = require( '../core/SPAudioBuffer' );
+ var log = require( 'loglevel' );
 
  /**
   * Helper class to loader multiple sources from URL String, File or AudioBuffer or SPAudioBuffer Objects.
@@ -33,7 +34,7 @@
 
          // If not defined, set empty sources.
          if ( !sources ) {
-             console.log( "Setting empty source. No sound may be heard" );
+             log.debug( "Setting empty source. No sound may be heard" );
              onLoadComplete( false, loadedAudioBuffers_ );
              return;
          }
@@ -47,7 +48,7 @@
 
          // If beyond size limits, log error and callback with false.
          if ( sources.length < self.minSources || sources.length > self.maxSources ) {
-             console.error( "Unsupported number of Sources. " + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources. Trying to load " + sources.length + "." );
+             log.error( "Unsupported number of Sources. " + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources. Trying to load " + sources.length + "." );
              onLoadComplete( false, loadedAudioBuffers_ );
              return;
          }
@@ -94,7 +95,7 @@
                  }
              } );
          } else {
-             console.error( "Incorrect Parameter Type - Source is not a URL, File or AudioBuffer or doesn't have sourceURL or buffer" );
+             log.error( "Incorrect Parameter Type - Source is not a URL, File or AudioBuffer or doesn't have sourceURL or buffer" );
              onSingleLoad( false, {} );
          }
      }
@@ -102,7 +103,7 @@
      function onSingleLoadAt( index ) {
          return function ( status, loadedSound ) {
              if ( status ) {
-                 //console.log( "Loaded ", index, "successfully" );
+                 log.debug( "Loaded track", index, "successfully" );
                  loadedAudioBuffers_[ index ] = loadedSound;
              }
              sourcesToLoad_--;

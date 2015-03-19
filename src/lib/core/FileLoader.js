@@ -3,6 +3,7 @@
  */
 "use strict";
 var detectLoopMarkers = require( '../core/DetectLoopMarkers' );
+var log = require( 'loglevel' );
 
 /**
  * Load a single file from a URL or a File object.
@@ -58,32 +59,32 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
         // Verify parameters
         if ( !isInt_( start ) ) {
             start = Number.isNan( start ) ? 0 : Math.round( Number( start ) );
-            console.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer. Coercing it to an Integer - start" );
+            log.debug( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer. Coercing it to an Integer - start" );
         } else if ( !isInt_( end ) ) {
-            console.warn( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" );
+            log.debug( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" );
             end = Number.isNan( end ) ? 0 : Math.round( Number( end ) );
         }
         // Check if start is smaller than end
         if ( start > end ) {
-            console.error( "Incorrect parameter Type - FileLoader getBuffer start parameter " + start + " should be smaller than end parameter " + end + " . Setting them to the same value " + start );
+            log.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter " + start + " should be smaller than end parameter " + end + " . Setting them to the same value " + start );
             end = start;
         }
         // Check if start is within the buffer size
         if ( start > loopEnd_ || start < loopStart_ ) {
-            console.error( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length + " . Setting start to " + loopStart_ );
+            log.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length + " . Setting start to " + loopStart_ );
             start = loopStart_;
         }
 
         // Check if end is within the buffer size
         if ( end > loopEnd_ || end < loopStart_ ) {
-            console.error( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length + " . Setting start to " + loopEnd_ );
+            log.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length + " . Setting start to " + loopEnd_ );
             end = loopEnd_;
         }
 
         var length = end - start;
 
         if ( !rawBuffer_ ) {
-            console.error( "No Buffer Found - Buffer loading has not completed or has failed." );
+            log.error( "No Buffer Found - Buffer loading has not completed or has failed." );
             return null;
         }
 
@@ -142,7 +143,7 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
                 onloadCallback( true );
             }
         }, function () {
-            console.warn( "Error Decoding " + URL );
+            log.error( "Error Decoding " + URL );
             if ( onloadCallback && typeof onloadCallback === 'function' ) {
                 onloadCallback( false );
             }
@@ -177,7 +178,7 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
      */
     this.getRawBuffer = function () {
         if ( !isSoundLoaded_ ) {
-            console.error( "No Buffer Found - Buffer loading has not completed or has failed." );
+            log.error( "No Buffer Found - Buffer loading has not completed or has failed." );
             return null;
         }
         return rawBuffer_;

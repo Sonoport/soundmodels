@@ -5,6 +5,7 @@
 "use strict";
 var SPPlaybackRateParam = require( '../core/SPPlaybackRateParam' );
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
+var log = require( 'loglevel' );
 
 /**
  * A wrapper around the AudioBufferSourceNode to be able to track the current playPosition of a AudioBufferSourceNode.
@@ -292,9 +293,8 @@ function SPAudioBufferSourceNode( audioContext ) {
 
         var self = this;
         webAudioDispatch( function () {
-            //console.log( 'resetting' );
+            log.debug( 'Resetting BufferSource', self.buffer.length );
             // Disconnect source(s) from output.
-            // self.disconnect( );
 
             // Disconnect scope node from trackGain
             scopeNode_.disconnect();

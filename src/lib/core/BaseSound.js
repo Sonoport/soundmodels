@@ -5,6 +5,7 @@
 'use strict';
 require( '../core/AudioContextMonkeyPatch' );
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
+var log = require( 'loglevel' );
 
 /**
  * Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. To be extended by all other Sound Models
@@ -22,7 +23,7 @@ function BaseSound( context ) {
      * @type AudioContext
      */
     if ( context === undefined || context === null ) {
-        console.log( 'Making a new AudioContext' );
+        log.debug( 'Making a new AudioContext' );
         this.audioContext = new AudioContext();
     } else {
         this.audioContext = context;
@@ -201,7 +202,7 @@ function BaseSound( context ) {
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 
         function createDummyOsc() {
-            //console.log( "Booting ", context );
+            log.debug( "Booting ", context );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
             window.liveAudioContexts.push( context );
@@ -249,7 +250,7 @@ BaseSound.prototype.connect = function ( destination, output, input ) {
             'input': input
         } );
     } else {
-        console.error( "No Input Connection - Attempts to connect " + ( typeof destination ) + " to " + ( typeof this ) );
+        log.error( "No Input Connection - Attempts to connect " + ( typeof destination ) + " to " + ( typeof this ) );
     }
 };
 
@@ -280,7 +281,7 @@ BaseSound.prototype.start = function ( when, offset, duration, attackDuration ) 
 
     this.releaseGainNode.gain.cancelScheduledValues( when );
     if ( typeof attackDuration !== 'undefined' ) {
-        //console.log( "Ramping from " + offset + "  in " + attackDuration );
+        log.debug( "Ramping from " + offset + "  in " + attackDuration );
         this.releaseGainNode.gain.setValueAtTime( 0, when );
         this.releaseGainNode.gain.linearRampToValueAtTime( 1, when + attackDuration );
     } else {

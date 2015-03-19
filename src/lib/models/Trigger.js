@@ -9,6 +9,7 @@ var SoundQueue = require( '../core/SoundQueue' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/multiFileLoader' );
 var Converter = require( '../core/Converter' );
+var log = require( 'loglevel' );
 
 /**
  * A model which triggers a single or multiple audio sources with multiple voices (polyphony).
@@ -192,7 +193,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
      */
     this.start = function ( when, offset, duration, attackDuration ) {
         if ( !this.isInitialized ) {
-            console.error( this.modelName, "hasn't finished Initializing yet. Please wait before calling start/play" );
+            log.warn( this.modelName, "hasn't finished Initializing yet. Please wait before calling start/play" );
             return;
         }
 

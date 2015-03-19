@@ -8,6 +8,8 @@ var Config = require( '../core/Config' );
 var BaseSound = require( '../core/BaseSound' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/multiFileLoader' );
+var log = require( 'loglevel' );
+
 /**
  *
  * A model which loads a source and allows it to be scrubbed using a position parameter.
@@ -268,7 +270,7 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
                 }
 
                 if ( audioPlaying && ( ( muteOnReverse && scale_ < AUDIOEVENT_TRESHOLD ) || Math.abs( scale_ ) < AUDIOEVENT_TRESHOLD ) ) {
-                    //console.log( "stopping..." );
+                    log.debug( "stopping..." );
                     audioPlaying = false;
                     if ( typeof self.onAudioEnd === 'function' ) {
                         self.onAudioEnd();
@@ -277,7 +279,7 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
                 }
 
                 if ( scale_ > AUDIOEVENT_TRESHOLD && !audioPlaying ) {
-                    //console.log( "playing..." );
+                    log.debug( "playing..." );
                     audioPlaying = true;
                     if ( typeof self.onAudioStart === 'function' ) {
                         self.onAudioStart();

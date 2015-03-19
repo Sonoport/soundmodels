@@ -5,6 +5,7 @@
 "use strict";
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var Config = require( '../core/Config' );
+var log = require( 'loglevel' );
 
 /**
  * Mock AudioParam used to create Parameters for Sonoport Sound Models. The SPAudioParam supports either a AudioParam backed parameter, or a completely Javascript mocked up Parameter, which supports a rough version of parameter automation.
@@ -84,21 +85,21 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
         enumerable: true,
         configurable: false,
         set: function ( value ) {
-            //console.log( "setting", name );
+            log.debug( "Setting param", name, "value to", value );
             // Sanitize the value with min/max
             // bounds first.
             if ( typeof value !== typeof defaultValue ) {
-                console.error( "Attempt to set a " + ( typeof defaultValue ) + " parameter to a " + ( typeof value ) + " value" );
+                log.error( "Attempt to set a", ( typeof defaultValue ), "parameter to a", ( typeof value ), "value" );
                 return;
             }
             // Sanitize the value with min/max
             // bounds first.
             if ( typeof value === "number" ) {
                 if ( value > maxValue ) {
-                    console.warn( this.name + ' clamping to max' );
+                    log.debug( this.name, 'clamping to max' );
                     value = maxValue;
                 } else if ( value < minValue ) {
-                    console.warn( this.name + ' clamping to min' );
+                    log.debug( this.name + ' clamping to min' );
                     value = minValue;
                 }
             }
@@ -113,7 +114,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
             }
 
             if ( !calledFromAutomation_ ) {
-                // console.log( "clearing automation" );
+                log.debug( "Clearing Automation for", name );
                 window.clearInterval( intervalID_ );
             }
             calledFromAutomation_ = false;
@@ -134,7 +135,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
                         thisParam.setTargetAtTime( value, baseSound.audioContext.currentTime, Config.DEFAULT_SMOOTHING_CONSTANT );
                     } else {
                         //set directly if not playing
-                        //console.log( "setting directly" );
+                        log.debug( "Setting param", name, 'through setter' );
                         thisParam.setValueAtTime( value, baseSound.audioContext.currentTime );
                     }
                 } );
@@ -233,7 +234,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
             var self = this;
             var initValue_ = self.value;
             var initTime_ = baseSound.audioContext.currentTime;
-            console.log( "starting automation" );
+            log.debug( "starting automation" );
             intervalID_ = window.setInterval( function () {
                 if ( baseSound.audioContext.currentTime >= startTime ) {
                     calledFromAutomation_ = true;
