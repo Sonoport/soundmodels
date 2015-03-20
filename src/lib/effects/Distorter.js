@@ -29,20 +29,21 @@ function Distorter( context ) {
     this.inputNode = filter_;
     this.outputNode = waveshaper_;
 
-    filter_.connect(waveshaper_);
+    filter_.type = 'bandpass';
+    filter_.connect( waveshaper_ );
 
     var curveLength_ = 22050;
-    var curve_ = new Float32Array(curveLength_);
+    var curve_ = new Float32Array( curveLength_ );
     var deg_ = Math.PI / 180;
 
-    function driveSetter_ (param, value){
+    function driveSetter_( param, value ) {
         var k = value * 100;
 
-        for (var i = 0; i < curveLength_; i++) {
+        for ( var i = 0; i < curveLength_; i++ ) {
             var x = i * 2 / curveLength_ - 1;
-            curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+            curve_[ i ] = ( 3 + k ) * x * 20 * deg_ / ( Math.PI + k * Math.abs( x ) );
         }
-        waveshaper_.curve = curve;
+        waveshaper_.curve = curve_;
     }
 
     /**
@@ -66,8 +67,7 @@ function Distorter( context ) {
      * @minvalue 0
      * @maxvalue 100
      */
-    this.registerParameter( new SPAudioParam( this, 'color', 0, 22050, 800, filter_.frequency, null, null ), false );
-
+    this.registerParameter( new SPAudioParam( this, 'color', 0, 22050, 800, filter_.frequency ), false );
 
     this.isInitialized = true;
 }

@@ -6,26 +6,28 @@
         window.context = new AudioContext();
     }
 
-    require( [ 'models/Looper', 'core/SPAudioBuffer', 'effects/Reverb' ], function ( Looper, SPAudioBuffer, Reverb ) {
+    require( [ 'models/Looper', 'core/SPAudioBuffer', 'effects/Distorter' ], function ( Looper, SPAudioBuffer, Distorter ) {
 
         var workout = new SPAudioBuffer( window.context, 'https://dl.dropboxusercontent.com/u/2117088/WorkoutTrack.mp3' );
 
         var drums = 'https://dl.dropboxusercontent.com/u/77191118/sounds/drum.mp3';
 
-        var reverb = new Reverb( context );
+        var distort = new Distorter( context );
 
         var looper = new Looper( context, workout, function ( progressEvent, sound ) {
             console.log( "Loading.. ", sound, ( progressEvent.loaded / progressEvent.total ) );
         }, function () {
             console.log( "Loaded..." );
-            // reverb.decayTime.value = -45;
-            // reverb.decayTime.setTargetAtTime( 90, context.currentTime + 2, 10 );
+            // distort.decayTime.value = -45;
+            // distort.decayTime.setTargetAtTime( 90, context.currentTime + 2, 10 );
 
-            var reverbSlider = document.getElementById( 'reverb' );
-            reverbSlider.disabled = false;
+            distort.color.value = 100;
 
-            reverbSlider.addEventListener( 'input', function () {
-                reverb.decayTime.value = parseFloat( reverbSlider.value );
+            var distortSlider = document.getElementById( 'distort' );
+            distortSlider.disabled = false;
+
+            distortSlider.addEventListener( 'input', function () {
+                distort.drive.value = parseFloat( distortSlider.value );
             } );
             looper.play();
         }, function () {
@@ -37,7 +39,7 @@
         } );
 
         looper.disconnect( 0 );
-        looper.connect( reverb );
-        reverb.connect( context.destination );
+        looper.connect( distort );
+        distort.connect( context.destination );
     } );
 } )();
