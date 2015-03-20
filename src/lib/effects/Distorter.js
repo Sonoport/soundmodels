@@ -5,7 +5,6 @@
 "use strict";
 var BaseEffect = require( '../core/BaseEffect' );
 var SPAudioParam = require( '../core/SPAudioParam' );
-var log = require( 'loglevel' );
 
 /**
  *
@@ -26,8 +25,25 @@ function Distorter( context ) {
     this.effectName = 'Distorter';
 
     var waveshaper_ = this.audioContext.createWaveShaper();
-    this.inputNode = waveshaper_;
+    var filter_ = this.audioContext.createBiquadFilter();
+    this.inputNode = filter_;
     this.outputNode = waveshaper_;
+
+    filter_.connect(waveshaper_);
+
+    var curveLength_ = 22050;
+    var curve_ = new Float32Array(curveLength_);
+    var deg_ = Math.PI / 180;
+
+    function driveSetter_ (param, value){
+        var k = value * 100;
+
+        for (var i = 0; i < curveLength_; i++) {
+            var x = i * 2 / curveLength_ - 1;
+            curve[i] = (3 + k) * x * 20 * deg / (Math.PI + k * Math.abs(x));
+        }
+        waveshaper_.curve = curve;
+    }
 
     /**
      * Fades or reduces the volume of the audio based on the value in percentage. 100% implies
@@ -39,19 +55,19 @@ function Distorter( context ) {
      * @minvalue 0
      * @maxvalue 100
      */
-    this.registerParameter( new SPAudioParam( this, 'volume', 0, 100, 100, waveshaper_.gain, faderGainMap, null ), false );
+    this.registerParameter( new SPAudioParam( this, 'drive', 0, 1.0, 0.5, null, null, driveSetter_ ), false );
 
     /**
-     * Fades or reduces the volume of the audio based on the value in decibles. 0 dB implies no
-     * change in volume. -80 dB implies almost completely muted audio.
      *
-     * @property volumeInDB
+     *
+     * @property volume
      * @type SPAudioParam
-     * @default 0
-     * @minvalue -80
-     * @maxvalue 0
+     * @default 100
+     * @minvalue 0
+     * @maxvalue 100
      */
-    this.registerParameter( new SPAudioParam( this, 'volumeInDB', -80, 0, 0, waveshaper_.gain, faderGainMapDB, null ), false );
+    this.registerParameter( new SPAudioParam( this, 'color', 0, 22050, 800, filter_.frequency, null, null ), false );
+
 
     this.isInitialized = true;
 }

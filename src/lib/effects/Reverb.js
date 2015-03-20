@@ -6,7 +6,7 @@
 var BaseEffect = require( '../core/BaseEffect' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var reverbGen = require( 'reverbGen' );
-var log = require( 'loglevel' );
+// var numChannels_ = require( 'loglevel' );
 
 /**
  *
@@ -35,38 +35,41 @@ function Reverb( context ) {
     var sampleRate_ = context.sampleRate;
     var lpFreqStart_ = 15000;
     var lpFreqEnd_ = 1000;
-    var numChannels_ = 2;
 
-    function regenIR = function (){
+    var self = this;
+
+    function regenIR() {
         var params = {
+            audioContext: self.audioContext,
             fadeInTime: fadeInTime_,
             decayTime: decayTime_,
             sampleRate: sampleRate_,
             lpFreqStart: lpFreqStart_,
             lpFreqEnd: lpFreqEnd_,
-            numChannels : 2
-        }
-        reverbGen.generateReverb(params, function (buffer){
+            numChannels: 2
+        };
+
+        reverbGen.generateReverb( params, function ( buffer ) {
             reverbConvolver_.buffer = buffer;
-        });
+        } );
     }
 
-    function fadeInTimeSetter (param, value){
+    function fadeInTimeSetter( param, value ) {
         fadeInTime_ = value;
         regenIR();
     }
 
-    function decayTimeSetter (param, value){
+    function decayTimeSetter( param, value ) {
         decayTime_ = value;
         regenIR();
     }
 
-    function lowPassStartFreqSetter (param, value){
+    function lowPassStartFreqSetter( param, value ) {
         lpFreqStart_ = value;
         regenIR();
     }
 
-    function lowPassEndFreqSetter (param, value){
+    function lowPassEndFreqSetter( param, value ) {
         lpFreqEnd_ = value;
         regenIR();
     }
@@ -102,7 +105,7 @@ function Reverb( context ) {
      * @minvalue 0
      * @maxvalue 20000
      */
-    this.registerParameter( new SPAudioParam( this, 'lowPassStartFreq', 0, 20000, 15000, null, null, lowPassStartFreqSetter), false );
+    this.registerParameter( new SPAudioParam( this, 'lowPassStartFreq', 0, 20000, 15000, null, null, lowPassStartFreqSetter ), false );
 
     /**
      *
