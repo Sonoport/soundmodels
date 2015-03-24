@@ -98,6 +98,8 @@ require( './cases/lib/core/test.SPAudioParam.js' );
 require( './cases/lib/effects/test.Fader.js' );
 require( './cases/lib/effects/test.Panner.js' );
 require( './cases/lib/effects/test.Filter.js' );
+require( './cases/lib/effects/test.Compressor.js' );
+require( './cases/lib/effects/test.Distorter.js' );
 
 /*Models Tests*/
 require( './cases/lib/models/test.Activity.js' );
@@ -107,7 +109,166 @@ require( './cases/lib/models/test.MultiTrigger.js' );
 require( './cases/lib/models/test.Scrubber.js' );
 require( './cases/lib/models/test.Trigger.js' );
 
-},{"./cases/lib/core/test.BaseSound.js":28,"./cases/lib/core/test.Config.js":29,"./cases/lib/core/test.Converter.js":30,"./cases/lib/core/test.DetectLoopMarkers.js":31,"./cases/lib/core/test.FileLoader.js":32,"./cases/lib/core/test.MultiFileLoader.js":33,"./cases/lib/core/test.SPAudioBuffer.js":34,"./cases/lib/core/test.SPAudioBufferSourceNode.js":35,"./cases/lib/core/test.SPAudioParam.js":36,"./cases/lib/core/test.SoundQueue.js":37,"./cases/lib/effects/test.Fader.js":38,"./cases/lib/effects/test.Filter.js":39,"./cases/lib/effects/test.Panner.js":40,"./cases/lib/models/test.Activity.js":41,"./cases/lib/models/test.Extender.js":42,"./cases/lib/models/test.Looper.js":43,"./cases/lib/models/test.MultiTrigger.js":44,"./cases/lib/models/test.Scrubber.js":45,"./cases/lib/models/test.Trigger.js":46}],2:[function(require,module,exports){
+},{"./cases/lib/core/test.BaseSound.js":31,"./cases/lib/core/test.Config.js":32,"./cases/lib/core/test.Converter.js":33,"./cases/lib/core/test.DetectLoopMarkers.js":34,"./cases/lib/core/test.FileLoader.js":35,"./cases/lib/core/test.MultiFileLoader.js":36,"./cases/lib/core/test.SPAudioBuffer.js":37,"./cases/lib/core/test.SPAudioBufferSourceNode.js":38,"./cases/lib/core/test.SPAudioParam.js":39,"./cases/lib/core/test.SoundQueue.js":40,"./cases/lib/effects/test.Compressor.js":41,"./cases/lib/effects/test.Distorter.js":42,"./cases/lib/effects/test.Fader.js":43,"./cases/lib/effects/test.Filter.js":44,"./cases/lib/effects/test.Panner.js":45,"./cases/lib/models/test.Activity.js":46,"./cases/lib/models/test.Extender.js":47,"./cases/lib/models/test.Looper.js":48,"./cases/lib/models/test.MultiTrigger.js":49,"./cases/lib/models/test.Scrubber.js":50,"./cases/lib/models/test.Trigger.js":51}],2:[function(require,module,exports){
+/*
+* loglevel - https://github.com/pimterry/loglevel
+*
+* Copyright (c) 2013 Tim Perry
+* Licensed under the MIT license.
+*/
+(function (root, definition) {
+    if (typeof module === 'object' && module.exports && typeof require === 'function') {
+        module.exports = definition();
+    } else if (typeof define === 'function' && typeof define.amd === 'object') {
+        define(definition);
+    } else {
+        root.log = definition();
+    }
+}(this, function () {
+    var self = {};
+    var noop = function() {};
+    var undefinedType = "undefined";
+
+    function realMethod(methodName) {
+        if (typeof console === undefinedType) {
+            return false; // We can't build a real method without a console to log to
+        } else if (console[methodName] !== undefined) {
+            return bindMethod(console, methodName);
+        } else if (console.log !== undefined) {
+            return bindMethod(console, 'log');
+        } else {
+            return noop;
+        }
+    }
+
+    function bindMethod(obj, methodName) {
+        var method = obj[methodName];
+        if (typeof method.bind === 'function') {
+            return method.bind(obj);
+        } else {
+            try {
+                return Function.prototype.bind.call(method, obj);
+            } catch (e) {
+                // Missing bind shim or IE8 + Modernizr, fallback to wrapping
+                return function() {
+                    return Function.prototype.apply.apply(method, [obj, arguments]);
+                };
+            }
+        }
+    }
+
+    function enableLoggingWhenConsoleArrives(methodName, level) {
+        return function () {
+            if (typeof console !== undefinedType) {
+                replaceLoggingMethods(level);
+                self[methodName].apply(self, arguments);
+            }
+        };
+    }
+
+    var logMethods = [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error"
+    ];
+
+    function replaceLoggingMethods(level) {
+        for (var i = 0; i < logMethods.length; i++) {
+            var methodName = logMethods[i];
+            self[methodName] = (i < level) ? noop : self.methodFactory(methodName, level);
+        }
+    }
+
+    function persistLevelIfPossible(levelNum) {
+        var levelName = (logMethods[levelNum] || 'silent').toUpperCase();
+
+        // Use localStorage if available
+        try {
+            window.localStorage['loglevel'] = levelName;
+            return;
+        } catch (ignore) {}
+
+        // Use session cookie as fallback
+        try {
+            window.document.cookie = "loglevel=" + levelName + ";";
+        } catch (ignore) {}
+    }
+
+    function loadPersistedLevel() {
+        var storedLevel;
+
+        try {
+            storedLevel = window.localStorage['loglevel'];
+        } catch (ignore) {}
+
+        if (typeof storedLevel === undefinedType) {
+            try {
+                storedLevel = /loglevel=([^;]+)/.exec(window.document.cookie)[1];
+            } catch (ignore) {}
+        }
+        
+        if (self.levels[storedLevel] === undefined) {
+            storedLevel = "WARN";
+        }
+
+        self.setLevel(self.levels[storedLevel]);
+    }
+
+    /*
+     *
+     * Public API
+     *
+     */
+
+    self.levels = { "TRACE": 0, "DEBUG": 1, "INFO": 2, "WARN": 3,
+        "ERROR": 4, "SILENT": 5};
+
+    self.methodFactory = function (methodName, level) {
+        return realMethod(methodName) ||
+               enableLoggingWhenConsoleArrives(methodName, level);
+    };
+
+    self.setLevel = function (level) {
+        if (typeof level === "string" && self.levels[level.toUpperCase()] !== undefined) {
+            level = self.levels[level.toUpperCase()];
+        }
+        if (typeof level === "number" && level >= 0 && level <= self.levels.SILENT) {
+            persistLevelIfPossible(level);
+            replaceLoggingMethods(level);
+            if (typeof console === undefinedType && level < self.levels.SILENT) {
+                return "No console available for logging";
+            }
+        } else {
+            throw "log.setLevel() called with invalid level: " + level;
+        }
+    };
+
+    self.enableAll = function() {
+        self.setLevel(self.levels.TRACE);
+    };
+
+    self.disableAll = function() {
+        self.setLevel(self.levels.SILENT);
+    };
+
+    // Grab the current global log variable in case of overwrite
+    var _log = (typeof window !== undefinedType) ? window.log : undefined;
+    self.noConflict = function() {
+        if (typeof window !== undefinedType &&
+               window.log === self) {
+            window.log = _log;
+        }
+
+        return self;
+    };
+
+    loadPersistedLevel();
+    return self;
+}));
+
+},{}],3:[function(require,module,exports){
 'use strict';
 
 function ProxyquireifyError(msg) {
@@ -212,7 +373,7 @@ if (require.cache) {
   proxyquire.plugin = replacePrelude.plugin;
 }
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /**
  *
  *
@@ -233,12 +394,13 @@ function AudioContextMonkeyPatch() {
 
 module.exports = AudioContextMonkeyPatch;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /**
  * @module Core
  */
 'use strict';
 require( '../core/AudioContextMonkeyPatch' );
+var log = require( 'loglevel' );
 
 /**
  * Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. To be extended by all other Effects
@@ -256,7 +418,7 @@ function BaseEffect( context ) {
      * @type AudioContext
      */
     if ( context === undefined || context === null ) {
-        console.log( 'Making a new AudioContext' );
+        log.debug( 'Making a new AudioContext' );
         this.audioContext = new AudioContext();
     } else {
         this.audioContext = context;
@@ -357,7 +519,7 @@ function BaseEffect( context ) {
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 
         function createDummyOsc() {
-            //console.log( "Booting ", context );
+            log.debug( "Booting ", context );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
             window.liveAudioContexts.push( context );
@@ -405,7 +567,7 @@ BaseEffect.prototype.connect = function ( destination, output, input ) {
             'input': input
         } );
     } else {
-        console.error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) );
+        log.error( "No Input Connection - Attempts to connect " + ( typeof output ) + " to " + ( typeof this ) );
     }
 };
 
@@ -465,7 +627,7 @@ BaseEffect.prototype.listParams = function () {
 // Return constructor function
 module.exports = BaseEffect;
 
-},{"../core/AudioContextMonkeyPatch":3}],5:[function(require,module,exports){
+},{"../core/AudioContextMonkeyPatch":4,"loglevel":2}],6:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -473,6 +635,7 @@ module.exports = BaseEffect;
 'use strict';
 require( '../core/AudioContextMonkeyPatch' );
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
+var log = require( 'loglevel' );
 
 /**
  * Pseudo AudioNode class the encapsulates basic functionality of an Audio Node. To be extended by all other Sound Models
@@ -490,7 +653,7 @@ function BaseSound( context ) {
      * @type AudioContext
      */
     if ( context === undefined || context === null ) {
-        console.log( 'Making a new AudioContext' );
+        log.debug( 'Making a new AudioContext' );
         this.audioContext = new AudioContext();
     } else {
         this.audioContext = context;
@@ -669,7 +832,7 @@ function BaseSound( context ) {
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 
         function createDummyOsc() {
-            //console.log( "Booting ", context );
+            log.debug( "Booting ", context );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
             window.liveAudioContexts.push( context );
@@ -717,7 +880,7 @@ BaseSound.prototype.connect = function ( destination, output, input ) {
             'input': input
         } );
     } else {
-        console.error( "No Input Connection - Attempts to connect " + ( typeof destination ) + " to " + ( typeof this ) );
+        log.error( "No Input Connection - Attempts to connect " + ( typeof destination ) + " to " + ( typeof this ) );
     }
 };
 
@@ -748,7 +911,7 @@ BaseSound.prototype.start = function ( when, offset, duration, attackDuration ) 
 
     this.releaseGainNode.gain.cancelScheduledValues( when );
     if ( typeof attackDuration !== 'undefined' ) {
-        //console.log( "Ramping from " + offset + "  in " + attackDuration );
+        log.debug( "Ramping from " + offset + "  in " + attackDuration );
         this.releaseGainNode.gain.setValueAtTime( 0, when );
         this.releaseGainNode.gain.linearRampToValueAtTime( 1, when + attackDuration );
     } else {
@@ -911,7 +1074,7 @@ BaseSound.prototype.setOutputEffect = function ( effect ) {
 // Return constructor function
 module.exports = BaseSound;
 
-},{"../core/AudioContextMonkeyPatch":3,"../core/WebAudioDispatch":16}],6:[function(require,module,exports){
+},{"../core/AudioContextMonkeyPatch":4,"../core/WebAudioDispatch":17,"loglevel":2}],7:[function(require,module,exports){
 /**
  * A structure for static configuration options.
  *
@@ -1001,7 +1164,7 @@ Config.DEFAULT_SMOOTHING_CONSTANT = 0.05;
 
 module.exports = Config;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1056,11 +1219,12 @@ Converter.dBFStoRatio = function ( dBFS ) {
 
 module.exports = Converter;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /**
  * @module Core
  */
 "use strict";
+var log = require( 'loglevel' );
 
 /**
  * @class DetectLoopMarkers
@@ -1136,7 +1300,7 @@ function DetectLoopMarkers( buffer ) {
      * @return {Function} A function which can check if the specific sample is beyond the silence threshold
      */
     var isChannelEmptyAfter = function ( channel, position ) {
-        //console.log( "checking at " + position );
+        log.debug( "Checking for loop marks at " + position );
         var sum = 0;
         for ( var sIndex = position + IGNORE_LENGTH; sIndex < position + IGNORE_LENGTH + EMPTY_CHECK_LENGTH; ++sIndex ) {
             sum += Math.abs( channel[ sIndex ] );
@@ -1211,12 +1375,12 @@ function DetectLoopMarkers( buffer ) {
             // Compute loop start and length
             nLoopStart_ = startSpikePos + correctedPostfixLen;
             nLoopEnd_ = endSpikePos - correctedPostfixLen;
-            //console.log( "Found loop between " + nLoopStart_ + " - " + nLoopEnd_ );
-            //console.log( "Spikes at  " + startSpikePos + " - " + endSpikePos );
+            log.debug( "Found loop between " + nLoopStart_ + " - " + nLoopEnd_ );
+            log.debug( "Spikes at  " + startSpikePos + " - " + endSpikePos );
             return true;
         } else {
             // Spikes not found!
-            //console.log( "No loop found" );
+            log.debug( "No loop found" );
             return false;
         }
     };
@@ -1297,12 +1461,13 @@ function DetectLoopMarkers( buffer ) {
 
 module.exports = DetectLoopMarkers;
 
-},{}],9:[function(require,module,exports){
+},{"loglevel":2}],10:[function(require,module,exports){
 /**
  * @module Core
  */
 "use strict";
 var detectLoopMarkers = require( '../core/DetectLoopMarkers' );
+var log = require( 'loglevel' );
 
 /**
  * Load a single file from a URL or a File object.
@@ -1358,32 +1523,32 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
         // Verify parameters
         if ( !isInt_( start ) ) {
             start = Number.isNan( start ) ? 0 : Math.round( Number( start ) );
-            console.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer. Coercing it to an Integer - start" );
+            log.debug( "Incorrect parameter Type - FileLoader getBuffer start parameter is not an integer. Coercing it to an Integer - start" );
         } else if ( !isInt_( end ) ) {
-            console.warn( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" );
+            log.debug( "Incorrect parameter Type - FileLoader getBuffer end parameter is not an integer" );
             end = Number.isNan( end ) ? 0 : Math.round( Number( end ) );
         }
         // Check if start is smaller than end
         if ( start > end ) {
-            console.error( "Incorrect parameter Type - FileLoader getBuffer start parameter " + start + " should be smaller than end parameter " + end + " . Setting them to the same value " + start );
+            log.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter " + start + " should be smaller than end parameter " + end + " . Setting them to the same value " + start );
             end = start;
         }
         // Check if start is within the buffer size
         if ( start > loopEnd_ || start < loopStart_ ) {
-            console.error( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length + " . Setting start to " + loopStart_ );
+            log.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length + " . Setting start to " + loopStart_ );
             start = loopStart_;
         }
 
         // Check if end is within the buffer size
         if ( end > loopEnd_ || end < loopStart_ ) {
-            console.error( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length + " . Setting start to " + loopEnd_ );
+            log.warn( "Incorrect parameter Type - FileLoader getBuffer start parameter should be within the buffer size : 0-" + rawBuffer_.length + " . Setting start to " + loopEnd_ );
             end = loopEnd_;
         }
 
         var length = end - start;
 
         if ( !rawBuffer_ ) {
-            console.error( "No Buffer Found - Buffer loading has not completed or has failed." );
+            log.error( "No Buffer Found - Buffer loading has not completed or has failed." );
             return null;
         }
 
@@ -1442,7 +1607,7 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
                 onloadCallback( true );
             }
         }, function () {
-            console.warn( "Error Decoding " + URL );
+            log.error( "Error Decoding " + URL );
             if ( onloadCallback && typeof onloadCallback === 'function' ) {
                 onloadCallback( false );
             }
@@ -1477,7 +1642,7 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
      */
     this.getRawBuffer = function () {
         if ( !isSoundLoaded_ ) {
-            console.error( "No Buffer Found - Buffer loading has not completed or has failed." );
+            log.error( "No Buffer Found - Buffer loading has not completed or has failed." );
             return null;
         }
         return rawBuffer_;
@@ -1498,7 +1663,7 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
 
 module.exports = FileLoader;
 
-},{"../core/DetectLoopMarkers":8}],10:[function(require,module,exports){
+},{"../core/DetectLoopMarkers":9,"loglevel":2}],11:[function(require,module,exports){
  /**
   * @module Core
   *
@@ -1510,6 +1675,7 @@ module.exports = FileLoader;
 
  var FileLoader = require( '../core/FileLoader' );
  var SPAudioBuffer = require( '../core/SPAudioBuffer' );
+ var log = require( 'loglevel' );
 
  /**
   * Helper class to loader multiple sources from URL String, File or AudioBuffer or SPAudioBuffer Objects.
@@ -1534,7 +1700,7 @@ module.exports = FileLoader;
 
          // If not defined, set empty sources.
          if ( !sources ) {
-             console.log( "Setting empty source. No sound may be heard" );
+             log.debug( "Setting empty source. No sound may be heard" );
              onLoadComplete( false, loadedAudioBuffers_ );
              return;
          }
@@ -1548,7 +1714,7 @@ module.exports = FileLoader;
 
          // If beyond size limits, log error and callback with false.
          if ( sources.length < self.minSources || sources.length > self.maxSources ) {
-             console.error( "Unsupported number of Sources. " + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources. Trying to load " + sources.length + "." );
+             log.error( "Unsupported number of Sources. " + self.modelName + " only supports a minimum of " + self.minSources + " and a maximum of " + self.maxSources + " sources. Trying to load " + sources.length + "." );
              onLoadComplete( false, loadedAudioBuffers_ );
              return;
          }
@@ -1595,7 +1761,7 @@ module.exports = FileLoader;
                  }
              } );
          } else {
-             console.error( "Incorrect Parameter Type - Source is not a URL, File or AudioBuffer or doesn't have sourceURL or buffer" );
+             log.error( "Incorrect Parameter Type - Source is not a URL, File or AudioBuffer or doesn't have sourceURL or buffer" );
              onSingleLoad( false, {} );
          }
      }
@@ -1603,7 +1769,7 @@ module.exports = FileLoader;
      function onSingleLoadAt( index ) {
          return function ( status, loadedSound ) {
              if ( status ) {
-                 //console.log( "Loaded ", index, "successfully" );
+                 log.debug( "Loaded track", index, "successfully" );
                  loadedAudioBuffers_[ index ] = loadedSound;
              }
              sourcesToLoad_--;
@@ -1623,12 +1789,14 @@ module.exports = FileLoader;
  }
  module.exports = MultiFileLoader;
 
-},{"../core/FileLoader":9,"../core/SPAudioBuffer":11}],11:[function(require,module,exports){
+},{"../core/FileLoader":10,"../core/SPAudioBuffer":12,"loglevel":2}],12:[function(require,module,exports){
 /**
  * @module Core
  */
 
 "use strict";
+var log = require( 'loglevel' );
+
 /**
  * Wrapper around AudioBuffer to support audio source caching and allowing clipping of audiobuffers to various lengths.
  *
@@ -1648,7 +1816,7 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
     // new SPAudioBuffer([object AudioBuffer], 0.8,1.0)
 
     if ( !( audioContext instanceof AudioContext ) ) {
-        console.error( 'First argument to SPAudioBuffer must be a valid AudioContext' );
+        log.error( 'First argument to SPAudioBuffer must be a valid AudioContext' );
         return;
     }
 
@@ -1723,13 +1891,13 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
             if ( startPoint_ === null ) {
                 this.startPoint = 0;
             } else if ( startPoint_ > buffer.length / buffer.sampleRate ) {
-                console.error( "SPAudioBuffer : startPoint cannot be greater than buffer length" );
+                log.error( "SPAudioBuffer : startPoint cannot be greater than buffer length" );
                 return;
             }
             if ( endPoint_ === null ) {
                 this.endPoint = this.rawBuffer_.length;
             } else if ( endPoint_ > buffer.length / buffer.sampleRate ) {
-                console.error( "SPAudioBuffer : endPoint cannot be greater than buffer length" );
+                log.error( "SPAudioBuffer : endPoint cannot be greater than buffer length" );
                 return;
             }
 
@@ -1761,12 +1929,12 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
     Object.defineProperty( this, 'startPoint', {
         set: function ( startPoint ) {
             if ( endPoint_ !== undefined && startPoint >= endPoint_ ) {
-                console.error( "SPAudioBuffer : startPoint cannot be greater than endPoint" );
+                log.error( "SPAudioBuffer : startPoint cannot be greater than endPoint" );
                 return;
             }
 
             if ( rawBuffer_ && ( startPoint * rawBuffer_.sampleRate ) >= rawBuffer_.length ) {
-                console.error( "SPAudioBuffer : startPoint cannot be greater than or equal to buffer length" );
+                log.error( "SPAudioBuffer : startPoint cannot be greater than or equal to buffer length" );
                 return;
             }
 
@@ -1789,12 +1957,12 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
     Object.defineProperty( this, 'endPoint', {
         set: function ( endPoint ) {
             if ( startPoint_ !== undefined && endPoint <= startPoint_ ) {
-                console.error( "SPAudioBuffer : endPoint cannot be lesser than startPoint" );
+                log.error( "SPAudioBuffer : endPoint cannot be lesser than startPoint" );
                 return;
             }
 
             if ( rawBuffer_ && ( endPoint * rawBuffer_.sampleRate ) >= rawBuffer_.length ) {
-                console.error( "SPAudioBuffer : endPoint cannot be greater than buffer or equal to length" );
+                log.error( "SPAudioBuffer : endPoint cannot be greater than buffer or equal to length" );
                 return;
             }
 
@@ -1852,14 +2020,14 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
     } else if ( urlType === "[object AudioBuffer]" ) {
         this.buffer = URL;
     } else {
-        console.warn( "Incorrect Parameter Type. url can only be a String, File or an AudioBuffer" );
+        log.error( "Incorrect Parameter Type. url can only be a String, File or an AudioBuffer" );
     }
 
     if ( startPointType === "[object Number]" ) {
         this.startPoint = parseFloat( startPoint );
     } else {
         if ( startPointType !== "[object Undefined]" ) {
-            console.warn( "Incorrect Parameter Type. startPoint should be a Number" );
+            log.warn( "Incorrect Parameter Type. startPoint should be a Number. Setting startPoint to 0" );
         }
     }
 
@@ -1867,7 +2035,7 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
         this.endPoint = parseFloat( endPoint );
     } else {
         if ( startPointType !== "[object Undefined]" ) {
-            console.warn( "Incorrect Parameter Type. endPoint should be a Number" );
+            log.warn( "Incorrect Parameter Type. endPoint should be a Number. Setting endPoint to end of dile" );
         }
     }
 
@@ -1877,7 +2045,7 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
 }
 module.exports = SPAudioBuffer;
 
-},{}],12:[function(require,module,exports){
+},{"loglevel":2}],13:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1885,6 +2053,7 @@ module.exports = SPAudioBuffer;
 "use strict";
 var SPPlaybackRateParam = require( '../core/SPPlaybackRateParam' );
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
+var log = require( 'loglevel' );
 
 /**
  * A wrapper around the AudioBufferSourceNode to be able to track the current playPosition of a AudioBufferSourceNode.
@@ -2172,9 +2341,8 @@ function SPAudioBufferSourceNode( audioContext ) {
 
         var self = this;
         webAudioDispatch( function () {
-            //console.log( 'resetting' );
+            log.debug( 'Resetting BufferSource', self.buffer.length );
             // Disconnect source(s) from output.
-            // self.disconnect( );
 
             // Disconnect scope node from trackGain
             scopeNode_.disconnect();
@@ -2258,7 +2426,7 @@ function SPAudioBufferSourceNode( audioContext ) {
 }
 module.exports = SPAudioBufferSourceNode;
 
-},{"../core/SPPlaybackRateParam":14,"../core/WebAudioDispatch":16}],13:[function(require,module,exports){
+},{"../core/SPPlaybackRateParam":15,"../core/WebAudioDispatch":17,"loglevel":2}],14:[function(require,module,exports){
 /*
  ** @module Core
  */
@@ -2266,6 +2434,7 @@ module.exports = SPAudioBufferSourceNode;
 "use strict";
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var Config = require( '../core/Config' );
+var log = require( 'loglevel' );
 
 /**
  * Mock AudioParam used to create Parameters for Sonoport Sound Models. The SPAudioParam supports either a AudioParam backed parameter, or a completely Javascript mocked up Parameter, which supports a rough version of parameter automation.
@@ -2345,21 +2514,21 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
         enumerable: true,
         configurable: false,
         set: function ( value ) {
-            //console.log( "setting", name );
+            log.debug( "Setting param", name, "value to", value );
             // Sanitize the value with min/max
             // bounds first.
             if ( typeof value !== typeof defaultValue ) {
-                console.error( "Attempt to set a " + ( typeof defaultValue ) + " parameter to a " + ( typeof value ) + " value" );
+                log.error( "Attempt to set a", ( typeof defaultValue ), "parameter to a", ( typeof value ), "value" );
                 return;
             }
             // Sanitize the value with min/max
             // bounds first.
             if ( typeof value === "number" ) {
                 if ( value > maxValue ) {
-                    console.warn( this.name + ' clamping to max' );
+                    log.debug( this.name, 'clamping to max' );
                     value = maxValue;
                 } else if ( value < minValue ) {
-                    console.warn( this.name + ' clamping to min' );
+                    log.debug( this.name + ' clamping to min' );
                     value = minValue;
                 }
             }
@@ -2374,7 +2543,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
             }
 
             if ( !calledFromAutomation_ ) {
-                // console.log( "clearing automation" );
+                log.debug( "Clearing Automation for", name );
                 window.clearInterval( intervalID_ );
             }
             calledFromAutomation_ = false;
@@ -2395,7 +2564,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
                         thisParam.setTargetAtTime( value, baseSound.audioContext.currentTime, Config.DEFAULT_SMOOTHING_CONSTANT );
                     } else {
                         //set directly if not playing
-                        //console.log( "setting directly" );
+                        log.debug( "Setting param", name, 'through setter' );
                         thisParam.setValueAtTime( value, baseSound.audioContext.currentTime );
                     }
                 } );
@@ -2494,7 +2663,7 @@ function SPAudioParam( baseSound, name, minValue, maxValue, defaultValue, aParam
             var self = this;
             var initValue_ = self.value;
             var initTime_ = baseSound.audioContext.currentTime;
-            console.log( "starting automation" );
+            log.debug( "starting automation" );
             intervalID_ = window.setInterval( function () {
                 if ( baseSound.audioContext.currentTime >= startTime ) {
                     calledFromAutomation_ = true;
@@ -2662,7 +2831,7 @@ SPAudioParam.createPsuedoParam = function ( baseSound, name, minValue, maxValue,
 
 module.exports = SPAudioParam;
 
-},{"../core/Config":6,"../core/WebAudioDispatch":16}],14:[function(require,module,exports){
+},{"../core/Config":7,"../core/WebAudioDispatch":17,"loglevel":2}],15:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2741,7 +2910,7 @@ function SPPlaybackRateParam( bufferSourceNode, audioParam, counterParam ) {
 }
 module.exports = SPPlaybackRateParam;
 
-},{"../core/Config":6}],15:[function(require,module,exports){
+},{"../core/Config":7}],16:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2749,6 +2918,7 @@ module.exports = SPPlaybackRateParam;
 var Config = require( '../core/Config' );
 var Looper = require( '../models/Looper' );
 var webaudioDispatch = require( '../core/WebAudioDispatch' );
+var log = require( 'loglevel' );
 
 /**
  * A primitive which allows events on other Sound Models to be queued based on time of execution and executed at the appropriate time. Enables polyphony.
@@ -2808,7 +2978,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
     }
 
     function onVoiceEnded( endedVoice ) {
-        //console.log( "freeing " + endedVoice.voiceIndex );
+        log.debug( "freeing " + endedVoice.voiceIndex );
         freeVoices_.push( endedVoice );
         busyVoices_.splice( busyVoices_.indexOf( endedVoice ), 1 );
 
@@ -2846,7 +3016,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
     function getFreeVoice( eventID, eventTime ) {
         var newVoice;
         if ( freeVoices_.length < 1 ) {
-            console.warn( "No free voices left. Stealing the oldest" );
+            log.debug( "No free voices left. Stealing the oldest" );
             newVoice = busyVoices_.shift();
             dequeueEventsHavingID( newVoice.eventID );
             newVoice.eventID = eventID;
@@ -2873,10 +3043,10 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
             return;
         }
 
-        //console.log( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice.voiceIndex );
+        log.debug( "Processing " + thisEvent.type + " : " + thisEvent.eventID + " at " + thisEvent.time + " on " + selectedVoice.voiceIndex );
 
         if ( thisEvent.type == 'QESTART' ) {
-            //console.log( "starting " + selectedVoice.voiceIndex );
+            log.info( "starting " + selectedVoice.voiceIndex );
             selectedVoice.start( thisEvent.time, thisEvent.offset, null, thisEvent.attackDuration );
             webaudioDispatch( function () {
                 if ( !self.isPlaying ) {
@@ -2893,7 +3063,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
         } else if ( thisEvent.type == 'QESETSRC' ) {
             selectedVoice.setSources( thisEvent.sourceBuffer );
         } else if ( thisEvent.type == 'QERELEASE' ) {
-            //console.log( "releasing " + selectedVoice.voiceIndex );
+            log.debug( "releasing " + selectedVoice.voiceIndex );
             selectedVoice.release( thisEvent.time, thisEvent.releaseDuration );
         } else if ( thisEvent.type == 'QESTOP' ) {
             selectedVoice.pause( thisEvent.time );
@@ -2902,7 +3072,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
                 busyVoices_.splice( busyVoices_.indexOf( selectedVoice ), 1 );
             }, thisEvent.time, context );
         } else {
-            console.warn( "Unknown Event Type : " + thisEvent );
+            log.warn( "Unknown Event Type : " + thisEvent );
         }
     }
 
@@ -3095,7 +3265,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
 
 module.exports = SoundQueue;
 
-},{"../core/Config":6,"../core/WebAudioDispatch":16,"../models/Looper":24}],16:[function(require,module,exports){
+},{"../core/Config":7,"../core/WebAudioDispatch":17,"../models/Looper":27,"loglevel":2}],17:[function(require,module,exports){
 /**
  * @module Core
  *
@@ -3103,6 +3273,8 @@ module.exports = SoundQueue;
  * @static
  */
 "use strict";
+var log = require( 'loglevel' );
+
 /**
  * Helper class to dispatch manual syncronized calls to for WebAudioAPI. This is to be used for API calls which can't don't take in a time argument and hence are inherently Syncronized.
  *
@@ -3115,18 +3287,18 @@ module.exports = SoundQueue;
 
 function WebAudioDispatch( functionCall, time, audioContext ) {
     if ( !audioContext ) {
-        console.warn( "No AudioContext provided" );
+        log.error( "No AudioContext provided" );
         return;
     }
     var currentTime = audioContext.currentTime;
     // Dispatch anything that's scheduled for anything before current time, current time and the next 5 msecs
     if ( currentTime >= time || time - currentTime < 0.005 ) {
-        //console.log( "Dispatching now" );
+        log.debug( "Dispatching now" );
         functionCall();
     } else {
-        //console.log( "Dispatching in ", ( time - currentTime ) * 1000 );
+        log.debug( "Dispatching in", ( time - currentTime ) * 1000, 'ms' );
         window.setTimeout( function () {
-            //console.log( "Diff at dispatch ", ( time - audioContext.currentTime ) * 1000 );
+            log.debug( "Diff at dispatch", ( time - audioContext.currentTime ) * 1000, 'ms' );
             functionCall();
         }, ( time - currentTime ) * 1000 );
     }
@@ -3134,11 +3306,183 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
 
 module.exports = WebAudioDispatch;
 
-},{}],17:[function(require,module,exports){
-arguments[4][10][0].apply(exports,arguments)
-},{"../core/FileLoader":9,"../core/SPAudioBuffer":11,"dup":10}],18:[function(require,module,exports){
-arguments[4][16][0].apply(exports,arguments)
-},{"dup":16}],19:[function(require,module,exports){
+},{"loglevel":2}],18:[function(require,module,exports){
+arguments[4][11][0].apply(exports,arguments)
+},{"../core/FileLoader":10,"../core/SPAudioBuffer":12,"dup":11,"loglevel":2}],19:[function(require,module,exports){
+arguments[4][17][0].apply(exports,arguments)
+},{"dup":17,"loglevel":2}],20:[function(require,module,exports){
+/**
+ * @module Effects
+ */
+
+"use strict";
+var BaseEffect = require( '../core/BaseEffect' );
+var SPAudioParam = require( '../core/SPAudioParam' );
+
+/**
+ *
+ * An effect changes the amplitude or volume of the audio that this effect is connected to.
+ * @class Compressor
+ * @constructor
+ * @param {AudioContext} [context] AudioContext to be used.
+ * @extends BaseEffect
+ */
+function Compressor( context ) {
+    if ( !( this instanceof Compressor ) ) {
+        throw new TypeError( "Compressor constructor cannot be called as a function." );
+    }
+    // Call superclass constructor
+    BaseEffect.call( this, context );
+    this.maxSources = 0;
+    this.minSources = 0;
+    this.effectName = 'Compressor';
+
+    var compressor_ = this.audioContext.createDynamicsCompressor();
+    this.inputNode = compressor_;
+    this.outputNode = compressor_;
+
+    /**
+     * The amount of time (in seconds) to reduce the gain by 10dB.
+     *
+     * @property attack
+     * @type SPAudioParam
+     * @default 0.003
+     * @minvalue 0
+     * @maxvalue 1
+     */
+    this.registerParameter( new SPAudioParam( this, 'attack', 0, 1, 0.003, compressor_.attack ), false );
+
+    /**
+     * A decibel value representing the range above the threshold where the curve * smoothly transitions to the "ratio" portion.
+     *
+     * @property knee
+     * @type SPAudioParam
+     * @default 30
+     * @minvalue 0
+     * @maxvalue 40
+     */
+    this.registerParameter( new SPAudioParam( this, 'knee', 0, 40, 30, compressor_.knee ), false );
+
+    /**
+     * The amount of dB change in input for a 1 dB change in output.
+     *
+     * @property ratio
+     * @type SPAudioParam
+     * @default 12
+     * @minvalue 1
+     * @maxvalue 20
+     */
+    this.registerParameter( new SPAudioParam( this, 'ratio', 0, 20, 12, compressor_.ratio ), false );
+
+    /**
+     * The amount of time (in seconds) to increase the gain by 10dB.
+     *
+     * @property release
+     * @type SPAudioParam
+     * @default 0.250
+     * @minvalue 0
+     * @maxvalue 1
+     */
+    this.registerParameter( new SPAudioParam( this, 'release', 0, 1, 0.250, compressor_.release ), false );
+
+    /**
+     * The decibel value above which the compression will start taking effect.
+     *
+     * @property threshold
+     * @type SPAudioParam
+     * @default -24
+     * @minvalue -100
+     * @maxvalue 0
+     */
+    this.registerParameter( new SPAudioParam( this, 'threshold', -100, 0, -24, compressor_.threshold ), false );
+
+    this.isInitialized = true;
+}
+
+Compressor.prototype = Object.create( BaseEffect.prototype );
+
+module.exports = Compressor;
+
+},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],21:[function(require,module,exports){
+/**
+ * @module Effects
+ */
+
+"use strict";
+var BaseEffect = require( '../core/BaseEffect' );
+var SPAudioParam = require( '../core/SPAudioParam' );
+
+/**
+ *
+ * An effect changes the amplitude or volume of the audio that this effect is connected to.
+ * @class Distorter
+ * @constructor
+ * @param {AudioContext} [context] AudioContext to be used.
+ * @extends BaseEffect
+ */
+function Distorter( context ) {
+    if ( !( this instanceof Distorter ) ) {
+        throw new TypeError( "Distorter constructor cannot be called as a function." );
+    }
+    // Call superclass constructor
+    BaseEffect.call( this, context );
+    this.maxSources = 0;
+    this.minSources = 0;
+    this.effectName = 'Distorter';
+
+    var waveshaper_ = this.audioContext.createWaveShaper();
+    var filter_ = this.audioContext.createBiquadFilter();
+    this.inputNode = filter_;
+    this.outputNode = waveshaper_;
+
+    filter_.type = 'bandpass';
+    filter_.connect( waveshaper_ );
+
+    var curveLength_ = 22050;
+    var curve_ = new Float32Array( curveLength_ );
+    var deg_ = Math.PI / 180;
+
+    function driveSetter_( param, value ) {
+        var k = value * 100;
+
+        for ( var i = 0; i < curveLength_; i++ ) {
+            var x = i * 2 / curveLength_ - 1;
+            curve_[ i ] = ( 3 + k ) * x * 20 * deg_ / ( Math.PI + k * Math.abs( x ) );
+        }
+        waveshaper_.curve = curve_;
+    }
+
+    /**
+     * Fades or reduces the volume of the audio based on the value in percentage. 100% implies
+     * no change in volume. 0% implies completely muted audio.
+     *
+     * @property volume
+     * @type SPAudioParam
+     * @default 100
+     * @minvalue 0
+     * @maxvalue 100
+     */
+    this.registerParameter( new SPAudioParam( this, 'drive', 0, 1.0, 0.5, null, null, driveSetter_ ), false );
+
+    /**
+     *
+     *
+     * @property volume
+     * @type SPAudioParam
+     * @default 100
+     * @minvalue 0
+     * @maxvalue 100
+     */
+    this.registerParameter( new SPAudioParam( this, 'color', 0, 22050, 800, filter_.frequency ), false );
+
+    this.isInitialized = true;
+}
+
+Distorter.prototype = Object.create( BaseEffect.prototype );
+
+module.exports = Distorter;
+
+},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],22:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3147,6 +3491,7 @@ arguments[4][16][0].apply(exports,arguments)
 var BaseEffect = require( '../core/BaseEffect' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var Converter = require( '../core/Converter' );
+var log = require( 'loglevel' );
 
 /**
  *
@@ -3171,12 +3516,12 @@ function Fader( context ) {
     this.outputNode = faderGain_;
 
     function faderGainMap( volume ) {
-        console.log( "Setting volume to ", volume / 100.0 );
+        log.debug( "Setting volume to ", volume / 100.0 );
         return volume / 100.0;
     }
 
     function faderGainMapDB( volumeInDB ) {
-        console.log( "Setting volume (DB) to ", Converter.dBFStoRatio( volumeInDB ) );
+        log.debug( "Setting volume (DB) to ", Converter.dBFStoRatio( volumeInDB ) );
         return Converter.dBFStoRatio( volumeInDB );
     }
 
@@ -3211,7 +3556,7 @@ Fader.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Fader;
 
-},{"../core/BaseEffect":4,"../core/Converter":7,"../core/SPAudioParam":13}],20:[function(require,module,exports){
+},{"../core/BaseEffect":5,"../core/Converter":8,"../core/SPAudioParam":14,"loglevel":2}],23:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3309,13 +3654,14 @@ Filter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Filter;
 
-},{"../core/BaseEffect":4,"../core/SPAudioParam":13}],21:[function(require,module,exports){
+},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],24:[function(require,module,exports){
 /**
  * @module Effects
  */
 "use strict";
 var BaseEffect = require( '../core/BaseEffect' );
 var SPAudioParam = require( '../core/SPAudioParam' );
+var log = require( 'loglevel' );
 
 /**
  *
@@ -3338,10 +3684,10 @@ function Panner( context ) {
     var usingNativePanner = typeof this.audioContext.createStereoPanner === 'function';
 
     if ( usingNativePanner ) {
-        console.log( "using native panner" );
+        log.debug( "using native panner" );
         panner_ = this.audioContext.createStereoPanner();
     } else {
-        console.log( "using 3D panner" );
+        log.debug( "using 3D panner" );
         panner_ = this.audioContext.createPanner();
     }
 
@@ -3389,7 +3735,7 @@ Panner.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Panner;
 
-},{"../core/BaseEffect":4,"../core/SPAudioParam":13}],22:[function(require,module,exports){
+},{"../core/BaseEffect":5,"../core/SPAudioParam":14,"loglevel":2}],25:[function(require,module,exports){
 /**
  * @module Models
  *
@@ -3401,6 +3747,7 @@ var BaseSound = require( '../core/BaseSound' );
 var Looper = require( '../models/Looper' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
+var log = require( 'loglevel' );
 
 /**
  * A model plays back the source at various speeds based on the movement of the activity parameter.
@@ -3511,7 +3858,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
             var deltaPos = Math.abs( newPosition - lastPosition_ );
             var deltaTime = ( time - lastUpdateTime_ );
 
-            //console.log( deltaTime );
+            log.debug( "delta time", deltaTime );
 
             if ( deltaTime > 0 ) {
 
@@ -3671,7 +4018,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
      */
     this.play = function ( when ) {
         if ( !this.isInitialized ) {
-            console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+            log.warn( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
             return;
         }
         internalLooper_.play( when );
@@ -3689,7 +4036,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
      */
     this.start = function ( when, offset, duration, attackDuration ) {
         if ( !this.isInitialized ) {
-            console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+            log.warn( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
             return;
         }
         internalLooper_.start( when, offset, duration );
@@ -3766,7 +4113,7 @@ Activity.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Activity;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/SPAudioParam":13,"../core/webAudioDispatch":18,"../models/Looper":24}],23:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/SPAudioParam":14,"../core/webAudioDispatch":19,"../models/Looper":27,"loglevel":2}],26:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -3779,6 +4126,7 @@ var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/multiFileLoader' );
 var Converter = require( '../core/Converter' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
+var log = require( 'loglevel' );
 
 /**
  * A model which extends the playing of a single source infinitely with windowed overlapping.
@@ -3907,7 +4255,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
             // Find a suitable start point as a offset taking into account the required amount of audio
             var startOffset = Math.max( 0, audioDur - requiredDur ) * Math.random();
 
-            //console.log( "Start Point : " + startPoint + " playSpeed : " + playSpeed + " fadeDur : " + fadeDur + " audioDur : " + audioDur + " eventTime : " + eventTime + " eventLen : " + eventLen );
+            log.debug( "Start Point : " + startOffset + " playSpeed : " + playSpeed + " fadeDur : " + fadeDur + " audioDur : " + audioDur + " eventTime : " + eventTime + " eventLen : " + eventLen );
 
             //  Stop/release the *previous* audio snippet
             if ( lastEventID_ > 0 ) {
@@ -3994,7 +4342,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
      */
     this.start = function ( when, offset, duration, attackDuration ) {
         if ( !this.isInitialized ) {
-            console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+            log.warn( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
             return;
         }
         BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
@@ -4046,7 +4394,7 @@ Extender.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Extender;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/Converter":7,"../core/SPAudioParam":13,"../core/SoundQueue":15,"../core/multiFileLoader":17,"../core/webAudioDispatch":18}],24:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/SPAudioParam":14,"../core/SoundQueue":16,"../core/multiFileLoader":18,"../core/webAudioDispatch":19,"loglevel":2}],27:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4059,6 +4407,7 @@ var SPAudioParam = require( '../core/SPAudioParam' );
 var SPAudioBufferSourceNode = require( '../core/SPAudioBufferSourceNode' );
 var multiFileLoader = require( '../core/multiFileLoader' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
+var log = require( 'loglevel' );
 
 /**
  *
@@ -4179,7 +4528,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
             var currentSpeed = sourceBufferNodes_[ 0 ] ? sourceBufferNodes_[ 0 ].playbackRate.value : 1;
 
             if ( self.isPlaying ) {
-                // console.log( "easingIn/Out" );
+                log.debug( "easingIn/Out" );
                 // easeIn/Out
                 if ( value > currentSpeed ) {
                     sourceBufferNodes_.forEach( function ( thisSource ) {
@@ -4193,7 +4542,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
                     } );
                 }
             } else {
-                // console.log( "changing directly" );
+                log.debug( "changing directly" );
                 sourceBufferNodes_.forEach( function ( thisSource ) {
                     thisSource.playbackRate.cancelScheduledValues( audioContext.currentTime );
                     thisSource.playbackRate.setValueAtTime( value, audioContext.currentTime );
@@ -4334,7 +4683,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
      */
     this.start = function ( when, offset, duration, attackDuration ) {
         if ( !this.isInitialized ) {
-            console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+            log.warn( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
             return;
         }
 
@@ -4458,7 +4807,7 @@ Looper.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Looper;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/SPAudioBufferSourceNode":12,"../core/SPAudioParam":13,"../core/multiFileLoader":17,"../core/webAudioDispatch":18}],25:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/SPAudioBufferSourceNode":13,"../core/SPAudioParam":14,"../core/multiFileLoader":18,"../core/webAudioDispatch":19,"loglevel":2}],28:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4472,6 +4821,7 @@ var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/multiFileLoader' );
 var Converter = require( '../core/Converter' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
+var log = require( 'loglevel' );
 
 /**
  * A model which triggers a single or multiple sources with multiple voices (polyphony)
@@ -4578,9 +4928,9 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
 
         if ( self.eventRand.value ) {
             if ( length > 2 ) {
-                currentSourceID_ = ( currentSourceID_ + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
+                currentSourceID_ = ( currentSourceID_ + Math.floor( Math.random() * length ) ) % length;
             } else {
-                currentSourceID_ = Math.floor( Math.random() * ( length - 1 ) );
+                currentSourceID_ = Math.floor( Math.random() * length );
             }
         } else {
             currentSourceID_ = currentSourceID_ % length;
@@ -4722,7 +5072,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
      */
     this.start = function ( when, offset, duration, attackDuration ) {
         if ( !this.isInitialized ) {
-            console.error( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
+            log.warn( this.modelName, " hasn't finished Initializing yet. Please wait before calling start/play" );
             return;
         }
         BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
@@ -4788,7 +5138,7 @@ MultiTrigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = MultiTrigger;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/Converter":7,"../core/SPAudioParam":13,"../core/SoundQueue":15,"../core/multiFileLoader":17,"../core/webAudioDispatch":18}],26:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/SPAudioParam":14,"../core/SoundQueue":16,"../core/multiFileLoader":18,"../core/webAudioDispatch":19,"loglevel":2}],29:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4799,6 +5149,8 @@ var Config = require( '../core/Config' );
 var BaseSound = require( '../core/BaseSound' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/multiFileLoader' );
+var log = require( 'loglevel' );
+
 /**
  *
  * A model which loads a source and allows it to be scrubbed using a position parameter.
@@ -5059,7 +5411,7 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
                 }
 
                 if ( audioPlaying && ( ( muteOnReverse && scale_ < AUDIOEVENT_TRESHOLD ) || Math.abs( scale_ ) < AUDIOEVENT_TRESHOLD ) ) {
-                    //console.log( "stopping..." );
+                    log.debug( "stopping..." );
                     audioPlaying = false;
                     if ( typeof self.onAudioEnd === 'function' ) {
                         self.onAudioEnd();
@@ -5068,7 +5420,7 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
                 }
 
                 if ( scale_ > AUDIOEVENT_TRESHOLD && !audioPlaying ) {
-                    //console.log( "playing..." );
+                    log.debug( "playing..." );
                     audioPlaying = true;
                     if ( typeof self.onAudioStart === 'function' ) {
                         self.onAudioStart();
@@ -5158,7 +5510,7 @@ Scrubber.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Scrubber;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/SPAudioParam":13,"../core/multiFileLoader":17}],27:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/SPAudioParam":14,"../core/multiFileLoader":18,"loglevel":2}],30:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5170,6 +5522,7 @@ var SoundQueue = require( '../core/SoundQueue' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/multiFileLoader' );
 var Converter = require( '../core/Converter' );
+var log = require( 'loglevel' );
 
 /**
  * A model which triggers a single or multiple audio sources with multiple voices (polyphony).
@@ -5353,7 +5706,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
      */
     this.start = function ( when, offset, duration, attackDuration ) {
         if ( !this.isInitialized ) {
-            console.error( this.modelName, "hasn't finished Initializing yet. Please wait before calling start/play" );
+            log.warn( this.modelName, "hasn't finished Initializing yet. Please wait before calling start/play" );
             return;
         }
 
@@ -5368,9 +5721,9 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
 
         if ( this.eventRand.value ) {
             if ( length > 2 ) {
-                currentSourceID_ = ( currentSourceID_ + Math.floor( Math.random() * ( length - 1 ) ) ) % length;
+                currentSourceID_ = ( currentSourceID_ + Math.floor( Math.random() * length - 1 ) ) % length;
             } else {
-                currentSourceID_ = Math.floor( Math.random() * ( length - 1 ) );
+                currentSourceID_ = Math.floor( Math.random() * length );
             }
         } else {
             currentSourceID_ = currentSourceID_ % length;
@@ -5400,7 +5753,7 @@ Trigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Trigger;
 
-},{"../core/BaseSound":5,"../core/Config":6,"../core/Converter":7,"../core/SPAudioParam":13,"../core/SoundQueue":15,"../core/multiFileLoader":17}],28:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/SPAudioParam":14,"../core/SoundQueue":16,"../core/multiFileLoader":18,"loglevel":2}],31:[function(require,module,exports){
 "use strict";
 var BaseSound = require( 'core/BaseSound' );
 console.log( "Running BaseSound Test... " );
@@ -5574,7 +5927,7 @@ describe( 'BaseSound.js', function () {
     } );
 } );
 
-},{"core/BaseSound":5}],29:[function(require,module,exports){
+},{"core/BaseSound":6}],32:[function(require,module,exports){
 "use strict";
 var Config = require( 'core/Config' );
 console.log( "Running Config Test... " );
@@ -5592,7 +5945,7 @@ describe( 'Config.js', function () {
     } );
 } );
 
-},{"core/Config":6}],30:[function(require,module,exports){
+},{"core/Config":7}],33:[function(require,module,exports){
 "use strict";
 var Converter = require( 'core/Converter' );
 console.log( "Running Converter Test... " );
@@ -5615,7 +5968,7 @@ describe( 'Converter.js', function () {
     } );
 } );
 
-},{"core/Converter":7}],31:[function(require,module,exports){
+},{"core/Converter":8}],34:[function(require,module,exports){
     "use strict";
     var detectLoopMarkers = require( 'core/DetectLoopMarkers' )
     console.log( "Running DetectLoopMarker Test... " );
@@ -5898,7 +6251,7 @@ describe( 'Converter.js', function () {
         } );
     } );
 
-},{"core/DetectLoopMarkers":8}],32:[function(require,module,exports){
+},{"core/DetectLoopMarkers":9}],35:[function(require,module,exports){
 "use strict";
 var FileLoader = require( 'core/FileLoader' );
 console.log( "Running FileLoader Test... " );
@@ -6050,7 +6403,7 @@ describe( 'FileLoader.js', function () {
     } );
 } );
 
-},{"core/FileLoader":9}],33:[function(require,module,exports){
+},{"core/FileLoader":10}],36:[function(require,module,exports){
 "use strict";
 var multiFileLoader = require( 'core/MultiFileLoader' );
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
@@ -6125,7 +6478,7 @@ describe( 'MultiFileLoader.js', function () {
     } );
 } );
 
-},{"core/MultiFileLoader":10,"core/SPAudioBuffer":11}],34:[function(require,module,exports){
+},{"core/MultiFileLoader":11,"core/SPAudioBuffer":12}],37:[function(require,module,exports){
 "use strict";
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
 console.log( "Running SPAudioBuffer Test... " );
@@ -6399,7 +6752,7 @@ describe( 'SPAudioBuffer.js', function () {
     } );
 } );
 
-},{"core/SPAudioBuffer":11}],35:[function(require,module,exports){
+},{"core/SPAudioBuffer":12}],38:[function(require,module,exports){
 "use strict";
 var SPAudioBufferSourceNode = require( 'core/SPAudioBufferSourceNode' );
 var SPPlaybackRateParam = require( 'core/SPPlaybackRateParam' );
@@ -6542,7 +6895,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
     } );
 } );
 
-},{"core/SPAudioBufferSourceNode":12,"core/SPPlaybackRateParam":14}],36:[function(require,module,exports){
+},{"core/SPAudioBufferSourceNode":13,"core/SPPlaybackRateParam":15}],39:[function(require,module,exports){
 "use strict";
 var SPAudioParam = require( 'core/SPAudioParam' );
 console.log( "Running SPAudioParam Test... " );
@@ -6705,7 +7058,7 @@ describe( 'SPAudioParam.js', function () {
     } );
 } );
 
-},{"core/SPAudioParam":13}],37:[function(require,module,exports){
+},{"core/SPAudioParam":14}],40:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('core/SoundQueue');var looperSpies = {
     start: jasmine.createSpy( 'start' ),
     stop: jasmine.createSpy( 'stop' ),
@@ -7131,7 +7484,306 @@ describe( 'SoundQueue.js', function () {
     } );
 } );
 
-},{"core/SoundQueue":15,"proxyquireify":2}],38:[function(require,module,exports){
+},{"core/SoundQueue":16,"proxyquireify":3}],41:[function(require,module,exports){
+"use strict";
+var Compressor = require( 'effects/Compressor' );
+if ( !window.context ) {
+    window.context = new AudioContext();
+}
+describe( 'Compressor.js', function () {
+    var filter;
+    var internalSpies = {};
+    var customMatchers = {
+        toBeInstanceOf: function () {
+            return {
+                compare: function ( actual, expected ) {
+                    var result = {};
+                    result.pass = actual instanceof expected;
+                    if ( result.pass ) {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
+                    } else {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
+                    }
+                    return result;
+                }
+            };
+        }
+    };
+    beforeEach( function ( done ) {
+        jasmine.addMatchers( customMatchers );
+        if ( !filter ) {
+            console.log( "Initing Compressor.." );
+            filter = new Compressor( window.context );
+        }
+        done();
+    } );
+
+    describe( '#new Compressor( context )', function () {
+
+        it( "should have audioContext available", function () {
+            expect( filter.audioContext ).toBeInstanceOf( AudioContext );
+        } );
+
+        it( "should have a minimum number of sources as 0", function () {
+            expect( filter.minSources ).toBe( 0 );
+        } );
+
+        it( "should have a maximum number of sources as 0", function () {
+            expect( filter.maxSources ).toBe( 0 );
+        } );
+
+        it( "should have atleast 1 input", function () {
+            expect( filter.numberOfInputs ).toBeGreaterThan( 0 );
+        } );
+
+        it( "should have atleast 1 output", function () {
+            expect( filter.numberOfOutputs ).toBeGreaterThan( 0 );
+        } );
+
+        it( "should have a model name as Compressor", function () {
+            expect( filter.effectName ).toBe( 'Compressor' );
+        } );
+
+        it( "should be a BaseEffect", function () {
+            expect( filter.isBaseEffect ).toBe( true );
+        } );
+
+        it( "should be have been initialized", function () {
+            expect( filter.isInitialized ).toBe( true );
+        } );
+    } );
+
+    describe( '#properties', function () {
+        it( "should have a valid parameter attack", function () {
+
+            expect( filter.attack.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                filter.attack = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete filter.attack;
+            } ).toThrowError();
+
+            expect( filter.attack.name ).toBe( 'attack' );
+            expect( filter.attack.value ).toBe( 0.003 );
+            expect( filter.attack.minValue ).toBe( 0 );
+            expect( filter.attack.maxValue ).toBe( 1 );
+
+        } );
+
+        it( "should have a valid parameter knee", function () {
+
+            expect( filter.knee.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                filter.knee = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete filter.knee;
+            } ).toThrowError();
+
+            expect( filter.knee.name ).toBe( 'knee' );
+            expect( filter.knee.value ).toBe( 30 );
+            expect( filter.knee.minValue ).toBe( 0 );
+            expect( filter.knee.maxValue ).toBe( 40 );
+
+        } );
+
+        it( "should have a valid parameter ratio", function () {
+
+            expect( filter.ratio.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                filter.ratio = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete filter.ratio;
+            } ).toThrowError();
+
+            expect( filter.ratio.name ).toBe( 'ratio' );
+            expect( filter.ratio.value ).toBe( 12 );
+            expect( filter.ratio.minValue ).toBe( 0 );
+            expect( filter.ratio.maxValue ).toBe( 20 );
+
+        } );
+
+        it( "should have a valid parameter release", function () {
+
+            expect( filter.release.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                filter.release = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete filter.release;
+            } ).toThrowError();
+
+            expect( filter.release.name ).toBe( 'release' );
+            expect( filter.release.value ).toBe( 0.25 );
+            expect( filter.release.minValue ).toBe( 0 );
+            expect( filter.release.maxValue ).toBe( 1 );
+
+        } );
+
+        it( "should have a valid parameter threshold", function () {
+
+            expect( filter.threshold.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                filter.threshold = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete filter.threshold;
+            } ).toThrowError();
+
+            expect( filter.threshold.name ).toBe( 'threshold' );
+            expect( filter.threshold.value ).toBe( -24 );
+            expect( filter.threshold.minValue ).toBe( -100 );
+            expect( filter.threshold.maxValue ).toBe( 0 );
+
+        } );
+    } );
+
+    describe( '#connect/disconnect', function () {
+
+        it( "have connect function defined", function () {
+            expect( filter.connect ).toBeInstanceOf( Function );
+        } );
+        it( "have disconnect function defined", function () {
+            expect( filter.disconnect ).toBeInstanceOf( Function );
+        } );
+
+    } );
+} );
+
+},{"effects/Compressor":20}],42:[function(require,module,exports){
+"use strict";
+var Distorter = require( 'effects/Distorter' );
+if ( !window.context ) {
+    window.context = new AudioContext();
+}
+describe( 'Distorter.js', function () {
+    var distorter;
+    var internalSpies = {};
+    var customMatchers = {
+        toBeInstanceOf: function () {
+            return {
+                compare: function ( actual, expected ) {
+                    var result = {};
+                    result.pass = actual instanceof expected;
+                    if ( result.pass ) {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected;
+                    } else {
+                        result.message = 'Expected ' + actual + ' to be an instance of ' + expected + ', but it is not';
+                    }
+                    return result;
+                }
+            };
+        }
+    };
+    beforeEach( function ( done ) {
+        jasmine.addMatchers( customMatchers );
+        if ( !distorter ) {
+            console.log( "Initing Distorter.." );
+            distorter = new Distorter( window.context );
+        }
+        done();
+    } );
+
+    describe( '#new Distorter( context )', function () {
+
+        it( "should have audioContext available", function () {
+            expect( distorter.audioContext ).toBeInstanceOf( AudioContext );
+        } );
+
+        it( "should have a minimum number of sources as 0", function () {
+            expect( distorter.minSources ).toBe( 0 );
+        } );
+
+        it( "should have a maximum number of sources as 0", function () {
+            expect( distorter.maxSources ).toBe( 0 );
+        } );
+
+        it( "should have atleast 1 input", function () {
+            expect( distorter.numberOfInputs ).toBeGreaterThan( 0 );
+        } );
+
+        it( "should have atleast 1 output", function () {
+            expect( distorter.numberOfOutputs ).toBeGreaterThan( 0 );
+        } );
+
+        it( "should have a model name as Distorter", function () {
+            expect( distorter.effectName ).toBe( 'Distorter' );
+        } );
+
+        it( "should be a BaseEffect", function () {
+            expect( distorter.isBaseEffect ).toBe( true );
+        } );
+
+        it( "should be have been initialized", function () {
+            expect( distorter.isInitialized ).toBe( true );
+        } );
+    } );
+
+    describe( '#properties', function () {
+        it( "should have a valid parameter drive", function () {
+
+            expect( distorter.drive.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                distorter.drive = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete distorter.drive;
+            } ).toThrowError();
+
+            expect( distorter.drive.name ).toBe( 'drive' );
+            expect( distorter.drive.value ).toBe( 0.5 );
+            expect( distorter.drive.minValue ).toBe( 0 );
+            expect( distorter.drive.maxValue ).toBe( 1.0 );
+
+        } );
+
+        it( "should have a valid parameter color", function () {
+
+            expect( distorter.color.isSPAudioParam ).toBe( true );
+
+            expect( function () {
+                distorter.color = 0;
+            } ).toThrowError();
+
+            expect( function () {
+                delete distorter.color;
+            } ).toThrowError();
+
+            expect( distorter.color.name ).toBe( 'color' );
+            expect( distorter.color.value ).toBe( 800 );
+            expect( distorter.color.minValue ).toBe( 0 );
+            expect( distorter.color.maxValue ).toBe( 22050 );
+
+        } );
+    } );
+
+    describe( '#connect/disconnect', function () {
+
+        it( "have connect function defined", function () {
+            expect( distorter.connect ).toBeInstanceOf( Function );
+        } );
+        it( "have disconnect function defined", function () {
+            expect( distorter.disconnect ).toBeInstanceOf( Function );
+        } );
+
+    } );
+} );
+
+},{"effects/Distorter":21}],43:[function(require,module,exports){
 "use strict";
 var Fader = require( 'effects/Fader' );
 if ( !window.context ) {
@@ -7252,7 +7904,7 @@ describe( 'Fader.js', function () {
     } );
 } );
 
-},{"effects/Fader":19}],39:[function(require,module,exports){
+},{"effects/Fader":22}],44:[function(require,module,exports){
 "use strict";
 var Filter = require( 'effects/Filter' );
 if ( !window.context ) {
@@ -7411,7 +8063,7 @@ describe( 'Filter.js', function () {
     } );
 } );
 
-},{"effects/Filter":20}],40:[function(require,module,exports){
+},{"effects/Filter":23}],45:[function(require,module,exports){
 "use strict";
 var Panner = require( 'effects/Panner' );
 if ( !window.context ) {
@@ -7513,7 +8165,7 @@ describe( 'Panner.js', function () {
     } );
 } );
 
-},{"effects/Panner":21}],41:[function(require,module,exports){
+},{"effects/Panner":24}],46:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Activity');"use strict";
 var Activity = require( 'models/Activity' );
 if ( !window.context ) {
@@ -8031,7 +8683,7 @@ describe( 'Activity.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Activity":22,"proxyquireify":2}],42:[function(require,module,exports){
+},{"models/Activity":25,"proxyquireify":3}],47:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Extender');"use strict";
 var Extender = require( 'models/Extender' );
 if ( !window.context ) {
@@ -8509,7 +9161,7 @@ describe( 'Extender.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Extender":23,"proxyquireify":2}],43:[function(require,module,exports){
+},{"models/Extender":26,"proxyquireify":3}],48:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Looper');"use strict";
 var Looper = require( 'models/Looper' );
 if ( !window.context ) {
@@ -9072,7 +9724,7 @@ describe( 'Looper.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Looper":24,"proxyquireify":2}],44:[function(require,module,exports){
+},{"models/Looper":27,"proxyquireify":3}],49:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/MultiTrigger');"use strict";
 var MultiTrigger = require( 'models/MultiTrigger' );
 if ( !window.context ) {
@@ -9589,7 +10241,7 @@ describe( 'MultiTrigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/MultiTrigger":25,"proxyquireify":2}],45:[function(require,module,exports){
+},{"models/MultiTrigger":28,"proxyquireify":3}],50:[function(require,module,exports){
 "use strict";
 var Scrubber = require( 'models/Scrubber' );
 if ( !window.context ) {
@@ -9906,7 +10558,7 @@ describe( 'Scrubber.js', function () {
     } );
 } );
 
-},{"models/Scrubber":26}],46:[function(require,module,exports){
+},{"models/Scrubber":29}],51:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Trigger');"use strict";
 var Trigger = require( 'models/Trigger' );
 if ( !window.context ) {
@@ -10384,4 +11036,4 @@ describe( 'Trigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Trigger":27,"proxyquireify":2}]},{},[1]);
+},{"models/Trigger":30,"proxyquireify":3}]},{},[1]);
