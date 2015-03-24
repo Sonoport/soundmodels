@@ -3,7 +3,9 @@
 
 [Web Audio](http://webaudio.github.io/web-audio-api/) based Sound Models for creating dynamic interactive sounds.
 
-Latest Version : v2.4.1 (19/03/2015)
+[![npm version](https://badge.fury.io/js/soundmodels.svg)](http://badge.fury.io/js/soundmodels)
+
+Latest Version : v2.5.0 (24/03/2015)
 
 ## Sound Models
 
@@ -60,6 +62,10 @@ A simple low-order filters that can be used as a building blocks of basic tone c
 #### Compressor
 
 Dynamics compression lowers the volume of the loudest parts of the signal and raises the volume of the softest parts. It can be used for produce, a louder, richer, and fuller sound.
+
+#### Distorter
+
+Distortion effect which tries to emulate a guitar amp distortion.
 
 ## Usage
 

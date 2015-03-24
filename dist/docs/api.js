@@ -5,6 +5,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "BaseEffect",
         "BaseSound",
         "Compressor",
+        "Distorter",
         "Extender",
         "Fader",
         "Filter",

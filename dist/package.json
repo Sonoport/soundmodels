@@ -1,7 +1,7 @@
 {
   "name": "soundmodels",
   "description": "Sonoport Sound Models",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "homepage": "http://sonoport.com",
   "author": "Sonport <tech@sonoport.com> (http://sonoport.com/)",
   "files": [
@@ -73,5 +73,8 @@
   "engines": {
     "node": ">= 0.8.0"
   },
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "reverbGen": "git://github.com/notthetup/reverbGen#caching"
+  }
 }
