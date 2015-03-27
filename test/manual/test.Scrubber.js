@@ -16,7 +16,7 @@
         // var url = 'https://dl.dropboxusercontent.com/u/77191118/Sin440Hz1s-Original.wav';
         // var url = 'https://dl.dropboxusercontent.com/u/77191118/DeepIntoIt.wav';
 
-        var url = 'https://dl.dropboxusercontent.com/u/77191118/sounds/gettysburg_address.mp3';
+        var url = 'https://dl.dropboxusercontent.com/u/957/audio/RebBull_WebGame_Normal.wav';
         // Single test
         scrubber = new Scrubber( context, url, function ( progressEvent, sound ) {
             console.log( sound, ( progressEvent.loaded / progressEvent.total ) );

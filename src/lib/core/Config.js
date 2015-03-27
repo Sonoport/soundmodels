@@ -72,7 +72,7 @@ Config.WINDOW_LENGTH = 512;
  * @default 256
  *
  */
-Config.CHUNK_LENGTH = 256;
+Config.CHUNK_LENGTH = 2048;
 
 /**
  * Default smoothing constant.
