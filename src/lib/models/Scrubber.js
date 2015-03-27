@@ -65,8 +65,8 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
     // Constants
     var MAX_JUMP_SECS = 1.0;
     var ALPHA = 0.95;
-    var SPEED_THRESH = 0.05;
-    var SPEED_ALPHA = 0.8;
+    var SPEED_THRESH = 0.1;
+    var SPEED_ALPHA = 0.93;
     var AUDIOEVENT_TRESHOLD = 0.0001;
 
     var audioPlaying = false;
@@ -95,6 +95,7 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
             synthBuf_ = newBuffer( winLen_, numChannels_ );
             srcBuf_ = newBuffer( winLen_, numChannels_ );
 
+            smoothPos_ = self.playPosition.value;
             self.isInitialized = true;
         }
 
@@ -154,9 +155,9 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
 
             if ( numReady_ > 0 && numToGo_ > 0 ) {
                 var numToCopy = Math.min( numToGo_, numReady_ );
-
+                var startPos = synthStep_ - numReady_;
                 for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
-                    var source = synthBuf_[ cIndex ].subarray( synthStep_ - numReady_, synthStep_ - numReady_ + numToCopy );
+                    var source = synthBuf_[ cIndex ].subarray( startPos, startPos + numToCopy );
                     processingEvent.outputBuffer.getChannelData( cIndex )
                         .set( source, processingEvent.outputBuffer.length - numToGo_ );
                 }
@@ -198,23 +199,15 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
                     }
                 }
 
-                // Find where the maximums in the *previous* source buffer (after
-                // shifting by a half frame).
-                for ( sIndex = 0; sIndex < winLen_ - synthStep_; sIndex++ ) {
-                    for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
-                        srcBuf_[ cIndex ][ sIndex ] = srcBuf_[ cIndex ][ sIndex + synthStep_ ];
-                    }
-                }
-
                 var bufPeakPos_ = 0;
                 var bufPeakVal = 0;
-                for ( sIndex = 0; sIndex < winLen_ - synthStep_; sIndex++ ) {
+                for ( sIndex = synthStep_; sIndex < winLen_; sIndex++ ) {
                     var combinedPeakVal = 0;
                     for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
                         combinedPeakVal += srcBuf_[ cIndex ][ sIndex ];
                     }
                     if ( combinedPeakVal > bufPeakVal ) {
-                        bufPeakPos_ = sIndex;
+                        bufPeakPos_ = sIndex - synthStep_;
                         bufPeakVal = combinedPeakVal;
                     }
                 }
@@ -261,7 +254,7 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
                     targetScale_ = 0.0;
                 }
 
-                scale_ = SPEED_ALPHA * scale_ + ( 1.0 - SPEED_ALPHA ) * targetScale_;
+                scale_ = ( SPEED_ALPHA * scale_ ) + ( ( 1.0 - SPEED_ALPHA ) * targetScale_ );
 
                 var muteOnReverse = self.muteOnReverse.value;
 
