@@ -7,7 +7,7 @@
 var Config = require( '../core/Config' );
 var BaseSound = require( '../core/BaseSound' );
 var SPAudioParam = require( '../core/SPAudioParam' );
-var multiFileLoader = require( '../core/multiFileLoader' );
+var multiFileLoader = require( '../core/MultiFileLoader' );
 var log = require( 'loglevel' );
 
 /**
