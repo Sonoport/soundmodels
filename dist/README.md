@@ -5,8 +5,6 @@
 
 [![npm version](https://badge.fury.io/js/soundmodels.svg)](http://badge.fury.io/js/soundmodels)
 
-Latest Version : v2.5.0 (24/03/2015)
-
 ## Sound Models
 
 Sound Models are parameterized algorithms which generate dynamic sounds in real time.
