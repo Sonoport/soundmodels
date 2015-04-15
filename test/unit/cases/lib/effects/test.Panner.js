@@ -1,6 +1,7 @@
 "use strict";
 var Panner = require( 'effects/Panner' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 describe( 'Panner.js', function () {

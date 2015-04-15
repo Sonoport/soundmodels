@@ -1,6 +1,7 @@
 "use strict";
 var Distorter = require( 'effects/Distorter' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 describe( 'Distorter.js', function () {

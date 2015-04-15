@@ -1,6 +1,7 @@
 "use strict";
 var Extender = require( 'models/Extender' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var internalSpies = {

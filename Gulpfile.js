@@ -305,7 +305,7 @@ gulp.task('player', ['player:compass', 'devbuild', 'watch:player'], function(){
     .pipe(webserver({
         port: 8080,
         open: true,
-        host : "localhost"
+        host : "0.0.0.0"
     }));
 });
 
@@ -336,7 +336,7 @@ gulp.task('test', ['devbuild'], function(){
     .pipe(webserver({
         port: 8080,
         open: true,
-        host : "localhost"
+        host : "0.0.0.0"
     }));
 });
 
@@ -366,7 +366,7 @@ gulp.task('unittest', ['jsbeautify:src', 'unittestbuild', 'watch:unittest'], fun
     .pipe(webserver({
         port: 8081,
         open: true,
-        host : "localhost"
+        host : "0.0.0.0"
     }));
 });
 
@@ -375,7 +375,7 @@ gulp.task('integration', function(){
     .pipe(webserver({
         port: 8082,
          open: true,
-        host : "localhost"
+        host : "0.0.0.0"
     }));
 
 });
