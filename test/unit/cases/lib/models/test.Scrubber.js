@@ -1,6 +1,7 @@
 "use strict";
 var Scrubber = require( 'models/Scrubber' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var internalSpies = {

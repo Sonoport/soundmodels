@@ -2,6 +2,7 @@
 var FileLoader = require( 'core/FileLoader' );
 console.log( "Running FileLoader Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var mp3File = 'audio/bullet.mp3';

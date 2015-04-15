@@ -1,6 +1,7 @@
 "use strict";
 var Compressor = require( 'effects/Compressor' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 describe( 'Compressor.js', function () {

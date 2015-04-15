@@ -1,6 +1,7 @@
 "use strict";
 var Fader = require( 'effects/Fader' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 describe( 'Fader.js', function () {

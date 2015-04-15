@@ -2,6 +2,7 @@
 var BaseSound = require( 'core/BaseSound' );
 console.log( "Running BaseSound Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 

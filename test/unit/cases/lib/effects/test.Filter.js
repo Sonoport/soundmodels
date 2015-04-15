@@ -1,6 +1,7 @@
 "use strict";
 var Filter = require( 'effects/Filter' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 describe( 'Filter.js', function () {

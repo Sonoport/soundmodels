@@ -3,6 +3,7 @@ var multiFileLoader = require( 'core/MultiFileLoader' );
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
 console.log( "Running MultiFileLoader Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var validSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav' ];

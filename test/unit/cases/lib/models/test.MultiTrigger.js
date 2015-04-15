@@ -1,6 +1,7 @@
 "use strict";
 var MultiTrigger = require( 'models/MultiTrigger' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var internalSpies = {

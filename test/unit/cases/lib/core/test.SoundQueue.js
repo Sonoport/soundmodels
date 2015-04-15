@@ -48,6 +48,7 @@ var proxyquire = require( 'proxyquireify' )( require );
 var SoundQueue = proxyquire( 'core/SoundQueue', looperStub );
 console.log( "Running SoundQueue Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 // makeContextRun( context );

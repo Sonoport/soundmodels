@@ -3,6 +3,7 @@ var SPAudioBufferSourceNode = require( 'core/SPAudioBufferSourceNode' );
 var SPPlaybackRateParam = require( 'core/SPPlaybackRateParam' );
 console.log( "Running SPAudioBufferSourceNode Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 
@@ -56,6 +57,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
     describe( '#playbackRate ', function () {
         it( "should be have a parameter called playbackRate", function () {
             var sourceNode = new SPAudioBufferSourceNode( context );
+            sourceNode.buffer = toneBuffer;
             expect( sourceNode.playbackRate )
                 .toBeDefined();
             expect( sourceNode.playbackRate.isSPPlaybackRateParam )
@@ -84,10 +86,11 @@ describe( 'SPAudioBufferSourceNode.js', function () {
             sourceNode.start( 0 );
             setTimeout( function () {
                 sourceNode.stop( 0 );
+                console.log( sourceNode.playbackPosition );
                 expect( sourceNode.playbackPosition )
                     .not.toBe( 0 );
                 done();
-            }, 500 );
+            }, 200 );
         } );
     } );
 

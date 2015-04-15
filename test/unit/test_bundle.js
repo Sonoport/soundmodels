@@ -109,7 +109,7 @@ require( './cases/lib/models/test.MultiTrigger.js' );
 require( './cases/lib/models/test.Scrubber.js' );
 require( './cases/lib/models/test.Trigger.js' );
 
-},{"./cases/lib/core/test.BaseSound.js":31,"./cases/lib/core/test.Config.js":32,"./cases/lib/core/test.Converter.js":33,"./cases/lib/core/test.DetectLoopMarkers.js":34,"./cases/lib/core/test.FileLoader.js":35,"./cases/lib/core/test.MultiFileLoader.js":36,"./cases/lib/core/test.SPAudioBuffer.js":37,"./cases/lib/core/test.SPAudioBufferSourceNode.js":38,"./cases/lib/core/test.SPAudioParam.js":39,"./cases/lib/core/test.SoundQueue.js":40,"./cases/lib/effects/test.Compressor.js":41,"./cases/lib/effects/test.Distorter.js":42,"./cases/lib/effects/test.Fader.js":43,"./cases/lib/effects/test.Filter.js":44,"./cases/lib/effects/test.Panner.js":45,"./cases/lib/models/test.Activity.js":46,"./cases/lib/models/test.Extender.js":47,"./cases/lib/models/test.Looper.js":48,"./cases/lib/models/test.MultiTrigger.js":49,"./cases/lib/models/test.Scrubber.js":50,"./cases/lib/models/test.Trigger.js":51}],2:[function(require,module,exports){
+},{"./cases/lib/core/test.BaseSound.js":30,"./cases/lib/core/test.Config.js":31,"./cases/lib/core/test.Converter.js":32,"./cases/lib/core/test.DetectLoopMarkers.js":33,"./cases/lib/core/test.FileLoader.js":34,"./cases/lib/core/test.MultiFileLoader.js":35,"./cases/lib/core/test.SPAudioBuffer.js":36,"./cases/lib/core/test.SPAudioBufferSourceNode.js":37,"./cases/lib/core/test.SPAudioParam.js":38,"./cases/lib/core/test.SoundQueue.js":39,"./cases/lib/effects/test.Compressor.js":40,"./cases/lib/effects/test.Distorter.js":41,"./cases/lib/effects/test.Fader.js":42,"./cases/lib/effects/test.Filter.js":43,"./cases/lib/effects/test.Panner.js":44,"./cases/lib/models/test.Activity.js":45,"./cases/lib/models/test.Extender.js":46,"./cases/lib/models/test.Looper.js":47,"./cases/lib/models/test.MultiTrigger.js":48,"./cases/lib/models/test.Scrubber.js":49,"./cases/lib/models/test.Trigger.js":50}],2:[function(require,module,exports){
 /*
 * loglevel - https://github.com/pimterry/loglevel
 *
@@ -1149,7 +1149,7 @@ Config.WINDOW_LENGTH = 512;
  * @default 256
  *
  */
-Config.CHUNK_LENGTH = 256;
+Config.CHUNK_LENGTH = 2048;
 
 /**
  * Default smoothing constant.
@@ -2064,19 +2064,20 @@ var log = require( 'loglevel' );
  */
 function SPAudioBufferSourceNode( audioContext ) {
     var bufferSourceNode_ = audioContext.createBufferSource();
-    var counterNode_ = audioContext.createBufferSource();
+    var counterNode_;
 
     var scopeNode_ = audioContext.createScriptProcessor( 256, 1, 1 );
     var trackGainNode_ = audioContext.createGain();
     var lastPos = 0;
 
     this.audioContext = audioContext;
-    this.channelCount = bufferSourceNode_.channelCount;
-    this.channelCountMode = bufferSourceNode_.channelCountMode;
-    this.channelInterpretation = bufferSourceNode_.channelInterpretation;
-    this.numberOfInputs = bufferSourceNode_.numberOfInputs;
-    this.numberOfOutputs = bufferSourceNode_.numberOfOutputs;
     this.playbackState = 0;
+
+    this.channelCount = null;
+    this.channelCountMode = null;
+    this.channelInterpretation = null;
+    this.numberOfInputs = null;
+    this.numberOfOutputs = null;
 
     /**
      * Playback States Constant.
@@ -2122,7 +2123,7 @@ function SPAudioBufferSourceNode( audioContext ) {
      * @default 1
      *
      */
-    this.playbackRate = new SPPlaybackRateParam( this, bufferSourceNode_.playbackRate, counterNode_.playbackRate );
+    this.playbackRate = null;
 
     /**
      * An optional value in seconds where looping should end if the loop attribute is true.
@@ -2195,6 +2196,7 @@ function SPAudioBufferSourceNode( audioContext ) {
         enumerable: true,
         configurable: false,
         set: function ( loop ) {
+            console.log( "setting loop", loop );
             bufferSourceNode_.loop = loop;
             counterNode_.loop = loop;
         },
@@ -2231,6 +2233,16 @@ function SPAudioBufferSourceNode( audioContext ) {
         enumerable: true,
         configurable: false,
         set: function ( buffer ) {
+            if ( bufferSourceNode_ ) {
+                bufferSourceNode_.disconnect();
+            }
+
+            if ( counterNode_ ) {
+                counterNode_.disconnect();
+            }
+
+            bufferSourceNode_ = audioContext.createBufferSource();
+            counterNode_ = audioContext.createBufferSource();
             if ( buffer.isSPAudioBuffer ) {
                 bufferSourceNode_.buffer = buffer.buffer;
                 counterNode_.buffer = createCounterBuffer( buffer.buffer );
@@ -2238,6 +2250,17 @@ function SPAudioBufferSourceNode( audioContext ) {
                 bufferSourceNode_.buffer = buffer;
                 counterNode_.buffer = createCounterBuffer( buffer );
             }
+
+            counterNode_.connect( scopeNode_ );
+            bufferSourceNode_.connect( trackGainNode_ );
+
+            this.channelCount = bufferSourceNode_.channelCount;
+            this.channelCountMode = bufferSourceNode_.channelCountMode;
+            this.channelInterpretation = bufferSourceNode_.channelInterpretation;
+            this.numberOfInputs = bufferSourceNode_.numberOfInputs;
+            this.numberOfOutputs = bufferSourceNode_.numberOfOutputs;
+
+            this.playbackRate = new SPPlaybackRateParam( this, bufferSourceNode_.playbackRate, counterNode_.playbackRate );
 
         },
         get: function () {
@@ -2304,8 +2327,14 @@ function SPAudioBufferSourceNode( audioContext ) {
         }
 
         if ( this.playbackState === this.UNSCHEDULED_STATE ) {
-            bufferSourceNode_.start( when, offset, duration );
-            counterNode_.start( when, offset, duration );
+            if ( offset === 0 && duration === bufferSourceNode_.buffer.duration ) {
+                bufferSourceNode_.start( when );
+                counterNode_.start( when );
+            } else {
+                bufferSourceNode_.start( when, offset, duration );
+                counterNode_.start( when, offset, duration );
+            }
+
             this.playbackState = this.SCHEDULED_STATE;
         }
 
@@ -2324,6 +2353,7 @@ function SPAudioBufferSourceNode( audioContext ) {
      */
     this.stop = function ( when ) {
         if ( this.playbackState === this.PLAYING_STATE || this.playbackState === this.SCHEDULED_STATE ) {
+            console.log( "stopping" );
             bufferSourceNode_.stop( when );
             counterNode_.stop( when );
         }
@@ -2395,14 +2425,11 @@ function SPAudioBufferSourceNode( audioContext ) {
             array[ index ] = index;
         }
 
-        audioBuf.getChannelData( 0 )
-            .set( array );
+        audioBuf.getChannelData( 0 ).set( array );
         return audioBuf;
     }
 
     function init() {
-        counterNode_.connect( scopeNode_ );
-        bufferSourceNode_.connect( trackGainNode_ );
         scopeNode_.connect( trackGainNode_ );
         scopeNode_.onaudioprocess = savePosition;
     }
@@ -2414,6 +2441,7 @@ function SPAudioBufferSourceNode( audioContext ) {
 
     function wrapAroundOnEnded( node, onended ) {
         return function ( event ) {
+            console.log( "ended" );
             node.playbackState = node.FINISHED_STATE;
             if ( typeof onended === 'function' ) {
                 onended( event );
@@ -3265,7 +3293,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
 
 module.exports = SoundQueue;
 
-},{"../core/Config":7,"../core/WebAudioDispatch":17,"../models/Looper":27,"loglevel":2}],17:[function(require,module,exports){
+},{"../core/Config":7,"../core/WebAudioDispatch":17,"../models/Looper":26,"loglevel":2}],17:[function(require,module,exports){
 /**
  * @module Core
  *
@@ -3307,10 +3335,8 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
 module.exports = WebAudioDispatch;
 
 },{"loglevel":2}],18:[function(require,module,exports){
-arguments[4][11][0].apply(exports,arguments)
-},{"../core/FileLoader":10,"../core/SPAudioBuffer":12,"dup":11,"loglevel":2}],19:[function(require,module,exports){
 arguments[4][17][0].apply(exports,arguments)
-},{"dup":17,"loglevel":2}],20:[function(require,module,exports){
+},{"dup":17,"loglevel":2}],19:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3403,7 +3429,7 @@ Compressor.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Compressor;
 
-},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],21:[function(require,module,exports){
+},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],20:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3482,7 +3508,7 @@ Distorter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Distorter;
 
-},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],22:[function(require,module,exports){
+},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],21:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3556,7 +3582,7 @@ Fader.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Fader;
 
-},{"../core/BaseEffect":5,"../core/Converter":8,"../core/SPAudioParam":14,"loglevel":2}],23:[function(require,module,exports){
+},{"../core/BaseEffect":5,"../core/Converter":8,"../core/SPAudioParam":14,"loglevel":2}],22:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3654,7 +3680,7 @@ Filter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Filter;
 
-},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],24:[function(require,module,exports){
+},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],23:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3735,7 +3761,7 @@ Panner.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Panner;
 
-},{"../core/BaseEffect":5,"../core/SPAudioParam":14,"loglevel":2}],25:[function(require,module,exports){
+},{"../core/BaseEffect":5,"../core/SPAudioParam":14,"loglevel":2}],24:[function(require,module,exports){
 /**
  * @module Models
  *
@@ -4113,7 +4139,7 @@ Activity.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Activity;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/SPAudioParam":14,"../core/webAudioDispatch":19,"../models/Looper":27,"loglevel":2}],26:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/SPAudioParam":14,"../core/webAudioDispatch":18,"../models/Looper":26,"loglevel":2}],25:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4123,7 +4149,7 @@ var Config = require( '../core/Config' );
 var BaseSound = require( '../core/BaseSound' );
 var SoundQueue = require( '../core/SoundQueue' );
 var SPAudioParam = require( '../core/SPAudioParam' );
-var multiFileLoader = require( '../core/multiFileLoader' );
+var multiFileLoader = require( '../core/MultiFileLoader' );
 var Converter = require( '../core/Converter' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
 var log = require( 'loglevel' );
@@ -4394,7 +4420,7 @@ Extender.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Extender;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/SPAudioParam":14,"../core/SoundQueue":16,"../core/multiFileLoader":18,"../core/webAudioDispatch":19,"loglevel":2}],27:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/MultiFileLoader":11,"../core/SPAudioParam":14,"../core/SoundQueue":16,"../core/webAudioDispatch":18,"loglevel":2}],26:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4405,7 +4431,7 @@ var Config = require( '../core/Config' );
 var BaseSound = require( '../core/BaseSound' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var SPAudioBufferSourceNode = require( '../core/SPAudioBufferSourceNode' );
-var multiFileLoader = require( '../core/multiFileLoader' );
+var multiFileLoader = require( '../core/MultiFileLoader' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
 var log = require( 'loglevel' );
 
@@ -4807,7 +4833,7 @@ Looper.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Looper;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/SPAudioBufferSourceNode":13,"../core/SPAudioParam":14,"../core/multiFileLoader":18,"../core/webAudioDispatch":19,"loglevel":2}],28:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/MultiFileLoader":11,"../core/SPAudioBufferSourceNode":13,"../core/SPAudioParam":14,"../core/webAudioDispatch":18,"loglevel":2}],27:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4818,7 +4844,7 @@ var Config = require( '../core/Config' );
 var BaseSound = require( '../core/BaseSound' );
 var SoundQueue = require( '../core/SoundQueue' );
 var SPAudioParam = require( '../core/SPAudioParam' );
-var multiFileLoader = require( '../core/multiFileLoader' );
+var multiFileLoader = require( '../core/MultiFileLoader' );
 var Converter = require( '../core/Converter' );
 var webAudioDispatch = require( '../core/webAudioDispatch' );
 var log = require( 'loglevel' );
@@ -5138,7 +5164,7 @@ MultiTrigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = MultiTrigger;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/SPAudioParam":14,"../core/SoundQueue":16,"../core/multiFileLoader":18,"../core/webAudioDispatch":19,"loglevel":2}],29:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/MultiFileLoader":11,"../core/SPAudioParam":14,"../core/SoundQueue":16,"../core/webAudioDispatch":18,"loglevel":2}],28:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5148,7 +5174,7 @@ module.exports = MultiTrigger;
 var Config = require( '../core/Config' );
 var BaseSound = require( '../core/BaseSound' );
 var SPAudioParam = require( '../core/SPAudioParam' );
-var multiFileLoader = require( '../core/multiFileLoader' );
+var multiFileLoader = require( '../core/MultiFileLoader' );
 var log = require( 'loglevel' );
 
 /**
@@ -5206,8 +5232,8 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
     // Constants
     var MAX_JUMP_SECS = 1.0;
     var ALPHA = 0.95;
-    var SPEED_THRESH = 0.05;
-    var SPEED_ALPHA = 0.8;
+    var SPEED_THRESH = 0.1;
+    var SPEED_ALPHA = 0.93;
     var AUDIOEVENT_TRESHOLD = 0.0001;
 
     var audioPlaying = false;
@@ -5236,6 +5262,7 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
             synthBuf_ = newBuffer( winLen_, numChannels_ );
             srcBuf_ = newBuffer( winLen_, numChannels_ );
 
+            smoothPos_ = self.playPosition.value;
             self.isInitialized = true;
         }
 
@@ -5295,9 +5322,9 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
 
             if ( numReady_ > 0 && numToGo_ > 0 ) {
                 var numToCopy = Math.min( numToGo_, numReady_ );
-
+                var startPos = synthStep_ - numReady_;
                 for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
-                    var source = synthBuf_[ cIndex ].subarray( synthStep_ - numReady_, synthStep_ - numReady_ + numToCopy );
+                    var source = synthBuf_[ cIndex ].subarray( startPos, startPos + numToCopy );
                     processingEvent.outputBuffer.getChannelData( cIndex )
                         .set( source, processingEvent.outputBuffer.length - numToGo_ );
                 }
@@ -5339,23 +5366,15 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
                     }
                 }
 
-                // Find where the maximums in the *previous* source buffer (after
-                // shifting by a half frame).
-                for ( sIndex = 0; sIndex < winLen_ - synthStep_; sIndex++ ) {
-                    for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
-                        srcBuf_[ cIndex ][ sIndex ] = srcBuf_[ cIndex ][ sIndex + synthStep_ ];
-                    }
-                }
-
                 var bufPeakPos_ = 0;
                 var bufPeakVal = 0;
-                for ( sIndex = 0; sIndex < winLen_ - synthStep_; sIndex++ ) {
+                for ( sIndex = synthStep_; sIndex < winLen_; sIndex++ ) {
                     var combinedPeakVal = 0;
                     for ( cIndex = 0; cIndex < numChannels_; cIndex++ ) {
                         combinedPeakVal += srcBuf_[ cIndex ][ sIndex ];
                     }
                     if ( combinedPeakVal > bufPeakVal ) {
-                        bufPeakPos_ = sIndex;
+                        bufPeakPos_ = sIndex - synthStep_;
                         bufPeakVal = combinedPeakVal;
                     }
                 }
@@ -5402,7 +5421,7 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
                     targetScale_ = 0.0;
                 }
 
-                scale_ = SPEED_ALPHA * scale_ + ( 1.0 - SPEED_ALPHA ) * targetScale_;
+                scale_ = ( SPEED_ALPHA * scale_ ) + ( ( 1.0 - SPEED_ALPHA ) * targetScale_ );
 
                 var muteOnReverse = self.muteOnReverse.value;
 
@@ -5510,7 +5529,7 @@ Scrubber.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Scrubber;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/SPAudioParam":14,"../core/multiFileLoader":18,"loglevel":2}],30:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/MultiFileLoader":11,"../core/SPAudioParam":14,"loglevel":2}],29:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5520,7 +5539,7 @@ var Config = require( '../core/Config' );
 var BaseSound = require( '../core/BaseSound' );
 var SoundQueue = require( '../core/SoundQueue' );
 var SPAudioParam = require( '../core/SPAudioParam' );
-var multiFileLoader = require( '../core/multiFileLoader' );
+var multiFileLoader = require( '../core/MultiFileLoader' );
 var Converter = require( '../core/Converter' );
 var log = require( 'loglevel' );
 
@@ -5753,11 +5772,12 @@ Trigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Trigger;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/SPAudioParam":14,"../core/SoundQueue":16,"../core/multiFileLoader":18,"loglevel":2}],31:[function(require,module,exports){
+},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/MultiFileLoader":11,"../core/SPAudioParam":14,"../core/SoundQueue":16,"loglevel":2}],30:[function(require,module,exports){
 "use strict";
 var BaseSound = require( 'core/BaseSound' );
 console.log( "Running BaseSound Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 
@@ -5927,7 +5947,7 @@ describe( 'BaseSound.js', function () {
     } );
 } );
 
-},{"core/BaseSound":6}],32:[function(require,module,exports){
+},{"core/BaseSound":6}],31:[function(require,module,exports){
 "use strict";
 var Config = require( 'core/Config' );
 console.log( "Running Config Test... " );
@@ -5945,7 +5965,7 @@ describe( 'Config.js', function () {
     } );
 } );
 
-},{"core/Config":7}],33:[function(require,module,exports){
+},{"core/Config":7}],32:[function(require,module,exports){
 "use strict";
 var Converter = require( 'core/Converter' );
 console.log( "Running Converter Test... " );
@@ -5968,11 +5988,12 @@ describe( 'Converter.js', function () {
     } );
 } );
 
-},{"core/Converter":8}],34:[function(require,module,exports){
+},{"core/Converter":8}],33:[function(require,module,exports){
     "use strict";
     var detectLoopMarkers = require( 'core/DetectLoopMarkers' )
     console.log( "Running DetectLoopMarker Test... " );
     if ( !window.context ) {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
         window.context = new AudioContext();
     }
     var rampMarkedMp3 = 'audio/ramp_marked.mp3';
@@ -6251,11 +6272,12 @@ describe( 'Converter.js', function () {
         } );
     } );
 
-},{"core/DetectLoopMarkers":9}],35:[function(require,module,exports){
+},{"core/DetectLoopMarkers":9}],34:[function(require,module,exports){
 "use strict";
 var FileLoader = require( 'core/FileLoader' );
 console.log( "Running FileLoader Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var mp3File = 'audio/bullet.mp3';
@@ -6403,12 +6425,13 @@ describe( 'FileLoader.js', function () {
     } );
 } );
 
-},{"core/FileLoader":10}],36:[function(require,module,exports){
+},{"core/FileLoader":10}],35:[function(require,module,exports){
 "use strict";
 var multiFileLoader = require( 'core/MultiFileLoader' );
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
 console.log( "Running MultiFileLoader Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var validSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav' ];
@@ -6478,11 +6501,12 @@ describe( 'MultiFileLoader.js', function () {
     } );
 } );
 
-},{"core/MultiFileLoader":11,"core/SPAudioBuffer":12}],37:[function(require,module,exports){
+},{"core/MultiFileLoader":11,"core/SPAudioBuffer":12}],36:[function(require,module,exports){
 "use strict";
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
 console.log( "Running SPAudioBuffer Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 
@@ -6752,12 +6776,13 @@ describe( 'SPAudioBuffer.js', function () {
     } );
 } );
 
-},{"core/SPAudioBuffer":12}],38:[function(require,module,exports){
+},{"core/SPAudioBuffer":12}],37:[function(require,module,exports){
 "use strict";
 var SPAudioBufferSourceNode = require( 'core/SPAudioBufferSourceNode' );
 var SPPlaybackRateParam = require( 'core/SPPlaybackRateParam' );
 console.log( "Running SPAudioBufferSourceNode Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 
@@ -6811,6 +6836,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
     describe( '#playbackRate ', function () {
         it( "should be have a parameter called playbackRate", function () {
             var sourceNode = new SPAudioBufferSourceNode( context );
+            sourceNode.buffer = toneBuffer;
             expect( sourceNode.playbackRate )
                 .toBeDefined();
             expect( sourceNode.playbackRate.isSPPlaybackRateParam )
@@ -6839,10 +6865,11 @@ describe( 'SPAudioBufferSourceNode.js', function () {
             sourceNode.start( 0 );
             setTimeout( function () {
                 sourceNode.stop( 0 );
+                console.log( sourceNode.playbackPosition );
                 expect( sourceNode.playbackPosition )
                     .not.toBe( 0 );
                 done();
-            }, 500 );
+            }, 200 );
         } );
     } );
 
@@ -6895,11 +6922,12 @@ describe( 'SPAudioBufferSourceNode.js', function () {
     } );
 } );
 
-},{"core/SPAudioBufferSourceNode":13,"core/SPPlaybackRateParam":15}],39:[function(require,module,exports){
+},{"core/SPAudioBufferSourceNode":13,"core/SPPlaybackRateParam":15}],38:[function(require,module,exports){
 "use strict";
 var SPAudioParam = require( 'core/SPAudioParam' );
 console.log( "Running SPAudioParam Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 
@@ -7058,7 +7086,7 @@ describe( 'SPAudioParam.js', function () {
     } );
 } );
 
-},{"core/SPAudioParam":14}],40:[function(require,module,exports){
+},{"core/SPAudioParam":14}],39:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('core/SoundQueue');var looperSpies = {
     start: jasmine.createSpy( 'start' ),
     stop: jasmine.createSpy( 'stop' ),
@@ -7109,6 +7137,7 @@ var proxyquire = require( 'proxyquireify' )( require );
 var SoundQueue = proxyquire( 'core/SoundQueue', looperStub );
 console.log( "Running SoundQueue Test... " );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 // makeContextRun( context );
@@ -7484,10 +7513,11 @@ describe( 'SoundQueue.js', function () {
     } );
 } );
 
-},{"core/SoundQueue":16,"proxyquireify":3}],41:[function(require,module,exports){
+},{"core/SoundQueue":16,"proxyquireify":3}],40:[function(require,module,exports){
 "use strict";
 var Compressor = require( 'effects/Compressor' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 describe( 'Compressor.js', function () {
@@ -7662,10 +7692,11 @@ describe( 'Compressor.js', function () {
     } );
 } );
 
-},{"effects/Compressor":20}],42:[function(require,module,exports){
+},{"effects/Compressor":19}],41:[function(require,module,exports){
 "use strict";
 var Distorter = require( 'effects/Distorter' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 describe( 'Distorter.js', function () {
@@ -7783,10 +7814,11 @@ describe( 'Distorter.js', function () {
     } );
 } );
 
-},{"effects/Distorter":21}],43:[function(require,module,exports){
+},{"effects/Distorter":20}],42:[function(require,module,exports){
 "use strict";
 var Fader = require( 'effects/Fader' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 describe( 'Fader.js', function () {
@@ -7904,10 +7936,11 @@ describe( 'Fader.js', function () {
     } );
 } );
 
-},{"effects/Fader":22}],44:[function(require,module,exports){
+},{"effects/Fader":21}],43:[function(require,module,exports){
 "use strict";
 var Filter = require( 'effects/Filter' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 describe( 'Filter.js', function () {
@@ -8063,10 +8096,11 @@ describe( 'Filter.js', function () {
     } );
 } );
 
-},{"effects/Filter":23}],45:[function(require,module,exports){
+},{"effects/Filter":22}],44:[function(require,module,exports){
 "use strict";
 var Panner = require( 'effects/Panner' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 describe( 'Panner.js', function () {
@@ -8165,10 +8199,11 @@ describe( 'Panner.js', function () {
     } );
 } );
 
-},{"effects/Panner":24}],46:[function(require,module,exports){
+},{"effects/Panner":23}],45:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Activity');"use strict";
 var Activity = require( 'models/Activity' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
@@ -8683,10 +8718,11 @@ describe( 'Activity.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Activity":25,"proxyquireify":3}],47:[function(require,module,exports){
+},{"models/Activity":24,"proxyquireify":3}],46:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Extender');"use strict";
 var Extender = require( 'models/Extender' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var internalSpies = {
@@ -9161,10 +9197,11 @@ describe( 'Extender.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Extender":26,"proxyquireify":3}],48:[function(require,module,exports){
+},{"models/Extender":25,"proxyquireify":3}],47:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Looper');"use strict";
 var Looper = require( 'models/Looper' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var listofSounds = [ 'audio/sineloopstereo.wav', 'audio/sineloopstereo.wav', 'audio/sineloopmono.wav', 'audio/sineloopmonomarked.mp3', 'audio/sineloopstereomarked.mp3', 'audio/sineloopstereomarked.wav' ];
@@ -9724,10 +9761,11 @@ describe( 'Looper.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Looper":27,"proxyquireify":3}],49:[function(require,module,exports){
+},{"models/Looper":26,"proxyquireify":3}],48:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/MultiTrigger');"use strict";
 var MultiTrigger = require( 'models/MultiTrigger' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var internalSpies = {
@@ -10241,10 +10279,11 @@ describe( 'MultiTrigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/MultiTrigger":28,"proxyquireify":3}],50:[function(require,module,exports){
+},{"models/MultiTrigger":27,"proxyquireify":3}],49:[function(require,module,exports){
 "use strict";
 var Scrubber = require( 'models/Scrubber' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var internalSpies = {
@@ -10558,10 +10597,11 @@ describe( 'Scrubber.js', function () {
     } );
 } );
 
-},{"models/Scrubber":29}],51:[function(require,module,exports){
+},{"models/Scrubber":28}],50:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Trigger');"use strict";
 var Trigger = require( 'models/Trigger' );
 if ( !window.context ) {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
     window.context = new AudioContext();
 }
 var internalSpies = {
@@ -11036,4 +11076,4 @@ describe( 'Trigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Trigger":30,"proxyquireify":3}]},{},[1]);
+},{"models/Trigger":29,"proxyquireify":3}]},{},[1]);

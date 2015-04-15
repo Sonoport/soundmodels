@@ -2,6 +2,7 @@
     var detectLoopMarkers = require( 'core/DetectLoopMarkers' )
     console.log( "Running DetectLoopMarker Test... " );
     if ( !window.context ) {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
         window.context = new AudioContext();
     }
     var rampMarkedMp3 = 'audio/ramp_marked.mp3';

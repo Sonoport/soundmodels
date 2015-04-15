@@ -16,19 +16,20 @@ var log = require( 'loglevel' );
  */
 function SPAudioBufferSourceNode( audioContext ) {
     var bufferSourceNode_ = audioContext.createBufferSource();
-    var counterNode_ = audioContext.createBufferSource();
+    var counterNode_;
 
     var scopeNode_ = audioContext.createScriptProcessor( 256, 1, 1 );
     var trackGainNode_ = audioContext.createGain();
     var lastPos = 0;
 
     this.audioContext = audioContext;
-    this.channelCount = bufferSourceNode_.channelCount;
-    this.channelCountMode = bufferSourceNode_.channelCountMode;
-    this.channelInterpretation = bufferSourceNode_.channelInterpretation;
-    this.numberOfInputs = bufferSourceNode_.numberOfInputs;
-    this.numberOfOutputs = bufferSourceNode_.numberOfOutputs;
     this.playbackState = 0;
+
+    this.channelCount = null;
+    this.channelCountMode = null;
+    this.channelInterpretation = null;
+    this.numberOfInputs = null;
+    this.numberOfOutputs = null;
 
     /**
      * Playback States Constant.
@@ -74,7 +75,7 @@ function SPAudioBufferSourceNode( audioContext ) {
      * @default 1
      *
      */
-    this.playbackRate = new SPPlaybackRateParam( this, bufferSourceNode_.playbackRate, counterNode_.playbackRate );
+    this.playbackRate = null;
 
     /**
      * An optional value in seconds where looping should end if the loop attribute is true.
@@ -183,6 +184,16 @@ function SPAudioBufferSourceNode( audioContext ) {
         enumerable: true,
         configurable: false,
         set: function ( buffer ) {
+            if ( bufferSourceNode_ ) {
+                bufferSourceNode_.disconnect();
+            }
+
+            if ( counterNode_ ) {
+                counterNode_.disconnect();
+            }
+
+            bufferSourceNode_ = audioContext.createBufferSource();
+            counterNode_ = audioContext.createBufferSource();
             if ( buffer.isSPAudioBuffer ) {
                 bufferSourceNode_.buffer = buffer.buffer;
                 counterNode_.buffer = createCounterBuffer( buffer.buffer );
@@ -190,6 +201,17 @@ function SPAudioBufferSourceNode( audioContext ) {
                 bufferSourceNode_.buffer = buffer;
                 counterNode_.buffer = createCounterBuffer( buffer );
             }
+
+            counterNode_.connect( scopeNode_ );
+            bufferSourceNode_.connect( trackGainNode_ );
+
+            this.channelCount = bufferSourceNode_.channelCount;
+            this.channelCountMode = bufferSourceNode_.channelCountMode;
+            this.channelInterpretation = bufferSourceNode_.channelInterpretation;
+            this.numberOfInputs = bufferSourceNode_.numberOfInputs;
+            this.numberOfOutputs = bufferSourceNode_.numberOfOutputs;
+
+            this.playbackRate = new SPPlaybackRateParam( this, bufferSourceNode_.playbackRate, counterNode_.playbackRate );
 
         },
         get: function () {
@@ -256,8 +278,14 @@ function SPAudioBufferSourceNode( audioContext ) {
         }
 
         if ( this.playbackState === this.UNSCHEDULED_STATE ) {
-            bufferSourceNode_.start( when, offset, duration );
-            counterNode_.start( when, offset, duration );
+            if ( offset === 0 && duration === bufferSourceNode_.buffer.duration ) {
+                bufferSourceNode_.start( when );
+                counterNode_.start( when );
+            } else {
+                bufferSourceNode_.start( when, offset, duration );
+                counterNode_.start( when, offset, duration );
+            }
+
             this.playbackState = this.SCHEDULED_STATE;
         }
 
@@ -347,14 +375,11 @@ function SPAudioBufferSourceNode( audioContext ) {
             array[ index ] = index;
         }
 
-        audioBuf.getChannelData( 0 )
-            .set( array );
+        audioBuf.getChannelData( 0 ).set( array );
         return audioBuf;
     }
 
     function init() {
-        counterNode_.connect( scopeNode_ );
-        bufferSourceNode_.connect( trackGainNode_ );
         scopeNode_.connect( trackGainNode_ );
         scopeNode_.onaudioprocess = savePosition;
     }
