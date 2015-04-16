@@ -3,7 +3,7 @@
  */
 
 'use strict';
-require( '../core/AudioContextMonkeyPatch' );
+require( '../core/AudioContextMonkeyPatch' )();
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var log = require( 'loglevel' );
 

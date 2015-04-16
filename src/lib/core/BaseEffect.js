@@ -2,7 +2,7 @@
  * @module Core
  */
 'use strict';
-require( '../core/AudioContextMonkeyPatch' );
+require( '../core/AudioContextMonkeyPatch' )();
 var log = require( 'loglevel' );
 
 /**
