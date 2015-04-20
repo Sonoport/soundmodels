@@ -101,7 +101,11 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
         smoothDeltaTime_ = 0;
 
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, audioBufferArray );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, arrayOfBuffers );
+                }
+            }, 0 );
         }
     }
 
@@ -365,10 +369,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
     };
 
     // Initialize the sources.
-    window.setTimeout( function () {
-        init( source );
-    }, 0 );
-
+    init( source );
 }
 
 Activity.prototype = Object.create( BaseSound.prototype );

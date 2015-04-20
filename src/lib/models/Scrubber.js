@@ -100,7 +100,11 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
         }
 
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, audioBufferArray );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, arrayOfBuffers );
+                }
+            }, 0 );
         }
     };
 
@@ -352,9 +356,7 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
     this.registerParameter( SPAudioParam.createPsuedoParam( this, 'muteOnReverse', true, false, true ) );
 
     // Initialize the sources.
-    window.setTimeout( function () {
-        init( source );
-    }, 0 );
+    init( source );
 
 }
 

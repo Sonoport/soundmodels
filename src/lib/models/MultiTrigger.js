@@ -100,7 +100,11 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
             self.isInitialized = true;
         }
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, audioBufferArray );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, arrayOfBuffers );
+                }
+            }, 0 );
         }
     };
 
@@ -318,9 +322,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
     // SoundQueue based model.
     soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
 
-    window.setTimeout( function () {
-        init( sources );
-    }, 0 );
+    init( sources );
 
 }
 

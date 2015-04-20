@@ -97,7 +97,11 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
             self.isInitialized = true;
         }
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, audioBufferArray );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, arrayOfBuffers );
+                }
+            }, 0 );
         }
     };
 
@@ -269,9 +273,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
     soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
 
     // Initialize the sources.
-    window.setTimeout( function () {
-        init( source );
-    }, 0 );
+    init( source );
 }
 
 Extender.prototype = Object.create( BaseSound.prototype );
