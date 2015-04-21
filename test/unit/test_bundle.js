@@ -399,7 +399,7 @@ module.exports = AudioContextMonkeyPatch;
  * @module Core
  */
 'use strict';
-require( '../core/AudioContextMonkeyPatch' );
+require( '../core/AudioContextMonkeyPatch' )();
 var log = require( 'loglevel' );
 
 /**
@@ -633,7 +633,7 @@ module.exports = BaseEffect;
  */
 
 'use strict';
-require( '../core/AudioContextMonkeyPatch' );
+require( '../core/AudioContextMonkeyPatch' )();
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var log = require( 'loglevel' );
 
@@ -2196,7 +2196,6 @@ function SPAudioBufferSourceNode( audioContext ) {
         enumerable: true,
         configurable: false,
         set: function ( loop ) {
-            console.log( "setting loop", loop );
             bufferSourceNode_.loop = loop;
             counterNode_.loop = loop;
         },
@@ -2353,7 +2352,6 @@ function SPAudioBufferSourceNode( audioContext ) {
      */
     this.stop = function ( when ) {
         if ( this.playbackState === this.PLAYING_STATE || this.playbackState === this.SCHEDULED_STATE ) {
-            console.log( "stopping" );
             bufferSourceNode_.stop( when );
             counterNode_.stop( when );
         }
@@ -2441,7 +2439,6 @@ function SPAudioBufferSourceNode( audioContext ) {
 
     function wrapAroundOnEnded( node, onended ) {
         return function ( event ) {
-            console.log( "ended" );
             node.playbackState = node.FINISHED_STATE;
             if ( typeof onended === 'function' ) {
                 onended( event );
@@ -3865,7 +3862,11 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
         smoothDeltaTime_ = 0;
 
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, audioBufferArray );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, audioBufferArray );
+                }
+            }, 0 );
         }
     }
 
@@ -4129,10 +4130,7 @@ function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart
     };
 
     // Initialize the sources.
-    window.setTimeout( function () {
-        init( source );
-    }, 0 );
-
+    init( source );
 }
 
 Activity.prototype = Object.create( BaseSound.prototype );
@@ -4239,7 +4237,11 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
             self.isInitialized = true;
         }
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, audioBufferArray );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, audioBufferArray );
+                }
+            }, 0 );
         }
     };
 
@@ -4411,9 +4413,7 @@ function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart
     soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
 
     // Initialize the sources.
-    window.setTimeout( function () {
-        init( source );
-    }, 0 );
+    init( source );
 }
 
 Extender.prototype = Object.create( BaseSound.prototype );
@@ -4487,7 +4487,11 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
         }
 
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, arrayOfBuffers );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, arrayOfBuffers );
+                }
+            }, 0 );
         }
     };
 
@@ -4824,9 +4828,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
     };
 
     // Initialize the sources.
-    window.setTimeout( function () {
-        init( sources );
-    }, 0 );
+    init( sources );
 }
 
 Looper.prototype = Object.create( BaseSound.prototype );
@@ -4936,7 +4938,11 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
             self.isInitialized = true;
         }
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, audioBufferArray );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, audioBufferArray );
+                }
+            }, 0 );
         }
     };
 
@@ -5154,9 +5160,7 @@ function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudio
     // SoundQueue based model.
     soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
 
-    window.setTimeout( function () {
-        init( sources );
-    }, 0 );
+    init( sources );
 
 }
 
@@ -5267,7 +5271,11 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
         }
 
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, audioBufferArray );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, audioBufferArray );
+                }
+            }, 0 );
         }
     };
 
@@ -5519,9 +5527,7 @@ function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart
     this.registerParameter( SPAudioParam.createPsuedoParam( this, 'muteOnReverse', true, false, true ) );
 
     // Initialize the sources.
-    window.setTimeout( function () {
-        init( source );
-    }, 0 );
+    init( source );
 
 }
 
@@ -5622,7 +5628,11 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
             self.isInitialized = true;
         }
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, audioBufferArray );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, audioBufferArray );
+                }
+            }, 0 );
         }
     };
 
@@ -5763,9 +5773,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
     // SoundQueue based model.
     soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
 
-    window.setTimeout( function () {
-        init( sources );
-    }, 0 );
+    init( sources );
 }
 
 Trigger.prototype = Object.create( BaseSound.prototype );

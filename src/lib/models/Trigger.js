@@ -92,7 +92,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
         if ( typeof self.onLoadComplete === 'function' ) {
             window.setTimeout( function () {
                 if ( typeof self.onLoadComplete === 'function' ) {
-                    self.onLoadComplete( status, arrayOfBuffers );
+                    self.onLoadComplete( status, audioBufferArray );
                 }
             }, 0 );
         }
