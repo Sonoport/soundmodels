@@ -64,7 +64,11 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
         }
 
         if ( typeof self.onLoadComplete === 'function' ) {
-            self.onLoadComplete( status, arrayOfBuffers );
+            window.setTimeout( function () {
+                if ( typeof self.onLoadComplete === 'function' ) {
+                    self.onLoadComplete( status, arrayOfBuffers );
+                }
+            }, 0 );
         }
     };
 
@@ -401,9 +405,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
     };
 
     // Initialize the sources.
-    window.setTimeout( function () {
-        init( sources );
-    }, 0 );
+    init( sources );
 }
 
 Looper.prototype = Object.create( BaseSound.prototype );
