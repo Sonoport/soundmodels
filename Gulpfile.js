@@ -28,7 +28,7 @@ var cached = require('gulp-cached');
 //var debug = require('gulp-debug');
 // var using = require('gulp-using');
 
-var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - <%= new Date() %> */';
+var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - <%= new Date() %> */\n';
 
 var paths = {
     files: {
@@ -36,6 +36,7 @@ var paths = {
         playerCSS: 'src/jsmplayer/**/**.css',
         vendorSrc: 'src/jsmplayer/vendor/*.js',
         libSrc: 'src/lib/**/*.js',
+        indexSrc: 'src/lib/index.js',
         modelsSrc: 'src/lib/models/*.js',
         effectsSrc: 'src/lib/effects/*.js',
         coreSrc: 'src/lib/core/*.js',
@@ -181,8 +182,9 @@ gulp.task('devbuild',['jsbeautify:src'], function(){
     var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/');
     var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/');
     var coreStream = createBundlerStreams(paths.files.coreSrc, 'build/core/');
+    var indexStream = gulp.src(paths.files.indexSrc).pipe(gulp.dest(paths.dirs.build));
 
-    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream);
+    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream).concat(indexStream);
 
     return merge.apply(this,combinedStreams);
 });
@@ -196,8 +198,9 @@ gulp.task('releasebuild',['jsbeautify:src'], function(){
     var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/', 'uglifyify');
     var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/', 'uglifyify');
     var coreStream = createBundlerStreams('src/lib/core/SPAudioBuffer.js', 'build/core/', 'uglifyify');
+    var indexStream = gulp.src(paths.files.indexSrc).pipe(gulp.dest(paths.dirs.build));
 
-    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream);
+    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream).concat(indexStream);
 
     return merge.apply(this,combinedStreams);
 });
