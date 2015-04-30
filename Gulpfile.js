@@ -33,8 +33,6 @@ var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - <%= new Date() %> */\n';
 var paths = {
     files: {
         jsSrc: 'src/**/**/*.js',
-        playerCSS: 'src/jsmplayer/**/**.css',
-        vendorSrc: 'src/jsmplayer/vendor/*.js',
         libSrc: 'src/lib/**/*.js',
         indexSrc: 'src/lib/index.js',
         modelsSrc: 'src/lib/models/*.js',
@@ -50,7 +48,6 @@ var paths = {
         build: 'build/',
         dist: 'dist/',
         src: 'src/',
-        player: 'src/jsmplayer/',
         lib: 'src/lib/',
         core: 'src/lib/core/',
         models: 'src/lib/models/',
@@ -123,11 +120,9 @@ gulp.task('publishdev', ['makedev'], function(){
 */
 
 gulp.task('jshint:src', function(){
-    var ignoreVendor = ignore.exclude(['**/jsmplayer/vendor/*.js']);
     var ignoreMonkeyPatch = ignore.exclude(['**/AudioContextMonkeyPatch.js']);
 
     return gulp.src([paths.files.jsSrc, 'package.json', 'Gulpfile.js'])
-    .pipe(ignoreVendor)
     .pipe(ignoreMonkeyPatch)
     .pipe(cached('jshint:src'))
     .pipe(jshint('.jshintrc'))
@@ -288,35 +283,6 @@ gulp.task('bump:pre', function(){
   .pipe(gulp.dest('./'));
 });
 
-/*
-**** Player ****
-*/
-
-gulp.task('player:compass', function (){
-    return gulp.src(paths.dirs.player + "sass/*.scss")
-    .pipe(compass({
-        css: paths.dirs.player+'css/',
-        sass: paths.dirs.player+'sass/',
-        require: ['susy', 'breakpoint']
-    }));
-});
-
-gulp.task('playerbuild', ['player:compass', 'devbuild']);
-
-gulp.task('player', ['player:compass', 'devbuild', 'watch:player'], function(){
-    return gulp.src([paths.dirs.player, paths.dirs.build])
-    .pipe(webserver({
-        port: 8080,
-        open: true,
-        host : "0.0.0.0"
-    }));
-});
-
-gulp.task('watch:player', ['watch:lib'], function(){
-    gulp.watch(paths.files.playerCSS, ['player:compass']);
-});
-
-
 
 /*
 **** Testing ****
@@ -382,21 +348,3 @@ gulp.task('integration', function(){
     }));
 
 });
-
-
-
-/*
-
-gulp build
-gulp player
-gulp test
-gulp unittest
-
-
-gulp bump:major
-gulp bump:minor
-gulp bump:patch
-gulp bump:pre
-gulp release
-
-*/
