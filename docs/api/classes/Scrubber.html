@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>MultiTrigger - soundmodels</title>
+    <title>Scrubber - soundmodels</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -116,7 +116,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>MultiTrigger Class</h1>
+                        <h1>Scrubber Class</h1>
 <div class="box meta">
     
 
@@ -140,16 +140,15 @@
 
 
 <div class="box intro">
-    <p>A model which triggers a single or multiple sources with multiple voices (polyphony)
-repeatedly.</p>
+    <p>A model which loads a source and allows it to be scrubbed using a position parameter.</p>
 
 </div>
 
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_MultiTrigger" class="method item">
-    <h3 class="name"><code>MultiTrigger</code></h3>
+        <div id="method_Scrubber" class="method item">
+    <h3 class="name"><code>Scrubber</code></h3>
 
     
         <div class="args">
@@ -163,7 +162,7 @@ repeatedly.</p>
             
                 <li class="arg">
                     
-                        <code class="optional">[sources]</code>
+                        <code class="optional">[source]</code>
                     
                 </li>
             
@@ -255,7 +254,7 @@ repeatedly.</p>
             
                 <li class="param">
                     
-                        <code class="param-name optional">[sources]</code>
+                        <code class="param-name optional">[source]</code>
                         <span class="type">Array/String/AudioBuffer/File</span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -297,7 +296,7 @@ repeatedly.</p>
                     
 
                     <div class="param-description">
-                        <p>Callback when all sources have finished loading.</p>
+                        <p>Callback when the source has finished loading.</p>
 
                     </div>
 
@@ -468,27 +467,6 @@ repeatedly.</p>
                                 
                             </li>
                         
-                            <li class="index-item property">
-                                <a href="#property_eventJitter">eventJitter</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_eventRand">eventRand</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_eventRate">eventRate</a>
-
-                                
-                                
-                            </li>
-                        
                             <li class="index-item property inherited">
                                 <a href="#property_inputNode">inputNode</a>
 
@@ -526,6 +504,20 @@ repeatedly.</p>
                         
                             <li class="index-item property inherited">
                                 <a href="#property_modelName">modelName</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_muteOnReverse">muteOnReverse</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_noMotionFade">noMotionFade</a>
 
                                 
                                 
@@ -574,14 +566,7 @@ repeatedly.</p>
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_pitchRand">pitchRand</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_pitchShift">pitchShift</a>
+                                <a href="#property_playPosition">playPosition</a>
 
                                 
                                 
@@ -909,7 +894,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_pause" class="method item">
+                    <div id="method_pause" class="method item inherited">
     <h3 class="name"><code>pause</code></h3>
 
     
@@ -932,10 +917,9 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            <p>Inherited from
-            <a href="../classes/BaseSound.html#method_pause">
-                BaseSound
-            </a>
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_pause">BaseSound</a>:
             
         
         
@@ -948,7 +932,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Pauses playing all voices.</p>
+        <p>Pause sound. Abstract method. Override this method when a Node is defined.</p>
 
     </div>
 
@@ -960,7 +944,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_play" class="method item">
+                    <div id="method_play" class="method item inherited">
     <h3 class="name"><code>play</code></h3>
 
     
@@ -983,10 +967,9 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            <p>Inherited from
-            <a href="../classes/BaseSound.html#method_play">
-                BaseSound
-            </a>
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_play">BaseSound</a>:
             
         
         
@@ -999,7 +982,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Start repeated triggering immediately</p>
+        <p>Play sound. Abstract method. Override this method when a Node is defined.</p>
 
     </div>
 
@@ -1235,7 +1218,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code>sources</code>
+                        <code>source</code>
                     
                 </li>
             
@@ -1287,7 +1270,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Reinitializes a MultiTrigger and sets it&#39;s sources.</p>
+        <p>Reinitializes a Scrubber and sets it&#39;s sources.</p>
 
     </div>
 
@@ -1299,14 +1282,14 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name">sources</code>
+                        <code class="param-name">source</code>
                         <span class="type">Array/AudioBuffer/String/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers or File Objects of audio sources.</p>
+                        <p>URL or AudioBuffer or File Object of the audio source.</p>
 
                     </div>
 
@@ -1357,7 +1340,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_start" class="method item">
+                    <div id="method_start" class="method item inherited">
     <h3 class="name"><code>start</code></h3>
 
     
@@ -1408,10 +1391,9 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            <p>Inherited from
-            <a href="../classes/BaseSound.html#method_start">
-                BaseSound
-            </a>
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_start">BaseSound</a>:
             
         
         
@@ -1424,7 +1406,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Start repeated triggering.</p>
+        <p>Start the AudioNode. Abstract method. Override this method when a Node is defined.</p>
 
     </div>
 
@@ -1443,7 +1425,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>The delay in seconds before playing the model</p>
+                        <p>Time (in seconds) when the sound should start playing.</p>
 
                     </div>
 
@@ -1511,11 +1493,21 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_stop" class="method item">
+                    <div id="method_stop" class="method item inherited">
     <h3 class="name"><code>stop</code></h3>
 
     
-        <span class="paren">()</span>
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code class="optional">[when]</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
     
 
     
@@ -1534,10 +1526,9 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            <p>Inherited from
-            <a href="../classes/BaseSound.html#method_stop">
-                BaseSound
-            </a>
+            
+                <p>Inherited from
+                <a href="../classes/BaseSound.html#method_stop">BaseSound</a>:
             
         
         
@@ -1550,10 +1541,35 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Stops playing all voices.</p>
+        <p>Stop the AudioNode. Abstract method. Override this method when a Node is defined.</p>
 
     </div>
 
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name optional">[when]</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
+                        <span class="flag optional" title="This parameter is optional.">optional</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>Time (in seconds) the sound should stop playing</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
     
 
     
@@ -1607,10 +1623,6 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     
 
     
-
-    
-
-    
 </div>
 
                 
@@ -1646,163 +1658,6 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     </div>
 
-    
-
-    
-
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_eventJitter" class="property item">
-    <h3 class="name"><code>eventJitter</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Maximum deviation from the regular trigger interval (as a factor of 1).</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 0.0</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0.0</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 0.99</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_eventRand" class="property item">
-    <h3 class="name"><code>eventRand</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Enable randomness in the order of sources which are triggered.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> true</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> false</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_eventRate" class="property item">
-    <h3 class="name"><code>eventRate</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Trigger rate for playing the model in Hz.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 10.0</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0.0</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 60.0</p>
     
 
     
@@ -1845,11 +1700,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
-    
-
-    
-
+        <p><strong>Default:</strong> null</p>
     
 
     
@@ -1891,11 +1742,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -1937,11 +1784,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -1983,11 +1826,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -2029,11 +1868,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -2075,11 +1910,93 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> &quot;Model&quot;</p>
+        <p><strong>Default:</strong> &quot;Model&quot;</p>
     
 
     
 
+    
+</div>
+
+                
+                    <div id="property_muteOnReverse" class="property item">
+    <h3 class="name"><code>muteOnReverse</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Sets if moving playPosition to backwards should mute the model.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> false</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_noMotionFade" class="property item">
+    <h3 class="name"><code>noMotionFade</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Sets if the audio should fade out when playPosition has not changed for a while.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -2121,11 +2038,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -2167,11 +2080,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -2213,11 +2122,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
-    
-
-    
-
+        <p><strong>Default:</strong> null</p>
     
 
     
@@ -2259,11 +2164,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
-    
-
-    
-
+        <p><strong>Default:</strong> null</p>
     
 
     
@@ -2305,11 +2206,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
-    
-
-    
-
+        <p><strong>Default:</strong> null</p>
     
 
     
@@ -2351,11 +2248,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
-    
-
-    
-
+        <p><strong>Default:</strong> null</p>
     
 
     
@@ -2364,8 +2257,8 @@ Set this value to null if no connection can be made on the input node</p>
 </div>
 
                 
-                    <div id="property_pitchRand" class="property item">
-    <h3 class="name"><code>pitchRand</code></h3>
+                    <div id="property_playPosition" class="property item">
+    <h3 class="name"><code>playPosition</code></h3>
     <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
@@ -2393,71 +2286,12 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     <div class="description">
-        <p>Maximum value for random pitch shift of the triggered voices in semitones.</p>
+        <p>Position of the audio to be played.</p>
 
     </div>
 
     
-        <p><strong>Default Value:</strong> 0.0</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0.0</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 24.0</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_pitchShift" class="property item">
-    <h3 class="name"><code>pitchShift</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Pitch shift of the triggered voices in semitones.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> -60.0</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 60.0</p>
+        <p><strong>Default:</strong> 0.0</p>
     
 
     
@@ -2501,11 +2335,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> Internal GainNode</p>
-    
-
-    
-
+        <p><strong>Default:</strong> Internal GainNode</p>
     
 
     

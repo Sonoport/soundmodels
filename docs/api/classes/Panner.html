@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Fader - soundmodels</title>
+    <title>Panner - soundmodels</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -116,7 +116,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Fader Class</h1>
+                        <h1>Panner Class</h1>
 <div class="box meta">
     
 
@@ -140,28 +140,18 @@
 
 
 <div class="box intro">
-    <p>An effect changes the amplitude or volume of the audio that this effect is connected to.</p>
+    <p>A simple stereo fader which moves the stereophonic image of the source left or right.</p>
 
 </div>
 
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_Fader" class="method item">
-    <h3 class="name"><code>Fader</code></h3>
+        <div id="method_Panner" class="method item">
+    <h3 class="name"><code>Panner</code></h3>
 
     
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code class="optional">[context]</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
+        <span class="paren">()</span>
     
 
     
@@ -199,31 +189,6 @@
         
     </div>
 
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[context]</code>
-                        <span class="type">AudioContext</span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>AudioContext to be used.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
     
 
     
@@ -353,14 +318,7 @@
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_volume">volume</a>
-
-                                
-                                
-                            </li>
-                        
-                            <li class="index-item property">
-                                <a href="#property_volumeInDB">volumeInDB</a>
+                                <a href="#property_pan">pan</a>
 
                                 
                                 
@@ -726,10 +684,6 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     
 
     
-
-    
-
-    
 </div>
 
                 
@@ -764,10 +718,6 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
         <p>Set of nodes the output of this effect is currently connected to.</p>
 
     </div>
-
-    
-
-    
 
     
 
@@ -816,10 +766,6 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     
 
     
-
-    
-
-    
 </div>
 
                 
@@ -856,11 +802,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -902,11 +844,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -948,11 +886,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> &quot;Model&quot;</p>
-    
-
-    
-
+        <p><strong>Default:</strong> &quot;Model&quot;</p>
     
 
     
@@ -994,11 +928,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -1040,11 +970,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -1092,15 +1018,11 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     
 
     
-
-    
-
-    
 </div>
 
                 
-                    <div id="property_volume" class="property item">
-    <h3 class="name"><code>volume</code></h3>
+                    <div id="property_pan" class="property item">
+    <h3 class="name"><code>pan</code></h3>
     <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
@@ -1128,73 +1050,15 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     <div class="description">
-        <p>Fades or reduces the volume of the audio based on the value in percentage. 100% implies
-no change in volume. 0% implies completely muted audio.</p>
+        <p>Pans the audio to left or right stereo audio channels using a value in degrees of the angle
+of the perceived audio source from the center. Positive value implies perceived source
+being on the right of center. Negative value implies the perceived sources being on the left
+of the center.</p>
 
     </div>
 
     
-        <p><strong>Default Value:</strong> 100</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 100</p>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_volumeInDB" class="property item">
-    <h3 class="name"><code>volumeInDB</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Fades or reduces the volume of the audio based on the value in decibles. 0 dB implies no
-change in volume. -80 dB implies almost completely muted audio.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> -80</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 0</p>
+        <p><strong>Default:</strong> 0</p>
     
 
     

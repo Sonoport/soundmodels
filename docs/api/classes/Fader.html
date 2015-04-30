@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Distorter - soundmodels</title>
+    <title>Fader - soundmodels</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -116,7 +116,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Distorter Class</h1>
+                        <h1>Fader Class</h1>
 <div class="box meta">
     
 
@@ -147,8 +147,8 @@
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_Distorter" class="method item">
-    <h3 class="name"><code>Distorter</code></h3>
+        <div id="method_Fader" class="method item">
+    <h3 class="name"><code>Fader</code></h3>
 
     
         <div class="args">
@@ -360,7 +360,7 @@
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_volume">volume</a>
+                                <a href="#property_volumeInDB">volumeInDB</a>
 
                                 
                                 
@@ -726,10 +726,6 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     
 
     
-
-    
-
-    
 </div>
 
                 
@@ -764,10 +760,6 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
         <p>Set of nodes the output of this effect is currently connected to.</p>
 
     </div>
-
-    
-
-    
 
     
 
@@ -816,10 +808,6 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     
 
     
-
-    
-
-    
 </div>
 
                 
@@ -856,11 +844,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -902,11 +886,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -948,11 +928,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> &quot;Model&quot;</p>
-    
-
-    
-
+        <p><strong>Default:</strong> &quot;Model&quot;</p>
     
 
     
@@ -994,11 +970,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -1040,11 +1012,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -1092,60 +1060,6 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     
 
     
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_volume" class="property item">
-    <h3 class="name"><code>volume</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 100</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 100</p>
-    
-
-    
-
-    
 </div>
 
                 
@@ -1184,15 +1098,51 @@ no change in volume. 0% implies completely muted audio.</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 100</p>
+        <p><strong>Default:</strong> 100</p>
     
 
     
-           <p><strong>Minimum Value:</strong> 0</p>
+
+    
+</div>
+
+                
+                    <div id="property_volumeInDB" class="property item">
+    <h3 class="name"><code>volumeInDB</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
     
 
     
-           <p><strong>Maximum Value:</strong> 100</p>
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Fades or reduces the volume of the audio based on the value in decibles. 0 dB implies no
+change in volume. -80 dB implies almost completely muted audio.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> 0</p>
     
 
     

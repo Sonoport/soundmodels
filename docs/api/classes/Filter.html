@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Panner - soundmodels</title>
+    <title>Filter - soundmodels</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -116,7 +116,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Panner Class</h1>
+                        <h1>Filter Class</h1>
 <div class="box meta">
     
 
@@ -147,8 +147,8 @@
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_Panner" class="method item">
-    <h3 class="name"><code>Panner</code></h3>
+        <div id="method_Filter" class="method item">
+    <h3 class="name"><code>Filter</code></h3>
 
     
         <span class="paren">()</span>
@@ -268,6 +268,20 @@
                                 
                             </li>
                         
+                            <li class="index-item property">
+                                <a href="#property_detune">detune</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_frequency">frequency</a>
+
+                                
+                                
+                            </li>
+                        
                             <li class="index-item property inherited">
                                 <a href="#property_inputNode">inputNode</a>
 
@@ -318,7 +332,14 @@
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_pan">pan</a>
+                                <a href="#property_Q">Q</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_type">type</a>
 
                                 
                                 
@@ -684,10 +705,6 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     
 
     
-
-    
-
-    
 </div>
 
                 
@@ -727,6 +744,88 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
 
     
 
+    
+</div>
+
+                
+                    <div id="property_detune" class="property item">
+    <h3 class="name"><code>detune</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>A detune value, in cents, for the frequency. Its default value is 0.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> 0</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_frequency" class="property item">
+    <h3 class="name"><code>frequency</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>The frequency at which the BiquadFilterNode will operate, in Hz. Its nominal range is from 10Hz to half the Nyquist frequency.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> 350</p>
     
 
     
@@ -774,10 +873,6 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     
 
     
-
-    
-
-    
 </div>
 
                 
@@ -814,11 +909,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -860,11 +951,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -906,11 +993,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> &quot;Model&quot;</p>
-    
-
-    
-
+        <p><strong>Default:</strong> &quot;Model&quot;</p>
     
 
     
@@ -952,11 +1035,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -998,11 +1077,7 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -1050,15 +1125,11 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     
 
     
-
-    
-
-    
 </div>
 
                 
-                    <div id="property_pan" class="property item">
-    <h3 class="name"><code>pan</code></h3>
+                    <div id="property_Q" class="property item">
+    <h3 class="name"><code>Q</code></h3>
     <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
@@ -1086,23 +1157,63 @@ If the output is a BaseEffect, it will connect BaseEffect&#39;s outputNode to th
     </div>
 
     <div class="description">
-        <p>Pans the audio to left or right stereo audio channels using a value in degrees of the angle
-of the perceived audio source from the center. Positive value implies perceived source
-being on the right of center. Negative value implies the perceived sources being on the left
-of the center.</p>
+        <p>The Q factor has a default value of 1, with a nominal range of 0.0001 to 1000.</p>
 
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
+        <p><strong>Default:</strong> 1</p>
     
 
     
-           <p><strong>Minimum Value:</strong> -90</p>
+
+    
+</div>
+
+                
+                    <div id="property_type" class="property item">
+    <h3 class="name"><code>type</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
     
 
     
-           <p><strong>Maximum Value:</strong> 90</p>
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>The type of this BiquadFilterNode, lowpass, highpass, etc. The exact meaning of the other parameters depend on the value of the type attribute. Possible values for this type are :
+ &quot;lowpass&quot;
+ &quot;highpass&quot;
+ &quot;bandpass&quot;
+ &quot;lowshelf&quot;
+ &quot;highshelf&quot;
+ &quot;peaking&quot;
+ &quot;notch&quot;
+ &quot;allpass&quot;</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> &quot;lowpass&quot;</p>
     
 
     

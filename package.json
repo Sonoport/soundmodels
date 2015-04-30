@@ -36,7 +36,6 @@
     "gulp": "^3.8.11",
     "gulp-bump": "^0.3.0",
     "gulp-cached": "^1.0.4",
-    "gulp-compass": "^2.0.4",
     "gulp-debug": "^2.0.1",
     "gulp-header": "^1.2.2",
     "gulp-ignore": "^1.2.1",

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Extender - soundmodels</title>
+    <title>MultiTrigger - soundmodels</title>
     <link rel="stylesheet" href="http://yui.yahooapis.com/3.9.1/build/cssgrids/cssgrids-min.css">
     <link rel="stylesheet" href="../assets/vendor/prettify/prettify-min.css">
     <link rel="stylesheet" href="../assets/css/main.css" id="site_styles">
@@ -116,7 +116,7 @@
             <div class="apidocs">
                 <div id="docs-main">
                     <div class="content">
-                        <h1>Extender Class</h1>
+                        <h1>MultiTrigger Class</h1>
 <div class="box meta">
     
 
@@ -140,15 +140,16 @@
 
 
 <div class="box intro">
-    <p>A model which extends the playing of a single source infinitely with windowed overlapping.</p>
+    <p>A model which triggers a single or multiple sources with multiple voices (polyphony)
+repeatedly.</p>
 
 </div>
 
 
     <div class="constructor">
         <h2>Constructor</h2>
-        <div id="method_Extender" class="method item">
-    <h3 class="name"><code>Extender</code></h3>
+        <div id="method_MultiTrigger" class="method item">
+    <h3 class="name"><code>MultiTrigger</code></h3>
 
     
         <div class="args">
@@ -162,7 +163,7 @@
             
                 <li class="arg">
                     
-                        <code class="optional">[source]</code>
+                        <code class="optional">[sources]</code>
                     
                 </li>
             
@@ -254,7 +255,7 @@
             
                 <li class="param">
                     
-                        <code class="param-name optional">[source]</code>
+                        <code class="param-name optional">[sources]</code>
                         <span class="type">Array/String/AudioBuffer/File</span>
                         <span class="flag optional" title="This parameter is optional.">optional</span>
                     
@@ -296,7 +297,7 @@
                     
 
                     <div class="param-description">
-                        <p>Callback when the source has finished loading.</p>
+                        <p>Callback when all sources have finished loading.</p>
 
                     </div>
 
@@ -443,13 +444,6 @@
                                 
                             </li>
                         
-                            <li class="index-item method">
-                                <a href="#method_stop">stop</a>
-
-                                
-                                
-                            </li>
-                        
                     </ul>
                 </div>
             
@@ -467,13 +461,6 @@
                                 
                             </li>
                         
-                            <li class="index-item property">
-                                <a href="#property_crossFadeDuration">crossFadeDuration</a>
-
-                                
-                                
-                            </li>
-                        
                             <li class="index-item property inherited">
                                 <a href="#property_destinations">destinations</a>
 
@@ -482,7 +469,21 @@
                             </li>
                         
                             <li class="index-item property">
-                                <a href="#property_eventPeriod">eventPeriod</a>
+                                <a href="#property_eventJitter">eventJitter</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_eventRand">eventRand</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_eventRate">eventRate</a>
 
                                 
                                 
@@ -567,6 +568,13 @@
                         
                             <li class="index-item property inherited">
                                 <a href="#property_onLoadProgress">onLoadProgress</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property">
+                                <a href="#property_pitchRand">pitchRand</a>
 
                                 
                                 
@@ -940,7 +948,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Pauses the model immediately</p>
+        <p>Pauses playing all voices.</p>
 
     </div>
 
@@ -991,7 +999,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Plays the model immediately</p>
+        <p>Start repeated triggering immediately</p>
 
     </div>
 
@@ -1227,7 +1235,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="arg">
                     
-                        <code>source</code>
+                        <code>sources</code>
                     
                 </li>
             
@@ -1279,7 +1287,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Reinitializes a Extender and sets it&#39;s sources.</p>
+        <p>Reinitializes a MultiTrigger and sets it&#39;s sources.</p>
 
     </div>
 
@@ -1291,14 +1299,14 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
             
                 <li class="param">
                     
-                        <code class="param-name">source</code>
+                        <code class="param-name">sources</code>
                         <span class="type">Array/AudioBuffer/String/File</span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>Single or Array of either URLs or AudioBuffers of source.</p>
+                        <p>Single or Array of either URLs or AudioBuffers or File Objects of audio sources.</p>
 
                     </div>
 
@@ -1349,7 +1357,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 </div>
 
                 
-                    <div id="method_start" class="method item inherited">
+                    <div id="method_start" class="method item">
     <h3 class="name"><code>start</code></h3>
 
     
@@ -1400,9 +1408,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
 
     <div class="meta">
         
-            
-                <p>Inherited from
-                <a href="../classes/BaseSound.html#method_start">BaseSound</a>:
+            <p>Inherited from
+            <a href="../classes/BaseSound.html#method_start">
+                BaseSound
+            </a>
             
         
         
@@ -1415,7 +1424,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Start the AudioNode. Abstract method. Override this method when a Node is defined.</p>
+        <p>Start repeated triggering.</p>
 
     </div>
 
@@ -1434,7 +1443,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
                     
 
                     <div class="param-description">
-                        <p>Time (in seconds) when the sound should start playing.</p>
+                        <p>The delay in seconds before playing the model</p>
 
                     </div>
 
@@ -1506,35 +1515,7 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     <h3 class="name"><code>stop</code></h3>
 
     
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code>when</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[offset]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[duration]</code>
-                    
-                </li>
-            
-                <li class="arg">
-                    
-                        <code class="optional">[attackDuration]</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
+        <span class="paren">()</span>
     
 
     
@@ -1569,171 +1550,10 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>Starts playing the source</p>
+        <p>Stops playing all voices.</p>
 
     </div>
 
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name">when</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>The delay in seconds before playing the source</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[offset]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>The starting position of the playhead</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[duration]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Duration of the portion (in seconds) to be played</p>
-
-                    </div>
-
-                    
-                </li>
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[attackDuration]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>Duration (in seconds) of attack ramp of the envelope.</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
-    
-
-    
-
-    
-</div>
-
-                
-                    <div id="method_stop" class="method item">
-    <h3 class="name"><code>stop</code></h3>
-
-    
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-            
-                <li class="arg">
-                    
-                        <code class="optional">[when]</code>
-                    
-                </li>
-            
-            </ul><span class="paren">)</span>
-        </div>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Stops playing the model.</p>
-
-    </div>
-
-    
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-            
-                <li class="param">
-                    
-                        <code class="param-name optional">[when]</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-                        <span class="flag optional" title="This parameter is optional.">optional</span>
-                    
-
-                    
-
-                    <div class="param-description">
-                        <p>At what time (in seconds) the model be stopped</p>
-
-                    </div>
-
-                    
-                </li>
-            
-            </ul>
-        </div>
     
 
     
@@ -1787,61 +1607,6 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     
 
     
-
-    
-
-    
-</div>
-
-                
-                    <div id="property_crossFadeDuration" class="property item">
-    <h3 class="name"><code>crossFadeDuration</code></h3>
-    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
-
-    
-
-    
-
-    
-
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-            
-        
-        
-        </p>
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Fraction of each window of the source that is overlapped with the succeding window of the source.</p>
-
-    </div>
-
-    
-        <p><strong>Default Value:</strong> 0.5</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> 0.1</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 0.99</p>
-    
-
-    
-
-    
 </div>
 
                 
@@ -1882,15 +1647,11 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     
 
     
-
-    
-
-    
 </div>
 
                 
-                    <div id="property_eventPeriod" class="property item">
-    <h3 class="name"><code>eventPeriod</code></h3>
+                    <div id="property_eventJitter" class="property item">
+    <h3 class="name"><code>eventJitter</code></h3>
     <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
 
     
@@ -1918,20 +1679,98 @@ If the output is a BaseSound, it will connect BaseSound&#39;s releaseGainNode to
     </div>
 
     <div class="description">
-        <p>The length (in seconds) of each window used to overlap the source.</p>
+        <p>Maximum deviation from the regular trigger interval (as a factor of 1).</p>
 
     </div>
 
     
-        <p><strong>Default Value:</strong> 2.0</p>
+        <p><strong>Default:</strong> 0.0</p>
     
 
     
-           <p><strong>Minimum Value:</strong> 0.1</p>
+
+    
+</div>
+
+                
+                    <div id="property_eventRand" class="property item">
+    <h3 class="name"><code>eventRand</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
     
 
     
-           <p><strong>Maximum Value:</strong> 10.0</p>
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Enable randomness in the order of sources which are triggered.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> false</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property_eventRate" class="property item">
+    <h3 class="name"><code>eventRate</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Trigger rate for playing the model in Hz.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> 10.0</p>
     
 
     
@@ -1974,11 +1813,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
-    
-
-    
-
+        <p><strong>Default:</strong> null</p>
     
 
     
@@ -2020,11 +1855,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -2066,11 +1897,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> false</p>
-    
-
-    
-
+        <p><strong>Default:</strong> false</p>
     
 
     
@@ -2112,11 +1939,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -2158,11 +1981,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -2204,11 +2023,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> &quot;Model&quot;</p>
-    
-
-    
-
+        <p><strong>Default:</strong> &quot;Model&quot;</p>
     
 
     
@@ -2250,11 +2065,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -2296,11 +2107,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> 0</p>
-    
-
-    
-
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -2342,11 +2149,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
-    
-
-    
-
+        <p><strong>Default:</strong> null</p>
     
 
     
@@ -2388,11 +2191,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
-    
-
-    
-
+        <p><strong>Default:</strong> null</p>
     
 
     
@@ -2434,11 +2233,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
-    
-
-    
-
+        <p><strong>Default:</strong> null</p>
     
 
     
@@ -2480,11 +2275,50 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> null</p>
+        <p><strong>Default:</strong> null</p>
     
 
     
 
+    
+</div>
+
+                
+                    <div id="property_pitchRand" class="property item">
+    <h3 class="name"><code>pitchRand</code></h3>
+    <span class="type"><a href="../classes/SPAudioParam.html" class="crosslink">SPAudioParam</a></span>
+
+    
+
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+            
+        
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Maximum value for random pitch shift of the triggered voices in semitones.</p>
+
+    </div>
+
+    
+        <p><strong>Default:</strong> 0.0</p>
     
 
     
@@ -2522,20 +2356,12 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     <div class="description">
-        <p>Amount of pitch shift of the source in the each window (in semitones).</p>
+        <p>Pitch shift of the triggered voices in semitones.</p>
 
     </div>
 
     
-        <p><strong>Default Value:</strong> 0.0</p>
-    
-
-    
-           <p><strong>Minimum Value:</strong> -60.0</p>
-    
-
-    
-           <p><strong>Maximum Value:</strong> 60.0</p>
+        <p><strong>Default:</strong> 0</p>
     
 
     
@@ -2579,11 +2405,7 @@ Set this value to null if no connection can be made on the input node</p>
     </div>
 
     
-        <p><strong>Default Value:</strong> Internal GainNode</p>
-    
-
-    
-
+        <p><strong>Default:</strong> Internal GainNode</p>
     
 
     
