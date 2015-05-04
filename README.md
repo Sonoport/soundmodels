@@ -114,7 +114,7 @@ The are available using [RequireJS](http://requirejs.org/) for async depdencency
 	});
 	```
 
-4. Detailed information about rest of the API can be found in the [API docs for individual Sound Models](http://cdn.rawgit.com/Sonoport/soundmodels/master/dist/docs/classes/Scrubber.html).
+4. Detailed information about rest of the API can be found in the [API docs for individual Sound Models](http://cdn.rawgit.com/Sonoport/soundmodels/master/docs/api/classes/Scrubber.html).
 
 
 ## Build Process
@@ -135,7 +135,7 @@ The build process uses [gulpjs](https://github.com/gulpjs/gulp/)
 
 - ```gulp makedoc```
 
-	API documentation is compiled and placed in the build/docs directory.
+	API documentation is compiled and placed in the docs/api directory.
 
 ## Release
 
