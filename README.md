@@ -23,7 +23,7 @@ Loops the audio source continuously. Also supports looping of multiple source sy
 ##### Trigger
 Triggers a single playback of the audio source. Supports multiple voices and multiple simulteanous playbacks.
 
-##### MultiTrgger
+##### MultiTrigger
 Triggers a repeated playback of the audio source.
 
 ##### Activity
