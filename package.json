@@ -3,7 +3,7 @@
   "description": "Sonoport Sound Models",
   "version": "2.5.5",
   "homepage": "http://sonoport.com",
-  "author": "Sonport <tech@sonoport.com> (http://sonoport.com/)",
+  "author": "Sonoport <tech@sonoport.com> (http://sonoport.com/)",
   "files": [
     "package.json",
     "README.md",
