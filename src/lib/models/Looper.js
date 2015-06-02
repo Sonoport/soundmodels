@@ -45,13 +45,11 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
     var self = this;
 
     var sourceBufferNodes_ = [];
-    var lastStopPosition_ = [];
     var rateArray_ = [];
 
     var onLoadAll = function ( status, arrayOfBuffers ) {
         self.multiTrackGain.length = arrayOfBuffers.length;
         arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
-            lastStopPosition_.push( 0 );
             insertBufferSource( thisBuffer, trackIndex, arrayOfBuffers.length );
         } );
 
@@ -82,6 +80,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
 
         source.buffer = audioBuffer;
         source.loopEnd = audioBuffer.duration;
+        source.lastStopPosition_ = 0;
         source.onended = function ( event ) {
             onSourceEnd( event, trackIndex, source );
         };
@@ -265,8 +264,8 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
         var now = this.audioContext.currentTime;
 
         if ( !this.isPlaying ) {
-            sourceBufferNodes_.forEach( function ( thisSource, index ) {
-                var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : thisSource.loopStart;
+            sourceBufferNodes_.forEach( function ( thisSource ) {
+                var offset = thisSource.lastStopPosition_ || thisSource.loopStart;
                 thisSource.loop = ( self.maxLoops.value !== 1 );
                 thisSource.start( now, offset );
             } );
@@ -322,9 +321,9 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
      */
     this.stop = function ( when ) {
         if ( self.isPlaying ) {
-            sourceBufferNodes_.forEach( function ( thisSource, index ) {
+            sourceBufferNodes_.forEach( function ( thisSource ) {
                 thisSource.stop( when );
-                lastStopPosition_[ index ] = 0;
+                thisSource.lastStopPosition_ = 0;
             } );
 
             BaseSound.prototype.stop.call( this, when );
@@ -344,9 +343,9 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
     this.pause = function () {
         if ( self.isPlaying ) {
 
-            sourceBufferNodes_.forEach( function ( thisSource, index ) {
+            sourceBufferNodes_.forEach( function ( thisSource ) {
                 thisSource.stop( 0 );
-                lastStopPosition_[ index ] = thisSource.playbackPosition / thisSource.buffer.sampleRate;
+                thisSource.lastStopPosition_ = thisSource.playbackPosition / thisSource.buffer.sampleRate;
             } );
 
             BaseSound.prototype.stop.call( this, 0 );
@@ -387,7 +386,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
             // Disconnect and rewire each source
             sourceBufferNodes_.forEach( function ( thisSource, trackIndex ) {
                 thisSource.stop( when + fadeTime );
-                lastStopPosition_[ trackIndex ] = 0;
+                thisSource.lastStopPosition_ = 0;
 
                 thisSource.resetBufferSource( when, self.releaseGainNode );
                 var multiChannelGainParam = new SPAudioParam( self, 'gain-' + trackIndex, 0.0, 1, 1, thisSource.gain, null, null );

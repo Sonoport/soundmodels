@@ -27,9 +27,10 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
     if ( currentTime >= time || time - currentTime < 0.005 ) {
         log.debug( "Dispatching now" );
         functionCall();
+        return null;
     } else {
         log.debug( "Dispatching in", ( time - currentTime ) * 1000, 'ms' );
-        window.setTimeout( function () {
+        return window.setTimeout( function () {
             log.debug( "Diff at dispatch", ( time - audioContext.currentTime ) * 1000, 'ms' );
             functionCall();
         }, ( time - currentTime ) * 1000 );

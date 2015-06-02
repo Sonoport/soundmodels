@@ -108,6 +108,7 @@ function BaseSound( context ) {
      * @final
      */
     this.releaseGainNode = this.audioContext.createGain();
+    this.releaseGainNode.gain.prevEndTime = 0;
 
     /**
      *  If Sound is currently playing.
@@ -192,6 +193,8 @@ function BaseSound( context ) {
     this.onAudioEnd = null;
 
     this.isBaseSound = true;
+
+    this.dispatches_ = [];
 
     this.parameterList_ = [];
 
@@ -279,19 +282,37 @@ BaseSound.prototype.start = function ( when, offset, duration, attackDuration ) 
         when = this.audioContext.currentTime;
     }
 
+    // Estimate the current value based on the previous ramp.
+    var currentValue = 1;
+    if ( this.releaseGainNode.gain.prevEndTime > when ) {
+        currentValue = this.releaseGainNode.gain.prevStartValue + ( this.releaseGainNode.gain.prevTargetValue - this.releaseGainNode.gain.prevStartValue ) * ( ( when - this.releaseGainNode.gain.prevStartTime ) / ( this.releaseGainNode.gain.prevEndTime - this.releaseGainNode.gain.prevStartTime ) );
+    }
+
+    // Cancel all automation
     this.releaseGainNode.gain.cancelScheduledValues( when );
     if ( typeof attackDuration !== 'undefined' ) {
         log.debug( "Ramping from " + offset + "  in " + attackDuration );
-        this.releaseGainNode.gain.setValueAtTime( 0, when );
+        this.releaseGainNode.gain.setValueAtTime( currentValue, when );
         this.releaseGainNode.gain.linearRampToValueAtTime( 1, when + attackDuration );
+
+        this.releaseGainNode.gain.prevStartTime = when;
+        this.releaseGainNode.gain.prevStartValue = currentValue;
+        this.releaseGainNode.gain.prevTargetValue = 1;
+        this.releaseGainNode.gain.prevEndTime = when + attackDuration;
+
     } else {
         this.releaseGainNode.gain.setValueAtTime( 1, when );
+
+        this.releaseGainNode.gain.prevStartTime = when;
+        this.releaseGainNode.gain.prevStartValue = 1;
+        this.releaseGainNode.gain.prevTargetValue = 1;
+        this.releaseGainNode.gain.prevEndTime = when;
     }
 
     var self = this;
-    webAudioDispatch( function () {
+    this.dispatch( function () {
         self.isPlaying = true;
-    }, when, this.audioContext );
+    }, when );
 };
 
 /**
@@ -306,12 +327,10 @@ BaseSound.prototype.stop = function ( when ) {
     }
 
     var self = this;
-    webAudioDispatch( function () {
+    this.dispatch( function () {
         self.isPlaying = false;
-    }, when, this.audioContext );
-
-    // cancel all scheduled ramps on this releaseGainNode
-    this.releaseGainNode.gain.cancelScheduledValues( when );
+        self.clearDispatches();
+    }, when );
 };
 
 /**
@@ -326,25 +345,35 @@ BaseSound.prototype.release = function ( when, fadeTime, resetOnRelease ) {
 
     if ( this.isPlaying ) {
         var FADE_TIME = 0.5;
-        //var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
 
         if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
             when = this.audioContext.currentTime;
         }
 
         fadeTime = fadeTime || FADE_TIME;
-        // Clamp the current gain value at this point of time to prevent sudden jumps.
-        this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, when );
 
-        // Now there won't be any glitch and there is a smooth ramp down.
+        // Estimate the current value based on the previous ramp.
+        var currentValue = 1;
+        if ( this.releaseGainNode.gain.prevEndTime > when ) {
+            currentValue = this.releaseGainNode.gain.prevStartValue + ( this.releaseGainNode.gain.prevTargetValue - this.releaseGainNode.gain.prevStartValue ) * ( ( when - this.releaseGainNode.gain.prevStartTime ) / ( this.releaseGainNode.gain.prevEndTime - this.releaseGainNode.gain.prevStartTime ) );
+        }
+
+        // Set that value as static value (stop automation);
+        this.releaseGainNode.gain.cancelScheduledValues( when );
+        this.releaseGainNode.gain.setValueAtTime( currentValue, when );
         this.releaseGainNode.gain.linearRampToValueAtTime( 0, when + fadeTime );
 
-        // Pause the sound after currentTime + fadeTime + FADE_TIME_PAD
+        this.releaseGainNode.gain.prevStartTime = when;
+        this.releaseGainNode.gain.prevStartValue = currentValue;
+        this.releaseGainNode.gain.prevTargetValue = 0;
+        this.releaseGainNode.gain.prevEndTime = when + fadeTime;
+
+        // Pause the sound after currentTime + fadeTime
         if ( !resetOnRelease ) {
             var self = this;
-            webAudioDispatch( function () {
+            this.dispatch( function () {
                 self.pause();
-            }, when + fadeTime, this.audioContext );
+            }, when + fadeTime );
         }
     }
 };
@@ -439,6 +468,33 @@ BaseSound.prototype.setOutputEffect = function ( effect ) {
     this.disconnect();
     this.connect( effect );
     effect.connect( this.audioContext.destination );
+};
+
+BaseSound.prototype.dispatch = function ( functionCall, time ) {
+    var dispatchID = webAudioDispatch( function () {
+        if ( typeof dispatchID !== "undefined" ) {
+            var idIndex = this.dispatches_.indexOf( dispatchID );
+            if ( idIndex > -1 ) {
+                console.log( 'done dispatching', dispatchID );
+                this.dispatches_.splice( idIndex, 1 );
+            } else {
+                log.warn( "Can't find ID", dispatchID, "in the list of dispatches" );
+            }
+        }
+        functionCall();
+    }.bind( this ), time, this.audioContext );
+
+    if ( dispatchID !== null ) {
+        this.dispatches_.push( dispatchID );
+    }
+};
+
+BaseSound.prototype.clearDispatches = function () {
+    this.dispatches_.forEach( function ( thisId ) {
+        log.debug( "Clearing timeout for", thisId );
+        window.clearInterval( thisId );
+    } );
+    this.dispatches_ = [];
 };
 
 // Return constructor function

@@ -157,8 +157,11 @@ gulp.task('devbuild',['jsbeautify:src'], function(){
     var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/');
     var coreStream = createBundlerStreams(paths.files.coreSrc, 'build/core/');
     var indexStream = gulp.src(paths.files.indexSrc).pipe(gulp.dest(paths.dirs.build));
+    var packageDataStream = gulp.src(paths.files.packageData).pipe(gulp.dest(paths.dirs.build));
 
-    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream).concat(indexStream);
+    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream).concat(indexStream).concat(packageDataStream);
+
+
 
     return merge.apply(this,combinedStreams);
 });

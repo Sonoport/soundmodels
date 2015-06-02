@@ -23,7 +23,7 @@ Loops the audio source continuously. Also supports looping of multiple source sy
 ##### Trigger
 Triggers a single playback of the audio source. Supports multiple voices and multiple simulteanous playbacks.
 
-##### MultiTrgger
+##### MultiTrigger
 Triggers a repeated playback of the audio source.
 
 ##### Activity
@@ -67,7 +67,7 @@ Distortion effect which tries to emulate a guitar amp distortion.
 
 ## Usage
 
-The sound models are avilable in two types of packages, [CommonJS](wiki.commonjs.org) and [AMD](http://requirejs.org/docs/whyamd.html). The sound models are packed as [UMD modules](https://github.com/umdjs/umd) and hence usable directly as global variable as well.
+The sound models are available in two types of packages, [CommonJS](wiki.commonjs.org) and [AMD](http://requirejs.org/docs/whyamd.html). The sound models are packed as [UMD modules](https://github.com/umdjs/umd) and hence usable directly as global variable as well.
 
 ### CommonJS (browserify)
 
@@ -114,7 +114,7 @@ The are available using [RequireJS](http://requirejs.org/) for async depdencency
 	});
 	```
 
-4. Detailed information about rest of the API can be found in the [API docs for individual Sound Models](http://cdn.rawgit.com/Sonoport/soundmodels/master/dist/docs/classes/Scrubber.html).
+4. Detailed information about rest of the API can be found in the [API docs for individual Sound Models](http://cdn.rawgit.com/Sonoport/soundmodels/master/docs/api/classes/Scrubber.html).
 
 
 ## Build Process
@@ -135,7 +135,7 @@ The build process uses [gulpjs](https://github.com/gulpjs/gulp/)
 
 - ```gulp makedoc```
 
-	API documentation is compiled and placed in the build/docs directory.
+	API documentation is compiled and placed in the docs/api directory.
 
 ## Release
 
