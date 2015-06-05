@@ -1,11 +1,11 @@
 module.exports = {
     models: {
         Looper: require( './models/Looper.js' ),
-        Activity: require( './models/Looper.js' ),
-        Trigger: require( './models/Looper.js' ),
-        MultiTrigger: require( './models/Looper.js' ),
-        Extender: require( './models/Looper.js' ),
-        Scrubber: require( './models/Looper.js' )
+        Activity: require( './models/Activity.js' ),
+        Trigger: require( './models/Trigger.js' ),
+        MultiTrigger: require( './models/MultiTrigger.js' ),
+        Extender: require( './models/Extender.js' ),
+        Scrubber: require( './models/Scrubber.js' )
     },
     core: {
         SPAudioBuffer: require( './core/SPAudioBuffer.js' )
