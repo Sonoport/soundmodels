@@ -1,12 +1,12 @@
-/*soundmodels - v2.5.5 - Mon May 04 2015 11:37:57 GMT+0800 (SGT) */
+/*soundmodels - v2.5.6 - Fri Jun 05 2015 10:47:20 GMT+0800 (SGT) */
 module.exports = {
     models: {
         Looper: require( './models/Looper.js' ),
-        Activity: require( './models/Looper.js' ),
-        Trigger: require( './models/Looper.js' ),
-        MultiTrigger: require( './models/Looper.js' ),
-        Extender: require( './models/Looper.js' ),
-        Scrubber: require( './models/Looper.js' )
+        Activity: require( './models/Activity.js' ),
+        Trigger: require( './models/Trigger.js' ),
+        MultiTrigger: require( './models/MultiTrigger.js' ),
+        Extender: require( './models/Extender.js' ),
+        Scrubber: require( './models/Scrubber.js' )
     },
     core: {
         SPAudioBuffer: require( './core/SPAudioBuffer.js' )
