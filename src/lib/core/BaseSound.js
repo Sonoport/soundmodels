@@ -475,7 +475,6 @@ BaseSound.prototype.dispatch = function ( functionCall, time ) {
         if ( typeof dispatchID !== "undefined" ) {
             var idIndex = this.dispatches_.indexOf( dispatchID );
             if ( idIndex > -1 ) {
-                console.log( 'done dispatching', dispatchID );
                 this.dispatches_.splice( idIndex, 1 );
             } else {
                 log.warn( "Can't find ID", dispatchID, "in the list of dispatches" );
