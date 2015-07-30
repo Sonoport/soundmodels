@@ -67,7 +67,7 @@
          if ( sourceType === '[object AudioBuffer]' ) {
              audioBuffer = new SPAudioBuffer( self.audioContext, source );
              onSingleLoad( true, audioBuffer );
-         } else if (source && source.isSPAudioBuffer && source.buffer ) {
+         } else if ( source && source.isSPAudioBuffer && source.buffer ) {
              onSingleLoad( true, source );
          } else if ( sourceType === '[object String]' ||
              sourceType === '[object File]' ||
