@@ -269,18 +269,10 @@ function SPAudioBufferSourceNode( audioContext ) {
      *
      */
     this.start = function ( when, offset, duration ) {
-        if ( typeof duration == 'undefined' ) {
-            duration = bufferSourceNode_.buffer.duration;
-        }
-
-        if ( typeof offset == 'undefined' ) {
-            offset = 0;
-        }
-
         if ( this.playbackState === this.UNSCHEDULED_STATE ) {
-            if ( offset === 0 && duration === bufferSourceNode_.buffer.duration ) {
-                bufferSourceNode_.start( when );
-                counterNode_.start( when );
+            if ( typeof duration === "undefined" ) {
+                bufferSourceNode_.start( when, offset );
+                counterNode_.start( when, offset );
             } else {
                 bufferSourceNode_.start( when, offset, duration );
                 counterNode_.start( when, offset, duration );

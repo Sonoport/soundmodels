@@ -297,10 +297,6 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
             sourceBufferNodes_.forEach( function ( thisSource ) {
 
                 offset = thisSource.loopStart + parseFloat( offset ) || 0;
-
-                if ( typeof duration == 'undefined' || duration === null ) {
-                    duration = thisSource.buffer.duration;
-                }
                 thisSource.loop = ( self.maxLoops.value !== 1 );
                 thisSource.start( when, offset, duration );
             } );
