@@ -270,7 +270,7 @@ function SPAudioBufferSourceNode( audioContext ) {
      */
     this.start = function ( when, offset, duration ) {
         if ( this.playbackState === this.UNSCHEDULED_STATE ) {
-            if ( typeof duration === "undefined" ) {
+            if ( duration == undefined ) { // jshint ignore:line
                 bufferSourceNode_.start( when, offset );
                 counterNode_.start( when, offset );
             } else {
