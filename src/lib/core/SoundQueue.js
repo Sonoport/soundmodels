@@ -134,7 +134,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
 
         if ( thisEvent.type == 'QESTART' ) {
             log.info( "starting " + selectedVoice.voiceIndex );
-            selectedVoice.start( thisEvent.time, thisEvent.offset, null, thisEvent.attackDuration );
+            selectedVoice.start( thisEvent.time, thisEvent.offset, undefined, thisEvent.attackDuration );
             webaudioDispatch( function () {
                 if ( !self.isPlaying ) {
                     self.isPlaying = true;
