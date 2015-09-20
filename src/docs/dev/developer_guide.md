@@ -6,8 +6,8 @@ A developer guide to Sonoport JavaScript Sound Models
 ## Introduction
 The Sonoport JavaScript Sound Models allow developer to leverage the new WebAudio API to create interactive experiences with dynamic sound in the browser. This plugin-free technology is purely based on JavaScript, and only requires a browser which has WebAudio API enabled. Chrome, Firefox, Safari and Opera have the API currently enabled.
 
-## Release 2.5.8
-The current release is 2.5.8. It currently contains six sound models, `Looper`, `Trigger`,  `MultiTrigger`, `Extender`, `Activity` and `Scrubber`, and five effects, `Fader`, `Compressor`, `Filter`, `Panner`, `Distorter`.
+## Release 2.5.9
+The current release is 2.5.9. It currently contains six sound models, `Looper`, `Trigger`,  `MultiTrigger`, `Extender`, `Activity` and `Scrubber`, and five effects, `Fader`, `Compressor`, `Filter`, `Panner`, `Distorter`.
 
 All current models require some sort of source material, _mp3_ or _wav_ audio files, which can be used by the models as source.
 
