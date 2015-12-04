@@ -205,7 +205,6 @@ function BaseSound( context ) {
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 
         function createDummyOsc() {
-            console.log( "Booting ", context );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
             window.liveAudioContexts.push( context );
