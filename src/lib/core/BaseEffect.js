@@ -122,11 +122,9 @@ function BaseEffect( context ) {
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 
         function createDummyOsc() {
-            log.debug( "Booting ", context );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
-            window.liveAudioContexts.push( context );
-            window.removeEventListener( 'touchstart', createDummyOsc );
+            document.body.removeEventListener( 'touchend', createDummyOsc );
         }
 
         if ( iOS ) {
@@ -135,11 +133,8 @@ function BaseEffect( context ) {
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
                 var bootOsc = context.createOscillator();
-                var bootGain = context.createGain();
-                bootGain.gain.value = 0;
-                bootOsc.connect( bootGain );
-                bootGain.connect( context.destination );
-                window.addEventListener( 'touchstart', createDummyOsc );
+                document.body.addEventListener( 'touchend', createDummyOsc );
+                window.liveAudioContexts.push( context );
             }
         }
     }

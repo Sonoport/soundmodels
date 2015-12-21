@@ -207,7 +207,6 @@ function BaseSound( context ) {
         function createDummyOsc() {
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
-            window.liveAudioContexts.push( context );
             document.body.removeEventListener( 'touchend', createDummyOsc );
         }
 
@@ -218,6 +217,7 @@ function BaseSound( context ) {
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
                 var bootOsc = context.createOscillator();
                 document.body.addEventListener( 'touchend', createDummyOsc );
+                window.liveAudioContexts.push( context );
             }
         }
     }
