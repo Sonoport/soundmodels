@@ -134,7 +134,7 @@ describe( 'SoundQueue.js', function () {
 
             window.setTimeout( function () {
                 expect( looperSpies.start )
-                    .toHaveBeenCalledWith( jasmine.any( Number ), offset, jasmine.any( Object ), attackDuration );
+                    .toHaveBeenCalledWith( jasmine.any( Number ), offset, undefined, attackDuration );
                 done();
             }, 500 );
         } );

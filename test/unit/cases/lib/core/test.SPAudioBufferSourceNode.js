@@ -83,7 +83,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
             sourceNode.loop = true;
             expect( sourceNode.playbackPosition )
                 .toBe( 0 );
-            sourceNode.start( 0 );
+            sourceNode.start( context.currentTime, 0, toneBuffer.duration );
             setTimeout( function () {
                 sourceNode.stop( 0 );
                 console.log( sourceNode.playbackPosition );
@@ -115,7 +115,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
             sourceNode.buffer = toneBuffer;
             sourceNode.loop = true;
             expect( function () {
-                    sourceNode.start( 0 );
+                    sourceNode.start( context.currentTime, 0, toneBuffer.duration );
                     setTimeout( function () {
                         sourceNode.stop( 0 );
                         done();
@@ -131,10 +131,10 @@ describe( 'SPAudioBufferSourceNode.js', function () {
             sourceNode.connect( context.destination );
             sourceNode.buffer = toneBuffer;
             expect( function () {
-                    sourceNode.start( context.currentTime );
+                    sourceNode.start( context.currentTime, 0, toneBuffer.duration );
                     sourceNode.stop( context.currentTime + 1 );
                     sourceNode.resetBufferSource( 0, context.destination );
-                    sourceNode.start( context.currentTime + 1.5 );
+                    sourceNode.start( context.currentTime + 1.5, 0, toneBuffer.duration );
                     sourceNode.stop( context.currentTime + 2 );
                 } )
                 .not.toThrowError();

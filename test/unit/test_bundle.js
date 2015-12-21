@@ -82,34 +82,6 @@
     return newRequire;
 })
 ({1:[function(require,module,exports){
-/* Core Tests */
-require( './cases/lib/core/test.BaseSound.js' );
-require( './cases/lib/core/test.Config.js' );
-require( './cases/lib/core/test.Converter.js' );
-require( './cases/lib/core/test.DetectLoopMarkers.js' );
-require( './cases/lib/core/test.FileLoader.js' );
-require( './cases/lib/core/test.MultiFileLoader.js' );
-require( './cases/lib/core/test.SoundQueue.js' );
-require( './cases/lib/core/test.SPAudioBuffer.js' );
-require( './cases/lib/core/test.SPAudioBufferSourceNode.js' );
-require( './cases/lib/core/test.SPAudioParam.js' );
-
-/*Effects Tests*/
-require( './cases/lib/effects/test.Fader.js' );
-require( './cases/lib/effects/test.Panner.js' );
-require( './cases/lib/effects/test.Filter.js' );
-require( './cases/lib/effects/test.Compressor.js' );
-require( './cases/lib/effects/test.Distorter.js' );
-
-/*Models Tests*/
-require( './cases/lib/models/test.Activity.js' );
-require( './cases/lib/models/test.Extender.js' );
-require( './cases/lib/models/test.Looper.js' );
-require( './cases/lib/models/test.MultiTrigger.js' );
-require( './cases/lib/models/test.Scrubber.js' );
-require( './cases/lib/models/test.Trigger.js' );
-
-},{"./cases/lib/core/test.BaseSound.js":30,"./cases/lib/core/test.Config.js":31,"./cases/lib/core/test.Converter.js":32,"./cases/lib/core/test.DetectLoopMarkers.js":33,"./cases/lib/core/test.FileLoader.js":34,"./cases/lib/core/test.MultiFileLoader.js":35,"./cases/lib/core/test.SPAudioBuffer.js":36,"./cases/lib/core/test.SPAudioBufferSourceNode.js":37,"./cases/lib/core/test.SPAudioParam.js":38,"./cases/lib/core/test.SoundQueue.js":39,"./cases/lib/effects/test.Compressor.js":40,"./cases/lib/effects/test.Distorter.js":41,"./cases/lib/effects/test.Fader.js":42,"./cases/lib/effects/test.Filter.js":43,"./cases/lib/effects/test.Panner.js":44,"./cases/lib/models/test.Activity.js":45,"./cases/lib/models/test.Extender.js":46,"./cases/lib/models/test.Looper.js":47,"./cases/lib/models/test.MultiTrigger.js":48,"./cases/lib/models/test.Scrubber.js":49,"./cases/lib/models/test.Trigger.js":50}],2:[function(require,module,exports){
 /*
 * loglevel - https://github.com/pimterry/loglevel
 *
@@ -117,6 +89,7 @@ require( './cases/lib/models/test.Trigger.js' );
 * Licensed under the MIT license.
 */
 (function (root, definition) {
+    "use strict";
     if (typeof module === 'object' && module.exports && typeof require === 'function') {
         module.exports = definition();
     } else if (typeof define === 'function' && typeof define.amd === 'object') {
@@ -125,7 +98,7 @@ require( './cases/lib/models/test.Trigger.js' );
         root.log = definition();
     }
 }(this, function () {
-    var self = {};
+    "use strict";
     var noop = function() {};
     var undefinedType = "undefined";
 
@@ -157,13 +130,31 @@ require( './cases/lib/models/test.Trigger.js' );
         }
     }
 
-    function enableLoggingWhenConsoleArrives(methodName, level) {
+    // these private functions always need `this` to be set properly
+
+    function enableLoggingWhenConsoleArrives(methodName, level, loggerName) {
         return function () {
             if (typeof console !== undefinedType) {
-                replaceLoggingMethods(level);
-                self[methodName].apply(self, arguments);
+                replaceLoggingMethods.call(this, level, loggerName);
+                this[methodName].apply(this, arguments);
             }
         };
+    }
+
+    function replaceLoggingMethods(level, loggerName) {
+        /*jshint validthis:true */
+        for (var i = 0; i < logMethods.length; i++) {
+            var methodName = logMethods[i];
+            this[methodName] = (i < level) ?
+                noop :
+                this.methodFactory(methodName, level, loggerName);
+        }
+    }
+
+    function defaultMethodFactory(methodName, level, loggerName) {
+        /*jshint validthis:true */
+        return realMethod(methodName) ||
+               enableLoggingWhenConsoleArrives.apply(this, arguments);
     }
 
     var logMethods = [
@@ -174,102 +165,151 @@ require( './cases/lib/models/test.Trigger.js' );
         "error"
     ];
 
-    function replaceLoggingMethods(level) {
-        for (var i = 0; i < logMethods.length; i++) {
-            var methodName = logMethods[i];
-            self[methodName] = (i < level) ? noop : self.methodFactory(methodName, level);
-        }
-    }
+    function Logger(name, defaultLevel, factory) {
+      var self = this;
+      var currentLevel;
+      var storageKey = "loglevel";
+      if (name) {
+        storageKey += ":" + name;
+      }
 
-    function persistLevelIfPossible(levelNum) {
-        var levelName = (logMethods[levelNum] || 'silent').toUpperCase();
+      function persistLevelIfPossible(levelNum) {
+          var levelName = (logMethods[levelNum] || 'silent').toUpperCase();
 
-        // Use localStorage if available
-        try {
-            window.localStorage['loglevel'] = levelName;
-            return;
-        } catch (ignore) {}
+          // Use localStorage if available
+          try {
+              window.localStorage[storageKey] = levelName;
+              return;
+          } catch (ignore) {}
 
-        // Use session cookie as fallback
-        try {
-            window.document.cookie = "loglevel=" + levelName + ";";
-        } catch (ignore) {}
-    }
+          // Use session cookie as fallback
+          try {
+              window.document.cookie =
+                encodeURIComponent(storageKey) + "=" + levelName + ";";
+          } catch (ignore) {}
+      }
 
-    function loadPersistedLevel() {
-        var storedLevel;
+      function getPersistedLevel() {
+          var storedLevel;
 
-        try {
-            storedLevel = window.localStorage['loglevel'];
-        } catch (ignore) {}
+          try {
+              storedLevel = window.localStorage[storageKey];
+          } catch (ignore) {}
 
-        if (typeof storedLevel === undefinedType) {
-            try {
-                storedLevel = /loglevel=([^;]+)/.exec(window.document.cookie)[1];
-            } catch (ignore) {}
-        }
-        
-        if (self.levels[storedLevel] === undefined) {
-            storedLevel = "WARN";
-        }
+          if (typeof storedLevel === undefinedType) {
+              try {
+                  var cookie = window.document.cookie;
+                  var location = cookie.indexOf(
+                      encodeURIComponent(storageKey) + "=");
+                  if (location) {
+                      storedLevel = /^([^;]+)/.exec(cookie.slice(location))[1];
+                  }
+              } catch (ignore) {}
+          }
 
-        self.setLevel(self.levels[storedLevel]);
+          // If the stored level is not valid, treat it as if nothing was stored.
+          if (self.levels[storedLevel] === undefined) {
+              storedLevel = undefined;
+          }
+
+          return storedLevel;
+      }
+
+      /*
+       *
+       * Public API
+       *
+       */
+
+      self.levels = { "TRACE": 0, "DEBUG": 1, "INFO": 2, "WARN": 3,
+          "ERROR": 4, "SILENT": 5};
+
+      self.methodFactory = factory || defaultMethodFactory;
+
+      self.getLevel = function () {
+          return currentLevel;
+      };
+
+      self.setLevel = function (level, persist) {
+          if (typeof level === "string" && self.levels[level.toUpperCase()] !== undefined) {
+              level = self.levels[level.toUpperCase()];
+          }
+          if (typeof level === "number" && level >= 0 && level <= self.levels.SILENT) {
+              currentLevel = level;
+              if (persist !== false) {  // defaults to true
+                  persistLevelIfPossible(level);
+              }
+              replaceLoggingMethods.call(self, level, name);
+              if (typeof console === undefinedType && level < self.levels.SILENT) {
+                  return "No console available for logging";
+              }
+          } else {
+              throw "log.setLevel() called with invalid level: " + level;
+          }
+      };
+
+      self.setDefaultLevel = function (level) {
+          if (!getPersistedLevel()) {
+              self.setLevel(level, false);
+          }
+      };
+
+      self.enableAll = function(persist) {
+          self.setLevel(self.levels.TRACE, persist);
+      };
+
+      self.disableAll = function(persist) {
+          self.setLevel(self.levels.SILENT, persist);
+      };
+
+      // Initialize with the right level
+      var initialLevel = getPersistedLevel();
+      if (initialLevel == null) {
+          initialLevel = defaultLevel == null ? "WARN" : defaultLevel;
+      }
+      self.setLevel(initialLevel, false);
     }
 
     /*
      *
-     * Public API
+     * Package-level API
      *
      */
 
-    self.levels = { "TRACE": 0, "DEBUG": 1, "INFO": 2, "WARN": 3,
-        "ERROR": 4, "SILENT": 5};
+    var defaultLogger = new Logger();
 
-    self.methodFactory = function (methodName, level) {
-        return realMethod(methodName) ||
-               enableLoggingWhenConsoleArrives(methodName, level);
-    };
-
-    self.setLevel = function (level) {
-        if (typeof level === "string" && self.levels[level.toUpperCase()] !== undefined) {
-            level = self.levels[level.toUpperCase()];
+    var _loggersByName = {};
+    defaultLogger.getLogger = function getLogger(name) {
+        if (typeof name !== "string" || name === "") {
+          throw new TypeError("You must supply a name when creating a logger.");
         }
-        if (typeof level === "number" && level >= 0 && level <= self.levels.SILENT) {
-            persistLevelIfPossible(level);
-            replaceLoggingMethods(level);
-            if (typeof console === undefinedType && level < self.levels.SILENT) {
-                return "No console available for logging";
-            }
-        } else {
-            throw "log.setLevel() called with invalid level: " + level;
+
+        var logger = _loggersByName[name];
+        if (!logger) {
+          logger = _loggersByName[name] = new Logger(
+            name, defaultLogger.getLevel(), defaultLogger.methodFactory);
         }
-    };
-
-    self.enableAll = function() {
-        self.setLevel(self.levels.TRACE);
-    };
-
-    self.disableAll = function() {
-        self.setLevel(self.levels.SILENT);
+        return logger;
     };
 
     // Grab the current global log variable in case of overwrite
     var _log = (typeof window !== undefinedType) ? window.log : undefined;
-    self.noConflict = function() {
+    defaultLogger.noConflict = function() {
         if (typeof window !== undefinedType &&
-               window.log === self) {
+               window.log === defaultLogger) {
             window.log = _log;
         }
 
-        return self;
+        return defaultLogger;
     };
 
-    loadPersistedLevel();
-    return self;
+    return defaultLogger;
 }));
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 'use strict';
+
+var fillMissingKeys = require('fill-keys');
 
 function ProxyquireifyError(msg) {
   this.name = 'ProxyquireifyError';
@@ -308,19 +348,6 @@ function stub(stubs_) {
 function reset() {
   stubs = undefined;
   module.exports._cache = null;
-}
-
-function fillMissingKeys(mdl, original) {
-  Object.keys(original).forEach(function (key) {
-    if (!mdl[key]) mdl[key] = original[key];
-  });
-  if (typeof mdl === 'function' && typeof original === 'function') {
-      Object.keys(original.prototype).forEach(function (key) {
-          if (!mdl.prototype[key]) mdl.prototype[key] = original.prototype[key];
-      });
-  }
-
-  return mdl;
 }
 
 var proxyquire = module.exports = function (require_) {
@@ -373,7 +400,111 @@ if (require.cache) {
   proxyquire.plugin = replacePrelude.plugin;
 }
 
-},{}],4:[function(require,module,exports){
+},{"fill-keys":3}],3:[function(require,module,exports){
+'use strict'
+
+var mergeDescriptors = require('merge-descriptors')
+var isObject = require('is-object')
+var hasOwnProperty = Object.prototype.hasOwnProperty
+
+function fill (destination, source, merge) {
+  if (destination && (isObject(source) || isFunction(source))) {
+    merge(destination, source, false)
+    if (isFunction(destination) && isFunction(source)) {
+      merge(destination.prototype, source.prototype, false)
+    }
+  }
+  return destination
+}
+
+exports = module.exports = function fillKeys (destination, source) {
+  return fill(destination, source, mergeDescriptors)
+}
+
+exports.es3 = function fillKeysEs3 (destination, source) {
+  return fill(destination, source, es3Merge)
+}
+
+function es3Merge (destination, source) {
+  for (var key in source) {
+    if (!hasOwnProperty.call(destination, key)) {
+      destination[key] = source[key]
+    }
+  }
+  return destination
+}
+
+function isFunction (value) {
+  return typeof value === 'function'
+}
+
+},{"is-object":4,"merge-descriptors":5}],4:[function(require,module,exports){
+"use strict";
+
+module.exports = function isObject(x) {
+	return typeof x === "object" && x !== null;
+};
+
+},{}],5:[function(require,module,exports){
+/*!
+ * merge-descriptors
+ * Copyright(c) 2014 Jonathan Ong
+ * MIT Licensed
+ */
+
+/**
+ * Module exports.
+ * @public
+ */
+
+module.exports = merge
+
+/**
+ * Module variables.
+ * @private
+ */
+
+var hasOwnProperty = Object.prototype.hasOwnProperty
+
+/**
+ * Merge the property descriptors of `src` into `dest`
+ *
+ * @param {object} dest Object to add descriptors to
+ * @param {object} src Object to clone descriptors from
+ * @param {boolean} [redefine=true] Redefine `dest` properties with `src` properties
+ * @returns {object} Reference to dest
+ * @public
+ */
+
+function merge(dest, src, redefine) {
+  if (!dest) {
+    throw new TypeError('argument dest is required')
+  }
+
+  if (!src) {
+    throw new TypeError('argument src is required')
+  }
+
+  if (redefine === undefined) {
+    // Default to true
+    redefine = true
+  }
+
+  Object.getOwnPropertyNames(src).forEach(function forEachOwnPropertyName(name) {
+    if (!redefine && hasOwnProperty.call(dest, name)) {
+      // Skip desriptor
+      return
+    }
+
+    // Copy descriptor
+    var descriptor = Object.getOwnPropertyDescriptor(src, name)
+    Object.defineProperty(dest, name, descriptor)
+  })
+
+  return dest
+}
+
+},{}],6:[function(require,module,exports){
 /**
  *
  *
@@ -394,7 +525,7 @@ function AudioContextMonkeyPatch() {
 
 module.exports = AudioContextMonkeyPatch;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -519,11 +650,9 @@ function BaseEffect( context ) {
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 
         function createDummyOsc() {
-            log.debug( "Booting ", context );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
-            window.liveAudioContexts.push( context );
-            window.removeEventListener( 'touchstart', createDummyOsc );
+            document.body.removeEventListener( 'touchend', createDummyOsc );
         }
 
         if ( iOS ) {
@@ -532,11 +661,8 @@ function BaseEffect( context ) {
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
                 var bootOsc = context.createOscillator();
-                var bootGain = context.createGain();
-                bootGain.gain.value = 0;
-                bootOsc.connect( bootGain );
-                bootGain.connect( context.destination );
-                window.addEventListener( 'touchstart', createDummyOsc );
+                document.body.addEventListener( 'touchend', createDummyOsc );
+                window.liveAudioContexts.push( context );
             }
         }
     }
@@ -627,7 +753,7 @@ BaseEffect.prototype.listParams = function () {
 // Return constructor function
 module.exports = BaseEffect;
 
-},{"../core/AudioContextMonkeyPatch":4,"loglevel":2}],6:[function(require,module,exports){
+},{"../core/AudioContextMonkeyPatch":6,"loglevel":1}],8:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -738,6 +864,7 @@ function BaseSound( context ) {
      * @final
      */
     this.releaseGainNode = this.audioContext.createGain();
+    this.releaseGainNode.gain.prevEndTime = 0;
 
     /**
      *  If Sound is currently playing.
@@ -823,6 +950,8 @@ function BaseSound( context ) {
 
     this.isBaseSound = true;
 
+    this.dispatches_ = [];
+
     this.parameterList_ = [];
 
     this.connect( this.audioContext.destination );
@@ -832,11 +961,9 @@ function BaseSound( context ) {
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
 
         function createDummyOsc() {
-            log.debug( "Booting ", context );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
-            window.liveAudioContexts.push( context );
-            window.removeEventListener( 'touchstart', createDummyOsc );
+            document.body.removeEventListener( 'touchend', createDummyOsc );
         }
 
         if ( iOS ) {
@@ -845,11 +972,8 @@ function BaseSound( context ) {
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
                 var bootOsc = context.createOscillator();
-                var bootGain = context.createGain();
-                bootGain.gain.value = 0;
-                bootOsc.connect( bootGain );
-                bootGain.connect( context.destination );
-                window.addEventListener( 'touchstart', createDummyOsc );
+                document.body.addEventListener( 'touchend', createDummyOsc );
+                window.liveAudioContexts.push( context );
             }
         }
     }
@@ -909,19 +1033,37 @@ BaseSound.prototype.start = function ( when, offset, duration, attackDuration ) 
         when = this.audioContext.currentTime;
     }
 
+    // Estimate the current value based on the previous ramp.
+    var currentValue = 1;
+    if ( this.releaseGainNode.gain.prevEndTime > when ) {
+        currentValue = this.releaseGainNode.gain.prevStartValue + ( this.releaseGainNode.gain.prevTargetValue - this.releaseGainNode.gain.prevStartValue ) * ( ( when - this.releaseGainNode.gain.prevStartTime ) / ( this.releaseGainNode.gain.prevEndTime - this.releaseGainNode.gain.prevStartTime ) );
+    }
+
+    // Cancel all automation
     this.releaseGainNode.gain.cancelScheduledValues( when );
     if ( typeof attackDuration !== 'undefined' ) {
         log.debug( "Ramping from " + offset + "  in " + attackDuration );
-        this.releaseGainNode.gain.setValueAtTime( 0, when );
+        this.releaseGainNode.gain.setValueAtTime( currentValue, when );
         this.releaseGainNode.gain.linearRampToValueAtTime( 1, when + attackDuration );
+
+        this.releaseGainNode.gain.prevStartTime = when;
+        this.releaseGainNode.gain.prevStartValue = currentValue;
+        this.releaseGainNode.gain.prevTargetValue = 1;
+        this.releaseGainNode.gain.prevEndTime = when + attackDuration;
+
     } else {
         this.releaseGainNode.gain.setValueAtTime( 1, when );
+
+        this.releaseGainNode.gain.prevStartTime = when;
+        this.releaseGainNode.gain.prevStartValue = 1;
+        this.releaseGainNode.gain.prevTargetValue = 1;
+        this.releaseGainNode.gain.prevEndTime = when;
     }
 
     var self = this;
-    webAudioDispatch( function () {
+    this.dispatch( function () {
         self.isPlaying = true;
-    }, when, this.audioContext );
+    }, when );
 };
 
 /**
@@ -936,12 +1078,10 @@ BaseSound.prototype.stop = function ( when ) {
     }
 
     var self = this;
-    webAudioDispatch( function () {
+    this.dispatch( function () {
         self.isPlaying = false;
-    }, when, this.audioContext );
-
-    // cancel all scheduled ramps on this releaseGainNode
-    this.releaseGainNode.gain.cancelScheduledValues( when );
+        self.clearDispatches();
+    }, when );
 };
 
 /**
@@ -956,25 +1096,35 @@ BaseSound.prototype.release = function ( when, fadeTime, resetOnRelease ) {
 
     if ( this.isPlaying ) {
         var FADE_TIME = 0.5;
-        //var FADE_TIME_PAD = 1 / this.audioContext.sampleRate;
 
         if ( typeof when === 'undefined' || when < this.audioContext.currentTime ) {
             when = this.audioContext.currentTime;
         }
 
         fadeTime = fadeTime || FADE_TIME;
-        // Clamp the current gain value at this point of time to prevent sudden jumps.
-        this.releaseGainNode.gain.setValueAtTime( this.releaseGainNode.gain.value, when );
 
-        // Now there won't be any glitch and there is a smooth ramp down.
+        // Estimate the current value based on the previous ramp.
+        var currentValue = 1;
+        if ( this.releaseGainNode.gain.prevEndTime > when ) {
+            currentValue = this.releaseGainNode.gain.prevStartValue + ( this.releaseGainNode.gain.prevTargetValue - this.releaseGainNode.gain.prevStartValue ) * ( ( when - this.releaseGainNode.gain.prevStartTime ) / ( this.releaseGainNode.gain.prevEndTime - this.releaseGainNode.gain.prevStartTime ) );
+        }
+
+        // Set that value as static value (stop automation);
+        this.releaseGainNode.gain.cancelScheduledValues( when );
+        this.releaseGainNode.gain.setValueAtTime( currentValue, when );
         this.releaseGainNode.gain.linearRampToValueAtTime( 0, when + fadeTime );
 
-        // Pause the sound after currentTime + fadeTime + FADE_TIME_PAD
+        this.releaseGainNode.gain.prevStartTime = when;
+        this.releaseGainNode.gain.prevStartValue = currentValue;
+        this.releaseGainNode.gain.prevTargetValue = 0;
+        this.releaseGainNode.gain.prevEndTime = when + fadeTime;
+
+        // Pause the sound after currentTime + fadeTime
         if ( !resetOnRelease ) {
             var self = this;
-            webAudioDispatch( function () {
+            this.dispatch( function () {
                 self.pause();
-            }, when + fadeTime, this.audioContext );
+            }, when + fadeTime );
         }
     }
 };
@@ -1071,10 +1221,36 @@ BaseSound.prototype.setOutputEffect = function ( effect ) {
     effect.connect( this.audioContext.destination );
 };
 
+BaseSound.prototype.dispatch = function ( functionCall, time ) {
+    var dispatchID = webAudioDispatch( function () {
+        if ( typeof dispatchID !== "undefined" ) {
+            var idIndex = this.dispatches_.indexOf( dispatchID );
+            if ( idIndex > -1 ) {
+                this.dispatches_.splice( idIndex, 1 );
+            } else {
+                log.warn( "Can't find ID", dispatchID, "in the list of dispatches" );
+            }
+        }
+        functionCall();
+    }.bind( this ), time, this.audioContext );
+
+    if ( dispatchID !== null ) {
+        this.dispatches_.push( dispatchID );
+    }
+};
+
+BaseSound.prototype.clearDispatches = function () {
+    this.dispatches_.forEach( function ( thisId ) {
+        log.debug( "Clearing timeout for", thisId );
+        window.clearInterval( thisId );
+    } );
+    this.dispatches_ = [];
+};
+
 // Return constructor function
 module.exports = BaseSound;
 
-},{"../core/AudioContextMonkeyPatch":4,"../core/WebAudioDispatch":17,"loglevel":2}],7:[function(require,module,exports){
+},{"../core/AudioContextMonkeyPatch":6,"../core/WebAudioDispatch":19,"loglevel":1}],9:[function(require,module,exports){
 /**
  * A structure for static configuration options.
  *
@@ -1164,7 +1340,7 @@ Config.DEFAULT_SMOOTHING_CONSTANT = 0.05;
 
 module.exports = Config;
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1219,7 +1395,7 @@ Converter.dBFStoRatio = function ( dBFS ) {
 
 module.exports = Converter;
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1461,7 +1637,7 @@ function DetectLoopMarkers( buffer ) {
 
 module.exports = DetectLoopMarkers;
 
-},{"loglevel":2}],10:[function(require,module,exports){
+},{"loglevel":1}],12:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1663,7 +1839,7 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
 
 module.exports = FileLoader;
 
-},{"../core/DetectLoopMarkers":9,"loglevel":2}],11:[function(require,module,exports){
+},{"../core/DetectLoopMarkers":11,"loglevel":1}],13:[function(require,module,exports){
  /**
   * @module Core
   *
@@ -1733,7 +1909,7 @@ module.exports = FileLoader;
          if ( sourceType === '[object AudioBuffer]' ) {
              audioBuffer = new SPAudioBuffer( self.audioContext, source );
              onSingleLoad( true, audioBuffer );
-         } else if ( source.isSPAudioBuffer && source.buffer ) {
+         } else if ( source && source.isSPAudioBuffer && source.buffer ) {
              onSingleLoad( true, source );
          } else if ( sourceType === '[object String]' ||
              sourceType === '[object File]' ||
@@ -1789,7 +1965,7 @@ module.exports = FileLoader;
  }
  module.exports = MultiFileLoader;
 
-},{"../core/FileLoader":10,"../core/SPAudioBuffer":12,"loglevel":2}],12:[function(require,module,exports){
+},{"../core/FileLoader":12,"../core/SPAudioBuffer":14,"loglevel":1}],14:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2045,7 +2221,7 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
 }
 module.exports = SPAudioBuffer;
 
-},{"loglevel":2}],13:[function(require,module,exports){
+},{"loglevel":1}],15:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2317,18 +2493,10 @@ function SPAudioBufferSourceNode( audioContext ) {
      *
      */
     this.start = function ( when, offset, duration ) {
-        if ( typeof duration == 'undefined' ) {
-            duration = bufferSourceNode_.buffer.duration;
-        }
-
-        if ( typeof offset == 'undefined' ) {
-            offset = 0;
-        }
-
         if ( this.playbackState === this.UNSCHEDULED_STATE ) {
-            if ( offset === 0 && duration === bufferSourceNode_.buffer.duration ) {
-                bufferSourceNode_.start( when );
-                counterNode_.start( when );
+            if ( duration == undefined ) { // jshint ignore:line
+                bufferSourceNode_.start( when, offset );
+                counterNode_.start( when, offset );
             } else {
                 bufferSourceNode_.start( when, offset, duration );
                 counterNode_.start( when, offset, duration );
@@ -2451,7 +2619,7 @@ function SPAudioBufferSourceNode( audioContext ) {
 }
 module.exports = SPAudioBufferSourceNode;
 
-},{"../core/SPPlaybackRateParam":15,"../core/WebAudioDispatch":17,"loglevel":2}],14:[function(require,module,exports){
+},{"../core/SPPlaybackRateParam":17,"../core/WebAudioDispatch":19,"loglevel":1}],16:[function(require,module,exports){
 /*
  ** @module Core
  */
@@ -2856,7 +3024,7 @@ SPAudioParam.createPsuedoParam = function ( baseSound, name, minValue, maxValue,
 
 module.exports = SPAudioParam;
 
-},{"../core/Config":7,"../core/WebAudioDispatch":17,"loglevel":2}],15:[function(require,module,exports){
+},{"../core/Config":9,"../core/WebAudioDispatch":19,"loglevel":1}],17:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2935,7 +3103,7 @@ function SPPlaybackRateParam( bufferSourceNode, audioParam, counterParam ) {
 }
 module.exports = SPPlaybackRateParam;
 
-},{"../core/Config":7}],16:[function(require,module,exports){
+},{"../core/Config":9}],18:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -3072,7 +3240,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
 
         if ( thisEvent.type == 'QESTART' ) {
             log.info( "starting " + selectedVoice.voiceIndex );
-            selectedVoice.start( thisEvent.time, thisEvent.offset, null, thisEvent.attackDuration );
+            selectedVoice.start( thisEvent.time, thisEvent.offset, undefined, thisEvent.attackDuration );
             webaudioDispatch( function () {
                 if ( !self.isPlaying ) {
                     self.isPlaying = true;
@@ -3290,7 +3458,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
 
 module.exports = SoundQueue;
 
-},{"../core/Config":7,"../core/WebAudioDispatch":17,"../models/Looper":26,"loglevel":2}],17:[function(require,module,exports){
+},{"../core/Config":9,"../core/WebAudioDispatch":19,"../models/Looper":28,"loglevel":1}],19:[function(require,module,exports){
 /**
  * @module Core
  *
@@ -3320,9 +3488,10 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
     if ( currentTime >= time || time - currentTime < 0.005 ) {
         log.debug( "Dispatching now" );
         functionCall();
+        return null;
     } else {
         log.debug( "Dispatching in", ( time - currentTime ) * 1000, 'ms' );
-        window.setTimeout( function () {
+        return window.setTimeout( function () {
             log.debug( "Diff at dispatch", ( time - audioContext.currentTime ) * 1000, 'ms' );
             functionCall();
         }, ( time - currentTime ) * 1000 );
@@ -3331,9 +3500,9 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
 
 module.exports = WebAudioDispatch;
 
-},{"loglevel":2}],18:[function(require,module,exports){
-arguments[4][17][0].apply(exports,arguments)
-},{"dup":17,"loglevel":2}],19:[function(require,module,exports){
+},{"loglevel":1}],20:[function(require,module,exports){
+arguments[4][19][0].apply(exports,arguments)
+},{"dup":19,"loglevel":1}],21:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3426,7 +3595,7 @@ Compressor.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Compressor;
 
-},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],20:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],22:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3505,7 +3674,7 @@ Distorter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Distorter;
 
-},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],21:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],23:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3579,7 +3748,7 @@ Fader.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Fader;
 
-},{"../core/BaseEffect":5,"../core/Converter":8,"../core/SPAudioParam":14,"loglevel":2}],22:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/Converter":10,"../core/SPAudioParam":16,"loglevel":1}],24:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3677,7 +3846,7 @@ Filter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Filter;
 
-},{"../core/BaseEffect":5,"../core/SPAudioParam":14}],23:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],25:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3758,7 +3927,7 @@ Panner.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Panner;
 
-},{"../core/BaseEffect":5,"../core/SPAudioParam":14,"loglevel":2}],24:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/SPAudioParam":16,"loglevel":1}],26:[function(require,module,exports){
 /**
  * @module Models
  *
@@ -4137,7 +4306,7 @@ Activity.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Activity;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/SPAudioParam":14,"../core/webAudioDispatch":18,"../models/Looper":26,"loglevel":2}],25:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/SPAudioParam":16,"../core/webAudioDispatch":20,"../models/Looper":28,"loglevel":1}],27:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4420,7 +4589,7 @@ Extender.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Extender;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/MultiFileLoader":11,"../core/SPAudioParam":14,"../core/SoundQueue":16,"../core/webAudioDispatch":18,"loglevel":2}],26:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"../core/webAudioDispatch":20,"loglevel":1}],28:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4468,13 +4637,11 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
     var self = this;
 
     var sourceBufferNodes_ = [];
-    var lastStopPosition_ = [];
     var rateArray_ = [];
 
     var onLoadAll = function ( status, arrayOfBuffers ) {
         self.multiTrackGain.length = arrayOfBuffers.length;
         arrayOfBuffers.forEach( function ( thisBuffer, trackIndex ) {
-            lastStopPosition_.push( 0 );
             insertBufferSource( thisBuffer, trackIndex, arrayOfBuffers.length );
         } );
 
@@ -4505,6 +4672,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
 
         source.buffer = audioBuffer;
         source.loopEnd = audioBuffer.duration;
+        source.lastStopPosition_ = 0;
         source.onended = function ( event ) {
             onSourceEnd( event, trackIndex, source );
         };
@@ -4688,8 +4856,8 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
         var now = this.audioContext.currentTime;
 
         if ( !this.isPlaying ) {
-            sourceBufferNodes_.forEach( function ( thisSource, index ) {
-                var offset = ( lastStopPosition_ && lastStopPosition_[ index ] ) ? lastStopPosition_[ index ] : thisSource.loopStart;
+            sourceBufferNodes_.forEach( function ( thisSource ) {
+                var offset = thisSource.lastStopPosition_ || thisSource.loopStart;
                 thisSource.loop = ( self.maxLoops.value !== 1 );
                 thisSource.start( now, offset );
             } );
@@ -4721,10 +4889,6 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
             sourceBufferNodes_.forEach( function ( thisSource ) {
 
                 offset = thisSource.loopStart + parseFloat( offset ) || 0;
-
-                if ( typeof duration == 'undefined' || duration === null ) {
-                    duration = thisSource.buffer.duration;
-                }
                 thisSource.loop = ( self.maxLoops.value !== 1 );
                 thisSource.start( when, offset, duration );
             } );
@@ -4745,9 +4909,9 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
      */
     this.stop = function ( when ) {
         if ( self.isPlaying ) {
-            sourceBufferNodes_.forEach( function ( thisSource, index ) {
+            sourceBufferNodes_.forEach( function ( thisSource ) {
                 thisSource.stop( when );
-                lastStopPosition_[ index ] = 0;
+                thisSource.lastStopPosition_ = 0;
             } );
 
             BaseSound.prototype.stop.call( this, when );
@@ -4767,9 +4931,9 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
     this.pause = function () {
         if ( self.isPlaying ) {
 
-            sourceBufferNodes_.forEach( function ( thisSource, index ) {
+            sourceBufferNodes_.forEach( function ( thisSource ) {
                 thisSource.stop( 0 );
-                lastStopPosition_[ index ] = thisSource.playbackPosition / thisSource.buffer.sampleRate;
+                thisSource.lastStopPosition_ = thisSource.playbackPosition / thisSource.buffer.sampleRate;
             } );
 
             BaseSound.prototype.stop.call( this, 0 );
@@ -4810,7 +4974,7 @@ function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart,
             // Disconnect and rewire each source
             sourceBufferNodes_.forEach( function ( thisSource, trackIndex ) {
                 thisSource.stop( when + fadeTime );
-                lastStopPosition_[ trackIndex ] = 0;
+                thisSource.lastStopPosition_ = 0;
 
                 thisSource.resetBufferSource( when, self.releaseGainNode );
                 var multiChannelGainParam = new SPAudioParam( self, 'gain-' + trackIndex, 0.0, 1, 1, thisSource.gain, null, null );
@@ -4835,7 +4999,7 @@ Looper.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Looper;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/MultiFileLoader":11,"../core/SPAudioBufferSourceNode":13,"../core/SPAudioParam":14,"../core/webAudioDispatch":18,"loglevel":2}],27:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioBufferSourceNode":15,"../core/SPAudioParam":16,"../core/webAudioDispatch":20,"loglevel":1}],29:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5168,7 +5332,7 @@ MultiTrigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = MultiTrigger;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/MultiFileLoader":11,"../core/SPAudioParam":14,"../core/SoundQueue":16,"../core/webAudioDispatch":18,"loglevel":2}],28:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"../core/webAudioDispatch":20,"loglevel":1}],30:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5535,7 +5699,7 @@ Scrubber.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Scrubber;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/MultiFileLoader":11,"../core/SPAudioParam":14,"loglevel":2}],29:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"loglevel":1}],31:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5780,7 +5944,7 @@ Trigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Trigger;
 
-},{"../core/BaseSound":6,"../core/Config":7,"../core/Converter":8,"../core/MultiFileLoader":11,"../core/SPAudioParam":14,"../core/SoundQueue":16,"loglevel":2}],30:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"loglevel":1}],32:[function(require,module,exports){
 "use strict";
 var BaseSound = require( 'core/BaseSound' );
 console.log( "Running BaseSound Test... " );
@@ -5955,7 +6119,7 @@ describe( 'BaseSound.js', function () {
     } );
 } );
 
-},{"core/BaseSound":6}],31:[function(require,module,exports){
+},{"core/BaseSound":8}],33:[function(require,module,exports){
 "use strict";
 var Config = require( 'core/Config' );
 console.log( "Running Config Test... " );
@@ -5973,7 +6137,7 @@ describe( 'Config.js', function () {
     } );
 } );
 
-},{"core/Config":7}],32:[function(require,module,exports){
+},{"core/Config":9}],34:[function(require,module,exports){
 "use strict";
 var Converter = require( 'core/Converter' );
 console.log( "Running Converter Test... " );
@@ -5996,7 +6160,7 @@ describe( 'Converter.js', function () {
     } );
 } );
 
-},{"core/Converter":8}],33:[function(require,module,exports){
+},{"core/Converter":10}],35:[function(require,module,exports){
     "use strict";
     var detectLoopMarkers = require( 'core/DetectLoopMarkers' )
     console.log( "Running DetectLoopMarker Test... " );
@@ -6280,7 +6444,7 @@ describe( 'Converter.js', function () {
         } );
     } );
 
-},{"core/DetectLoopMarkers":9}],34:[function(require,module,exports){
+},{"core/DetectLoopMarkers":11}],36:[function(require,module,exports){
 "use strict";
 var FileLoader = require( 'core/FileLoader' );
 console.log( "Running FileLoader Test... " );
@@ -6433,7 +6597,7 @@ describe( 'FileLoader.js', function () {
     } );
 } );
 
-},{"core/FileLoader":10}],35:[function(require,module,exports){
+},{"core/FileLoader":12}],37:[function(require,module,exports){
 "use strict";
 var multiFileLoader = require( 'core/MultiFileLoader' );
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
@@ -6509,7 +6673,7 @@ describe( 'MultiFileLoader.js', function () {
     } );
 } );
 
-},{"core/MultiFileLoader":11,"core/SPAudioBuffer":12}],36:[function(require,module,exports){
+},{"core/MultiFileLoader":13,"core/SPAudioBuffer":14}],38:[function(require,module,exports){
 "use strict";
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
 console.log( "Running SPAudioBuffer Test... " );
@@ -6784,7 +6948,7 @@ describe( 'SPAudioBuffer.js', function () {
     } );
 } );
 
-},{"core/SPAudioBuffer":12}],37:[function(require,module,exports){
+},{"core/SPAudioBuffer":14}],39:[function(require,module,exports){
 "use strict";
 var SPAudioBufferSourceNode = require( 'core/SPAudioBufferSourceNode' );
 var SPPlaybackRateParam = require( 'core/SPPlaybackRateParam' );
@@ -6870,7 +7034,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
             sourceNode.loop = true;
             expect( sourceNode.playbackPosition )
                 .toBe( 0 );
-            sourceNode.start( 0 );
+            sourceNode.start( context.currentTime, 0, toneBuffer.duration );
             setTimeout( function () {
                 sourceNode.stop( 0 );
                 console.log( sourceNode.playbackPosition );
@@ -6902,7 +7066,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
             sourceNode.buffer = toneBuffer;
             sourceNode.loop = true;
             expect( function () {
-                    sourceNode.start( 0 );
+                    sourceNode.start( context.currentTime, 0, toneBuffer.duration );
                     setTimeout( function () {
                         sourceNode.stop( 0 );
                         done();
@@ -6918,10 +7082,10 @@ describe( 'SPAudioBufferSourceNode.js', function () {
             sourceNode.connect( context.destination );
             sourceNode.buffer = toneBuffer;
             expect( function () {
-                    sourceNode.start( context.currentTime );
+                    sourceNode.start( context.currentTime, 0, toneBuffer.duration );
                     sourceNode.stop( context.currentTime + 1 );
                     sourceNode.resetBufferSource( 0, context.destination );
-                    sourceNode.start( context.currentTime + 1.5 );
+                    sourceNode.start( context.currentTime + 1.5, 0, toneBuffer.duration );
                     sourceNode.stop( context.currentTime + 2 );
                 } )
                 .not.toThrowError();
@@ -6930,7 +7094,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
     } );
 } );
 
-},{"core/SPAudioBufferSourceNode":13,"core/SPPlaybackRateParam":15}],38:[function(require,module,exports){
+},{"core/SPAudioBufferSourceNode":15,"core/SPPlaybackRateParam":17}],40:[function(require,module,exports){
 "use strict";
 var SPAudioParam = require( 'core/SPAudioParam' );
 console.log( "Running SPAudioParam Test... " );
@@ -7094,8 +7258,8 @@ describe( 'SPAudioParam.js', function () {
     } );
 } );
 
-},{"core/SPAudioParam":14}],39:[function(require,module,exports){
-/* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('core/SoundQueue');var looperSpies = {
+},{"core/SPAudioParam":16}],41:[function(require,module,exports){
+/* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('core/SoundQueue');});var looperSpies = {
     start: jasmine.createSpy( 'start' ),
     stop: jasmine.createSpy( 'stop' ),
     play: jasmine.createSpy( 'play' ),
@@ -7231,7 +7395,7 @@ describe( 'SoundQueue.js', function () {
 
             window.setTimeout( function () {
                 expect( looperSpies.start )
-                    .toHaveBeenCalledWith( jasmine.any( Number ), offset, jasmine.any( Object ), attackDuration );
+                    .toHaveBeenCalledWith( jasmine.any( Number ), offset, undefined, attackDuration );
                 done();
             }, 500 );
         } );
@@ -7521,7 +7685,7 @@ describe( 'SoundQueue.js', function () {
     } );
 } );
 
-},{"core/SoundQueue":16,"proxyquireify":3}],40:[function(require,module,exports){
+},{"core/SoundQueue":18,"proxyquireify":2}],42:[function(require,module,exports){
 "use strict";
 var Compressor = require( 'effects/Compressor' );
 if ( !window.context ) {
@@ -7700,7 +7864,7 @@ describe( 'Compressor.js', function () {
     } );
 } );
 
-},{"effects/Compressor":19}],41:[function(require,module,exports){
+},{"effects/Compressor":21}],43:[function(require,module,exports){
 "use strict";
 var Distorter = require( 'effects/Distorter' );
 if ( !window.context ) {
@@ -7822,7 +7986,7 @@ describe( 'Distorter.js', function () {
     } );
 } );
 
-},{"effects/Distorter":20}],42:[function(require,module,exports){
+},{"effects/Distorter":22}],44:[function(require,module,exports){
 "use strict";
 var Fader = require( 'effects/Fader' );
 if ( !window.context ) {
@@ -7944,7 +8108,7 @@ describe( 'Fader.js', function () {
     } );
 } );
 
-},{"effects/Fader":21}],43:[function(require,module,exports){
+},{"effects/Fader":23}],45:[function(require,module,exports){
 "use strict";
 var Filter = require( 'effects/Filter' );
 if ( !window.context ) {
@@ -8104,7 +8268,7 @@ describe( 'Filter.js', function () {
     } );
 } );
 
-},{"effects/Filter":22}],44:[function(require,module,exports){
+},{"effects/Filter":24}],46:[function(require,module,exports){
 "use strict";
 var Panner = require( 'effects/Panner' );
 if ( !window.context ) {
@@ -8207,8 +8371,8 @@ describe( 'Panner.js', function () {
     } );
 } );
 
-},{"effects/Panner":23}],45:[function(require,module,exports){
-/* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Activity');"use strict";
+},{"effects/Panner":25}],47:[function(require,module,exports){
+/* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Activity');});"use strict";
 var Activity = require( 'models/Activity' );
 if ( !window.context ) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -8726,8 +8890,8 @@ describe( 'Activity.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Activity":24,"proxyquireify":3}],46:[function(require,module,exports){
-/* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Extender');"use strict";
+},{"models/Activity":26,"proxyquireify":2}],48:[function(require,module,exports){
+/* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Extender');});"use strict";
 var Extender = require( 'models/Extender' );
 if ( !window.context ) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -9205,8 +9369,8 @@ describe( 'Extender.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Extender":25,"proxyquireify":3}],47:[function(require,module,exports){
-/* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Looper');"use strict";
+},{"models/Extender":27,"proxyquireify":2}],49:[function(require,module,exports){
+/* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Looper');});"use strict";
 var Looper = require( 'models/Looper' );
 if ( !window.context ) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -9769,8 +9933,8 @@ describe( 'Looper.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Looper":26,"proxyquireify":3}],48:[function(require,module,exports){
-/* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/MultiTrigger');"use strict";
+},{"models/Looper":28,"proxyquireify":2}],50:[function(require,module,exports){
+/* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/MultiTrigger');});"use strict";
 var MultiTrigger = require( 'models/MultiTrigger' );
 if ( !window.context ) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -10287,7 +10451,7 @@ describe( 'MultiTrigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/MultiTrigger":27,"proxyquireify":3}],49:[function(require,module,exports){
+},{"models/MultiTrigger":29,"proxyquireify":2}],51:[function(require,module,exports){
 "use strict";
 var Scrubber = require( 'models/Scrubber' );
 if ( !window.context ) {
@@ -10605,8 +10769,8 @@ describe( 'Scrubber.js', function () {
     } );
 } );
 
-},{"models/Scrubber":28}],50:[function(require,module,exports){
-/* proxyquireify injected requires to make browserify include dependencies in the bundle */;require('models/Trigger');"use strict";
+},{"models/Scrubber":30}],52:[function(require,module,exports){
+/* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Trigger');});"use strict";
 var Trigger = require( 'models/Trigger' );
 if ( !window.context ) {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -11084,4 +11248,32 @@ describe( 'Trigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Trigger":29,"proxyquireify":3}]},{},[1]);
+},{"models/Trigger":31,"proxyquireify":2}],53:[function(require,module,exports){
+/* Core Tests */
+require( './cases/lib/core/test.BaseSound.js' );
+require( './cases/lib/core/test.Config.js' );
+require( './cases/lib/core/test.Converter.js' );
+require( './cases/lib/core/test.DetectLoopMarkers.js' );
+require( './cases/lib/core/test.FileLoader.js' );
+require( './cases/lib/core/test.MultiFileLoader.js' );
+require( './cases/lib/core/test.SoundQueue.js' );
+require( './cases/lib/core/test.SPAudioBuffer.js' );
+require( './cases/lib/core/test.SPAudioBufferSourceNode.js' );
+require( './cases/lib/core/test.SPAudioParam.js' );
+
+/*Effects Tests*/
+require( './cases/lib/effects/test.Fader.js' );
+require( './cases/lib/effects/test.Panner.js' );
+require( './cases/lib/effects/test.Filter.js' );
+require( './cases/lib/effects/test.Compressor.js' );
+require( './cases/lib/effects/test.Distorter.js' );
+
+/*Models Tests*/
+require( './cases/lib/models/test.Activity.js' );
+require( './cases/lib/models/test.Extender.js' );
+require( './cases/lib/models/test.Looper.js' );
+require( './cases/lib/models/test.MultiTrigger.js' );
+require( './cases/lib/models/test.Scrubber.js' );
+require( './cases/lib/models/test.Trigger.js' );
+
+},{"./cases/lib/core/test.BaseSound.js":32,"./cases/lib/core/test.Config.js":33,"./cases/lib/core/test.Converter.js":34,"./cases/lib/core/test.DetectLoopMarkers.js":35,"./cases/lib/core/test.FileLoader.js":36,"./cases/lib/core/test.MultiFileLoader.js":37,"./cases/lib/core/test.SPAudioBuffer.js":38,"./cases/lib/core/test.SPAudioBufferSourceNode.js":39,"./cases/lib/core/test.SPAudioParam.js":40,"./cases/lib/core/test.SoundQueue.js":41,"./cases/lib/effects/test.Compressor.js":42,"./cases/lib/effects/test.Distorter.js":43,"./cases/lib/effects/test.Fader.js":44,"./cases/lib/effects/test.Filter.js":45,"./cases/lib/effects/test.Panner.js":46,"./cases/lib/models/test.Activity.js":47,"./cases/lib/models/test.Extender.js":48,"./cases/lib/models/test.Looper.js":49,"./cases/lib/models/test.MultiTrigger.js":50,"./cases/lib/models/test.Scrubber.js":51,"./cases/lib/models/test.Trigger.js":52}]},{},[53]);
