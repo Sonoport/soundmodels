@@ -1,7 +1,7 @@
 {
   "name": "soundmodels",
   "description": "Sonoport Sound Models",
-  "version": "2.5.10",
+  "version": "2.5.11",
   "homepage": "http://sonoport.com",
   "author": "Sonoport <tech@sonoport.com> (http://sonoport.com/)",
   "files": [
@@ -29,10 +29,10 @@
     }
   ],
   "devDependencies": {
-    "browserify": "^11.0.1",
+    "browserify": "^12.0.1",
     "browserify-derequire": "^0.9.4",
     "del": "^2.0.0",
-    "glob": "^5.0.14",
+    "glob": "^6.0.3",
     "gulp": "^3.9.0",
     "gulp-bump": "^0.3.1",
     "gulp-cached": "^1.1.0",
@@ -50,7 +50,7 @@
     "merge-stream": "^1.0.0",
     "proxyquireify": "^3.0.0",
     "require-uncached": "^1.0.2",
-    "requirejs": "2.1.20",
+    "requirejs": "2.1.22",
     "uglifyify": "^3.0.1",
     "vinyl-source-stream": "^1.1.0"
   },

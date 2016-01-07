@@ -203,20 +203,26 @@ function BaseSound( context ) {
     function bootAudioContext( context ) {
 
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
+        var isSafari = /Safari/.test( navigator.userAgent ) && /Apple Computer/.test( navigator.vendor );
 
         function createDummyOsc() {
+            bootOsc.connect( context.destination );
             bootOsc.start( 0 );
             bootOsc.stop( context.currentTime + 0.0001 );
+            bootOsc.disconnect( context.destination );
             document.body.removeEventListener( 'touchend', createDummyOsc );
+            document.body.removeEventListener( 'webkitmouseforcewillbegin', createDummyOsc );
         }
 
-        if ( iOS ) {
+        if ( iOS || isSafari ) {
             if ( !window.liveAudioContexts ) {
                 window.liveAudioContexts = [];
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
                 var bootOsc = context.createOscillator();
                 document.body.addEventListener( 'touchend', createDummyOsc );
+                // for desktop Safari using touchpad with Force Touch
+                document.body.addEventListener( 'webkitmouseforcewillbegin', createDummyOsc );
                 window.liveAudioContexts.push( context );
             }
         }

@@ -82,6 +82,51 @@
     return newRequire;
 })
 ({1:[function(require,module,exports){
+'use strict'
+
+var mergeDescriptors = require('merge-descriptors')
+var isObject = require('is-object')
+var hasOwnProperty = Object.prototype.hasOwnProperty
+
+function fill (destination, source, merge) {
+  if (destination && (isObject(source) || isFunction(source))) {
+    merge(destination, source, false)
+    if (isFunction(destination) && isFunction(source) && source.prototype) {
+      merge(destination.prototype, source.prototype, false)
+    }
+  }
+  return destination
+}
+
+exports = module.exports = function fillKeys (destination, source) {
+  return fill(destination, source, mergeDescriptors)
+}
+
+exports.es3 = function fillKeysEs3 (destination, source) {
+  return fill(destination, source, es3Merge)
+}
+
+function es3Merge (destination, source) {
+  for (var key in source) {
+    if (!hasOwnProperty.call(destination, key)) {
+      destination[key] = source[key]
+    }
+  }
+  return destination
+}
+
+function isFunction (value) {
+  return typeof value === 'function'
+}
+
+},{"is-object":2,"merge-descriptors":4}],2:[function(require,module,exports){
+"use strict";
+
+module.exports = function isObject(x) {
+	return typeof x === "object" && x !== null;
+};
+
+},{}],3:[function(require,module,exports){
 /*
 * loglevel - https://github.com/pimterry/loglevel
 *
@@ -306,7 +351,66 @@
     return defaultLogger;
 }));
 
-},{}],2:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
+/*!
+ * merge-descriptors
+ * Copyright(c) 2014 Jonathan Ong
+ * MIT Licensed
+ */
+
+/**
+ * Module exports.
+ * @public
+ */
+
+module.exports = merge
+
+/**
+ * Module variables.
+ * @private
+ */
+
+var hasOwnProperty = Object.prototype.hasOwnProperty
+
+/**
+ * Merge the property descriptors of `src` into `dest`
+ *
+ * @param {object} dest Object to add descriptors to
+ * @param {object} src Object to clone descriptors from
+ * @param {boolean} [redefine=true] Redefine `dest` properties with `src` properties
+ * @returns {object} Reference to dest
+ * @public
+ */
+
+function merge(dest, src, redefine) {
+  if (!dest) {
+    throw new TypeError('argument dest is required')
+  }
+
+  if (!src) {
+    throw new TypeError('argument src is required')
+  }
+
+  if (redefine === undefined) {
+    // Default to true
+    redefine = true
+  }
+
+  Object.getOwnPropertyNames(src).forEach(function forEachOwnPropertyName(name) {
+    if (!redefine && hasOwnProperty.call(dest, name)) {
+      // Skip desriptor
+      return
+    }
+
+    // Copy descriptor
+    var descriptor = Object.getOwnPropertyDescriptor(src, name)
+    Object.defineProperty(dest, name, descriptor)
+  })
+
+  return dest
+}
+
+},{}],5:[function(require,module,exports){
 'use strict';
 
 var fillMissingKeys = require('fill-keys');
@@ -400,111 +504,7 @@ if (require.cache) {
   proxyquire.plugin = replacePrelude.plugin;
 }
 
-},{"fill-keys":3}],3:[function(require,module,exports){
-'use strict'
-
-var mergeDescriptors = require('merge-descriptors')
-var isObject = require('is-object')
-var hasOwnProperty = Object.prototype.hasOwnProperty
-
-function fill (destination, source, merge) {
-  if (destination && (isObject(source) || isFunction(source))) {
-    merge(destination, source, false)
-    if (isFunction(destination) && isFunction(source)) {
-      merge(destination.prototype, source.prototype, false)
-    }
-  }
-  return destination
-}
-
-exports = module.exports = function fillKeys (destination, source) {
-  return fill(destination, source, mergeDescriptors)
-}
-
-exports.es3 = function fillKeysEs3 (destination, source) {
-  return fill(destination, source, es3Merge)
-}
-
-function es3Merge (destination, source) {
-  for (var key in source) {
-    if (!hasOwnProperty.call(destination, key)) {
-      destination[key] = source[key]
-    }
-  }
-  return destination
-}
-
-function isFunction (value) {
-  return typeof value === 'function'
-}
-
-},{"is-object":4,"merge-descriptors":5}],4:[function(require,module,exports){
-"use strict";
-
-module.exports = function isObject(x) {
-	return typeof x === "object" && x !== null;
-};
-
-},{}],5:[function(require,module,exports){
-/*!
- * merge-descriptors
- * Copyright(c) 2014 Jonathan Ong
- * MIT Licensed
- */
-
-/**
- * Module exports.
- * @public
- */
-
-module.exports = merge
-
-/**
- * Module variables.
- * @private
- */
-
-var hasOwnProperty = Object.prototype.hasOwnProperty
-
-/**
- * Merge the property descriptors of `src` into `dest`
- *
- * @param {object} dest Object to add descriptors to
- * @param {object} src Object to clone descriptors from
- * @param {boolean} [redefine=true] Redefine `dest` properties with `src` properties
- * @returns {object} Reference to dest
- * @public
- */
-
-function merge(dest, src, redefine) {
-  if (!dest) {
-    throw new TypeError('argument dest is required')
-  }
-
-  if (!src) {
-    throw new TypeError('argument src is required')
-  }
-
-  if (redefine === undefined) {
-    // Default to true
-    redefine = true
-  }
-
-  Object.getOwnPropertyNames(src).forEach(function forEachOwnPropertyName(name) {
-    if (!redefine && hasOwnProperty.call(dest, name)) {
-      // Skip desriptor
-      return
-    }
-
-    // Copy descriptor
-    var descriptor = Object.getOwnPropertyDescriptor(src, name)
-    Object.defineProperty(dest, name, descriptor)
-  })
-
-  return dest
-}
-
-},{}],6:[function(require,module,exports){
+},{"fill-keys":1}],6:[function(require,module,exports){
 /**
  *
  *
@@ -753,7 +753,7 @@ BaseEffect.prototype.listParams = function () {
 // Return constructor function
 module.exports = BaseEffect;
 
-},{"../core/AudioContextMonkeyPatch":6,"loglevel":1}],8:[function(require,module,exports){
+},{"../core/AudioContextMonkeyPatch":6,"loglevel":3}],8:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1250,7 +1250,7 @@ BaseSound.prototype.clearDispatches = function () {
 // Return constructor function
 module.exports = BaseSound;
 
-},{"../core/AudioContextMonkeyPatch":6,"../core/WebAudioDispatch":19,"loglevel":1}],9:[function(require,module,exports){
+},{"../core/AudioContextMonkeyPatch":6,"../core/WebAudioDispatch":19,"loglevel":3}],9:[function(require,module,exports){
 /**
  * A structure for static configuration options.
  *
@@ -1637,7 +1637,7 @@ function DetectLoopMarkers( buffer ) {
 
 module.exports = DetectLoopMarkers;
 
-},{"loglevel":1}],12:[function(require,module,exports){
+},{"loglevel":3}],12:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1839,7 +1839,7 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
 
 module.exports = FileLoader;
 
-},{"../core/DetectLoopMarkers":11,"loglevel":1}],13:[function(require,module,exports){
+},{"../core/DetectLoopMarkers":11,"loglevel":3}],13:[function(require,module,exports){
  /**
   * @module Core
   *
@@ -1965,7 +1965,7 @@ module.exports = FileLoader;
  }
  module.exports = MultiFileLoader;
 
-},{"../core/FileLoader":12,"../core/SPAudioBuffer":14,"loglevel":1}],14:[function(require,module,exports){
+},{"../core/FileLoader":12,"../core/SPAudioBuffer":14,"loglevel":3}],14:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2221,7 +2221,7 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
 }
 module.exports = SPAudioBuffer;
 
-},{"loglevel":1}],15:[function(require,module,exports){
+},{"loglevel":3}],15:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2619,7 +2619,7 @@ function SPAudioBufferSourceNode( audioContext ) {
 }
 module.exports = SPAudioBufferSourceNode;
 
-},{"../core/SPPlaybackRateParam":17,"../core/WebAudioDispatch":19,"loglevel":1}],16:[function(require,module,exports){
+},{"../core/SPPlaybackRateParam":17,"../core/WebAudioDispatch":19,"loglevel":3}],16:[function(require,module,exports){
 /*
  ** @module Core
  */
@@ -3024,7 +3024,7 @@ SPAudioParam.createPsuedoParam = function ( baseSound, name, minValue, maxValue,
 
 module.exports = SPAudioParam;
 
-},{"../core/Config":9,"../core/WebAudioDispatch":19,"loglevel":1}],17:[function(require,module,exports){
+},{"../core/Config":9,"../core/WebAudioDispatch":19,"loglevel":3}],17:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -3458,7 +3458,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
 
 module.exports = SoundQueue;
 
-},{"../core/Config":9,"../core/WebAudioDispatch":19,"../models/Looper":28,"loglevel":1}],19:[function(require,module,exports){
+},{"../core/Config":9,"../core/WebAudioDispatch":19,"../models/Looper":28,"loglevel":3}],19:[function(require,module,exports){
 /**
  * @module Core
  *
@@ -3500,9 +3500,9 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
 
 module.exports = WebAudioDispatch;
 
-},{"loglevel":1}],20:[function(require,module,exports){
+},{"loglevel":3}],20:[function(require,module,exports){
 arguments[4][19][0].apply(exports,arguments)
-},{"dup":19,"loglevel":1}],21:[function(require,module,exports){
+},{"dup":19,"loglevel":3}],21:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3748,7 +3748,7 @@ Fader.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Fader;
 
-},{"../core/BaseEffect":7,"../core/Converter":10,"../core/SPAudioParam":16,"loglevel":1}],24:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/Converter":10,"../core/SPAudioParam":16,"loglevel":3}],24:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3927,7 +3927,7 @@ Panner.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Panner;
 
-},{"../core/BaseEffect":7,"../core/SPAudioParam":16,"loglevel":1}],26:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/SPAudioParam":16,"loglevel":3}],26:[function(require,module,exports){
 /**
  * @module Models
  *
@@ -4306,7 +4306,7 @@ Activity.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Activity;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/SPAudioParam":16,"../core/webAudioDispatch":20,"../models/Looper":28,"loglevel":1}],27:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/SPAudioParam":16,"../core/webAudioDispatch":20,"../models/Looper":28,"loglevel":3}],27:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4589,7 +4589,7 @@ Extender.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Extender;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"../core/webAudioDispatch":20,"loglevel":1}],28:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"../core/webAudioDispatch":20,"loglevel":3}],28:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4999,7 +4999,7 @@ Looper.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Looper;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioBufferSourceNode":15,"../core/SPAudioParam":16,"../core/webAudioDispatch":20,"loglevel":1}],29:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioBufferSourceNode":15,"../core/SPAudioParam":16,"../core/webAudioDispatch":20,"loglevel":3}],29:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5332,7 +5332,7 @@ MultiTrigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = MultiTrigger;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"../core/webAudioDispatch":20,"loglevel":1}],30:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"../core/webAudioDispatch":20,"loglevel":3}],30:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5699,7 +5699,7 @@ Scrubber.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Scrubber;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"loglevel":1}],31:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"loglevel":3}],31:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5944,7 +5944,7 @@ Trigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Trigger;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"loglevel":1}],32:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"loglevel":3}],32:[function(require,module,exports){
 "use strict";
 var BaseSound = require( 'core/BaseSound' );
 console.log( "Running BaseSound Test... " );
@@ -7685,7 +7685,7 @@ describe( 'SoundQueue.js', function () {
     } );
 } );
 
-},{"core/SoundQueue":18,"proxyquireify":2}],42:[function(require,module,exports){
+},{"core/SoundQueue":18,"proxyquireify":5}],42:[function(require,module,exports){
 "use strict";
 var Compressor = require( 'effects/Compressor' );
 if ( !window.context ) {
@@ -8890,7 +8890,7 @@ describe( 'Activity.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Activity":26,"proxyquireify":2}],48:[function(require,module,exports){
+},{"models/Activity":26,"proxyquireify":5}],48:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Extender');});"use strict";
 var Extender = require( 'models/Extender' );
 if ( !window.context ) {
@@ -9369,7 +9369,7 @@ describe( 'Extender.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Extender":27,"proxyquireify":2}],49:[function(require,module,exports){
+},{"models/Extender":27,"proxyquireify":5}],49:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Looper');});"use strict";
 var Looper = require( 'models/Looper' );
 if ( !window.context ) {
@@ -9933,7 +9933,7 @@ describe( 'Looper.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Looper":28,"proxyquireify":2}],50:[function(require,module,exports){
+},{"models/Looper":28,"proxyquireify":5}],50:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/MultiTrigger');});"use strict";
 var MultiTrigger = require( 'models/MultiTrigger' );
 if ( !window.context ) {
@@ -10451,7 +10451,7 @@ describe( 'MultiTrigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/MultiTrigger":29,"proxyquireify":2}],51:[function(require,module,exports){
+},{"models/MultiTrigger":29,"proxyquireify":5}],51:[function(require,module,exports){
 "use strict";
 var Scrubber = require( 'models/Scrubber' );
 if ( !window.context ) {
@@ -11248,7 +11248,7 @@ describe( 'Trigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Trigger":31,"proxyquireify":2}],53:[function(require,module,exports){
+},{"models/Trigger":31,"proxyquireify":5}],53:[function(require,module,exports){
 /* Core Tests */
 require( './cases/lib/core/test.BaseSound.js' );
 require( './cases/lib/core/test.Config.js' );
