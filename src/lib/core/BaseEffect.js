@@ -2,7 +2,7 @@
  * @module Core
  */
 'use strict';
-require( '../core/AudioContextMonkeyPatch' )();
+var SafeAudioContext = require( '../core/SafeAudioContext' );
 var log = require( 'loglevel' );
 
 /**
@@ -22,7 +22,7 @@ function BaseEffect( context ) {
      */
     if ( context === undefined || context === null ) {
         log.debug( 'Making a new AudioContext' );
-        this.audioContext = new AudioContext();
+        this.audioContext = new SafeAudioContext();
     } else {
         this.audioContext = context;
     }
@@ -121,25 +121,38 @@ function BaseEffect( context ) {
 
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
         var isSafari = /Safari/.test( navigator.userAgent ) && /Apple Computer/.test( navigator.vendor );
-
-        function createDummyOsc() {
-            bootOsc.connect( context.destination );
-            bootOsc.start( 0 );
-            bootOsc.stop( context.currentTime + 0.0001 );
-            bootOsc.disconnect( context.destination );
-            document.body.removeEventListener( 'touchend', createDummyOsc );
-            document.body.removeEventListener( 'webkitmouseforcewillbegin', createDummyOsc );
+        var desiredSampleRate = typeof desiredSampleRate === 'number' ? desiredSampleRate : 44100;
+        if ( isSafari ) {
+            if ( context.state && context.state === 'suspended' ) {
+                context.resume();
+            }
         }
 
-        if ( iOS || isSafari ) {
+        function createDummyBuffer() {
+            // actually this does nothing. support for older devices support iOS 8 and below
+            var buffer = context.createBuffer( 1, 1, desiredSampleRate );
+            var dummy = context.createBufferSource();
+            dummy.buffer = buffer;
+            dummy.connect( context.destination );
+            dummy.start( 0 );
+            dummy.disconnect();
+            if ( context.state && context.state === 'suspended' ) {
+                context.resume();
+            }
+            log.debug( 'currentTime & state ', context.currentTime, context.state );
+            setTimeout( function () {
+                if ( context.state && context.state === 'running' ) {
+                    log.debug( 'context state', context.state );
+                    document.body.removeEventListener( 'touchend', createDummyBuffer );
+                }
+            }, 0 );
+        }
+        if ( iOS ) {
             if ( !window.liveAudioContexts ) {
                 window.liveAudioContexts = [];
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
-                var bootOsc = context.createOscillator();
-                document.body.addEventListener( 'touchend', createDummyOsc );
-                // for desktop Safari using touchpad with Force Touch
-                document.body.addEventListener( 'webkitmouseforcewillbegin', createDummyOsc );
+                document.body.addEventListener( 'touchend', createDummyBuffer );
                 window.liveAudioContexts.push( context );
             }
         }

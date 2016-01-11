@@ -22,6 +22,8 @@ var header = require('gulp-header');
 var markdown = require('gulp-markdown');
 var webserver = require('gulp-webserver');
 var cached = require('gulp-cached');
+// var gulpif = require('gulp-if');
+// var uglify = require('gulp-uglify');
 
 
 //var debug = require('gulp-debug');
@@ -126,6 +128,7 @@ gulp.task('build',['devbuild']);
 function createBundlerStreams(globPattern, destDir, transforms){
     var moduleStripRegex = /.*\//;
     var extStripRegex = /\.js/;
+
     return glob.sync(globPattern).map(function (thisFile){
         gutil.log("Bundling ", thisFile);
         var fileName = thisFile.replace(moduleStripRegex,'');
@@ -175,12 +178,17 @@ gulp.task('releasebuild',['jsbeautify:src'], function(){
     var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/', 'uglifyify');
     var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/', 'uglifyify');
     var coreStream = createBundlerStreams('src/lib/core/SPAudioBuffer.js', 'build/core/', 'uglifyify');
+    // var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/');
+    // var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/');
+    // var coreStream = createBundlerStreams('src/lib/core/SPAudioBuffer.js', 'build/core/');
     var indexStream = gulp.src(paths.files.indexSrc).pipe(gulp.dest(paths.dirs.build));
 
     var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream).concat(indexStream);
 
     return merge.apply(this,combinedStreams);
 });
+
+// custom build for models + effects
 
 gulp.task('watch:lib', function(){
     gulp.watch(paths.files.libSrc, ['devbuild']);

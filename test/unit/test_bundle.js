@@ -530,7 +530,7 @@ module.exports = AudioContextMonkeyPatch;
  * @module Core
  */
 'use strict';
-require( '../core/AudioContextMonkeyPatch' )();
+var SafeAudioContext = require( '../core/SafeAudioContext' );
 var log = require( 'loglevel' );
 
 /**
@@ -550,7 +550,7 @@ function BaseEffect( context ) {
      */
     if ( context === undefined || context === null ) {
         log.debug( 'Making a new AudioContext' );
-        this.audioContext = new AudioContext();
+        this.audioContext = new SafeAudioContext();
     } else {
         this.audioContext = context;
     }
@@ -645,24 +645,40 @@ function BaseEffect( context ) {
 
     this.parameterList_ = [];
 
+    var self = this;
+
+    var desiredSampleRate = typeof desiredSampleRate === 'number' ? desiredSampleRate : 44100;
+
     function bootAudioContext( context ) {
 
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
+        var isSafari = /Safari/.test( navigator.userAgent ) && /Apple Computer/.test( navigator.vendor );
 
-        function createDummyOsc() {
-            bootOsc.start( 0 );
-            bootOsc.stop( context.currentTime + 0.0001 );
-            document.body.removeEventListener( 'touchend', createDummyOsc );
+        function createDummyBuffer() {
+            var bootBuffer = context.createBuffer( 1, 1, desiredSampleRate );
+            var bootSource = context.createBufferSource();
+            bootSource.buffer = bootBuffer;
+            console.log( 'sample rate', context.sampleRate );
+            bootSource.connect( context.destination );
+            bootSource.start( 0 );
+            bootSource.stop( context.currentTime + 0.0001 );
+            bootSource.disconnect();
+            context.close(); // dispose old AudioContext
+            self.context = new AudioContext(); // make a new here
+            document.body.removeEventListener( 'touchend', createDummyBuffer );
+            document.body.removeEventListener( 'webkitmouseforcewillbegin', createDummyBuffer );
         }
 
-        if ( iOS ) {
+        if ( iOS || isSafari && context.sampleRate !== desiredSampleRate ) {
             if ( !window.liveAudioContexts ) {
                 window.liveAudioContexts = [];
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
-                var bootOsc = context.createOscillator();
-                document.body.addEventListener( 'touchend', createDummyOsc );
-                window.liveAudioContexts.push( context );
+
+                document.body.addEventListener( 'touchend', createDummyBuffer );
+                // for desktop Safari using touchpad with Force Touch
+                document.body.addEventListener( 'webkitmouseforcewillbegin', createDummyBuffer );
+                window.liveAudioContexts.push( self.context );
             }
         }
     }
@@ -753,13 +769,13 @@ BaseEffect.prototype.listParams = function () {
 // Return constructor function
 module.exports = BaseEffect;
 
-},{"../core/AudioContextMonkeyPatch":6,"loglevel":3}],8:[function(require,module,exports){
+},{"../core/SafeAudioContext":18,"loglevel":3}],8:[function(require,module,exports){
 /**
  * @module Core
  */
 
 'use strict';
-require( '../core/AudioContextMonkeyPatch' )();
+var SafeAudioContext = require( '../core/SafeAudioContext' );
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var log = require( 'loglevel' );
 
@@ -780,7 +796,7 @@ function BaseSound( context ) {
      */
     if ( context === undefined || context === null ) {
         log.debug( 'Making a new AudioContext' );
-        this.audioContext = new AudioContext();
+        this.audioContext = new SafeAudioContext();
     } else {
         this.audioContext = context;
     }
@@ -959,21 +975,39 @@ function BaseSound( context ) {
     function bootAudioContext( context ) {
 
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
+        var isSafari = /Safari/.test( navigator.userAgent ) && /Apple Computer/.test( navigator.vendor );
+        var desiredSampleRate = typeof desiredSampleRate === 'number' ? desiredSampleRate : 44100;
 
-        function createDummyOsc() {
-            bootOsc.start( 0 );
-            bootOsc.stop( context.currentTime + 0.0001 );
-            document.body.removeEventListener( 'touchend', createDummyOsc );
+        function createDummyBuffer() {
+            // actually this does nothing but or older devices support iOS 8 and below
+            var buffer = context.createBuffer( 1, 1, desiredSampleRate );
+            var dummy = context.createBufferSource();
+            dummy.buffer = buffer;
+            dummy.connect( context.destination );
+            dummy.start( 0 );
+            dummy.disconnect();
+            if ( context.state && context.state === 'suspended' ) {
+                context.resume();
+            }
+            console.log( 'osc sc', context.currentTime, context.state );
+            setTimeout( function () {
+                if ( context.state && context.state === 'running' ) {
+                    console.log( "i'm running" );
+                    document.body.removeEventListener( 'touchend', createDummyBuffer );
+                    document.body.removeEventListener( 'webkitmouseforcewillbegin', createDummyBuffer );
+                }
+            }, 0 );
         }
-
-        if ( iOS ) {
+        if ( iOS || isSafari ) {
             if ( !window.liveAudioContexts ) {
                 window.liveAudioContexts = [];
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
-                var bootOsc = context.createOscillator();
-                document.body.addEventListener( 'touchend', createDummyOsc );
+                document.body.addEventListener( 'touchend', createDummyBuffer );
+                // for desktop Safari using touchpad with Force Touch
+                document.body.addEventListener( 'webkitmouseforcewillbegin', createDummyBuffer );
                 window.liveAudioContexts.push( context );
+                console.log( 'liveAudioContexts', window.liveAudioContexts );
             }
         }
     }
@@ -1250,7 +1284,7 @@ BaseSound.prototype.clearDispatches = function () {
 // Return constructor function
 module.exports = BaseSound;
 
-},{"../core/AudioContextMonkeyPatch":6,"../core/WebAudioDispatch":19,"loglevel":3}],9:[function(require,module,exports){
+},{"../core/SafeAudioContext":18,"../core/WebAudioDispatch":20,"loglevel":3}],9:[function(require,module,exports){
 /**
  * A structure for static configuration options.
  *
@@ -2229,7 +2263,7 @@ module.exports = SPAudioBuffer;
 "use strict";
 var SPPlaybackRateParam = require( '../core/SPPlaybackRateParam' );
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
-var log = require( 'loglevel' );
+//var log = require( 'loglevel' );
 
 /**
  * A wrapper around the AudioBufferSourceNode to be able to track the current playPosition of a AudioBufferSourceNode.
@@ -2537,7 +2571,8 @@ function SPAudioBufferSourceNode( audioContext ) {
 
         var self = this;
         webAudioDispatch( function () {
-            log.debug( 'Resetting BufferSource', self.buffer.length );
+            console.log( 'Resetting BufferSource', self.buffer.length );
+            //log.debug( 'Resetting BufferSource', self.buffer.length );
             // Disconnect source(s) from output.
 
             // Disconnect scope node from trackGain
@@ -2619,7 +2654,7 @@ function SPAudioBufferSourceNode( audioContext ) {
 }
 module.exports = SPAudioBufferSourceNode;
 
-},{"../core/SPPlaybackRateParam":17,"../core/WebAudioDispatch":19,"loglevel":3}],16:[function(require,module,exports){
+},{"../core/SPPlaybackRateParam":17,"../core/WebAudioDispatch":20}],16:[function(require,module,exports){
 /*
  ** @module Core
  */
@@ -3024,7 +3059,7 @@ SPAudioParam.createPsuedoParam = function ( baseSound, name, minValue, maxValue,
 
 module.exports = SPAudioParam;
 
-},{"../core/Config":9,"../core/WebAudioDispatch":19,"loglevel":3}],17:[function(require,module,exports){
+},{"../core/Config":9,"../core/WebAudioDispatch":20,"loglevel":3}],17:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -3104,6 +3139,38 @@ function SPPlaybackRateParam( bufferSourceNode, audioParam, counterParam ) {
 module.exports = SPPlaybackRateParam;
 
 },{"../core/Config":9}],18:[function(require,module,exports){
+/**
+ * @module Core
+ *
+ */
+'use strict';
+require( '../core/AudioContextMonkeyPatch' )();
+var log = require( 'loglevel' );
+/*
+ *  Check for erroreous samplerate in iOS and re-creates a brand new AudioContext.
+ *
+ * @class SafeAudioContext
+ */
+function SafeAudioContext() {
+
+    var desiredSampleRate = typeof desiredSampleRate === 'number' ? desiredSampleRate : 44100;
+    log.debug( 'desiredSampleRate', desiredSampleRate );
+    var context = new AudioContext();
+    var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
+    // In iOS devices sampleRate sometimes can report 48000
+    // Make a new AudioContext
+    if ( iOS && context.sampleRate !== desiredSampleRate ) {
+        log.debug( 'bad sample rate', context.sampleRate );
+        context.close();
+        context = new AudioContext();
+    }
+
+    return context;
+}
+
+module.exports = SafeAudioContext;
+
+},{"../core/AudioContextMonkeyPatch":6,"loglevel":3}],19:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -3458,7 +3525,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
 
 module.exports = SoundQueue;
 
-},{"../core/Config":9,"../core/WebAudioDispatch":19,"../models/Looper":28,"loglevel":3}],19:[function(require,module,exports){
+},{"../core/Config":9,"../core/WebAudioDispatch":20,"../models/Looper":29,"loglevel":3}],20:[function(require,module,exports){
 /**
  * @module Core
  *
@@ -3500,9 +3567,9 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
 
 module.exports = WebAudioDispatch;
 
-},{"loglevel":3}],20:[function(require,module,exports){
-arguments[4][19][0].apply(exports,arguments)
-},{"dup":19,"loglevel":3}],21:[function(require,module,exports){
+},{"loglevel":3}],21:[function(require,module,exports){
+arguments[4][20][0].apply(exports,arguments)
+},{"dup":20,"loglevel":3}],22:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3595,7 +3662,7 @@ Compressor.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Compressor;
 
-},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],22:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],23:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3674,7 +3741,7 @@ Distorter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Distorter;
 
-},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],23:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],24:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3748,7 +3815,7 @@ Fader.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Fader;
 
-},{"../core/BaseEffect":7,"../core/Converter":10,"../core/SPAudioParam":16,"loglevel":3}],24:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/Converter":10,"../core/SPAudioParam":16,"loglevel":3}],25:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3846,7 +3913,7 @@ Filter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Filter;
 
-},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],25:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],26:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3927,7 +3994,7 @@ Panner.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Panner;
 
-},{"../core/BaseEffect":7,"../core/SPAudioParam":16,"loglevel":3}],26:[function(require,module,exports){
+},{"../core/BaseEffect":7,"../core/SPAudioParam":16,"loglevel":3}],27:[function(require,module,exports){
 /**
  * @module Models
  *
@@ -4306,7 +4373,7 @@ Activity.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Activity;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/SPAudioParam":16,"../core/webAudioDispatch":20,"../models/Looper":28,"loglevel":3}],27:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/SPAudioParam":16,"../core/webAudioDispatch":21,"../models/Looper":29,"loglevel":3}],28:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4589,7 +4656,7 @@ Extender.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Extender;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"../core/webAudioDispatch":20,"loglevel":3}],28:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":19,"../core/webAudioDispatch":21,"loglevel":3}],29:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4999,7 +5066,7 @@ Looper.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Looper;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioBufferSourceNode":15,"../core/SPAudioParam":16,"../core/webAudioDispatch":20,"loglevel":3}],29:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioBufferSourceNode":15,"../core/SPAudioParam":16,"../core/webAudioDispatch":21,"loglevel":3}],30:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5332,7 +5399,7 @@ MultiTrigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = MultiTrigger;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"../core/webAudioDispatch":20,"loglevel":3}],30:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":19,"../core/webAudioDispatch":21,"loglevel":3}],31:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5699,7 +5766,7 @@ Scrubber.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Scrubber;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"loglevel":3}],31:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"loglevel":3}],32:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5944,7 +6011,7 @@ Trigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Trigger;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":18,"loglevel":3}],32:[function(require,module,exports){
+},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":19,"loglevel":3}],33:[function(require,module,exports){
 "use strict";
 var BaseSound = require( 'core/BaseSound' );
 console.log( "Running BaseSound Test... " );
@@ -6119,7 +6186,7 @@ describe( 'BaseSound.js', function () {
     } );
 } );
 
-},{"core/BaseSound":8}],33:[function(require,module,exports){
+},{"core/BaseSound":8}],34:[function(require,module,exports){
 "use strict";
 var Config = require( 'core/Config' );
 console.log( "Running Config Test... " );
@@ -6137,7 +6204,7 @@ describe( 'Config.js', function () {
     } );
 } );
 
-},{"core/Config":9}],34:[function(require,module,exports){
+},{"core/Config":9}],35:[function(require,module,exports){
 "use strict";
 var Converter = require( 'core/Converter' );
 console.log( "Running Converter Test... " );
@@ -6160,7 +6227,7 @@ describe( 'Converter.js', function () {
     } );
 } );
 
-},{"core/Converter":10}],35:[function(require,module,exports){
+},{"core/Converter":10}],36:[function(require,module,exports){
     "use strict";
     var detectLoopMarkers = require( 'core/DetectLoopMarkers' )
     console.log( "Running DetectLoopMarker Test... " );
@@ -6444,7 +6511,7 @@ describe( 'Converter.js', function () {
         } );
     } );
 
-},{"core/DetectLoopMarkers":11}],36:[function(require,module,exports){
+},{"core/DetectLoopMarkers":11}],37:[function(require,module,exports){
 "use strict";
 var FileLoader = require( 'core/FileLoader' );
 console.log( "Running FileLoader Test... " );
@@ -6597,7 +6664,7 @@ describe( 'FileLoader.js', function () {
     } );
 } );
 
-},{"core/FileLoader":12}],37:[function(require,module,exports){
+},{"core/FileLoader":12}],38:[function(require,module,exports){
 "use strict";
 var multiFileLoader = require( 'core/MultiFileLoader' );
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
@@ -6673,7 +6740,7 @@ describe( 'MultiFileLoader.js', function () {
     } );
 } );
 
-},{"core/MultiFileLoader":13,"core/SPAudioBuffer":14}],38:[function(require,module,exports){
+},{"core/MultiFileLoader":13,"core/SPAudioBuffer":14}],39:[function(require,module,exports){
 "use strict";
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
 console.log( "Running SPAudioBuffer Test... " );
@@ -6948,7 +7015,7 @@ describe( 'SPAudioBuffer.js', function () {
     } );
 } );
 
-},{"core/SPAudioBuffer":14}],39:[function(require,module,exports){
+},{"core/SPAudioBuffer":14}],40:[function(require,module,exports){
 "use strict";
 var SPAudioBufferSourceNode = require( 'core/SPAudioBufferSourceNode' );
 var SPPlaybackRateParam = require( 'core/SPPlaybackRateParam' );
@@ -7094,7 +7161,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
     } );
 } );
 
-},{"core/SPAudioBufferSourceNode":15,"core/SPPlaybackRateParam":17}],40:[function(require,module,exports){
+},{"core/SPAudioBufferSourceNode":15,"core/SPPlaybackRateParam":17}],41:[function(require,module,exports){
 "use strict";
 var SPAudioParam = require( 'core/SPAudioParam' );
 console.log( "Running SPAudioParam Test... " );
@@ -7258,7 +7325,7 @@ describe( 'SPAudioParam.js', function () {
     } );
 } );
 
-},{"core/SPAudioParam":16}],41:[function(require,module,exports){
+},{"core/SPAudioParam":16}],42:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('core/SoundQueue');});var looperSpies = {
     start: jasmine.createSpy( 'start' ),
     stop: jasmine.createSpy( 'stop' ),
@@ -7685,7 +7752,7 @@ describe( 'SoundQueue.js', function () {
     } );
 } );
 
-},{"core/SoundQueue":18,"proxyquireify":5}],42:[function(require,module,exports){
+},{"core/SoundQueue":19,"proxyquireify":5}],43:[function(require,module,exports){
 "use strict";
 var Compressor = require( 'effects/Compressor' );
 if ( !window.context ) {
@@ -7864,7 +7931,7 @@ describe( 'Compressor.js', function () {
     } );
 } );
 
-},{"effects/Compressor":21}],43:[function(require,module,exports){
+},{"effects/Compressor":22}],44:[function(require,module,exports){
 "use strict";
 var Distorter = require( 'effects/Distorter' );
 if ( !window.context ) {
@@ -7986,7 +8053,7 @@ describe( 'Distorter.js', function () {
     } );
 } );
 
-},{"effects/Distorter":22}],44:[function(require,module,exports){
+},{"effects/Distorter":23}],45:[function(require,module,exports){
 "use strict";
 var Fader = require( 'effects/Fader' );
 if ( !window.context ) {
@@ -8108,7 +8175,7 @@ describe( 'Fader.js', function () {
     } );
 } );
 
-},{"effects/Fader":23}],45:[function(require,module,exports){
+},{"effects/Fader":24}],46:[function(require,module,exports){
 "use strict";
 var Filter = require( 'effects/Filter' );
 if ( !window.context ) {
@@ -8268,7 +8335,7 @@ describe( 'Filter.js', function () {
     } );
 } );
 
-},{"effects/Filter":24}],46:[function(require,module,exports){
+},{"effects/Filter":25}],47:[function(require,module,exports){
 "use strict";
 var Panner = require( 'effects/Panner' );
 if ( !window.context ) {
@@ -8371,7 +8438,7 @@ describe( 'Panner.js', function () {
     } );
 } );
 
-},{"effects/Panner":25}],47:[function(require,module,exports){
+},{"effects/Panner":26}],48:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Activity');});"use strict";
 var Activity = require( 'models/Activity' );
 if ( !window.context ) {
@@ -8890,7 +8957,7 @@ describe( 'Activity.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Activity":26,"proxyquireify":5}],48:[function(require,module,exports){
+},{"models/Activity":27,"proxyquireify":5}],49:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Extender');});"use strict";
 var Extender = require( 'models/Extender' );
 if ( !window.context ) {
@@ -9369,7 +9436,7 @@ describe( 'Extender.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Extender":27,"proxyquireify":5}],49:[function(require,module,exports){
+},{"models/Extender":28,"proxyquireify":5}],50:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Looper');});"use strict";
 var Looper = require( 'models/Looper' );
 if ( !window.context ) {
@@ -9933,7 +10000,7 @@ describe( 'Looper.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Looper":28,"proxyquireify":5}],50:[function(require,module,exports){
+},{"models/Looper":29,"proxyquireify":5}],51:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/MultiTrigger');});"use strict";
 var MultiTrigger = require( 'models/MultiTrigger' );
 if ( !window.context ) {
@@ -10451,7 +10518,7 @@ describe( 'MultiTrigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/MultiTrigger":29,"proxyquireify":5}],51:[function(require,module,exports){
+},{"models/MultiTrigger":30,"proxyquireify":5}],52:[function(require,module,exports){
 "use strict";
 var Scrubber = require( 'models/Scrubber' );
 if ( !window.context ) {
@@ -10769,7 +10836,7 @@ describe( 'Scrubber.js', function () {
     } );
 } );
 
-},{"models/Scrubber":30}],52:[function(require,module,exports){
+},{"models/Scrubber":31}],53:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Trigger');});"use strict";
 var Trigger = require( 'models/Trigger' );
 if ( !window.context ) {
@@ -11248,7 +11315,7 @@ describe( 'Trigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Trigger":31,"proxyquireify":5}],53:[function(require,module,exports){
+},{"models/Trigger":32,"proxyquireify":5}],54:[function(require,module,exports){
 /* Core Tests */
 require( './cases/lib/core/test.BaseSound.js' );
 require( './cases/lib/core/test.Config.js' );
@@ -11276,4 +11343,4 @@ require( './cases/lib/models/test.MultiTrigger.js' );
 require( './cases/lib/models/test.Scrubber.js' );
 require( './cases/lib/models/test.Trigger.js' );
 
-},{"./cases/lib/core/test.BaseSound.js":32,"./cases/lib/core/test.Config.js":33,"./cases/lib/core/test.Converter.js":34,"./cases/lib/core/test.DetectLoopMarkers.js":35,"./cases/lib/core/test.FileLoader.js":36,"./cases/lib/core/test.MultiFileLoader.js":37,"./cases/lib/core/test.SPAudioBuffer.js":38,"./cases/lib/core/test.SPAudioBufferSourceNode.js":39,"./cases/lib/core/test.SPAudioParam.js":40,"./cases/lib/core/test.SoundQueue.js":41,"./cases/lib/effects/test.Compressor.js":42,"./cases/lib/effects/test.Distorter.js":43,"./cases/lib/effects/test.Fader.js":44,"./cases/lib/effects/test.Filter.js":45,"./cases/lib/effects/test.Panner.js":46,"./cases/lib/models/test.Activity.js":47,"./cases/lib/models/test.Extender.js":48,"./cases/lib/models/test.Looper.js":49,"./cases/lib/models/test.MultiTrigger.js":50,"./cases/lib/models/test.Scrubber.js":51,"./cases/lib/models/test.Trigger.js":52}]},{},[53]);
+},{"./cases/lib/core/test.BaseSound.js":33,"./cases/lib/core/test.Config.js":34,"./cases/lib/core/test.Converter.js":35,"./cases/lib/core/test.DetectLoopMarkers.js":36,"./cases/lib/core/test.FileLoader.js":37,"./cases/lib/core/test.MultiFileLoader.js":38,"./cases/lib/core/test.SPAudioBuffer.js":39,"./cases/lib/core/test.SPAudioBufferSourceNode.js":40,"./cases/lib/core/test.SPAudioParam.js":41,"./cases/lib/core/test.SoundQueue.js":42,"./cases/lib/effects/test.Compressor.js":43,"./cases/lib/effects/test.Distorter.js":44,"./cases/lib/effects/test.Fader.js":45,"./cases/lib/effects/test.Filter.js":46,"./cases/lib/effects/test.Panner.js":47,"./cases/lib/models/test.Activity.js":48,"./cases/lib/models/test.Extender.js":49,"./cases/lib/models/test.Looper.js":50,"./cases/lib/models/test.MultiTrigger.js":51,"./cases/lib/models/test.Scrubber.js":52,"./cases/lib/models/test.Trigger.js":53}]},{},[54]);
