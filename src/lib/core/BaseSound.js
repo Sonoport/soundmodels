@@ -231,7 +231,7 @@ function BaseSound( context ) {
                 }
             }, 0 );
         }
-        if ( iOS ) {
+        if ( iOS || isSafari ) {
             if ( !window.liveAudioContexts ) {
                 window.liveAudioContexts = [];
             }

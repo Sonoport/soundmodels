@@ -22,8 +22,6 @@ var header = require('gulp-header');
 var markdown = require('gulp-markdown');
 var webserver = require('gulp-webserver');
 var cached = require('gulp-cached');
-// var gulpif = require('gulp-if');
-// var uglify = require('gulp-uglify');
 
 
 //var debug = require('gulp-debug');
