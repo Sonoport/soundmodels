@@ -645,40 +645,43 @@ function BaseEffect( context ) {
 
     this.parameterList_ = [];
 
-    var self = this;
-
-    var desiredSampleRate = typeof desiredSampleRate === 'number' ? desiredSampleRate : 44100;
-
     function bootAudioContext( context ) {
 
         var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
         var isSafari = /Safari/.test( navigator.userAgent ) && /Apple Computer/.test( navigator.vendor );
-
-        function createDummyBuffer() {
-            var bootBuffer = context.createBuffer( 1, 1, desiredSampleRate );
-            var bootSource = context.createBufferSource();
-            bootSource.buffer = bootBuffer;
-            console.log( 'sample rate', context.sampleRate );
-            bootSource.connect( context.destination );
-            bootSource.start( 0 );
-            bootSource.stop( context.currentTime + 0.0001 );
-            bootSource.disconnect();
-            context.close(); // dispose old AudioContext
-            self.context = new AudioContext(); // make a new here
-            document.body.removeEventListener( 'touchend', createDummyBuffer );
-            document.body.removeEventListener( 'webkitmouseforcewillbegin', createDummyBuffer );
+        var desiredSampleRate = typeof desiredSampleRate === 'number' ? desiredSampleRate : 44100;
+        if ( isSafari ) {
+            if ( context.state && context.state === 'suspended' ) {
+                context.resume();
+            }
         }
 
-        if ( iOS || isSafari && context.sampleRate !== desiredSampleRate ) {
+        function createDummyBuffer() {
+            // actually this does nothing. support for older devices support iOS 8 and below
+            var buffer = context.createBuffer( 1, 1, desiredSampleRate );
+            var dummy = context.createBufferSource();
+            dummy.buffer = buffer;
+            dummy.connect( context.destination );
+            dummy.start( 0 );
+            dummy.disconnect();
+            if ( context.state && context.state === 'suspended' ) {
+                context.resume();
+            }
+            log.debug( 'currentTime & state ', context.currentTime, context.state );
+            setTimeout( function () {
+                if ( context.state && context.state === 'running' ) {
+                    log.debug( 'context state', context.state );
+                    document.body.removeEventListener( 'touchend', createDummyBuffer );
+                }
+            }, 0 );
+        }
+        if ( iOS ) {
             if ( !window.liveAudioContexts ) {
                 window.liveAudioContexts = [];
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
-
                 document.body.addEventListener( 'touchend', createDummyBuffer );
-                // for desktop Safari using touchpad with Force Touch
-                document.body.addEventListener( 'webkitmouseforcewillbegin', createDummyBuffer );
-                window.liveAudioContexts.push( self.context );
+                window.liveAudioContexts.push( context );
             }
         }
     }
@@ -978,8 +981,14 @@ function BaseSound( context ) {
         var isSafari = /Safari/.test( navigator.userAgent ) && /Apple Computer/.test( navigator.vendor );
         var desiredSampleRate = typeof desiredSampleRate === 'number' ? desiredSampleRate : 44100;
 
+        if ( isSafari ) {
+            if ( context.state && context.state === 'suspended' ) {
+                context.resume();
+            }
+        }
+
         function createDummyBuffer() {
-            // actually this does nothing but or older devices support iOS 8 and below
+            // actually this does nothing. support for older devices support iOS 8 and below
             var buffer = context.createBuffer( 1, 1, desiredSampleRate );
             var dummy = context.createBufferSource();
             dummy.buffer = buffer;
@@ -989,14 +998,16 @@ function BaseSound( context ) {
             if ( context.state && context.state === 'suspended' ) {
                 context.resume();
             }
-            console.log( 'osc sc', context.currentTime, context.state );
+            console.log( 'currentTime & state ', context.currentTime, context.state );
+            log.debug( 'currentTime & state ', context.currentTime, context.state );
             setTimeout( function () {
                 if ( context.state && context.state === 'running' ) {
-                    console.log( "i'm running" );
+                    console.log( 'context state', context.state );
+                    log.debug( 'context state', context.state );
                     document.body.removeEventListener( 'touchend', createDummyBuffer );
-                    document.body.removeEventListener( 'webkitmouseforcewillbegin', createDummyBuffer );
                 }
             }, 0 );
+
         }
         if ( iOS || isSafari ) {
             if ( !window.liveAudioContexts ) {
@@ -1004,10 +1015,7 @@ function BaseSound( context ) {
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
                 document.body.addEventListener( 'touchend', createDummyBuffer );
-                // for desktop Safari using touchpad with Force Touch
-                document.body.addEventListener( 'webkitmouseforcewillbegin', createDummyBuffer );
                 window.liveAudioContexts.push( context );
-                console.log( 'liveAudioContexts', window.liveAudioContexts );
             }
         }
     }
@@ -3157,12 +3165,11 @@ function SafeAudioContext() {
     log.debug( 'desiredSampleRate', desiredSampleRate );
     var context = new AudioContext();
     var iOS = /(iPad|iPhone|iPod)/g.test( navigator.userAgent );
-    // In iOS devices sampleRate sometimes can report 48000
-    // Make a new AudioContext
+    // In iOS devices sampleRate can sometimes report 48000
     if ( iOS && context.sampleRate !== desiredSampleRate ) {
         log.debug( 'bad sample rate', context.sampleRate );
-        context.close();
-        context = new AudioContext();
+        context.close(); // close the old one
+        context = new AudioContext(); // Make a new one
     }
 
     return context;

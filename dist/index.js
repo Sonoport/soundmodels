@@ -1,4 +1,4 @@
-/*soundmodels - v2.5.14 - Tue Jan 12 2016 11:17:52 GMT+0800 (SGT) */
+/*soundmodels - v2.5.15 - Mon Feb 01 2016 16:25:35 GMT+0800 (SGT) */
 module.exports = {
     models: {
         Looper: require( './models/Looper.js' ),

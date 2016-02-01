@@ -230,12 +230,14 @@ function BaseSound( context ) {
                     document.body.removeEventListener( 'touchend', createDummyBuffer );
                 }
             }, 0 );
+
         }
         if ( iOS || isSafari ) {
             if ( !window.liveAudioContexts ) {
                 window.liveAudioContexts = [];
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
+                log.debug( 'audio context created' );
                 document.body.addEventListener( 'touchend', createDummyBuffer );
                 window.liveAudioContexts.push( context );
             }
