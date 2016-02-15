@@ -1,4 +1,4 @@
-/*soundmodels - v2.6.0 - Mon Feb 15 2016 16:11:16 GMT+0800 (SGT) */
+/*soundmodels - v2.6.1 - Mon Feb 15 2016 17:25:54 GMT+0800 (SGT) */
 'use strict';
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     core: {
         SPAudioBuffer: require( './core/SPAudioBuffer.js' )
     },
-    effect: {
+    effects: {
         Compressor: require( './effects/Compressor.js' ),
         Distorter: require( './effects/Distorter.js' ),
         Fader: require( './effects/Fader.js' ),
@@ -21,3 +21,7 @@ module.exports = {
         Panner: require( './effects/Panner.js' ),
     }
 };
+
+// Aliases.
+module.exports.model = module.exports.models;
+module.exports.effect = module.exports.effects;

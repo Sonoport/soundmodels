@@ -84,7 +84,7 @@ The sound models are available in two types of packages, [CommonJS](wiki.commonj
 	trigger.play();
 	```
 
-3. The individual models are available using the `require('soundmodels/model/<model name>)` scheme, while the sound effects are available using the `require('soundmodels/effects/<effect name>)`. This helps to minimize the amount of code bundled.
+3. The individual models are available using the `require('soundmodels/models/<model name>)` scheme, while the sound effects are available using the `require('soundmodels/effects/<effect name>)`. This helps to minimize the amount of code bundled.
 
 4. The CommonJS based dependencies can then be bundled using something like [browserify](http://browserify.org/)
 
@@ -207,6 +207,3 @@ Please [raise issues](https://github.com/Sonoport/soundmodels/issues) if you fin
 ## License
 
 Sonoport Sound Models are licensed under the Apache License, Version 2.0. See the LICENSE file for more info.
-
-
-
