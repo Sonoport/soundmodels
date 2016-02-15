@@ -12,7 +12,7 @@ module.exports = {
     core: {
         SPAudioBuffer: require( './core/SPAudioBuffer.js' )
     },
-    effect: {
+    effects: {
         Compressor: require( './effects/Compressor.js' ),
         Distorter: require( './effects/Distorter.js' ),
         Fader: require( './effects/Fader.js' ),
@@ -20,3 +20,7 @@ module.exports = {
         Panner: require( './effects/Panner.js' ),
     }
 };
+
+// Aliases.
+module.exports.model = module.exports.models;
+module.exports.effect = module.exports.effects;
