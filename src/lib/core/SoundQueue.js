@@ -301,12 +301,14 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
      *
      * @method clear
      * @param {Number} [when] A timestamp describing when to clear the SoundQueue
+     * @param {Number} [fadeTime] Amount of time (seconds) it takes for linear ramp down to happen.
+     * @param {Number} [resetOnRelease] Boolean to define if release stops (resets) the playback or just pauses it.
      */
-    this.stop = function ( when ) {
+    this.stop = function ( when, fadeTime, resetOnRelease ) {
         processEventsTill( when );
         eventQueue_ = [];
         busyVoices_.forEach( function ( thisVoice ) {
-            thisVoice.release( when );
+            thisVoice.release( when, fadeTime, resetOnRelease );
         } );
         freeVoices_.forEach( function ( thisVoice ) {
             thisVoice.stop( when );
