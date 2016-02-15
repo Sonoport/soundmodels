@@ -293,7 +293,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
      * @method clear
      */
     this.pause = function () {
-        this.stop( 0 );
+        this.stop( 0, 0.01 );
     };
 
     /**
