@@ -8,7 +8,7 @@ var Config = require( '../core/Config' );
 var BaseSound = require( '../core/BaseSound' );
 var Looper = require( '../models/Looper' );
 var SPAudioParam = require( '../core/SPAudioParam' );
-var webAudioDispatch = require( '../core/webAudioDispatch' );
+var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var log = require( 'loglevel' );
 
 /**

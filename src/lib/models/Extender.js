@@ -9,7 +9,7 @@ var SoundQueue = require( '../core/SoundQueue' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/MultiFileLoader' );
 var Converter = require( '../core/Converter' );
-var webAudioDispatch = require( '../core/webAudioDispatch' );
+var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var log = require( 'loglevel' );
 
 /**
