@@ -355,8 +355,11 @@ module.exports = function isObject(x) {
 /*!
  * merge-descriptors
  * Copyright(c) 2014 Jonathan Ong
+ * Copyright(c) 2015 Douglas Christopher Wilson
  * MIT Licensed
  */
+
+'use strict'
 
 /**
  * Module exports.
@@ -411,9 +414,19 @@ function merge(dest, src, redefine) {
 }
 
 },{}],5:[function(require,module,exports){
+'use strict'
+
+module.exports = function createNotFoundError (path) {
+  var err = new Error('Cannot find module \'' + path + '\'')
+  err.code = 'MODULE_NOT_FOUND'
+  return err
+}
+
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var fillMissingKeys = require('fill-keys');
+var moduleNotFoundError = require('module-not-found-error');
 
 function ProxyquireifyError(msg) {
   this.name = 'ProxyquireifyError';
@@ -485,14 +498,14 @@ proxyquire._proxy = function (require_, request) {
     return require_(request);
   }
 
-  if (!stubs) return original();
+  if (!stubs || !stubs.hasOwnProperty(request)) return original();
 
   var stub = stubs[request];
 
-  if (!stub) return original();
+  if (stub === null) throw moduleNotFoundError(request)
 
-  var stubWideNoCallThru = !!stubs['@noCallThru'] && stub['@noCallThru'] !== false;
-  var noCallThru = stubWideNoCallThru || !!stub['@noCallThru'];
+  var stubWideNoCallThru = Boolean(stubs['@noCallThru']) && (stub == null || stub['@noCallThru'] !== false);
+  var noCallThru = stubWideNoCallThru || (stub != null && Boolean(stub['@noCallThru']));
   return noCallThru ? stub : fillMissingKeys(stub, original());
 };
 
@@ -504,7 +517,7 @@ if (require.cache) {
   proxyquire.plugin = replacePrelude.plugin;
 }
 
-},{"fill-keys":1}],6:[function(require,module,exports){
+},{"fill-keys":1,"module-not-found-error":5}],7:[function(require,module,exports){
 /**
  *
  *
@@ -525,7 +538,7 @@ function AudioContextMonkeyPatch() {
 
 module.exports = AudioContextMonkeyPatch;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -772,7 +785,7 @@ BaseEffect.prototype.listParams = function () {
 // Return constructor function
 module.exports = BaseEffect;
 
-},{"../core/SafeAudioContext":18,"loglevel":3}],8:[function(require,module,exports){
+},{"../core/SafeAudioContext":19,"loglevel":3}],9:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -998,11 +1011,9 @@ function BaseSound( context ) {
             if ( context.state && context.state === 'suspended' ) {
                 context.resume();
             }
-            console.log( 'currentTime & state ', context.currentTime, context.state );
             log.debug( 'currentTime & state ', context.currentTime, context.state );
             setTimeout( function () {
                 if ( context.state && context.state === 'running' ) {
-                    console.log( 'context state', context.state );
                     log.debug( 'context state', context.state );
                     document.body.removeEventListener( 'touchend', createDummyBuffer );
                 }
@@ -1014,6 +1025,7 @@ function BaseSound( context ) {
                 window.liveAudioContexts = [];
             }
             if ( window.liveAudioContexts.indexOf( context ) < 0 ) {
+                log.debug( 'audio context created' );
                 document.body.addEventListener( 'touchend', createDummyBuffer );
                 window.liveAudioContexts.push( context );
             }
@@ -1292,7 +1304,7 @@ BaseSound.prototype.clearDispatches = function () {
 // Return constructor function
 module.exports = BaseSound;
 
-},{"../core/SafeAudioContext":18,"../core/WebAudioDispatch":20,"loglevel":3}],9:[function(require,module,exports){
+},{"../core/SafeAudioContext":19,"../core/WebAudioDispatch":21,"loglevel":3}],10:[function(require,module,exports){
 /**
  * A structure for static configuration options.
  *
@@ -1382,7 +1394,7 @@ Config.DEFAULT_SMOOTHING_CONSTANT = 0.05;
 
 module.exports = Config;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1437,7 +1449,7 @@ Converter.dBFStoRatio = function ( dBFS ) {
 
 module.exports = Converter;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1679,7 +1691,7 @@ function DetectLoopMarkers( buffer ) {
 
 module.exports = DetectLoopMarkers;
 
-},{"loglevel":3}],12:[function(require,module,exports){
+},{"loglevel":3}],13:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1881,7 +1893,7 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
 
 module.exports = FileLoader;
 
-},{"../core/DetectLoopMarkers":11,"loglevel":3}],13:[function(require,module,exports){
+},{"../core/DetectLoopMarkers":12,"loglevel":3}],14:[function(require,module,exports){
  /**
   * @module Core
   *
@@ -2007,7 +2019,7 @@ module.exports = FileLoader;
  }
  module.exports = MultiFileLoader;
 
-},{"../core/FileLoader":12,"../core/SPAudioBuffer":14,"loglevel":3}],14:[function(require,module,exports){
+},{"../core/FileLoader":13,"../core/SPAudioBuffer":15,"loglevel":3}],15:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2263,7 +2275,7 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
 }
 module.exports = SPAudioBuffer;
 
-},{"loglevel":3}],15:[function(require,module,exports){
+},{"loglevel":3}],16:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2271,7 +2283,7 @@ module.exports = SPAudioBuffer;
 "use strict";
 var SPPlaybackRateParam = require( '../core/SPPlaybackRateParam' );
 var webAudioDispatch = require( '../core/WebAudioDispatch' );
-//var log = require( 'loglevel' );
+var log = require( 'loglevel' );
 
 /**
  * A wrapper around the AudioBufferSourceNode to be able to track the current playPosition of a AudioBufferSourceNode.
@@ -2536,7 +2548,7 @@ function SPAudioBufferSourceNode( audioContext ) {
      */
     this.start = function ( when, offset, duration ) {
         if ( this.playbackState === this.UNSCHEDULED_STATE ) {
-            if ( duration == undefined ) { // jshint ignore:line
+            if ( duration === undefined || duration === null ) {
                 bufferSourceNode_.start( when, offset );
                 counterNode_.start( when, offset );
             } else {
@@ -2579,8 +2591,7 @@ function SPAudioBufferSourceNode( audioContext ) {
 
         var self = this;
         webAudioDispatch( function () {
-            console.log( 'Resetting BufferSource', self.buffer.length );
-            //log.debug( 'Resetting BufferSource', self.buffer.length );
+            log.debug( 'Resetting BufferSource', self.buffer.length );
             // Disconnect source(s) from output.
 
             // Disconnect scope node from trackGain
@@ -2662,7 +2673,7 @@ function SPAudioBufferSourceNode( audioContext ) {
 }
 module.exports = SPAudioBufferSourceNode;
 
-},{"../core/SPPlaybackRateParam":17,"../core/WebAudioDispatch":20}],16:[function(require,module,exports){
+},{"../core/SPPlaybackRateParam":18,"../core/WebAudioDispatch":21,"loglevel":3}],17:[function(require,module,exports){
 /*
  ** @module Core
  */
@@ -3067,7 +3078,7 @@ SPAudioParam.createPsuedoParam = function ( baseSound, name, minValue, maxValue,
 
 module.exports = SPAudioParam;
 
-},{"../core/Config":9,"../core/WebAudioDispatch":20,"loglevel":3}],17:[function(require,module,exports){
+},{"../core/Config":10,"../core/WebAudioDispatch":21,"loglevel":3}],18:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -3146,7 +3157,7 @@ function SPPlaybackRateParam( bufferSourceNode, audioParam, counterParam ) {
 }
 module.exports = SPPlaybackRateParam;
 
-},{"../core/Config":9}],18:[function(require,module,exports){
+},{"../core/Config":10}],19:[function(require,module,exports){
 /**
  * @module Core
  *
@@ -3177,7 +3188,7 @@ function SafeAudioContext() {
 
 module.exports = SafeAudioContext;
 
-},{"../core/AudioContextMonkeyPatch":6,"loglevel":3}],19:[function(require,module,exports){
+},{"../core/AudioContextMonkeyPatch":7,"loglevel":3}],20:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -3532,7 +3543,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
 
 module.exports = SoundQueue;
 
-},{"../core/Config":9,"../core/WebAudioDispatch":20,"../models/Looper":29,"loglevel":3}],20:[function(require,module,exports){
+},{"../core/Config":10,"../core/WebAudioDispatch":21,"../models/Looper":29,"loglevel":3}],21:[function(require,module,exports){
 /**
  * @module Core
  *
@@ -3574,9 +3585,7 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
 
 module.exports = WebAudioDispatch;
 
-},{"loglevel":3}],21:[function(require,module,exports){
-arguments[4][20][0].apply(exports,arguments)
-},{"dup":20,"loglevel":3}],22:[function(require,module,exports){
+},{"loglevel":3}],22:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3669,7 +3678,7 @@ Compressor.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Compressor;
 
-},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],23:[function(require,module,exports){
+},{"../core/BaseEffect":8,"../core/SPAudioParam":17}],23:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3748,7 +3757,7 @@ Distorter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Distorter;
 
-},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],24:[function(require,module,exports){
+},{"../core/BaseEffect":8,"../core/SPAudioParam":17}],24:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3822,7 +3831,7 @@ Fader.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Fader;
 
-},{"../core/BaseEffect":7,"../core/Converter":10,"../core/SPAudioParam":16,"loglevel":3}],25:[function(require,module,exports){
+},{"../core/BaseEffect":8,"../core/Converter":11,"../core/SPAudioParam":17,"loglevel":3}],25:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3920,7 +3929,7 @@ Filter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Filter;
 
-},{"../core/BaseEffect":7,"../core/SPAudioParam":16}],26:[function(require,module,exports){
+},{"../core/BaseEffect":8,"../core/SPAudioParam":17}],26:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -4001,7 +4010,7 @@ Panner.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Panner;
 
-},{"../core/BaseEffect":7,"../core/SPAudioParam":16,"loglevel":3}],27:[function(require,module,exports){
+},{"../core/BaseEffect":8,"../core/SPAudioParam":17,"loglevel":3}],27:[function(require,module,exports){
 /**
  * @module Models
  *
@@ -4012,7 +4021,7 @@ var Config = require( '../core/Config' );
 var BaseSound = require( '../core/BaseSound' );
 var Looper = require( '../models/Looper' );
 var SPAudioParam = require( '../core/SPAudioParam' );
-var webAudioDispatch = require( '../core/webAudioDispatch' );
+var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var log = require( 'loglevel' );
 
 /**
@@ -4380,7 +4389,7 @@ Activity.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Activity;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/SPAudioParam":16,"../core/webAudioDispatch":21,"../models/Looper":29,"loglevel":3}],28:[function(require,module,exports){
+},{"../core/BaseSound":9,"../core/Config":10,"../core/SPAudioParam":17,"../core/WebAudioDispatch":21,"../models/Looper":29,"loglevel":3}],28:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4392,7 +4401,7 @@ var SoundQueue = require( '../core/SoundQueue' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/MultiFileLoader' );
 var Converter = require( '../core/Converter' );
-var webAudioDispatch = require( '../core/webAudioDispatch' );
+var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var log = require( 'loglevel' );
 
 /**
@@ -4663,7 +4672,7 @@ Extender.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Extender;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":19,"../core/webAudioDispatch":21,"loglevel":3}],29:[function(require,module,exports){
+},{"../core/BaseSound":9,"../core/Config":10,"../core/Converter":11,"../core/MultiFileLoader":14,"../core/SPAudioParam":17,"../core/SoundQueue":20,"../core/WebAudioDispatch":21,"loglevel":3}],29:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4675,7 +4684,7 @@ var BaseSound = require( '../core/BaseSound' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var SPAudioBufferSourceNode = require( '../core/SPAudioBufferSourceNode' );
 var multiFileLoader = require( '../core/MultiFileLoader' );
-var webAudioDispatch = require( '../core/webAudioDispatch' );
+var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var log = require( 'loglevel' );
 
 /**
@@ -5073,7 +5082,7 @@ Looper.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Looper;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioBufferSourceNode":15,"../core/SPAudioParam":16,"../core/webAudioDispatch":21,"loglevel":3}],30:[function(require,module,exports){
+},{"../core/BaseSound":9,"../core/Config":10,"../core/MultiFileLoader":14,"../core/SPAudioBufferSourceNode":16,"../core/SPAudioParam":17,"../core/WebAudioDispatch":21,"loglevel":3}],30:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5086,7 +5095,7 @@ var SoundQueue = require( '../core/SoundQueue' );
 var SPAudioParam = require( '../core/SPAudioParam' );
 var multiFileLoader = require( '../core/MultiFileLoader' );
 var Converter = require( '../core/Converter' );
-var webAudioDispatch = require( '../core/webAudioDispatch' );
+var webAudioDispatch = require( '../core/WebAudioDispatch' );
 var log = require( 'loglevel' );
 
 /**
@@ -5406,7 +5415,7 @@ MultiTrigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = MultiTrigger;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":19,"../core/webAudioDispatch":21,"loglevel":3}],31:[function(require,module,exports){
+},{"../core/BaseSound":9,"../core/Config":10,"../core/Converter":11,"../core/MultiFileLoader":14,"../core/SPAudioParam":17,"../core/SoundQueue":20,"../core/WebAudioDispatch":21,"loglevel":3}],31:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5773,7 +5782,7 @@ Scrubber.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Scrubber;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"loglevel":3}],32:[function(require,module,exports){
+},{"../core/BaseSound":9,"../core/Config":10,"../core/MultiFileLoader":14,"../core/SPAudioParam":17,"loglevel":3}],32:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -6018,7 +6027,7 @@ Trigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Trigger;
 
-},{"../core/BaseSound":8,"../core/Config":9,"../core/Converter":10,"../core/MultiFileLoader":13,"../core/SPAudioParam":16,"../core/SoundQueue":19,"loglevel":3}],33:[function(require,module,exports){
+},{"../core/BaseSound":9,"../core/Config":10,"../core/Converter":11,"../core/MultiFileLoader":14,"../core/SPAudioParam":17,"../core/SoundQueue":20,"loglevel":3}],33:[function(require,module,exports){
 "use strict";
 var BaseSound = require( 'core/BaseSound' );
 console.log( "Running BaseSound Test... " );
@@ -6193,7 +6202,7 @@ describe( 'BaseSound.js', function () {
     } );
 } );
 
-},{"core/BaseSound":8}],34:[function(require,module,exports){
+},{"core/BaseSound":9}],34:[function(require,module,exports){
 "use strict";
 var Config = require( 'core/Config' );
 console.log( "Running Config Test... " );
@@ -6211,7 +6220,7 @@ describe( 'Config.js', function () {
     } );
 } );
 
-},{"core/Config":9}],35:[function(require,module,exports){
+},{"core/Config":10}],35:[function(require,module,exports){
 "use strict";
 var Converter = require( 'core/Converter' );
 console.log( "Running Converter Test... " );
@@ -6234,7 +6243,7 @@ describe( 'Converter.js', function () {
     } );
 } );
 
-},{"core/Converter":10}],36:[function(require,module,exports){
+},{"core/Converter":11}],36:[function(require,module,exports){
     "use strict";
     var detectLoopMarkers = require( 'core/DetectLoopMarkers' )
     console.log( "Running DetectLoopMarker Test... " );
@@ -6518,7 +6527,7 @@ describe( 'Converter.js', function () {
         } );
     } );
 
-},{"core/DetectLoopMarkers":11}],37:[function(require,module,exports){
+},{"core/DetectLoopMarkers":12}],37:[function(require,module,exports){
 "use strict";
 var FileLoader = require( 'core/FileLoader' );
 console.log( "Running FileLoader Test... " );
@@ -6671,7 +6680,7 @@ describe( 'FileLoader.js', function () {
     } );
 } );
 
-},{"core/FileLoader":12}],38:[function(require,module,exports){
+},{"core/FileLoader":13}],38:[function(require,module,exports){
 "use strict";
 var multiFileLoader = require( 'core/MultiFileLoader' );
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
@@ -6747,7 +6756,7 @@ describe( 'MultiFileLoader.js', function () {
     } );
 } );
 
-},{"core/MultiFileLoader":13,"core/SPAudioBuffer":14}],39:[function(require,module,exports){
+},{"core/MultiFileLoader":14,"core/SPAudioBuffer":15}],39:[function(require,module,exports){
 "use strict";
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
 console.log( "Running SPAudioBuffer Test... " );
@@ -7022,7 +7031,7 @@ describe( 'SPAudioBuffer.js', function () {
     } );
 } );
 
-},{"core/SPAudioBuffer":14}],40:[function(require,module,exports){
+},{"core/SPAudioBuffer":15}],40:[function(require,module,exports){
 "use strict";
 var SPAudioBufferSourceNode = require( 'core/SPAudioBufferSourceNode' );
 var SPPlaybackRateParam = require( 'core/SPPlaybackRateParam' );
@@ -7168,7 +7177,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
     } );
 } );
 
-},{"core/SPAudioBufferSourceNode":15,"core/SPPlaybackRateParam":17}],41:[function(require,module,exports){
+},{"core/SPAudioBufferSourceNode":16,"core/SPPlaybackRateParam":18}],41:[function(require,module,exports){
 "use strict";
 var SPAudioParam = require( 'core/SPAudioParam' );
 console.log( "Running SPAudioParam Test... " );
@@ -7332,7 +7341,7 @@ describe( 'SPAudioParam.js', function () {
     } );
 } );
 
-},{"core/SPAudioParam":16}],42:[function(require,module,exports){
+},{"core/SPAudioParam":17}],42:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('core/SoundQueue');});var looperSpies = {
     start: jasmine.createSpy( 'start' ),
     stop: jasmine.createSpy( 'stop' ),
@@ -7759,7 +7768,7 @@ describe( 'SoundQueue.js', function () {
     } );
 } );
 
-},{"core/SoundQueue":19,"proxyquireify":5}],43:[function(require,module,exports){
+},{"core/SoundQueue":20,"proxyquireify":6}],43:[function(require,module,exports){
 "use strict";
 var Compressor = require( 'effects/Compressor' );
 if ( !window.context ) {
@@ -8964,7 +8973,7 @@ describe( 'Activity.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Activity":27,"proxyquireify":5}],49:[function(require,module,exports){
+},{"models/Activity":27,"proxyquireify":6}],49:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Extender');});"use strict";
 var Extender = require( 'models/Extender' );
 if ( !window.context ) {
@@ -9443,7 +9452,7 @@ describe( 'Extender.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Extender":28,"proxyquireify":5}],50:[function(require,module,exports){
+},{"models/Extender":28,"proxyquireify":6}],50:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Looper');});"use strict";
 var Looper = require( 'models/Looper' );
 if ( !window.context ) {
@@ -10007,7 +10016,7 @@ describe( 'Looper.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Looper":29,"proxyquireify":5}],51:[function(require,module,exports){
+},{"models/Looper":29,"proxyquireify":6}],51:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/MultiTrigger');});"use strict";
 var MultiTrigger = require( 'models/MultiTrigger' );
 if ( !window.context ) {
@@ -10525,7 +10534,7 @@ describe( 'MultiTrigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/MultiTrigger":30,"proxyquireify":5}],52:[function(require,module,exports){
+},{"models/MultiTrigger":30,"proxyquireify":6}],52:[function(require,module,exports){
 "use strict";
 var Scrubber = require( 'models/Scrubber' );
 if ( !window.context ) {
@@ -11322,7 +11331,7 @@ describe( 'Trigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Trigger":32,"proxyquireify":5}],54:[function(require,module,exports){
+},{"models/Trigger":32,"proxyquireify":6}],54:[function(require,module,exports){
 /* Core Tests */
 require( './cases/lib/core/test.BaseSound.js' );
 require( './cases/lib/core/test.Config.js' );

@@ -374,7 +374,8 @@ var requirejs, require, define;
                                 this.defining = !1;
                                 this.defined && !this.defineEmitted && ( this.defineEmitted = !0, this.emit( "defined", this.exports ), this.defineEmitComplete = !0 )
                             }
-                        } else this.fetch()
+                        }
+                    else this.fetch()
                 }
             },
             callPlugin: function () {
