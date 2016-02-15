@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
     models: {
         Looper: require( './models/Looper.js' ),
