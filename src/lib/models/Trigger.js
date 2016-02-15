@@ -232,6 +232,21 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
         BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
     };
 
+    /**
+     * Pauses if currently playing. Otherwise starts playing.
+     *
+     * @method toggle
+     *
+     */
+    this.toggle = function () {
+        if ( soundQueue_.isPlaying ) {
+            soundQueue_.pause();
+            BaseSound.prototype.pause.call( this );
+        } else {
+            this.start( 0 );
+        }
+    };
+
     // SoundQueue based model.
     soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
 
