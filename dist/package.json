@@ -1,7 +1,7 @@
 {
   "name": "soundmodels",
   "description": "Sonoport Sound Models",
-  "version": "2.5.15",
+  "version": "2.6.0",
   "homepage": "http://sonoport.com",
   "author": "Sonoport <tech@sonoport.com> (http://sonoport.com/)",
   "files": [
@@ -26,6 +26,10 @@
     {
       "name": "Cliburn Solano",
       "email": "cliburn.solano@sonoport.com"
+    },
+    {
+      "name": "Melvin Tiong",
+      "email": "melvin.tiong@sonoport.com"
     }
   ],
   "devDependencies": {
