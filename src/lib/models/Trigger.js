@@ -28,7 +28,7 @@ var log = require( 'loglevel' );
 function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
 
     var options;
-    if (context && context.isOptionsObject === true) {
+    if ( context && context.isOptionsObject === true ) {
         options = context; // Hack to enable passing in an options argument as the 1st argument in a non-breaking manner.
         context = options.context;
         sources = options.sources;
