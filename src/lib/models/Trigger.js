@@ -36,6 +36,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
         onLoadComplete = options.onLoadComplete;
         onAudioStart = options.onAudioStart;
         onAudioEnd = options.onAudioEnd;
+        var numberOfVoices = options.numberOfVoices; // We pass this to soundQueue constructor at the bottom so we can have a different number of voices besides 8.
     }
 
     if ( !( this instanceof Trigger ) ) {
@@ -260,7 +261,7 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
     };
 
     // SoundQueue based model.
-    soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
+    soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd, numberOfVoices );
 
     init( sources );
 }
