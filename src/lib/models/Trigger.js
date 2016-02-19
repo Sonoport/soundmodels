@@ -26,6 +26,18 @@ var log = require( 'loglevel' );
  * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
  */
 function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
+
+    var options;
+    if (context && context.isOptionsObject === true) {
+        options = context; // Hack to enable passing in an options argument as the 1st argument in a non-breaking manner.
+        context = options.context;
+        sources = options.sources;
+        onLoadProgress = options.onLoadProgress;
+        onLoadComplete = options.onLoadComplete;
+        onAudioStart = options.onAudioStart;
+        onAudioEnd = options.onAudioEnd;
+    }
+
     if ( !( this instanceof Trigger ) ) {
         throw new TypeError( "Trigger constructor cannot be called as a function." );
     }
