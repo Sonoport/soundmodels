@@ -1,4 +1,4 @@
-/*soundmodels - v2.6.3 - Fri Feb 19 2016 15:30:29 GMT+0800 (SGT) */
+/*soundmodels - v2.7.0 - Mon Feb 22 2016 16:14:52 GMT+0800 (SGT) */
 'use strict';
 
 module.exports = {
