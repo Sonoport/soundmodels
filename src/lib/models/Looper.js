@@ -26,10 +26,19 @@ var log = require( 'loglevel' );
  * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
  * @param {Function} [onTrackEnd] Callback when an individual track has finished playing.
  */
-function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd, onTrackEnd ) {
+function Looper( options ) {
     if ( !( this instanceof Looper ) ) {
-        throw new TypeError( "Looper constructor cannot be called as a function." );
+        return new Looper( options );
     }
+    var legacyArgumentsMode = arguments.length > 1 || ( options || {} ).currentTime; // Test to guess whether user is using old-style multiple argument constructor instead.
+    var context = legacyArgumentsMode ? arguments[ 0 ] : options.context;
+    var sources = legacyArgumentsMode ? arguments[ 1 ] : options.sources;
+    var onLoadProgress = legacyArgumentsMode ? arguments[ 2 ] : options.onLoadProgress;
+    var onLoadComplete = legacyArgumentsMode ? arguments[ 3 ] : options.onLoadComplete;
+    var onAudioStart = legacyArgumentsMode ? arguments[ 4 ] : options.onAudioStart;
+    var onAudioEnd = legacyArgumentsMode ? arguments[ 5 ] : options.onAudioEnd;
+    var onTrackEnd = legacyArgumentsMode ? arguments[ 6 ] : options.onTrackEnd;
+
     // Call superclass constructor
     BaseSound.call( this, context );
     this.maxSources = Config.MAX_VOICES;

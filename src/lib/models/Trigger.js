@@ -25,23 +25,18 @@ var log = require( 'loglevel' );
  * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
  * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
  */
-function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
-
-    var options;
-    if ( context && context.isOptionsObject === true ) {
-        options = context; // Hack to enable passing in an options argument as the 1st argument in a non-breaking manner.
-        context = options.context;
-        sources = options.sources;
-        onLoadProgress = options.onLoadProgress;
-        onLoadComplete = options.onLoadComplete;
-        onAudioStart = options.onAudioStart;
-        onAudioEnd = options.onAudioEnd;
-        var numberOfVoices = options.numberOfVoices; // We pass this to soundQueue constructor at the bottom so we can have a different number of voices besides 8.
-    }
-
+function Trigger( options ) {
     if ( !( this instanceof Trigger ) ) {
-        throw new TypeError( "Trigger constructor cannot be called as a function." );
+        return new Trigger( options );
     }
+    var legacyArgumentsMode = arguments.length > 1 || ( options || {} ).currentTime; // Test to guess whether user is using old-style multiple argument constructor instead.
+    var context = legacyArgumentsMode ? arguments[ 0 ] : options.context;
+    var sources = legacyArgumentsMode ? arguments[ 1 ] : options.sources;
+    var onLoadProgress = legacyArgumentsMode ? arguments[ 2 ] : options.onLoadProgress;
+    var onLoadComplete = legacyArgumentsMode ? arguments[ 3 ] : options.onLoadComplete;
+    var onAudioStart = legacyArgumentsMode ? arguments[ 4 ] : options.onAudioStart;
+    var onAudioEnd = legacyArgumentsMode ? arguments[ 5 ] : options.onAudioEnd;
+    var numberOfVoices = options.numberOfVoices; // We pass this to soundQueue constructor at the bottom so we can have a different number of voices besides 8.
 
     // Call superclass constructor
     BaseSound.call( this, context );

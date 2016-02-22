@@ -24,10 +24,18 @@ var log = require( 'loglevel' );
  * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
  * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
  */
-function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
+function Scrubber( options ) {
     if ( !( this instanceof Scrubber ) ) {
-        throw new TypeError( "Scrubber constructor cannot be called as a function." );
+        return new Scrubber( options );
     }
+    var legacyArgumentsMode = arguments.length > 1 || ( options || {} ).currentTime; // Test to guess whether user is using old-style multiple argument constructor instead.
+    var context = legacyArgumentsMode ? arguments[ 0 ] : options.context;
+    var source = legacyArgumentsMode ? arguments[ 1 ] : options.source;
+    var onLoadProgress = legacyArgumentsMode ? arguments[ 2 ] : options.onLoadProgress;
+    var onLoadComplete = legacyArgumentsMode ? arguments[ 3 ] : options.onLoadComplete;
+    var onAudioStart = legacyArgumentsMode ? arguments[ 4 ] : options.onAudioStart;
+    var onAudioEnd = legacyArgumentsMode ? arguments[ 5 ] : options.onAudioEnd;
+
     // Call superclass constructor
     BaseSound.call( this, context );
     this.maxSources = 1;
