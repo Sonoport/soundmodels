@@ -31,25 +31,22 @@ var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - <%= new Date() %> */\n';
 
 var paths = {
     files: {
-        jsSrc: 'src/**/**/*.js',
-        libSrc: 'src/lib/**/*.js',
-        indexSrc: 'src/lib/index.js',
-        modelsSrc: 'src/lib/models/*.js',
-        effectsSrc: 'src/lib/effects/*.js',
-        coreSrc: 'src/lib/core/*.js',
+        indexSrc: 'index.js',
+        modelsSrc: 'models/*.js',
+        effectsSrc: 'effects/*.js',
+        coreSrc: 'core/*.js',
         allTestSrc: 'test/**/*.js',
         unitTestCases: 'test/unit/cases/**/*.js',
         builtSrc : 'build/**/*.js',
         packageData : ['LICENSE', 'package.json', 'README.md'],
-        publishableSrc : ['src/lib/models/*.js', 'src/lib/effects/*.js', 'src/lib/core/SPAudioParam.js','src/lib/core/BaseSound.js', 'src/lib/core/BaseEffect.js', 'src/lib/core/SPAudioBuffer.js']
+        publishableSrc : ['models/*.js', 'effects/*.js', 'core/SPAudioParam.js','core/BaseSound.js', 'core/BaseEffect.js', 'core/SPAudioBuffer.js']
     },
     dirs: {
         build: 'build/',
         dist: 'dist/',
-        src: 'src/',
-        lib: 'src/lib/',
-        core: 'src/lib/core/',
-        models: 'src/lib/models/',
+        core: 'core/',
+        models: 'models/',
+        effects: 'effects/',
         apiDocs: 'docs/api/',
         yuiDocSrc: 'docs/yuidocs/',
         yuiDocTheme: 'docs/yuitheme/',
@@ -92,7 +89,7 @@ gulp.task('publishdocs', function() {
 });
 
 gulp.task('publishdev', function(){
-    return gulp.src('src/docs/dev/*.md')
+    return gulp.src('docs/src/dev/*.md')
         .pipe(markdown())
         .pipe(gulp.dest('docs/dev/'));
 });
@@ -102,7 +99,13 @@ gulp.task('publishdev', function(){
 */
 
 gulp.task('jshint:src', function(){
-    return gulp.src([paths.files.jsSrc, 'package.json', 'Gulpfile.js', '!src/docs/yuitheme/**/*.js', '!src/**/AudioContextMonkeyPatch.js'])
+    return gulp.src([paths.files.indexSrc,
+        paths.files.modelsSrc,
+        paths.files.coreSrc,
+        paths.files.effectsSrc,
+        'package.json',
+        'Gulpfile.js',
+        '!core/AudioContextMonkeyPatch.js'])
     .pipe(cached('jshint:src'))
     .pipe(jshint('.jshintrc'))
     .pipe(jshint.reporter('jshint-stylish'))
@@ -110,10 +113,27 @@ gulp.task('jshint:src', function(){
 });
 
 gulp.task('jsbeautify:src', ['jshint:src'], function(){
-    return gulp.src(paths.files.libSrc)
-    .pipe(cached('beautify:src'))
-    .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
-    .pipe(gulp.dest(paths.dirs.lib));
+    var indexStream = gulp.src(paths.files.indexSrc)
+        .pipe(cached('jsbeautify:src'))
+        .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
+        .pipe(gulp.dest('./'));
+
+    var coreStream = gulp.src(paths.files.coreSrc)
+        .pipe(cached('jsbeautify:src'))
+        .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
+        .pipe(gulp.dest(paths.dirs.core));
+
+    var modelStreams = gulp.src(paths.files.modelsSrc)
+        .pipe(cached('jsbeautify:src'))
+        .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
+        .pipe(gulp.dest(paths.dirs.models));
+
+    var effectsStreams = gulp.src(paths.files.effectsSrc)
+        .pipe(cached('jsbeautify:src'))
+        .pipe(prettify({config: '.jsbeautifyrc', mode: 'VERIFY_AND_WRITE'}))
+        .pipe(gulp.dest(paths.dirs.effects));
+
+    return merge(indexStream, coreStream, modelStreams, effectsStreams);
 });
 
 /*
@@ -158,9 +178,8 @@ gulp.task('devbuild',['jsbeautify:src'], function(){
     var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/');
     var coreStream = createBundlerStreams(paths.files.coreSrc, 'build/core/');
     var indexStream = gulp.src(paths.files.indexSrc).pipe(gulp.dest(paths.dirs.build));
-    var packageDataStream = gulp.src(paths.files.packageData).pipe(gulp.dest(paths.dirs.build));
 
-    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream).concat(indexStream).concat(packageDataStream);
+    var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream).concat(indexStream);
 
     return merge.apply(this,combinedStreams);
 });
@@ -173,7 +192,7 @@ gulp.task('releasebuild',['jsbeautify:src'], function(){
 
     var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/', 'uglifyify');
     var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/', 'uglifyify');
-    var coreStream = createBundlerStreams('src/lib/core/SPAudioBuffer.js', 'build/core/', 'uglifyify');
+    var coreStream = createBundlerStreams('core/SPAudioBuffer.js', 'build/core/', 'uglifyify');
     var indexStream = gulp.src(paths.files.indexSrc).pipe(gulp.dest(paths.dirs.build));
 
     var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream).concat(indexStream);
@@ -184,7 +203,7 @@ gulp.task('releasebuild',['jsbeautify:src'], function(){
 // custom build for models + effects
 
 gulp.task('watch:lib', function(){
-    gulp.watch(paths.files.libSrc, ['devbuild']);
+    gulp.watch([paths.files.indexSrc, paths.files.coreSrc, paths.files.modelsSrc, paths.files.effectsSrc], ['devbuild']);
 });
 
 /*
@@ -192,39 +211,21 @@ gulp.task('watch:lib', function(){
 */
 
 gulp.task('bump:major', function(){
-  var packageStream =  gulp.src('./package.json')
-  .pipe(bump({type: 'major'}))
-  .pipe(gulp.dest('./'));
-
-  var bowerStream =  gulp.src('./bower.json')
-  .pipe(bump({type: 'major'}))
-  .pipe(gulp.dest('./'));
-
-  return merge(packageStream,bowerStream);
+  return gulp.src(['./package.json', './bower.json'])
+    .pipe(bump({type: 'major'}))
+    .pipe(gulp.dest('./'));
 });
 
 gulp.task('bump:minor', function(){
-  var packageStream =  gulp.src('./package.json')
-  .pipe(bump({type: 'minor'}))
-  .pipe(gulp.dest('./'));
-
-  var bowerStream =  gulp.src('./bower.json')
-  .pipe(bump({type: 'minor'}))
-  .pipe(gulp.dest('./'));
-
-  return merge(packageStream,bowerStream);
+  return gulp.src(['./package.json', './bower.json'])
+    .pipe(bump({type: 'minor'}))
+    .pipe(gulp.dest('./'));
 });
 
 gulp.task('bump:patch', function(){
-  var packageStream =  gulp.src('./package.json')
-  .pipe(bump({type: 'patch'}))
-  .pipe(gulp.dest('./'));
-
-  var bowerStream =  gulp.src('./bower.json')
-  .pipe(bump({type: 'patch'}))
-  .pipe(gulp.dest('./'));
-
-  return merge(packageStream,bowerStream);
+    return gulp.src(['./package.json', './bower.json'])
+        .pipe(bump({type: 'patch'}))
+        .pipe(gulp.dest('./'));
 });
 
 /*
@@ -304,7 +305,7 @@ gulp.task('unittestbuild',['jsbeautify:test'], function(){
 
     var bundler = browserify({
         entries: ['./test/unit/spec_entry.js'],
-        paths : [paths.dirs.lib],
+        paths : ['./', paths.dirs.core, paths.dirs.models, paths.dirs.effects],
     });
     return bundler
     .plugin(proxyquire.plugin)

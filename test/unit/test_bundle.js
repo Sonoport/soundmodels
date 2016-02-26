@@ -82,442 +82,6 @@
     return newRequire;
 })
 ({1:[function(require,module,exports){
-'use strict'
-
-var mergeDescriptors = require('merge-descriptors')
-var isObject = require('is-object')
-var hasOwnProperty = Object.prototype.hasOwnProperty
-
-function fill (destination, source, merge) {
-  if (destination && (isObject(source) || isFunction(source))) {
-    merge(destination, source, false)
-    if (isFunction(destination) && isFunction(source) && source.prototype) {
-      merge(destination.prototype, source.prototype, false)
-    }
-  }
-  return destination
-}
-
-exports = module.exports = function fillKeys (destination, source) {
-  return fill(destination, source, mergeDescriptors)
-}
-
-exports.es3 = function fillKeysEs3 (destination, source) {
-  return fill(destination, source, es3Merge)
-}
-
-function es3Merge (destination, source) {
-  for (var key in source) {
-    if (!hasOwnProperty.call(destination, key)) {
-      destination[key] = source[key]
-    }
-  }
-  return destination
-}
-
-function isFunction (value) {
-  return typeof value === 'function'
-}
-
-},{"is-object":2,"merge-descriptors":4}],2:[function(require,module,exports){
-"use strict";
-
-module.exports = function isObject(x) {
-	return typeof x === "object" && x !== null;
-};
-
-},{}],3:[function(require,module,exports){
-/*
-* loglevel - https://github.com/pimterry/loglevel
-*
-* Copyright (c) 2013 Tim Perry
-* Licensed under the MIT license.
-*/
-(function (root, definition) {
-    "use strict";
-    if (typeof module === 'object' && module.exports && typeof require === 'function') {
-        module.exports = definition();
-    } else if (typeof define === 'function' && typeof define.amd === 'object') {
-        define(definition);
-    } else {
-        root.log = definition();
-    }
-}(this, function () {
-    "use strict";
-    var noop = function() {};
-    var undefinedType = "undefined";
-
-    function realMethod(methodName) {
-        if (typeof console === undefinedType) {
-            return false; // We can't build a real method without a console to log to
-        } else if (console[methodName] !== undefined) {
-            return bindMethod(console, methodName);
-        } else if (console.log !== undefined) {
-            return bindMethod(console, 'log');
-        } else {
-            return noop;
-        }
-    }
-
-    function bindMethod(obj, methodName) {
-        var method = obj[methodName];
-        if (typeof method.bind === 'function') {
-            return method.bind(obj);
-        } else {
-            try {
-                return Function.prototype.bind.call(method, obj);
-            } catch (e) {
-                // Missing bind shim or IE8 + Modernizr, fallback to wrapping
-                return function() {
-                    return Function.prototype.apply.apply(method, [obj, arguments]);
-                };
-            }
-        }
-    }
-
-    // these private functions always need `this` to be set properly
-
-    function enableLoggingWhenConsoleArrives(methodName, level, loggerName) {
-        return function () {
-            if (typeof console !== undefinedType) {
-                replaceLoggingMethods.call(this, level, loggerName);
-                this[methodName].apply(this, arguments);
-            }
-        };
-    }
-
-    function replaceLoggingMethods(level, loggerName) {
-        /*jshint validthis:true */
-        for (var i = 0; i < logMethods.length; i++) {
-            var methodName = logMethods[i];
-            this[methodName] = (i < level) ?
-                noop :
-                this.methodFactory(methodName, level, loggerName);
-        }
-    }
-
-    function defaultMethodFactory(methodName, level, loggerName) {
-        /*jshint validthis:true */
-        return realMethod(methodName) ||
-               enableLoggingWhenConsoleArrives.apply(this, arguments);
-    }
-
-    var logMethods = [
-        "trace",
-        "debug",
-        "info",
-        "warn",
-        "error"
-    ];
-
-    function Logger(name, defaultLevel, factory) {
-      var self = this;
-      var currentLevel;
-      var storageKey = "loglevel";
-      if (name) {
-        storageKey += ":" + name;
-      }
-
-      function persistLevelIfPossible(levelNum) {
-          var levelName = (logMethods[levelNum] || 'silent').toUpperCase();
-
-          // Use localStorage if available
-          try {
-              window.localStorage[storageKey] = levelName;
-              return;
-          } catch (ignore) {}
-
-          // Use session cookie as fallback
-          try {
-              window.document.cookie =
-                encodeURIComponent(storageKey) + "=" + levelName + ";";
-          } catch (ignore) {}
-      }
-
-      function getPersistedLevel() {
-          var storedLevel;
-
-          try {
-              storedLevel = window.localStorage[storageKey];
-          } catch (ignore) {}
-
-          if (typeof storedLevel === undefinedType) {
-              try {
-                  var cookie = window.document.cookie;
-                  var location = cookie.indexOf(
-                      encodeURIComponent(storageKey) + "=");
-                  if (location) {
-                      storedLevel = /^([^;]+)/.exec(cookie.slice(location))[1];
-                  }
-              } catch (ignore) {}
-          }
-
-          // If the stored level is not valid, treat it as if nothing was stored.
-          if (self.levels[storedLevel] === undefined) {
-              storedLevel = undefined;
-          }
-
-          return storedLevel;
-      }
-
-      /*
-       *
-       * Public API
-       *
-       */
-
-      self.levels = { "TRACE": 0, "DEBUG": 1, "INFO": 2, "WARN": 3,
-          "ERROR": 4, "SILENT": 5};
-
-      self.methodFactory = factory || defaultMethodFactory;
-
-      self.getLevel = function () {
-          return currentLevel;
-      };
-
-      self.setLevel = function (level, persist) {
-          if (typeof level === "string" && self.levels[level.toUpperCase()] !== undefined) {
-              level = self.levels[level.toUpperCase()];
-          }
-          if (typeof level === "number" && level >= 0 && level <= self.levels.SILENT) {
-              currentLevel = level;
-              if (persist !== false) {  // defaults to true
-                  persistLevelIfPossible(level);
-              }
-              replaceLoggingMethods.call(self, level, name);
-              if (typeof console === undefinedType && level < self.levels.SILENT) {
-                  return "No console available for logging";
-              }
-          } else {
-              throw "log.setLevel() called with invalid level: " + level;
-          }
-      };
-
-      self.setDefaultLevel = function (level) {
-          if (!getPersistedLevel()) {
-              self.setLevel(level, false);
-          }
-      };
-
-      self.enableAll = function(persist) {
-          self.setLevel(self.levels.TRACE, persist);
-      };
-
-      self.disableAll = function(persist) {
-          self.setLevel(self.levels.SILENT, persist);
-      };
-
-      // Initialize with the right level
-      var initialLevel = getPersistedLevel();
-      if (initialLevel == null) {
-          initialLevel = defaultLevel == null ? "WARN" : defaultLevel;
-      }
-      self.setLevel(initialLevel, false);
-    }
-
-    /*
-     *
-     * Package-level API
-     *
-     */
-
-    var defaultLogger = new Logger();
-
-    var _loggersByName = {};
-    defaultLogger.getLogger = function getLogger(name) {
-        if (typeof name !== "string" || name === "") {
-          throw new TypeError("You must supply a name when creating a logger.");
-        }
-
-        var logger = _loggersByName[name];
-        if (!logger) {
-          logger = _loggersByName[name] = new Logger(
-            name, defaultLogger.getLevel(), defaultLogger.methodFactory);
-        }
-        return logger;
-    };
-
-    // Grab the current global log variable in case of overwrite
-    var _log = (typeof window !== undefinedType) ? window.log : undefined;
-    defaultLogger.noConflict = function() {
-        if (typeof window !== undefinedType &&
-               window.log === defaultLogger) {
-            window.log = _log;
-        }
-
-        return defaultLogger;
-    };
-
-    return defaultLogger;
-}));
-
-},{}],4:[function(require,module,exports){
-/*!
- * merge-descriptors
- * Copyright(c) 2014 Jonathan Ong
- * Copyright(c) 2015 Douglas Christopher Wilson
- * MIT Licensed
- */
-
-'use strict'
-
-/**
- * Module exports.
- * @public
- */
-
-module.exports = merge
-
-/**
- * Module variables.
- * @private
- */
-
-var hasOwnProperty = Object.prototype.hasOwnProperty
-
-/**
- * Merge the property descriptors of `src` into `dest`
- *
- * @param {object} dest Object to add descriptors to
- * @param {object} src Object to clone descriptors from
- * @param {boolean} [redefine=true] Redefine `dest` properties with `src` properties
- * @returns {object} Reference to dest
- * @public
- */
-
-function merge(dest, src, redefine) {
-  if (!dest) {
-    throw new TypeError('argument dest is required')
-  }
-
-  if (!src) {
-    throw new TypeError('argument src is required')
-  }
-
-  if (redefine === undefined) {
-    // Default to true
-    redefine = true
-  }
-
-  Object.getOwnPropertyNames(src).forEach(function forEachOwnPropertyName(name) {
-    if (!redefine && hasOwnProperty.call(dest, name)) {
-      // Skip desriptor
-      return
-    }
-
-    // Copy descriptor
-    var descriptor = Object.getOwnPropertyDescriptor(src, name)
-    Object.defineProperty(dest, name, descriptor)
-  })
-
-  return dest
-}
-
-},{}],5:[function(require,module,exports){
-'use strict'
-
-module.exports = function createNotFoundError (path) {
-  var err = new Error('Cannot find module \'' + path + '\'')
-  err.code = 'MODULE_NOT_FOUND'
-  return err
-}
-
-},{}],6:[function(require,module,exports){
-'use strict';
-
-var fillMissingKeys = require('fill-keys');
-var moduleNotFoundError = require('module-not-found-error');
-
-function ProxyquireifyError(msg) {
-  this.name = 'ProxyquireifyError';
-  Error.captureStackTrace(this, ProxyquireifyError);
-  this.message = msg || 'An error occurred inside proxyquireify.';
-}
-
-function validateArguments(request, stubs) {
-  var msg = (function getMessage() {
-    if (!request)
-      return 'Missing argument: "request". Need it to resolve desired module.';
-
-    if (!stubs)
-      return 'Missing argument: "stubs". If no stubbing is needed, use regular require instead.';
-
-    if (typeof request != 'string')
-      return 'Invalid argument: "request". Needs to be a requirable string that is the module to load.';
-
-    if (typeof stubs != 'object')
-      return 'Invalid argument: "stubs". Needs to be an object containing overrides e.g., {"path": { extname: function () { ... } } }.';
-  })();
-
-  if (msg) throw new ProxyquireifyError(msg);
-}
-
-var stubs;
-
-function stub(stubs_) {
-  stubs = stubs_;
-  // This cache is used by the prelude as an alternative to the regular cache.
-  // It is not read or written here, except to set it to an empty object when
-  // adding stubs and to reset it to null when clearing stubs.
-  module.exports._cache = {};
-}
-
-function reset() {
-  stubs = undefined;
-  module.exports._cache = null;
-}
-
-var proxyquire = module.exports = function (require_) {
-  if (typeof require_ != 'function')
-    throw new ProxyquireifyError(
-        'It seems like you didn\'t initialize proxyquireify with the require in your test.\n'
-      + 'Make sure to correct this, i.e.: "var proxyquire = require(\'proxyquireify\')(require);"'
-    );
-
-  reset();
-
-  return function(request, stubs) {
-
-    validateArguments(request, stubs);
-
-    // set the stubs and require dependency
-    // when stub require is invoked by the module under test it will find the stubs here
-    stub(stubs);
-    var dep = require_(request);
-    reset();
-
-    return dep;
-  };
-};
-
-// Start with the default cache
-proxyquire._cache = null;
-
-proxyquire._proxy = function (require_, request) {
-  function original() {
-    return require_(request);
-  }
-
-  if (!stubs || !stubs.hasOwnProperty(request)) return original();
-
-  var stub = stubs[request];
-
-  if (stub === null) throw moduleNotFoundError(request)
-
-  var stubWideNoCallThru = Boolean(stubs['@noCallThru']) && (stub == null || stub['@noCallThru'] !== false);
-  var noCallThru = stubWideNoCallThru || (stub != null && Boolean(stub['@noCallThru']));
-  return noCallThru ? stub : fillMissingKeys(stub, original());
-};
-
-if (require.cache) {
-  // only used during build, so prevent browserify from including it
-  var replacePreludePath = './lib/replace-prelude';
-  var replacePrelude = require(replacePreludePath);
-  proxyquire.browserify = replacePrelude.browserify;
-  proxyquire.plugin = replacePrelude.plugin;
-}
-
-},{"fill-keys":1,"module-not-found-error":5}],7:[function(require,module,exports){
 /**
  *
  *
@@ -538,7 +102,7 @@ function AudioContextMonkeyPatch() {
 
 module.exports = AudioContextMonkeyPatch;
 
-},{}],8:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -785,7 +349,7 @@ BaseEffect.prototype.listParams = function () {
 // Return constructor function
 module.exports = BaseEffect;
 
-},{"../core/SafeAudioContext":19,"loglevel":3}],9:[function(require,module,exports){
+},{"../core/SafeAudioContext":13,"loglevel":29}],3:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1304,7 +868,7 @@ BaseSound.prototype.clearDispatches = function () {
 // Return constructor function
 module.exports = BaseSound;
 
-},{"../core/SafeAudioContext":19,"../core/WebAudioDispatch":21,"loglevel":3}],10:[function(require,module,exports){
+},{"../core/SafeAudioContext":13,"../core/WebAudioDispatch":15,"loglevel":29}],4:[function(require,module,exports){
 /**
  * A structure for static configuration options.
  *
@@ -1394,7 +958,7 @@ Config.DEFAULT_SMOOTHING_CONSTANT = 0.05;
 
 module.exports = Config;
 
-},{}],11:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1449,7 +1013,7 @@ Converter.dBFStoRatio = function ( dBFS ) {
 
 module.exports = Converter;
 
-},{}],12:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1691,7 +1255,7 @@ function DetectLoopMarkers( buffer ) {
 
 module.exports = DetectLoopMarkers;
 
-},{"loglevel":3}],13:[function(require,module,exports){
+},{"loglevel":29}],7:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -1893,7 +1457,7 @@ function FileLoader( URL, context, onloadCallback, onProgressCallback ) {
 
 module.exports = FileLoader;
 
-},{"../core/DetectLoopMarkers":12,"loglevel":3}],14:[function(require,module,exports){
+},{"../core/DetectLoopMarkers":6,"loglevel":29}],8:[function(require,module,exports){
  /**
   * @module Core
   *
@@ -2019,7 +1583,7 @@ module.exports = FileLoader;
  }
  module.exports = MultiFileLoader;
 
-},{"../core/FileLoader":13,"../core/SPAudioBuffer":15,"loglevel":3}],15:[function(require,module,exports){
+},{"../core/FileLoader":7,"../core/SPAudioBuffer":9,"loglevel":29}],9:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2275,7 +1839,7 @@ function SPAudioBuffer( audioContext, URL, startPoint, endPoint, audioBuffer ) {
 }
 module.exports = SPAudioBuffer;
 
-},{"loglevel":3}],16:[function(require,module,exports){
+},{"loglevel":29}],10:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -2673,7 +2237,7 @@ function SPAudioBufferSourceNode( audioContext ) {
 }
 module.exports = SPAudioBufferSourceNode;
 
-},{"../core/SPPlaybackRateParam":18,"../core/WebAudioDispatch":21,"loglevel":3}],17:[function(require,module,exports){
+},{"../core/SPPlaybackRateParam":12,"../core/WebAudioDispatch":15,"loglevel":29}],11:[function(require,module,exports){
 /*
  ** @module Core
  */
@@ -3078,7 +2642,7 @@ SPAudioParam.createPsuedoParam = function ( baseSound, name, minValue, maxValue,
 
 module.exports = SPAudioParam;
 
-},{"../core/Config":10,"../core/WebAudioDispatch":21,"loglevel":3}],18:[function(require,module,exports){
+},{"../core/Config":4,"../core/WebAudioDispatch":15,"loglevel":29}],12:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -3157,7 +2721,7 @@ function SPPlaybackRateParam( bufferSourceNode, audioParam, counterParam ) {
 }
 module.exports = SPPlaybackRateParam;
 
-},{"../core/Config":10}],19:[function(require,module,exports){
+},{"../core/Config":4}],13:[function(require,module,exports){
 /**
  * @module Core
  *
@@ -3188,7 +2752,7 @@ function SafeAudioContext() {
 
 module.exports = SafeAudioContext;
 
-},{"../core/AudioContextMonkeyPatch":7,"loglevel":3}],20:[function(require,module,exports){
+},{"../core/AudioContextMonkeyPatch":1,"loglevel":29}],14:[function(require,module,exports){
 /**
  * @module Core
  */
@@ -3484,7 +3048,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
      * @method clear
      */
     this.pause = function () {
-        this.stop( 0 );
+        this.stop( 0, 0.01 );
     };
 
     /**
@@ -3492,12 +3056,14 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
      *
      * @method clear
      * @param {Number} [when] A timestamp describing when to clear the SoundQueue
+     * @param {Number} [fadeTime] Amount of time (seconds) it takes for linear ramp down to happen.
+     * @param {Number} [resetOnRelease] Boolean to define if release stops (resets) the playback or just pauses it.
      */
-    this.stop = function ( when ) {
+    this.stop = function ( when, fadeTime, resetOnRelease ) {
         processEventsTill( when );
         eventQueue_ = [];
         busyVoices_.forEach( function ( thisVoice ) {
-            thisVoice.release( when );
+            thisVoice.release( when, fadeTime, resetOnRelease );
         } );
         freeVoices_.forEach( function ( thisVoice ) {
             thisVoice.stop( when );
@@ -3543,7 +3109,7 @@ function SoundQueue( context, onAudioStart, onAudioEnd, numberOfVoices ) {
 
 module.exports = SoundQueue;
 
-},{"../core/Config":10,"../core/WebAudioDispatch":21,"../models/Looper":29,"loglevel":3}],21:[function(require,module,exports){
+},{"../core/Config":4,"../core/WebAudioDispatch":15,"../models/Looper":23,"loglevel":29}],15:[function(require,module,exports){
 /**
  * @module Core
  *
@@ -3585,7 +3151,7 @@ function WebAudioDispatch( functionCall, time, audioContext ) {
 
 module.exports = WebAudioDispatch;
 
-},{"loglevel":3}],22:[function(require,module,exports){
+},{"loglevel":29}],16:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3678,7 +3244,7 @@ Compressor.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Compressor;
 
-},{"../core/BaseEffect":8,"../core/SPAudioParam":17}],23:[function(require,module,exports){
+},{"../core/BaseEffect":2,"../core/SPAudioParam":11}],17:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3757,7 +3323,7 @@ Distorter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Distorter;
 
-},{"../core/BaseEffect":8,"../core/SPAudioParam":17}],24:[function(require,module,exports){
+},{"../core/BaseEffect":2,"../core/SPAudioParam":11}],18:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3831,7 +3397,7 @@ Fader.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Fader;
 
-},{"../core/BaseEffect":8,"../core/Converter":11,"../core/SPAudioParam":17,"loglevel":3}],25:[function(require,module,exports){
+},{"../core/BaseEffect":2,"../core/Converter":5,"../core/SPAudioParam":11,"loglevel":29}],19:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -3929,7 +3495,7 @@ Filter.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Filter;
 
-},{"../core/BaseEffect":8,"../core/SPAudioParam":17}],26:[function(require,module,exports){
+},{"../core/BaseEffect":2,"../core/SPAudioParam":11}],20:[function(require,module,exports){
 /**
  * @module Effects
  */
@@ -4010,7 +3576,7 @@ Panner.prototype = Object.create( BaseEffect.prototype );
 
 module.exports = Panner;
 
-},{"../core/BaseEffect":8,"../core/SPAudioParam":17,"loglevel":3}],27:[function(require,module,exports){
+},{"../core/BaseEffect":2,"../core/SPAudioParam":11,"loglevel":29}],21:[function(require,module,exports){
 /**
  * @module Models
  *
@@ -4038,10 +3604,17 @@ var log = require( 'loglevel' );
  * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
  * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
  */
-function Activity( context, source, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
+function Activity( options ) {
     if ( !( this instanceof Activity ) ) {
-        throw new TypeError( "Activity constructor cannot be called as a function." );
+        return new Activity( options );
     }
+    var legacyArgumentsMode = arguments.length > 1 || ( options || {} ).currentTime; // Test to guess whether user is using old-style multiple argument constructor instead.
+    var context = legacyArgumentsMode ? arguments[ 0 ] : options.context;
+    var source = legacyArgumentsMode ? arguments[ 1 ] : options.source;
+    var onLoadProgress = legacyArgumentsMode ? arguments[ 2 ] : options.onLoadProgress;
+    var onLoadComplete = legacyArgumentsMode ? arguments[ 3 ] : options.onLoadComplete;
+    var onAudioStart = legacyArgumentsMode ? arguments[ 4 ] : options.onAudioStart;
+    var onAudioEnd = legacyArgumentsMode ? arguments[ 5 ] : options.onAudioEnd;
 
     BaseSound.call( this, context );
     /*Support upto 8 seperate voices*/
@@ -4389,7 +3962,7 @@ Activity.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Activity;
 
-},{"../core/BaseSound":9,"../core/Config":10,"../core/SPAudioParam":17,"../core/WebAudioDispatch":21,"../models/Looper":29,"loglevel":3}],28:[function(require,module,exports){
+},{"../core/BaseSound":3,"../core/Config":4,"../core/SPAudioParam":11,"../core/WebAudioDispatch":15,"../models/Looper":23,"loglevel":29}],22:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4418,10 +3991,17 @@ var log = require( 'loglevel' );
  * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
  * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
  */
-function Extender( context, source, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
+function Extender( options ) {
     if ( !( this instanceof Extender ) ) {
-        throw new TypeError( "Extender constructor cannot be called as a function." );
+        return new Extender( options );
     }
+    var legacyArgumentsMode = arguments.length > 1 || ( options || {} ).currentTime; // Test to guess whether user is using old-style multiple argument constructor instead.
+    var context = legacyArgumentsMode ? arguments[ 0 ] : options.context;
+    var source = legacyArgumentsMode ? arguments[ 1 ] : options.source;
+    var onLoadProgress = legacyArgumentsMode ? arguments[ 2 ] : options.onLoadProgress;
+    var onLoadComplete = legacyArgumentsMode ? arguments[ 3 ] : options.onLoadComplete;
+    var onAudioStart = legacyArgumentsMode ? arguments[ 4 ] : options.onAudioStart;
+    var onAudioEnd = legacyArgumentsMode ? arguments[ 5 ] : options.onAudioEnd;
 
     // Call superclass constructor
     BaseSound.call( this, context );
@@ -4672,7 +4252,7 @@ Extender.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Extender;
 
-},{"../core/BaseSound":9,"../core/Config":10,"../core/Converter":11,"../core/MultiFileLoader":14,"../core/SPAudioParam":17,"../core/SoundQueue":20,"../core/WebAudioDispatch":21,"loglevel":3}],29:[function(require,module,exports){
+},{"../core/BaseSound":3,"../core/Config":4,"../core/Converter":5,"../core/MultiFileLoader":8,"../core/SPAudioParam":11,"../core/SoundQueue":14,"../core/WebAudioDispatch":15,"loglevel":29}],23:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -4701,10 +4281,19 @@ var log = require( 'loglevel' );
  * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
  * @param {Function} [onTrackEnd] Callback when an individual track has finished playing.
  */
-function Looper( context, sources, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd, onTrackEnd ) {
+function Looper( options ) {
     if ( !( this instanceof Looper ) ) {
-        throw new TypeError( "Looper constructor cannot be called as a function." );
+        return new Looper( options );
     }
+    var legacyArgumentsMode = arguments.length > 1 || ( options || {} ).currentTime; // Test to guess whether user is using old-style multiple argument constructor instead.
+    var context = legacyArgumentsMode ? arguments[ 0 ] : options.context;
+    var sources = legacyArgumentsMode ? arguments[ 1 ] : options.sources;
+    var onLoadProgress = legacyArgumentsMode ? arguments[ 2 ] : options.onLoadProgress;
+    var onLoadComplete = legacyArgumentsMode ? arguments[ 3 ] : options.onLoadComplete;
+    var onAudioStart = legacyArgumentsMode ? arguments[ 4 ] : options.onAudioStart;
+    var onAudioEnd = legacyArgumentsMode ? arguments[ 5 ] : options.onAudioEnd;
+    var onTrackEnd = legacyArgumentsMode ? arguments[ 6 ] : options.onTrackEnd;
+
     // Call superclass constructor
     BaseSound.call( this, context );
     this.maxSources = Config.MAX_VOICES;
@@ -5082,7 +4671,7 @@ Looper.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Looper;
 
-},{"../core/BaseSound":9,"../core/Config":10,"../core/MultiFileLoader":14,"../core/SPAudioBufferSourceNode":16,"../core/SPAudioParam":17,"../core/WebAudioDispatch":21,"loglevel":3}],30:[function(require,module,exports){
+},{"../core/BaseSound":3,"../core/Config":4,"../core/MultiFileLoader":8,"../core/SPAudioBufferSourceNode":10,"../core/SPAudioParam":11,"../core/WebAudioDispatch":15,"loglevel":29}],24:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5114,10 +4703,17 @@ var log = require( 'loglevel' );
  * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
  * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
  */
-function MultiTrigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
+function MultiTrigger( options ) {
     if ( !( this instanceof MultiTrigger ) ) {
-        throw new TypeError( "MultiTrigger constructor cannot be called as a function." );
+        return new MultiTrigger( options );
     }
+    var legacyArgumentsMode = arguments.length > 1 || ( options || {} ).currentTime; // Test to guess whether user is using old-style multiple argument constructor instead.
+    var context = legacyArgumentsMode ? arguments[ 0 ] : options.context;
+    var sources = legacyArgumentsMode ? arguments[ 1 ] : options.sources;
+    var onLoadProgress = legacyArgumentsMode ? arguments[ 2 ] : options.onLoadProgress;
+    var onLoadComplete = legacyArgumentsMode ? arguments[ 3 ] : options.onLoadComplete;
+    var onAudioStart = legacyArgumentsMode ? arguments[ 4 ] : options.onAudioStart;
+    var onAudioEnd = legacyArgumentsMode ? arguments[ 5 ] : options.onAudioEnd;
 
     // Call superclass constructor
     BaseSound.call( this, context );
@@ -5415,7 +5011,7 @@ MultiTrigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = MultiTrigger;
 
-},{"../core/BaseSound":9,"../core/Config":10,"../core/Converter":11,"../core/MultiFileLoader":14,"../core/SPAudioParam":17,"../core/SoundQueue":20,"../core/WebAudioDispatch":21,"loglevel":3}],31:[function(require,module,exports){
+},{"../core/BaseSound":3,"../core/Config":4,"../core/Converter":5,"../core/MultiFileLoader":8,"../core/SPAudioParam":11,"../core/SoundQueue":14,"../core/WebAudioDispatch":15,"loglevel":29}],25:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5442,10 +5038,18 @@ var log = require( 'loglevel' );
  * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
  * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
  */
-function Scrubber( context, source, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
+function Scrubber( options ) {
     if ( !( this instanceof Scrubber ) ) {
-        throw new TypeError( "Scrubber constructor cannot be called as a function." );
+        return new Scrubber( options );
     }
+    var legacyArgumentsMode = arguments.length > 1 || ( options || {} ).currentTime; // Test to guess whether user is using old-style multiple argument constructor instead.
+    var context = legacyArgumentsMode ? arguments[ 0 ] : options.context;
+    var source = legacyArgumentsMode ? arguments[ 1 ] : options.source;
+    var onLoadProgress = legacyArgumentsMode ? arguments[ 2 ] : options.onLoadProgress;
+    var onLoadComplete = legacyArgumentsMode ? arguments[ 3 ] : options.onLoadComplete;
+    var onAudioStart = legacyArgumentsMode ? arguments[ 4 ] : options.onAudioStart;
+    var onAudioEnd = legacyArgumentsMode ? arguments[ 5 ] : options.onAudioEnd;
+
     // Call superclass constructor
     BaseSound.call( this, context );
     this.maxSources = 1;
@@ -5782,7 +5386,7 @@ Scrubber.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Scrubber;
 
-},{"../core/BaseSound":9,"../core/Config":10,"../core/MultiFileLoader":14,"../core/SPAudioParam":17,"loglevel":3}],32:[function(require,module,exports){
+},{"../core/BaseSound":3,"../core/Config":4,"../core/MultiFileLoader":8,"../core/SPAudioParam":11,"loglevel":29}],26:[function(require,module,exports){
 /**
  * @module Models
  */
@@ -5810,10 +5414,18 @@ var log = require( 'loglevel' );
  * @param {Function} [onAudioStart] Callback when the audio is about to start playing.
  * @param {Function} [onAudioEnd] Callback when the audio has finished playing.
  */
-function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart, onAudioEnd ) {
+function Trigger( options ) {
     if ( !( this instanceof Trigger ) ) {
-        throw new TypeError( "Trigger constructor cannot be called as a function." );
+        return new Trigger( options );
     }
+    var legacyArgumentsMode = arguments.length > 1 || ( options || {} ).currentTime; // Test to guess whether user is using old-style multiple argument constructor instead.
+    var context = legacyArgumentsMode ? arguments[ 0 ] : options.context;
+    var sources = legacyArgumentsMode ? arguments[ 1 ] : options.sources;
+    var onLoadProgress = legacyArgumentsMode ? arguments[ 2 ] : options.onLoadProgress;
+    var onLoadComplete = legacyArgumentsMode ? arguments[ 3 ] : options.onLoadComplete;
+    var onAudioStart = legacyArgumentsMode ? arguments[ 4 ] : options.onAudioStart;
+    var onAudioEnd = legacyArgumentsMode ? arguments[ 5 ] : options.onAudioEnd;
+    var numberOfVoices = options.numberOfVoices; // We pass this to soundQueue constructor at the bottom so we can have a different number of voices besides 8.
 
     // Call superclass constructor
     BaseSound.call( this, context );
@@ -6017,8 +5629,23 @@ function Trigger( context, sources, onLoadProgress, onLoadComplete, onAudioStart
         BaseSound.prototype.start.call( this, when, offset, duration, attackDuration );
     };
 
+    /**
+     * Pauses if currently playing. Otherwise starts playing.
+     *
+     * @method toggle
+     *
+     */
+    this.toggle = function () {
+        if ( soundQueue_.isPlaying ) {
+            soundQueue_.pause();
+            BaseSound.prototype.pause.call( this );
+        } else {
+            this.start( 0 );
+        }
+    };
+
     // SoundQueue based model.
-    soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd );
+    soundQueue_ = new SoundQueue( this.audioContext, this.onAudioStart, this.onAudioEnd, numberOfVoices );
 
     init( sources );
 }
@@ -6027,7 +5654,443 @@ Trigger.prototype = Object.create( BaseSound.prototype );
 
 module.exports = Trigger;
 
-},{"../core/BaseSound":9,"../core/Config":10,"../core/Converter":11,"../core/MultiFileLoader":14,"../core/SPAudioParam":17,"../core/SoundQueue":20,"loglevel":3}],33:[function(require,module,exports){
+},{"../core/BaseSound":3,"../core/Config":4,"../core/Converter":5,"../core/MultiFileLoader":8,"../core/SPAudioParam":11,"../core/SoundQueue":14,"loglevel":29}],27:[function(require,module,exports){
+'use strict'
+
+var mergeDescriptors = require('merge-descriptors')
+var isObject = require('is-object')
+var hasOwnProperty = Object.prototype.hasOwnProperty
+
+function fill (destination, source, merge) {
+  if (destination && (isObject(source) || isFunction(source))) {
+    merge(destination, source, false)
+    if (isFunction(destination) && isFunction(source) && source.prototype) {
+      merge(destination.prototype, source.prototype, false)
+    }
+  }
+  return destination
+}
+
+exports = module.exports = function fillKeys (destination, source) {
+  return fill(destination, source, mergeDescriptors)
+}
+
+exports.es3 = function fillKeysEs3 (destination, source) {
+  return fill(destination, source, es3Merge)
+}
+
+function es3Merge (destination, source) {
+  for (var key in source) {
+    if (!hasOwnProperty.call(destination, key)) {
+      destination[key] = source[key]
+    }
+  }
+  return destination
+}
+
+function isFunction (value) {
+  return typeof value === 'function'
+}
+
+},{"is-object":28,"merge-descriptors":30}],28:[function(require,module,exports){
+"use strict";
+
+module.exports = function isObject(x) {
+	return typeof x === "object" && x !== null;
+};
+
+},{}],29:[function(require,module,exports){
+/*
+* loglevel - https://github.com/pimterry/loglevel
+*
+* Copyright (c) 2013 Tim Perry
+* Licensed under the MIT license.
+*/
+(function (root, definition) {
+    "use strict";
+    if (typeof module === 'object' && module.exports && typeof require === 'function') {
+        module.exports = definition();
+    } else if (typeof define === 'function' && typeof define.amd === 'object') {
+        define(definition);
+    } else {
+        root.log = definition();
+    }
+}(this, function () {
+    "use strict";
+    var noop = function() {};
+    var undefinedType = "undefined";
+
+    function realMethod(methodName) {
+        if (typeof console === undefinedType) {
+            return false; // We can't build a real method without a console to log to
+        } else if (console[methodName] !== undefined) {
+            return bindMethod(console, methodName);
+        } else if (console.log !== undefined) {
+            return bindMethod(console, 'log');
+        } else {
+            return noop;
+        }
+    }
+
+    function bindMethod(obj, methodName) {
+        var method = obj[methodName];
+        if (typeof method.bind === 'function') {
+            return method.bind(obj);
+        } else {
+            try {
+                return Function.prototype.bind.call(method, obj);
+            } catch (e) {
+                // Missing bind shim or IE8 + Modernizr, fallback to wrapping
+                return function() {
+                    return Function.prototype.apply.apply(method, [obj, arguments]);
+                };
+            }
+        }
+    }
+
+    // these private functions always need `this` to be set properly
+
+    function enableLoggingWhenConsoleArrives(methodName, level, loggerName) {
+        return function () {
+            if (typeof console !== undefinedType) {
+                replaceLoggingMethods.call(this, level, loggerName);
+                this[methodName].apply(this, arguments);
+            }
+        };
+    }
+
+    function replaceLoggingMethods(level, loggerName) {
+        /*jshint validthis:true */
+        for (var i = 0; i < logMethods.length; i++) {
+            var methodName = logMethods[i];
+            this[methodName] = (i < level) ?
+                noop :
+                this.methodFactory(methodName, level, loggerName);
+        }
+    }
+
+    function defaultMethodFactory(methodName, level, loggerName) {
+        /*jshint validthis:true */
+        return realMethod(methodName) ||
+               enableLoggingWhenConsoleArrives.apply(this, arguments);
+    }
+
+    var logMethods = [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error"
+    ];
+
+    function Logger(name, defaultLevel, factory) {
+      var self = this;
+      var currentLevel;
+      var storageKey = "loglevel";
+      if (name) {
+        storageKey += ":" + name;
+      }
+
+      function persistLevelIfPossible(levelNum) {
+          var levelName = (logMethods[levelNum] || 'silent').toUpperCase();
+
+          // Use localStorage if available
+          try {
+              window.localStorage[storageKey] = levelName;
+              return;
+          } catch (ignore) {}
+
+          // Use session cookie as fallback
+          try {
+              window.document.cookie =
+                encodeURIComponent(storageKey) + "=" + levelName + ";";
+          } catch (ignore) {}
+      }
+
+      function getPersistedLevel() {
+          var storedLevel;
+
+          try {
+              storedLevel = window.localStorage[storageKey];
+          } catch (ignore) {}
+
+          if (typeof storedLevel === undefinedType) {
+              try {
+                  var cookie = window.document.cookie;
+                  var location = cookie.indexOf(
+                      encodeURIComponent(storageKey) + "=");
+                  if (location) {
+                      storedLevel = /^([^;]+)/.exec(cookie.slice(location))[1];
+                  }
+              } catch (ignore) {}
+          }
+
+          // If the stored level is not valid, treat it as if nothing was stored.
+          if (self.levels[storedLevel] === undefined) {
+              storedLevel = undefined;
+          }
+
+          return storedLevel;
+      }
+
+      /*
+       *
+       * Public API
+       *
+       */
+
+      self.levels = { "TRACE": 0, "DEBUG": 1, "INFO": 2, "WARN": 3,
+          "ERROR": 4, "SILENT": 5};
+
+      self.methodFactory = factory || defaultMethodFactory;
+
+      self.getLevel = function () {
+          return currentLevel;
+      };
+
+      self.setLevel = function (level, persist) {
+          if (typeof level === "string" && self.levels[level.toUpperCase()] !== undefined) {
+              level = self.levels[level.toUpperCase()];
+          }
+          if (typeof level === "number" && level >= 0 && level <= self.levels.SILENT) {
+              currentLevel = level;
+              if (persist !== false) {  // defaults to true
+                  persistLevelIfPossible(level);
+              }
+              replaceLoggingMethods.call(self, level, name);
+              if (typeof console === undefinedType && level < self.levels.SILENT) {
+                  return "No console available for logging";
+              }
+          } else {
+              throw "log.setLevel() called with invalid level: " + level;
+          }
+      };
+
+      self.setDefaultLevel = function (level) {
+          if (!getPersistedLevel()) {
+              self.setLevel(level, false);
+          }
+      };
+
+      self.enableAll = function(persist) {
+          self.setLevel(self.levels.TRACE, persist);
+      };
+
+      self.disableAll = function(persist) {
+          self.setLevel(self.levels.SILENT, persist);
+      };
+
+      // Initialize with the right level
+      var initialLevel = getPersistedLevel();
+      if (initialLevel == null) {
+          initialLevel = defaultLevel == null ? "WARN" : defaultLevel;
+      }
+      self.setLevel(initialLevel, false);
+    }
+
+    /*
+     *
+     * Package-level API
+     *
+     */
+
+    var defaultLogger = new Logger();
+
+    var _loggersByName = {};
+    defaultLogger.getLogger = function getLogger(name) {
+        if (typeof name !== "string" || name === "") {
+          throw new TypeError("You must supply a name when creating a logger.");
+        }
+
+        var logger = _loggersByName[name];
+        if (!logger) {
+          logger = _loggersByName[name] = new Logger(
+            name, defaultLogger.getLevel(), defaultLogger.methodFactory);
+        }
+        return logger;
+    };
+
+    // Grab the current global log variable in case of overwrite
+    var _log = (typeof window !== undefinedType) ? window.log : undefined;
+    defaultLogger.noConflict = function() {
+        if (typeof window !== undefinedType &&
+               window.log === defaultLogger) {
+            window.log = _log;
+        }
+
+        return defaultLogger;
+    };
+
+    return defaultLogger;
+}));
+
+},{}],30:[function(require,module,exports){
+/*!
+ * merge-descriptors
+ * Copyright(c) 2014 Jonathan Ong
+ * Copyright(c) 2015 Douglas Christopher Wilson
+ * MIT Licensed
+ */
+
+'use strict'
+
+/**
+ * Module exports.
+ * @public
+ */
+
+module.exports = merge
+
+/**
+ * Module variables.
+ * @private
+ */
+
+var hasOwnProperty = Object.prototype.hasOwnProperty
+
+/**
+ * Merge the property descriptors of `src` into `dest`
+ *
+ * @param {object} dest Object to add descriptors to
+ * @param {object} src Object to clone descriptors from
+ * @param {boolean} [redefine=true] Redefine `dest` properties with `src` properties
+ * @returns {object} Reference to dest
+ * @public
+ */
+
+function merge(dest, src, redefine) {
+  if (!dest) {
+    throw new TypeError('argument dest is required')
+  }
+
+  if (!src) {
+    throw new TypeError('argument src is required')
+  }
+
+  if (redefine === undefined) {
+    // Default to true
+    redefine = true
+  }
+
+  Object.getOwnPropertyNames(src).forEach(function forEachOwnPropertyName(name) {
+    if (!redefine && hasOwnProperty.call(dest, name)) {
+      // Skip desriptor
+      return
+    }
+
+    // Copy descriptor
+    var descriptor = Object.getOwnPropertyDescriptor(src, name)
+    Object.defineProperty(dest, name, descriptor)
+  })
+
+  return dest
+}
+
+},{}],31:[function(require,module,exports){
+'use strict'
+
+module.exports = function createNotFoundError (path) {
+  var err = new Error('Cannot find module \'' + path + '\'')
+  err.code = 'MODULE_NOT_FOUND'
+  return err
+}
+
+},{}],32:[function(require,module,exports){
+'use strict';
+
+var fillMissingKeys = require('fill-keys');
+var moduleNotFoundError = require('module-not-found-error');
+
+function ProxyquireifyError(msg) {
+  this.name = 'ProxyquireifyError';
+  Error.captureStackTrace(this, ProxyquireifyError);
+  this.message = msg || 'An error occurred inside proxyquireify.';
+}
+
+function validateArguments(request, stubs) {
+  var msg = (function getMessage() {
+    if (!request)
+      return 'Missing argument: "request". Need it to resolve desired module.';
+
+    if (!stubs)
+      return 'Missing argument: "stubs". If no stubbing is needed, use regular require instead.';
+
+    if (typeof request != 'string')
+      return 'Invalid argument: "request". Needs to be a requirable string that is the module to load.';
+
+    if (typeof stubs != 'object')
+      return 'Invalid argument: "stubs". Needs to be an object containing overrides e.g., {"path": { extname: function () { ... } } }.';
+  })();
+
+  if (msg) throw new ProxyquireifyError(msg);
+}
+
+var stubs;
+
+function stub(stubs_) {
+  stubs = stubs_;
+  // This cache is used by the prelude as an alternative to the regular cache.
+  // It is not read or written here, except to set it to an empty object when
+  // adding stubs and to reset it to null when clearing stubs.
+  module.exports._cache = {};
+}
+
+function reset() {
+  stubs = undefined;
+  module.exports._cache = null;
+}
+
+var proxyquire = module.exports = function (require_) {
+  if (typeof require_ != 'function')
+    throw new ProxyquireifyError(
+        'It seems like you didn\'t initialize proxyquireify with the require in your test.\n'
+      + 'Make sure to correct this, i.e.: "var proxyquire = require(\'proxyquireify\')(require);"'
+    );
+
+  reset();
+
+  return function(request, stubs) {
+
+    validateArguments(request, stubs);
+
+    // set the stubs and require dependency
+    // when stub require is invoked by the module under test it will find the stubs here
+    stub(stubs);
+    var dep = require_(request);
+    reset();
+
+    return dep;
+  };
+};
+
+// Start with the default cache
+proxyquire._cache = null;
+
+proxyquire._proxy = function (require_, request) {
+  function original() {
+    return require_(request);
+  }
+
+  if (!stubs || !stubs.hasOwnProperty(request)) return original();
+
+  var stub = stubs[request];
+
+  if (stub === null) throw moduleNotFoundError(request)
+
+  var stubWideNoCallThru = Boolean(stubs['@noCallThru']) && (stub == null || stub['@noCallThru'] !== false);
+  var noCallThru = stubWideNoCallThru || (stub != null && Boolean(stub['@noCallThru']));
+  return noCallThru ? stub : fillMissingKeys(stub, original());
+};
+
+if (require.cache) {
+  // only used during build, so prevent browserify from including it
+  var replacePreludePath = './lib/replace-prelude';
+  var replacePrelude = require(replacePreludePath);
+  proxyquire.browserify = replacePrelude.browserify;
+  proxyquire.plugin = replacePrelude.plugin;
+}
+
+},{"fill-keys":27,"module-not-found-error":31}],33:[function(require,module,exports){
 "use strict";
 var BaseSound = require( 'core/BaseSound' );
 console.log( "Running BaseSound Test... " );
@@ -6202,7 +6265,7 @@ describe( 'BaseSound.js', function () {
     } );
 } );
 
-},{"core/BaseSound":9}],34:[function(require,module,exports){
+},{"core/BaseSound":3}],34:[function(require,module,exports){
 "use strict";
 var Config = require( 'core/Config' );
 console.log( "Running Config Test... " );
@@ -6220,7 +6283,7 @@ describe( 'Config.js', function () {
     } );
 } );
 
-},{"core/Config":10}],35:[function(require,module,exports){
+},{"core/Config":4}],35:[function(require,module,exports){
 "use strict";
 var Converter = require( 'core/Converter' );
 console.log( "Running Converter Test... " );
@@ -6243,7 +6306,7 @@ describe( 'Converter.js', function () {
     } );
 } );
 
-},{"core/Converter":11}],36:[function(require,module,exports){
+},{"core/Converter":5}],36:[function(require,module,exports){
     "use strict";
     var detectLoopMarkers = require( 'core/DetectLoopMarkers' )
     console.log( "Running DetectLoopMarker Test... " );
@@ -6527,7 +6590,7 @@ describe( 'Converter.js', function () {
         } );
     } );
 
-},{"core/DetectLoopMarkers":12}],37:[function(require,module,exports){
+},{"core/DetectLoopMarkers":6}],37:[function(require,module,exports){
 "use strict";
 var FileLoader = require( 'core/FileLoader' );
 console.log( "Running FileLoader Test... " );
@@ -6680,7 +6743,7 @@ describe( 'FileLoader.js', function () {
     } );
 } );
 
-},{"core/FileLoader":13}],38:[function(require,module,exports){
+},{"core/FileLoader":7}],38:[function(require,module,exports){
 "use strict";
 var multiFileLoader = require( 'core/MultiFileLoader' );
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
@@ -6756,7 +6819,7 @@ describe( 'MultiFileLoader.js', function () {
     } );
 } );
 
-},{"core/MultiFileLoader":14,"core/SPAudioBuffer":15}],39:[function(require,module,exports){
+},{"core/MultiFileLoader":8,"core/SPAudioBuffer":9}],39:[function(require,module,exports){
 "use strict";
 var SPAudioBuffer = require( 'core/SPAudioBuffer' );
 console.log( "Running SPAudioBuffer Test... " );
@@ -7031,7 +7094,7 @@ describe( 'SPAudioBuffer.js', function () {
     } );
 } );
 
-},{"core/SPAudioBuffer":15}],40:[function(require,module,exports){
+},{"core/SPAudioBuffer":9}],40:[function(require,module,exports){
 "use strict";
 var SPAudioBufferSourceNode = require( 'core/SPAudioBufferSourceNode' );
 var SPPlaybackRateParam = require( 'core/SPPlaybackRateParam' );
@@ -7177,7 +7240,7 @@ describe( 'SPAudioBufferSourceNode.js', function () {
     } );
 } );
 
-},{"core/SPAudioBufferSourceNode":16,"core/SPPlaybackRateParam":18}],41:[function(require,module,exports){
+},{"core/SPAudioBufferSourceNode":10,"core/SPPlaybackRateParam":12}],41:[function(require,module,exports){
 "use strict";
 var SPAudioParam = require( 'core/SPAudioParam' );
 console.log( "Running SPAudioParam Test... " );
@@ -7341,7 +7404,7 @@ describe( 'SPAudioParam.js', function () {
     } );
 } );
 
-},{"core/SPAudioParam":17}],42:[function(require,module,exports){
+},{"core/SPAudioParam":11}],42:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('core/SoundQueue');});var looperSpies = {
     start: jasmine.createSpy( 'start' ),
     stop: jasmine.createSpy( 'stop' ),
@@ -7768,7 +7831,7 @@ describe( 'SoundQueue.js', function () {
     } );
 } );
 
-},{"core/SoundQueue":20,"proxyquireify":6}],43:[function(require,module,exports){
+},{"core/SoundQueue":14,"proxyquireify":32}],43:[function(require,module,exports){
 "use strict";
 var Compressor = require( 'effects/Compressor' );
 if ( !window.context ) {
@@ -7947,7 +8010,7 @@ describe( 'Compressor.js', function () {
     } );
 } );
 
-},{"effects/Compressor":22}],44:[function(require,module,exports){
+},{"effects/Compressor":16}],44:[function(require,module,exports){
 "use strict";
 var Distorter = require( 'effects/Distorter' );
 if ( !window.context ) {
@@ -8069,7 +8132,7 @@ describe( 'Distorter.js', function () {
     } );
 } );
 
-},{"effects/Distorter":23}],45:[function(require,module,exports){
+},{"effects/Distorter":17}],45:[function(require,module,exports){
 "use strict";
 var Fader = require( 'effects/Fader' );
 if ( !window.context ) {
@@ -8191,7 +8254,7 @@ describe( 'Fader.js', function () {
     } );
 } );
 
-},{"effects/Fader":24}],46:[function(require,module,exports){
+},{"effects/Fader":18}],46:[function(require,module,exports){
 "use strict";
 var Filter = require( 'effects/Filter' );
 if ( !window.context ) {
@@ -8351,7 +8414,7 @@ describe( 'Filter.js', function () {
     } );
 } );
 
-},{"effects/Filter":25}],47:[function(require,module,exports){
+},{"effects/Filter":19}],47:[function(require,module,exports){
 "use strict";
 var Panner = require( 'effects/Panner' );
 if ( !window.context ) {
@@ -8454,7 +8517,7 @@ describe( 'Panner.js', function () {
     } );
 } );
 
-},{"effects/Panner":26}],48:[function(require,module,exports){
+},{"effects/Panner":20}],48:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Activity');});"use strict";
 var Activity = require( 'models/Activity' );
 if ( !window.context ) {
@@ -8973,7 +9036,7 @@ describe( 'Activity.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Activity":27,"proxyquireify":6}],49:[function(require,module,exports){
+},{"models/Activity":21,"proxyquireify":32}],49:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Extender');});"use strict";
 var Extender = require( 'models/Extender' );
 if ( !window.context ) {
@@ -9452,7 +9515,7 @@ describe( 'Extender.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Extender":28,"proxyquireify":6}],50:[function(require,module,exports){
+},{"models/Extender":22,"proxyquireify":32}],50:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Looper');});"use strict";
 var Looper = require( 'models/Looper' );
 if ( !window.context ) {
@@ -10016,7 +10079,7 @@ describe( 'Looper.js with stubbed Source', function () {
     } );
 } );
 
-},{"models/Looper":29,"proxyquireify":6}],51:[function(require,module,exports){
+},{"models/Looper":23,"proxyquireify":32}],51:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/MultiTrigger');});"use strict";
 var MultiTrigger = require( 'models/MultiTrigger' );
 if ( !window.context ) {
@@ -10534,7 +10597,7 @@ describe( 'MultiTrigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/MultiTrigger":30,"proxyquireify":6}],52:[function(require,module,exports){
+},{"models/MultiTrigger":24,"proxyquireify":32}],52:[function(require,module,exports){
 "use strict";
 var Scrubber = require( 'models/Scrubber' );
 if ( !window.context ) {
@@ -10852,7 +10915,7 @@ describe( 'Scrubber.js', function () {
     } );
 } );
 
-},{"models/Scrubber":31}],53:[function(require,module,exports){
+},{"models/Scrubber":25}],53:[function(require,module,exports){
 /* proxyquireify injected requires to make browserify include dependencies in the bundle */ /* istanbul ignore next */; (function __makeBrowserifyIncludeModule__() { require('models/Trigger');});"use strict";
 var Trigger = require( 'models/Trigger' );
 if ( !window.context ) {
@@ -11331,7 +11394,7 @@ describe( 'Trigger.js with stubbed Queue', function () {
     } );
 } );
 
-},{"models/Trigger":32,"proxyquireify":6}],54:[function(require,module,exports){
+},{"models/Trigger":26,"proxyquireify":32}],54:[function(require,module,exports){
 /* Core Tests */
 require( './cases/lib/core/test.BaseSound.js' );
 require( './cases/lib/core/test.Config.js' );
