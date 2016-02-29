@@ -23,7 +23,6 @@ var markdown = require('gulp-markdown');
 var webserver = require('gulp-webserver');
 var cached = require('gulp-cached');
 
-
 //var debug = require('gulp-debug');
 // var using = require('gulp-using');
 
@@ -31,18 +30,17 @@ var banner= '/*<%= pkg.name %> - v<%= pkg.version %> - <%= new Date() %> */\n';
 
 var paths = {
     files: {
-        indexSrc: 'index.js',
+        indexSrc: './index.js',
         modelsSrc: 'models/*.js',
         effectsSrc: 'effects/*.js',
         coreSrc: 'core/*.js',
         allTestSrc: 'test/**/*.js',
         unitTestCases: 'test/unit/cases/**/*.js',
-        builtSrc : 'build/**/*.js',
+        builtSrc : 'dist/**/*.js',
         packageData : ['LICENSE', 'package.json', 'README.md'],
         publishableSrc : ['models/*.js', 'effects/*.js', 'core/SPAudioParam.js','core/BaseSound.js', 'core/BaseEffect.js', 'core/SPAudioBuffer.js']
     },
     dirs: {
-        build: 'build/',
         dist: 'dist/',
         core: 'core/',
         models: 'models/',
@@ -170,14 +168,14 @@ function createBundlerStreams(globPattern, destDir, transforms){
 
 gulp.task('devbuild',['jsbeautify:src'], function(){
 
-    del([paths.dirs.build], function () {
+    del([paths.dirs.dist], function () {
         console.log('Cleaning old built assets.');
     });
 
-    var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/');
-    var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/');
-    var coreStream = createBundlerStreams(paths.files.coreSrc, 'build/core/');
-    var indexStream = gulp.src(paths.files.indexSrc).pipe(gulp.dest(paths.dirs.build));
+    var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'dist/models/');
+    var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'dist/effects/');
+    var coreStream = createBundlerStreams(paths.files.coreSrc, 'dist/core/');
+    var indexStream = gulp.src(paths.files.indexSrc).pipe(gulp.dest(paths.dirs.dist));
 
     var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream).concat(indexStream);
 
@@ -186,14 +184,14 @@ gulp.task('devbuild',['jsbeautify:src'], function(){
 
 gulp.task('releasebuild',['jsbeautify:src'], function(){
 
-    del([paths.dirs.build], function () {
+    del([paths.dirs.dist], function () {
         console.log('Cleaning old built assets.');
     });
 
-    var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'build/models/', 'uglifyify');
-    var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'build/effects/', 'uglifyify');
-    var coreStream = createBundlerStreams('core/SPAudioBuffer.js', 'build/core/', 'uglifyify');
-    var indexStream = gulp.src(paths.files.indexSrc).pipe(gulp.dest(paths.dirs.build));
+    var modelStreams = createBundlerStreams(paths.files.modelsSrc, 'dist/models/', 'uglifyify');
+    var effectsStreams = createBundlerStreams(paths.files.effectsSrc, 'dist/effects/', 'uglifyify');
+    var coreStream = createBundlerStreams('core/SPAudioBuffer.js', 'dist/core/', 'uglifyify');
+    var indexStream = gulp.src(paths.files.indexSrc).pipe(gulp.dest(paths.dirs.dist));
 
     var combinedStreams = modelStreams.concat(effectsStreams).concat(coreStream).concat(indexStream);
 
@@ -237,32 +235,23 @@ gulp.task('release', ['releasebuild', 'publishdocs', 'publishdev'], function(){
     pkg = requireUncached('./package.json');
     gutil.log("Creating the ", pkg.version, " release.");
 
-    var builtFileStream = gulp.src(paths.files.builtSrc)
+    return gulp.src(paths.files.builtSrc)
     .pipe(header(banner, {pkg: pkg}))
     .pipe(gulp.dest(paths.dirs.dist));
 
-    var packageDataStream = gulp.src(paths.files.packageData)
-    .pipe(gulp.dest(paths.dirs.dist));
-
-    return merge(builtFileStream,packageDataStream);
 });
 
 gulp.task('release:testbuild', ['bump:pre', 'releasebuild', 'publishdocs'], function(){
     pkg = requireUncached('./package.json');
     gutil.log("Creating the ", pkg.version, " test release.");
 
-    var builtFileStream = gulp.src(paths.files.builtSrc)
+    return gulp.src(paths.files.builtSrc)
     .pipe(header(banner, {pkg: pkg}))
     .pipe(gulp.dest(paths.dirs.dist));
-
-    var packageDataStream = gulp.src(paths.files.packageData)
-    .pipe(gulp.dest(paths.dirs.dist));
-
-    return merge(builtFileStream,packageDataStream);
 });
 
 gulp.task('bump:pre', function(){
-  return gulp.src('./package.json')
+  return gulp.src(['./package.json', './bower.json'])
   .pipe(bump({type: 'prerelease'}))
   .pipe(gulp.dest('./'));
 });
@@ -315,7 +304,7 @@ gulp.task('unittestbuild',['jsbeautify:test'], function(){
 });
 
 gulp.task('unittest', ['jsbeautify:src', 'unittestbuild', 'watch:unittest'], function(){
-    return gulp.src([paths.dirs.unittest, paths.dirs.build])
+    return gulp.src([paths.dirs.unittest, paths.dirs.dist])
     .pipe(webserver({
         port: 8081,
         open: true,
@@ -324,7 +313,7 @@ gulp.task('unittest', ['jsbeautify:src', 'unittestbuild', 'watch:unittest'], fun
 });
 
 gulp.task('integration', function(){
-    return gulp.src([paths.dirs.integration, paths.dirs.build])
+    return gulp.src([paths.dirs.integration, paths.dirs.dist])
     .pipe(webserver({
         port: 8082,
          open: true,
