@@ -3,7 +3,7 @@
 
 /.editorconfig
 
-
+/bower_components
 /build
 /test
 /docs
