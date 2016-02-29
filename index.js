@@ -10,7 +10,22 @@ module.exports = {
         Scrubber: require( './models/Scrubber.js' )
     },
     core: {
-        SPAudioBuffer: require( './core/SPAudioBuffer.js' )
+        AudioContextMonkeyPatch: require( './core/AudioContextMonkeyPatch.js' ),
+        BaseEffect: require( './core/BaseEffect.js' ),
+        BaseSound: require( './core/BaseSound.js' ),
+        Config: require( './core/Config.js' ),
+        Converter: require( './core/Converter.js' ),
+        DetectLoopMarker: require( './core/DetectLoopMarkers.js' ),
+        Envelope: require( '/core/Envelope.js' ),
+        FileLoader: require( './core/FileLoader.js' ),
+        MultiFileLoader: require( './core/MultiFileLoader.js' ),
+        SafeAudioContext: require( './core/SafeAudioContext.js' ),
+        SoundQueue: require( './core/SoundQueue.js' ),
+        SPAudioBuffer: require( './core/SPAudioBuffer.js' ),
+        SPAudioBufferSourceNode: require( './core/SPAudioBufferSourceNode.js' ),
+        SPAudioParam: require( './core/SPAudioParam.js' ),
+        SPPlaybackRateParam: require( './core/SPPlaybackRateParam.js' ),
+        WebAudioDispatch: require( './core/WebAudioDispatch.js' )
     },
     effects: {
         Compressor: require( './effects/Compressor.js' ),

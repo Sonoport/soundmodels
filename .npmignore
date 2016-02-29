@@ -1,0 +1,13 @@
+.jshintrc
+.jsbeautifyrc
+
+/.editorconfig
+
+
+/build
+/test
+/docs
+
+Gulpfile.js
+index.html
+bower.json
